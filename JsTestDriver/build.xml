@@ -1,10 +1,5 @@
 <project name="JsTestDriver" default="jar">
 
-	<!--
-	TODO(jeremiele): Rename the last jspuppet things to jstestdriver in this file when migration
-	                 is complete
-	-->
-
   <property name="src.dir" value="src" />
   <property name="src-test.dir" value="src-test" />
   <property name="lib.dir" value="lib" />
@@ -27,8 +22,8 @@
   <property name="TESTPATH" value="." />
 	<property name="CONFIGURATIONFILE" value="jsTestDriver.conf" />
 
-  <property name="svn.trunkUrl" value="https://jspuppet.googlecode.com/svn/trunk"/>
-  <property name="svn.tagsUrl" value="https://jspuppet.googlecode.com/svn/tags"/>
+  <property name="svn.trunkUrl" value="https://js-test-driver.googlecode.com/svn/trunk"/>
+  <property name="svn.tagsUrl" value="https://js-test-driver.googlecode.com/svn/tags"/>
 
   <target name="clean">
     <delete dir="target" />
@@ -168,7 +163,7 @@
 	</target>
 
   <!-- TODO: also have a JNLP launcher for the CBuild latest code - set deploy.codebase to
-             http://build.hevery.com/job/JsPuppet/lastSuccessfulBuild/artifact/target/bin -->
+             http://build.hevery.com/job/JsTestDriver/lastSuccessfulBuild/artifact/target/bin -->
   <property name="deploy.codebase" value="http://www.corp.google.com/~alexeagle/jstestdriver"/>
   <target name="sign" depends="jar">
     <copy todir="${bin.dir}" file="src/com/google/jstestdriver/ui/JsTestDriver.jnlp">
@@ -210,11 +205,11 @@
     <gcupload labels="Featured, Type-Executable" filename="${bin.dir}/${ant.project.name}.jar"
               targetfilename="${ant.project.name}-${release.id}.jar"
               username="${googlecode.username}" password="${googlecode.password}"
-              projectname="jspuppet" summary="Self-contained executable jar"/>
+              projectname="js-test-driver" summary="Self-contained executable jar"/>
     <gcupload labels="Featured, Type-Executable" filename="${bin.dir}/JsTestDriver.jnlp"
               targetfilename="JsTestDriver-${release.id}.jnlp"
               username="${googlecode.username}" password="${googlecode.password}"
-              projectname="jspuppet" summary="Java WebStart link for the GUI application"/>
+              projectname="js-test-driver" summary="Java WebStart link for the GUI application"/>
     <echo message="Release has been deployed. You should now remove the 'featured' label from the previous release on the googlecode site."/>
   </target>
 
