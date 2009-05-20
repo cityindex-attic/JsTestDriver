@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>Checkstyle report</title>
+    <link>http://args4j.dev.java.net/</link>
+    <description>Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>Copyright 2004 The Apache Software Foundation</copyright>
+    <item>
+      <title>File: 40 , Errors: 146 , Warnings: 0 , Infos: 0</title>
+      <link>http://args4j.dev.java.net//checkstyle-report.html</link>
+      <description>
+        <p>Click
+          <a href="http://args4j.dev.java.net//checkstyle-report.html">here</a>for the full Checkstyle report.</p>
+        <table border="1" summary="Files">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px">I</th>
+              <th style="width:30px">W</th>
+              <th style="width:30px">E</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/Ant.java">org/kohsuke/args4j/Ant.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/Argument.java">org/kohsuke/args4j/Argument.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/CmdLineException.java">org/kohsuke/args4j/CmdLineException.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>8</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/CmdLineParser.java">org/kohsuke/args4j/CmdLineParser.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/FieldSetter.java">org/kohsuke/args4j/FieldSetter.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>14</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/IllegalAnnotationError.java">org/kohsuke/args4j/IllegalAnnotationError.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>8</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/Messages.java">org/kohsuke/args4j/Messages.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/MethodSetter.java">org/kohsuke/args4j/MethodSetter.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>16</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/MultiValueFieldSetter.java">org/kohsuke/args4j/MultiValueFieldSetter.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>38</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/Option.java">org/kohsuke/args4j/Option.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/spi/BooleanOptionHandler.java">org/kohsuke/args4j/spi/BooleanOptionHandler.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>9</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/spi/EnumOptionHandler.java">org/kohsuke/args4j/spi/EnumOptionHandler.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/spi/FileOptionHandler.java">org/kohsuke/args4j/spi/FileOptionHandler.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>8</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/spi/IntOptionHandler.java">org/kohsuke/args4j/spi/IntOptionHandler.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>8</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/spi/Messages.java">org/kohsuke/args4j/spi/Messages.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/spi/OptionHandler.java">org/kohsuke/args4j/spi/OptionHandler.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>16</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/spi/Parameters.java">org/kohsuke/args4j/spi/Parameters.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/spi/Setter.java">org/kohsuke/args4j/spi/Setter.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="http://args4j.dev.java.net//checkstyle-report.html#org/kohsuke/args4j/spi/StringOptionHandler.java">org/kohsuke/args4j/spi/StringOptionHandler.java</a>
+              </td>
+              <td>0</td>
+              <td>0</td>
+              <td>8</td>
+            </tr>
+          </tbody>
+        </table>
+      </description>
+    </item>
+  </channel>
+</rss>

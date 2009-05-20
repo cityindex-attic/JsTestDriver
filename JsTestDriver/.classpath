@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src-test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="lib/jetty/servlet-api-2.5-6.1.14.jar"/>
+	<classpathentry kind="lib" path="lib/jetty/jetty-6.1.14.jar"/>
+	<classpathentry kind="lib" path="lib/jetty/jetty-util-6.1.14.jar"/>
+	<classpathentry kind="lib" path="lib/google-gson-1.2.3/gson-1.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/args4j-2.0.1/args4j-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/joda-time-1.6/joda-time-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/xerces-2_9_1/resolver.jar"/>
+	<classpathentry kind="lib" path="lib/xerces-2_9_1/serializer.jar"/>
+	<classpathentry kind="lib" path="lib/xerces-2_9_1/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="lib/xerces-2_9_1/xml-apis.jar"/>
+	<classpathentry kind="lib" path="lib/jvyaml-0.2/lib/jvyaml.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-1.5.6/slf4j-api-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-1.5.6/slf4j-jcl-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
