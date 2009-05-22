@@ -20,11 +20,11 @@ consoleTest.prototype.testLog = function() {
 
   console.log("Hello %s", "world");
   assertEquals("[LOG] Hello world", console.getLog());
-  console.log("This is some log", " and more");
+  console.log("This is some log", "and more");
   assertEquals("[LOG] This is some log and more", console.getLog());
   console.log("A number %d", 42);
   assertEquals("[LOG] A number 42", console.getLog());
-  console.log("A", " B");
+  console.log("A", "B");
   console.log("C %s", "D");
   assertEquals("[LOG] A B\n[LOG] C D", console.getLog());
   console.log("log");

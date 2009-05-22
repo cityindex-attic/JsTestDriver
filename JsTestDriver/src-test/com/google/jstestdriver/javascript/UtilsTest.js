@@ -20,11 +20,11 @@ utilsTest.prototype.testStringFormat = function() {
   assertEquals("Hello 1", jstestdriver.formatString("Hello %d", 1));
   assertEquals("Hello world, number 1 and number 2 a float 1.5 ahah",
       jstestdriver.formatString("Hello %s, number %d and number %i a float %f", "world", 1, 2, 1.5,
-      " ahah"));
-  assertEquals("Hello world 42", jstestdriver.formatString("Hello", " world ", 42));
+      "ahah"));
+  assertEquals("Hello world 42", jstestdriver.formatString("Hello", "world", 42));
   assertEquals("Hello undefined", jstestdriver.formatString("Hello %s"));
   assertEquals("Hello {\"property\":\"value\"}", jstestdriver.formatString("Hello %s", {property:
     'value'}));
-  assertEquals("Hello {\"property\":\"value\"}", jstestdriver.formatString("Hello ", {property:
+  assertEquals("Hello {\"property\":\"value\"}", jstestdriver.formatString("Hello", {property:
     'value'}));
 };

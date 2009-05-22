@@ -29,6 +29,9 @@ jstestdriver.formatString = function() {
       if (typeof currentArg == 'object') {
         currentArg = JSON.stringify(currentArg);
       }
+      if (stringBuilder.length > 0) {
+        stringBuilder.push(" ");
+      }
       stringBuilder.push(currentArg);
       i++;
     } else {
