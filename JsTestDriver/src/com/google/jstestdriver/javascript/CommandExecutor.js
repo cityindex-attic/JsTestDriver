@@ -164,7 +164,10 @@ jstestdriver.CommandExecutor.prototype.runAllTests = function(captureConsole) {
 };
 
 
-jstestdriver.CommandExecutor.prototype.runTests = function(testCases, captureConsole) {
+jstestdriver.CommandExecutor.prototype.runTests = function(args) {
+  var testCases = args[0];
+  var captureConsole = args[1];
+
   this.runTestCases_(jsonParse('{"testCases":' + testCases + '}').testCases,
       captureConsole == "true" ? true : false);
 };
