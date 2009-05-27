@@ -25,7 +25,7 @@ import java.util.Observer;
 import java.util.Set;
 
 /**
- * Produces instances of Actions, so they can have observers.
+ * Produces instances of Actions, so they can have observers, and other stuff.
  *
  * @author alexeagle@google.com (Alex Eagle)
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -42,7 +42,18 @@ public class ActionFactory {
           (file.startsWith("http://") || file.startsWith("https://")) ?
               -1 : new File(file).lastModified()));
     }
-    return new JsTestDriverClientImpl(filesInfo, serverAddress, new HttpServer());
+    return new JsTestDriverClientImpl(new CommandTaskFactory(new JsTestDriverFileFilter() {
+      public String filterFile(String content, boolean reload) {
+        return content;
+      }
+
+      public Set<String> resolveFilesDeps(String file) {
+        Set<String> set = new LinkedHashSet<String>();
+
+        set.add(file);
+        return set;
+      }
+    }), filesInfo, serverAddress, new HttpServer());
   }
 
   public ServerStartupAction getServerStartupAction(Integer port,

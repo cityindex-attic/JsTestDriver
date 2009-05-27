@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -90,8 +91,19 @@ public class JsTestDriverClientTest extends TestCase {
         "{\"response\":\"2\",\"browser\":{\"name\":\"browser2\"}," +
         "\"error\":\"error2\",\"executionTime\":6},\"last\":true}");
 
-    JsTestDriverClient client = new JsTestDriverClientImpl(new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+    JsTestDriverClient client =
+        new JsTestDriverClientImpl(new CommandTaskFactory(new JsTestDriverFileFilter() {
+          public String filterFile(String content, boolean reload) {
+            return content;
+          }
+
+          public Set<String> resolveFilesDeps(String file) {
+            Set<String> set = new LinkedHashSet<String>();
+
+            set.add(file);
+            return set;
+          }
+        }), new LinkedHashSet<FileInfo>(), "http://localhost", server);
     FakeResponseStream stream = new FakeResponseStream();
     FakeResponseStreamFactory factory = new FakeResponseStreamFactory();
 
@@ -118,8 +130,19 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/cmd?listBrowsers", "[" +
         "{\"id\":0, \"name\":\"name0\", \"version\":\"ver0\", \"os\":\"os0\"}," +
         "{\"id\":1, \"name\":\"name1\", \"version\":\"ver1\", \"os\":\"os1\"}]");
-    JsTestDriverClient client = new JsTestDriverClientImpl(new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+    JsTestDriverClient client =
+        new JsTestDriverClientImpl(new CommandTaskFactory(new JsTestDriverFileFilter() {
+          public String filterFile(String content, boolean reload) {
+            return content;
+          }
+
+          public Set<String> resolveFilesDeps(String file) {
+            Set<String> set = new LinkedHashSet<String>();
+
+            set.add(file);
+            return set;
+          }
+        }), new LinkedHashSet<FileInfo>(), "http://localhost", server);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
     List<BrowserInfo> browsers = new ArrayList<BrowserInfo>(browsersCollection);
 
@@ -149,15 +172,26 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\"," +
     		"\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123}," +
     		"\"last\":true}");
-    JsTestDriverClient client = new JsTestDriverClientImpl(new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+    JsTestDriverClient client =
+        new JsTestDriverClientImpl(new CommandTaskFactory(new JsTestDriverFileFilter() {
+          public String filterFile(String content, boolean reload) {
+            return content;
+          }
+
+          public Set<String> resolveFilesDeps(String file) {
+            Set<String> set = new LinkedHashSet<String>();
+
+            set.add(file);
+            return set;
+          }
+        }), new LinkedHashSet<FileInfo>(), "http://localhost", server);
     FakeResponseStreamFactory factory = new FakeResponseStreamFactory();
     FakeResponseStream stream = new FakeResponseStream();
 
     factory.setResponseStream(stream);
     client.runAllTests("1", factory, false);
 
-    assertEquals("PASSED", stream.getResponse().getResponse());
+    assertEquals("PASSED", stream.getResponse().getResponse()); 
   }
 
   public void testRunOneTest() throws Exception {
@@ -171,8 +205,19 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\"," +
             "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123}," +
             "\"last\":true}");
-    JsTestDriverClient client = new JsTestDriverClientImpl(new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+    JsTestDriverClient client =
+        new JsTestDriverClientImpl(new CommandTaskFactory(new JsTestDriverFileFilter() {
+          public String filterFile(String content, boolean reload) {
+            return content;
+          }
+
+          public Set<String> resolveFilesDeps(String file) {
+            Set<String> set = new LinkedHashSet<String>();
+
+            set.add(file);
+            return set;
+          }
+        }), new LinkedHashSet<FileInfo>(), "http://localhost", server);
     FakeResponseStreamFactory factory = new FakeResponseStreamFactory();
     FakeResponseStream stream = new FakeResponseStream();
 

@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -42,10 +43,20 @@ public class CommandTaskTest extends TestCase {
     params.put("data", "{mooh}");
     params.put("id", "1");
     FakeResponseStream stream = new FakeResponseStream();
-    CommandTask task = new CommandTask(stream, new LinkedHashSet<FileInfo>(),
-        "http://localhost", server, params);
-    task.run();
+    CommandTask task = new CommandTask(new JsTestDriverFileFilter() {
+      public String filterFile(String content, boolean reload) {
+        return content;
+      }
 
+      public Set<String> resolveFilesDeps(String file) {
+        Set<String> set = new LinkedHashSet<String>();
+
+        set.add(file);
+        return set;
+      }
+    }, stream, new LinkedHashSet<FileInfo>(), "http://localhost", server, params);
+
+    task.run();
     Response response = stream.getResponse();
 
     assertEquals("response", response.getResponse());

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,14 +40,16 @@ public class CommandTask {
 
   private final Gson gson = new Gson();
 
+  private final JsTestDriverFileFilter filter;
   private final ResponseStream stream;
   private final Set<FileInfo> fileSet;
   private final String baseUrl;
   private final Server server;
   private final Map<String, String> params;
 
-  public CommandTask(ResponseStream stream, Set<FileInfo> fileSet, String baseUrl, Server server,
-      Map<String, String> params) {
+  public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
+      String baseUrl, Server server, Map<String, String> params) {
+    this.filter = filter;
     this.stream = stream;
     this.fileSet = fileSet;
     this.baseUrl = baseUrl;
@@ -92,8 +95,9 @@ public class CommandTask {
     if (postResult.length() > 0) {
       Collection<String> filesToUpload = gson.fromJson(postResult,
           new TypeToken<Collection<String>>() {}.getType());
+      boolean shouldReset = sameFiles(filesToUpload, fileSet);
 
-      if (sameFiles(filesToUpload, fileSet)) {
+      if (shouldReset) {
         JsonCommand cmd = new JsonCommand(CommandType.RESET, EMPTY_ARRAYLIST);
         Map<String, String> resetParams = new LinkedHashMap<String, String>();
 
@@ -104,16 +108,21 @@ public class CommandTask {
       }
       List<FileData> filesData = new ArrayList<FileData>();
       List<String> filesSrc = new ArrayList<String>();
+      Set<String> finalFilesToUpload = new LinkedHashSet<String>();
 
       for (String file : filesToUpload) {
+        finalFilesToUpload.addAll(filter.resolveFilesDeps(file));
+      }
+      for (String file : finalFilesToUpload) {
         String readFile = null;
         long timestamp = -1;
+
         if (file.startsWith("http://") || file.startsWith("https://")) {
           filesSrc.add(file);
           readFile = "none";
         } else {
           filesSrc.add("/test/" + file);
-          readFile = readFile(file);
+          readFile = filter.filterFile(readFile(file), !shouldReset);
           timestamp = getTimestamp(file);
         }
         filesData.add(new FileData(file, readFile, timestamp));

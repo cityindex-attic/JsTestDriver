@@ -35,11 +35,17 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   private static final List<String> EMPTY_ARRAYLIST = new ArrayList<String>();
 
   private final Gson gson = new Gson();
+
+  private final CommandTaskFactory commandTaskFactory;
   private final Set<FileInfo> fileSet;
   private final String baseUrl;
   private final Server server;
 
-  public JsTestDriverClientImpl(Set<FileInfo> fileSet, String baseUrl, Server server) {
+  
+
+  public JsTestDriverClientImpl(CommandTaskFactory commandTaskFactory, Set<FileInfo> fileSet,
+      String baseUrl, Server server) {
+    this.commandTaskFactory = commandTaskFactory;
     this.fileSet = fileSet;
     this.baseUrl = baseUrl;
     this.server = server;
@@ -55,7 +61,9 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
     params.put("data", cmd);
     params.put("id", id);
-    new CommandTask(stream, fileSet, baseUrl, server, params).run();
+    CommandTask task = commandTaskFactory.getCommandTask(stream, fileSet, baseUrl, server, params);
+
+    task.run();
   }
 
   public void eval(String id, ResponseStreamFactory factory, String cmd) {

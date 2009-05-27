@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -58,8 +59,19 @@ public class JsTestDriverServerTest extends TestCase {
   }
 
   public void testListBrowsers() throws Exception {
-    JsTestDriverClient client = new JsTestDriverClientImpl(new LinkedHashSet<FileInfo>(),
-        "http://localhost:4224", new HttpServer());
+    JsTestDriverClient client =
+        new JsTestDriverClientImpl(new CommandTaskFactory(new JsTestDriverFileFilter() {
+          public String filterFile(String content, boolean reload) {
+            return content;
+          }
+
+          public Set<String> resolveFilesDeps(String file) {
+            Set<String> set = new LinkedHashSet<String>();
+
+            set.add(file);
+            return set;
+          }
+        }), new LinkedHashSet<FileInfo>(), "http://localhost:4224", new HttpServer());
 
     server.start();
     Collection<BrowserInfo> browsers = client.listBrowsers();
