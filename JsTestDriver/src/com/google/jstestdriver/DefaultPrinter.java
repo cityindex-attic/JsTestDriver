@@ -80,7 +80,7 @@ public class DefaultPrinter implements TestResultPrinter {
             String stack  = "";
 
             try {
-              // TODO(jeremiele): do a better job at parsin the stack.
+              // TODO(jeremiele): do a better job at parsing the stack.
               JsException exception = gson.fromJson(testResult.getMessage(), JsException.class);
 
               message = exception.getMessage();
@@ -90,7 +90,7 @@ public class DefaultPrinter implements TestResultPrinter {
 
               for (String l : lines) {
                 if (l.contains("/test/")) {
-                  errorLine += NEW_LINE + "    " + l;
+                  errorLine += NEW_LINE + "      " + l;
                 }
               }
               if (errorLine.length() > 0) {
