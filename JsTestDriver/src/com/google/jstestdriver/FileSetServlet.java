@@ -21,11 +21,14 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServlet;
@@ -150,9 +153,44 @@ public class FileSetServlet extends HttpServlet implements Observer {
     LinkedHashSet<FileInfo> filesUploaded = new LinkedHashSet<FileInfo>();
 
     for (FileData f : filesData) {
-      files.put(f.getFile(), f.getData());
+      String path = f.getFile();
+      String fileData = f.getData();
+
+      files.put(path, fileData);
+      files.put(resolvePath(path), fileData);
       filesUploaded.add(new FileInfo(f.getFile(), f.getTimestamp()));
     }
     browser.addFiles(filesUploaded);
+  }
+
+  private String resolvePath(String path) {
+    Stack<String> resolvedPath = new Stack<String>();
+    String[] tokenizedPath = path.split("/");
+
+    for (String token : tokenizedPath) {
+      if (token.equals("..")) {
+        if (!resolvedPath.isEmpty()) {
+          resolvedPath.pop();
+          continue;
+        }
+      }
+      resolvedPath.push(token);
+    }
+    return join(resolvedPath);
+  }
+
+  private String join(Collection<String> collection) {
+    StringBuilder sb = new StringBuilder();
+    Iterator<String> iterator = collection.iterator();
+
+    if (iterator.hasNext()) {
+      sb.append(iterator.next());
+
+      while (iterator.hasNext()) {
+        sb.append("/");
+        sb.append(iterator.next());
+      }
+    }
+    return sb.toString();
   }
 }
