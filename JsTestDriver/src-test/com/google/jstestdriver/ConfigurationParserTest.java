@@ -68,8 +68,8 @@ public class ConfigurationParserTest extends TestCase {
     List<String> listFiles = new ArrayList<String>(files);
 
     assertEquals(3, files.size());
-    assertEquals("code/code.js", listFiles.get(0));
-    assertEquals("test/test.js", listFiles.get(1));
-    assertEquals("test/test3.js", listFiles.get(2));
+    assertTrue(listFiles.get(0).endsWith("code/code.js"));
+    assertTrue(listFiles.get(1).endsWith("test/test.js"));
+    assertTrue(listFiles.get(2).endsWith("test/test3.js"));
   }
 }
