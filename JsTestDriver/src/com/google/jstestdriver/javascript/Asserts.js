@@ -28,7 +28,7 @@ fail = function(msg) {
 
 isBoolean_ = function(bool) {
   if (typeof(bool) != 'boolean') {
-    fail('Not a boolean');
+    fail('Not a boolean: ' + this.prettyPrintEntity_(bool));
   }
 };
 
