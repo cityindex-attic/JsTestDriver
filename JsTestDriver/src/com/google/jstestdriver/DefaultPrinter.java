@@ -130,11 +130,12 @@ public class DefaultPrinter implements TestResultPrinter {
   public void print(TestResult testResult) {
     String browserName = testResult.getBrowserInfo().getName();
     String browserVersion = testResult.getBrowserInfo().getVersion();
-    RunData runData = browsersRunData.get(browserName + " " + browserVersion);
+    String os = testResult.getBrowserInfo().getOs();
+    RunData runData = browsersRunData.get(browserName + " " + browserVersion + " " + os);
 
     if (runData == null) {
       runData = new RunData();
-      browsersRunData.put(browserName + " " + browserVersion, runData);
+      browsersRunData.put(browserName + " " + browserVersion + " " + os, runData);
     }
     String result = testResult.getResult();
     String log = testResult.getLog();

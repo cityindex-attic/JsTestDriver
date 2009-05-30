@@ -36,6 +36,7 @@ public class DefaultPrinterTest extends TestCase {
 
     browser.setName("TB");
     browser.setVersion("1");
+    browser.setOs("os");
     printer.print(new TestResult(browser, "passed", "", "", "A", "d", 1));
     printer.print(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "", "B", "e", 2));
@@ -44,7 +45,7 @@ public class DefaultPrinterTest extends TestCase {
     printer.close();
     assertEquals(".FE" + NEW_LINE +
         "Total 3 tests (Passed: 1; Fails: 1; Errors: 1) (6.00 ms)" + NEW_LINE +
-        "  TB 1: Run 3 tests (Passed: 1; Fails: 1; Errors 1) (6.00 ms)" + NEW_LINE +
+        "  TB 1 os: Run 3 tests (Passed: 1; Fails: 1; Errors 1) (6.00 ms)" + NEW_LINE +
         "    B.e failed (2.00 ms): abc" + NEW_LINE +
         "    C.f error (3.00 ms): abc" + NEW_LINE, buf.toString());
   }
@@ -55,6 +56,7 @@ public class DefaultPrinterTest extends TestCase {
 
     browser.setName("TB");
     browser.setVersion("1");
+    browser.setOs("os");
     printer.setLineLength(1);
     TestResult result = new TestResult(browser, "passed", "", "", "", "", 0);
 
@@ -70,11 +72,12 @@ public class DefaultPrinterTest extends TestCase {
 
     browser.setName("TB");
     browser.setVersion("1");
+    browser.setOs("os");
     printer.print(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
     printer.close();
     assertEquals("." + NEW_LINE +
         "Total 1 tests (Passed: 1; Fails: 0; Errors: 0) (1.00 ms)" + NEW_LINE +
-        "  TB 1: Run 1 tests (Passed: 1; Fails: 0; Errors 0) (1.00 ms)" + NEW_LINE +
+        "  TB 1 os: Run 1 tests (Passed: 1; Fails: 0; Errors 0) (1.00 ms)" + NEW_LINE +
         "    A.d passed (1.00 ms)" + NEW_LINE +
         "      [LOG] some log" + NEW_LINE, buf.toString());
   }
@@ -85,12 +88,13 @@ public class DefaultPrinterTest extends TestCase {
 
     browser.setName("TB");
     browser.setVersion("1");
+    browser.setOs("os");
     printer.print(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
     printer.close();
     assertEquals("[PASSED] A.d" + NEW_LINE +
         "  [LOG] some log" + NEW_LINE +
         "Total 1 tests (Passed: 1; Fails: 0; Errors: 0) (1.00 ms)" + NEW_LINE +
-        "  TB 1: Run 1 tests (Passed: 1; Fails: 0; Errors 0) (1.00 ms)" + NEW_LINE, buf.toString());
+        "  TB 1 os: Run 1 tests (Passed: 1; Fails: 0; Errors 0) (1.00 ms)" + NEW_LINE, buf.toString());
   }
 
   public void testNotVerbosePassFailErrorAndLog() throws Exception {
@@ -99,6 +103,7 @@ public class DefaultPrinterTest extends TestCase {
 
     browser.setName("TB");
     browser.setVersion("1");
+    browser.setOs("os");
     printer.print(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
     printer.print(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "[LOG] failed log", "B", "e", 2));
@@ -107,7 +112,7 @@ public class DefaultPrinterTest extends TestCase {
     printer.close();
     assertEquals(".FE" + NEW_LINE +
         "Total 3 tests (Passed: 1; Fails: 1; Errors: 1) (6.00 ms)" + NEW_LINE +
-        "  TB 1: Run 3 tests (Passed: 1; Fails: 1; Errors 1) (6.00 ms)" + NEW_LINE +
+        "  TB 1 os: Run 3 tests (Passed: 1; Fails: 1; Errors 1) (6.00 ms)" + NEW_LINE +
         "    A.d passed (1.00 ms)" + NEW_LINE +
         "      [LOG] some log" + NEW_LINE +
         "    B.e failed (2.00 ms): abc" + NEW_LINE +
@@ -122,6 +127,7 @@ public class DefaultPrinterTest extends TestCase {
 
     browser.setName("TB");
     browser.setVersion("1");
+    browser.setOs("os");
     printer.print(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
     printer.print(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "[LOG] failed log", "B", "e", 2));
@@ -135,7 +141,7 @@ public class DefaultPrinterTest extends TestCase {
         "[ERROR] C.f" + NEW_LINE +
         "  [LOG] error log" + NEW_LINE +
         "Total 3 tests (Passed: 1; Fails: 1; Errors: 1) (6.00 ms)" + NEW_LINE +
-        "  TB 1: Run 3 tests (Passed: 1; Fails: 1; Errors 1) (6.00 ms)" + NEW_LINE +
+        "  TB 1 os: Run 3 tests (Passed: 1; Fails: 1; Errors 1) (6.00 ms)" + NEW_LINE +
         "    B.e failed (2.00 ms): abc" + NEW_LINE +
         "    C.f error (3.00 ms): abc" + NEW_LINE, buf.toString());
   }

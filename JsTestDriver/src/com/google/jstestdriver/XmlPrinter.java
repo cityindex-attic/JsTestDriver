@@ -99,9 +99,10 @@ public class XmlPrinter implements TestResultPrinter {
     String result = testResult.getResult();
     String browserName = testResult.getBrowserInfo().getName();
     String browserVersion = testResult.getBrowserInfo().getVersion();
+    String os = testResult.getBrowserInfo().getOs();
 
     // There is one thread per browser it should be added the first time
-    browsersRunData.putIfAbsent(browserName + " " + browserVersion, runData);
+    browsersRunData.putIfAbsent(browserName + " " + browserVersion + " " + os, runData);
     String log = testResult.getLog();
 
     if (log.length() > 0) {
