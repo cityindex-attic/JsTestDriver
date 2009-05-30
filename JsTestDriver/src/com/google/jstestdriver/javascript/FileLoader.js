@@ -43,22 +43,33 @@ jstestdriver.FileLoader.prototype.load = function(files, onAllFilesLoaded) {
   if (this.files_.length > 0) {
     this.onAllFilesLoaded_ = onAllFilesLoaded;
     this.dom_.write = function() {};
-    this.createScript(this.dom_, this.files_.shift(), this.boundOnFileLoaded_);
+    this.createTag(this.files_.shift());
   } else {
     onAllFilesLoaded('no files to load');
   }
 };
 
 
-jstestdriver.FileLoader.prototype.onFileLoaded = function() {
-  if (this.files_.length == 0) {
-    var onAllFilesLoaded = this.onAllFilesLoaded_;
+jstestdriver.FileLoader.prototype.onFileLoaded = function(fileLoaded) {
+  if (fileLoaded && fileLoaded == this.fileLoading_) {
+    if (this.files_.length == 0) {
+      var onAllFilesLoaded = this.onAllFilesLoaded_;
 
-    this.onAllFilesLoaded_ = null;
-    this.dom_.write = this.savedDocumentWrite_;
-    onAllFilesLoaded(JSON.stringify({ message: this.loadMsg_, files: this.errorFiles_ }));
-  } else {
-    this.createScript(this.dom_, this.files_.shift(), this.boundOnFileLoaded_);
+      this.onAllFilesLoaded_ = null;
+      this.dom_.write = this.savedDocumentWrite_;
+      onAllFilesLoaded(JSON.stringify({ message: this.loadMsg_, files: this.errorFiles_ }));
+    } else {
+      this.createTag(this.files_.shift());
+    }
+  }
+};
+
+
+jstestdriver.FileLoader.prototype.createTag = function(file) {
+  if (file.match(/\.js$/)) {
+    this.createScript(this.dom_, file, this.boundOnFileLoaded_);
+  } else if (file.match(/\.css$/)) {
+    this.createLink(this.dom_, file, this.boundOnFileLoaded_);
   }
 };
 
@@ -68,13 +79,38 @@ jstestdriver.FileLoader.prototype.createScript = function(dom, file, callback) {
   var script = dom.createElement('script');
 
   script.onerror = this.boundOnError_;
-  script.onload = callback;
+  script.onload = function() { callback(file); };
   script.onreadystatechange = function() {
     if (script.readyState == 'loaded') {
-      callback();
+      callback(file);
     }
   };
   script.type = "text/javascript";
   script.src = file;
+  this.fileLoading_ = file;
   head.appendChild(script);
+};
+
+
+jstestdriver.FileLoader.prototype.createLink = function(dom, file, callback) {
+  var head = dom.getElementsByTagName('head')[0];
+  var link = dom.createElement('link');
+
+  link.onerror = this.boundOnError_;
+  link.onload = function() { callback(file); };
+  link.onreadystatechange = function() {
+    if (link.readyState == 'loaded') {
+      callback(file);
+    }
+  };
+  link.type = "text/css";
+  link.rel = "stylesheet";
+  link.href = file;
+  this.fileLoading_ = file;
+  head.appendChild(link);
+
+  // Firefox and Safari don't seem to support onload or onreadystatechange for link
+  if (jQuery.browser.mozilla || jQuery.browser.safari) {
+    this.onFileLoaded(file);
+  }
 };
