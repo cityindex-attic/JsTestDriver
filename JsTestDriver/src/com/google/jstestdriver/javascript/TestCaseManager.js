@@ -16,7 +16,10 @@
 jstestdriver.initializeTestCaseManager = function() {
   jstestdriver.testCaseManager = new jstestdriver.TestCaseManager(
       new jstestdriver.TestRunner(function() {
-        jQuery('body').children().remove(':not(iframe)'); }, Date));
+        jQuery('body').children().remove(':not(iframe)');
+        jQuery(document).unbind();
+        jQuery(document).die();
+        }, Date));
 };
 
 
