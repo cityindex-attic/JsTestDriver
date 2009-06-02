@@ -22,13 +22,15 @@ public class FileInfo {
 
   private String fileName;
   private Long timestamp;
+  private boolean isPatch;
 
   public FileInfo() {
   }
 
-  public FileInfo(String fileName, long timestamp) {
+  public FileInfo(String fileName, long timestamp, boolean isPatch) {
     this.fileName = fileName;
     this.timestamp = timestamp;
+    this.isPatch = isPatch;
   }
 
   public String getFileName() {
@@ -37,6 +39,10 @@ public class FileInfo {
 
   public long getTimestamp() {
     return timestamp;
+  }
+
+  public boolean isPatch() {
+    return isPatch;
   }
 
   @Override

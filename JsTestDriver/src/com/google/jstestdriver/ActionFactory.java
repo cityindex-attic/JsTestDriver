@@ -38,9 +38,16 @@ public class ActionFactory {
     Set<FileInfo> filesInfo = new LinkedHashSet<FileInfo>();
 
     for (String file : files) {
+      boolean isPatch = file.startsWith("patch:");
+
+      if (isPatch) {
+        String[] tokens = file.split(":");
+
+        file = tokens[1].trim();
+      }
       filesInfo.add(new FileInfo(file,
           (file.startsWith("http://") || file.startsWith("https://")) ?
-              -1 : new File(file).lastModified()));
+              -1 : new File(file).lastModified(), isPatch));
     }
     return new JsTestDriverClientImpl(new CommandTaskFactory(new JsTestDriverFileFilter() {
       public String filterFile(String content, boolean reload) {

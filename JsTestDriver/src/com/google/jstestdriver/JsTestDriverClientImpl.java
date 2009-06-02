@@ -41,7 +41,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   private final String baseUrl;
   private final Server server;
 
-  
+
 
   public JsTestDriverClientImpl(CommandTaskFactory commandTaskFactory, Set<FileInfo> fileSet,
       String baseUrl, Server server) {

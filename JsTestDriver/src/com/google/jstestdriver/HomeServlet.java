@@ -37,7 +37,14 @@ public class HomeServlet extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    service(resp.getWriter());
+    PrintWriter writer = resp.getWriter();
+
+    if ("/".equals(req.getRequestURI())) {
+      service(writer);
+    } else {
+      resp.setStatus(204);
+      writer.flush();
+    }
   }
 
   public void service(PrintWriter writer) {

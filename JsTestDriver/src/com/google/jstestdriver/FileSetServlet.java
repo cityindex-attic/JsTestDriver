@@ -157,7 +157,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
       files.put(path, fileData);
       files.put(resolvePath(path), fileData);
-      filesUploaded.add(new FileInfo(f.getFile(), f.getTimestamp()));
+      filesUploaded.add(new FileInfo(f.getFile(), f.getTimestamp(), false));
     }
     browser.addFiles(filesUploaded);
   }

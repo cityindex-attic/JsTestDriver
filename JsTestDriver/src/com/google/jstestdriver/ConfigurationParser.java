@@ -71,6 +71,13 @@ public class ConfigurationParser {
       Set<String> resolvedFiles = new LinkedHashSet<String>();
 
       for (String f : files) {
+        boolean isPatch = f.startsWith("patch");
+
+        if (isPatch) {
+          String[] tokens = f.split(" ");
+
+          f = tokens[1].trim();
+        }
         if (f.startsWith("http://") || f.startsWith("https://")) {
           resolvedFiles.add(f);
         } else {
@@ -96,8 +103,13 @@ public class ConfigurationParser {
             if (normalizedRelativeDir.length() > 0) {
               normalizedRelativeDir += "/";
             }
-            resolvedFiles.add(String.format("%s%s%s", normalizedBasePath, normalizedRelativeDir,
-                filteredFile.replaceAll("\\\\", "/")));
+            String resolvedFile = String.format("%s%s%s", normalizedBasePath, normalizedRelativeDir,
+                filteredFile.replaceAll("\\\\", "/"));
+
+            if (isPatch) {
+              resolvedFile = "patch:" + resolvedFile;
+            }
+            resolvedFiles.add(resolvedFile);
           }
         }
       }

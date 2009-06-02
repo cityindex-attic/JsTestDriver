@@ -94,7 +94,8 @@ public class DefaultPrinterTest extends TestCase {
     assertEquals("[PASSED] A.d" + NEW_LINE +
         "  [LOG] some log" + NEW_LINE +
         "Total 1 tests (Passed: 1; Fails: 0; Errors: 0) (1.00 ms)" + NEW_LINE +
-        "  TB 1 os: Run 1 tests (Passed: 1; Fails: 0; Errors 0) (1.00 ms)" + NEW_LINE, buf.toString());
+        "  TB 1 os: Run 1 tests (Passed: 1; Fails: 0; Errors 0) (1.00 ms)" + NEW_LINE,
+        buf.toString());
   }
 
   public void testNotVerbosePassFailErrorAndLog() throws Exception {

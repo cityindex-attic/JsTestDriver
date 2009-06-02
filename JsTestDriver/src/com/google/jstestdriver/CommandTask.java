@@ -24,8 +24,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -87,9 +89,11 @@ public class CommandTask {
 
   private void uploadFileSet() {
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
+    Map<String, List<String>> patchMap = new HashMap<String, List<String>>();
+    List<FileInfo> patchLessFileSet = createPatchLessFileSet(fileSet, patchMap);
 
     fileSetParams.put("id", params.get("id"));
-    fileSetParams.put("fileSet", gson.toJson(fileSet));
+    fileSetParams.put("fileSet", gson.toJson(patchLessFileSet));
     String postResult = server.post(baseUrl + "/fileSet", fileSetParams);
 
     if (postResult.length() > 0) {
@@ -114,18 +118,25 @@ public class CommandTask {
         finalFilesToUpload.addAll(filter.resolveFilesDeps(file));
       }
       for (String file : finalFilesToUpload) {
-        String readFile = null;
+        StringBuilder fileContent = new StringBuilder();
         long timestamp = -1;
 
         if (file.startsWith("http://") || file.startsWith("https://")) {
           filesSrc.add(file);
-          readFile = "none";
+          fileContent.append("none");
         } else {
           filesSrc.add("/test/" + file);
-          readFile = filter.filterFile(readFile(file), !shouldReset);
+          fileContent.append(filter.filterFile(readFile(file), !shouldReset));
+          List<String> patches = patchMap.get(file);
+
+          if (patches != null) {
+            for (String patch : patches) {
+              fileContent.append(readFile(patch));
+            }
+          }
           timestamp = getTimestamp(file);
         }
-        filesData.add(new FileData(file, readFile, timestamp));
+        filesData.add(new FileData(file, fileContent.toString(), timestamp));
       }
       Map<String, String> loadFileParams = new LinkedHashMap<String, String>();
 
@@ -146,6 +157,33 @@ public class CommandTask {
         System.err.println(loadStatus);
       }
     }
+  }
+
+  private List<FileInfo> createPatchLessFileSet(Set<FileInfo> originalFileSet,
+      Map<String, List<String>> patchMap) {
+    List<FileInfo> patchLessFileSet = new LinkedList<FileInfo>();
+
+    for (FileInfo i : originalFileSet) {
+      if (i.isPatch()) {
+        int size = patchLessFileSet.size();
+
+        if (size > 0) {
+          FileInfo prev = patchLessFileSet.get(size - 1);
+          List<String> patches = patchMap.get(prev.getFileName());
+
+          if (patches == null) {
+            patches = new LinkedList<String>();
+            patchMap.put(prev.getFileName(), patches);
+          }
+          patches.add(i.getFileName());
+        } else {
+          patchLessFileSet.add(i);
+        }
+      } else {
+        patchLessFileSet.add(i);
+      }
+    }
+    return patchLessFileSet;
   }
 
   public void run() {
