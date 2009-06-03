@@ -74,7 +74,7 @@ public class ConfigurationParser {
         boolean isPatch = f.startsWith("patch");
 
         if (isPatch) {
-          String[] tokens = f.split(" ");
+          String[] tokens = f.split(" ", 2);
 
           f = tokens[1].trim();
         }

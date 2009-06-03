@@ -41,7 +41,7 @@ public class ActionFactory {
       boolean isPatch = file.startsWith("patch:");
 
       if (isPatch) {
-        String[] tokens = file.split(":");
+        String[] tokens = file.split(":", 2);
 
         file = tokens[1].trim();
       }
