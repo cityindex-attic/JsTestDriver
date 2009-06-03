@@ -99,7 +99,7 @@ public class CommandTask {
     if (postResult.length() > 0) {
       Collection<String> filesToUpload = gson.fromJson(postResult,
           new TypeToken<Collection<String>>() {}.getType());
-      boolean shouldReset = sameFiles(filesToUpload, fileSet);
+      boolean shouldReset = sameFiles(filesToUpload, patchLessFileSet);
 
       if (shouldReset) {
         JsonCommand cmd = new JsonCommand(CommandType.RESET, EMPTY_ARRAYLIST);
@@ -216,7 +216,7 @@ public class CommandTask {
     return 0;
   }
 
-  private boolean sameFiles(Collection<String> filesToUpload, Set<FileInfo> fileSet) {
+  private boolean sameFiles(Collection<String> filesToUpload, List<FileInfo> fileSet) {
     if (filesToUpload.size() != fileSet.size()) {
       return false;
     }
