@@ -72,7 +72,7 @@ public class FlagsImpl implements Flags {
     return testOutput;
   }
 
-  @Option(name="--browser", usage="The path to the browser")
+  @Option(name="--browser", usage="The path to the browser executable")
   public void setBrowser(String browser) {
     this.browser = Arrays.asList(browser.split(","));
   }
