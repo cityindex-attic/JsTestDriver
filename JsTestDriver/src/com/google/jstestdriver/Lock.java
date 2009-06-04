@@ -23,23 +23,47 @@ public class Lock {
 
   private final Object lock = new Object();
   private volatile boolean locked;
+  private String sessionId = "";
+  private long lastHeartBeat = 0;
 
-  public boolean tryLock() {
+  public boolean tryLock(String sessionId) {
     synchronized (lock) {
       if (locked) {
         return false;
       }
       locked = true;
+      this.sessionId = sessionId;
       return true;
     }
   }
 
-  public void unlock() {
+  public void unlock(String sessionId) {
     synchronized (lock) {
-      if (!locked) {
-        throw new IllegalStateException("Try to call unlock when lock not locked.");
+      if (!locked || (!this.sessionId.equals(sessionId))) {
+        throw new IllegalStateException(String.format("Unlock error [%s : %s]", this.sessionId,
+            sessionId));
       }
       locked = false;
+      sessionId = "";
+    }
+  }
+
+  public String getSessionId() {
+    return sessionId;
+  }
+
+  public void setLastHeartBeat(long lastHeartBeat) {
+    this.lastHeartBeat = lastHeartBeat;
+  }
+
+  public long getLastHeartBeat() {
+    return lastHeartBeat;
+  }
+
+  public void forceUnlock() {
+    synchronized (lock) {
+      locked = false;
+      sessionId = "";
     }
   }
 }

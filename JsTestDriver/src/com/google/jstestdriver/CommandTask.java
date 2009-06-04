@@ -22,6 +22,10 @@ import com.google.jstestdriver.JsonCommand.CommandType;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +35,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -59,21 +65,26 @@ public class CommandTask {
     this.params = params;
   }
 
-  private boolean startSession() {
-    while (!server.startSession(baseUrl, params.get("id"))) {
-      try {
-        System.out.println("Waiting for a slot...");
-        Thread.sleep(WAIT_INTERVAL);
-      } catch (InterruptedException e) {
-        System.err.println("Could not create session for browser: " + params.get("id"));
-        return false;
-      }
+  private String startSession() {
+    String browserId = params.get("id");
+    String sessionId = server.startSession(baseUrl, browserId);
+
+    if (sessionId.equals("FAILED")) {
+      while (sessionId.equals("FAILED")) {
+        try {
+          Thread.sleep(WAIT_INTERVAL);
+        } catch (InterruptedException e) {
+          System.err.println("Could not create session for browser: " + browserId);
+          return "";
+        }
+        sessionId = server.startSession(baseUrl, browserId);
+      } 
     }
-    return true;
+    return sessionId;
   }
 
-  private void stopSession() {
-    server.stopSession(baseUrl, params.get("id"));
+  private void stopSession(String sessionId) {
+    server.stopSession(baseUrl, params.get("id"), sessionId);
   }
 
   private boolean isBrowserAlive() {
@@ -187,8 +198,18 @@ public class CommandTask {
   }
 
   public void run() {
+    Timer timer = new Timer(true);
+    String browserId = params.get("id");
+    String sessionId = null;
+
     try {
-      if (!startSession() || !isBrowserAlive()) {
+      sessionId = startSession();
+
+      if (!sessionId.equals("")) {
+        timer.schedule(new HeartBeat(
+            (baseUrl + "/fileSet?id=" + browserId + "&sessionId=" + sessionId)), 0, 500);
+      }
+      if (!isBrowserAlive()) {
         return;
       }
       uploadFileSet();
@@ -196,15 +217,56 @@ public class CommandTask {
       StreamMessage streamMessage = null;
 
       do {
-        String response = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
+        String response = server.fetch(baseUrl + "/cmd?id=" + browserId);
 
         streamMessage = gson.fromJson(response, StreamMessage.class);
         stream.stream(streamMessage.getResponse());
       } while (streamMessage != null && !streamMessage.isLast());
     } finally {
       stream.finish();
-      stopSession();
+      timer.cancel();
+      stopSession(sessionId);
     }
+  }
+
+  private static class HeartBeat extends TimerTask {
+
+    private final String url;
+
+    public HeartBeat(String url) {
+      this.url = url;
+    }
+
+    private String toString(InputStream inputStream) throws IOException {
+      StringBuilder sb = new StringBuilder();
+      int ch;
+
+      while ((ch = inputStream.read()) != -1) {
+        sb.append((char) ch);
+      }
+      inputStream.close();
+      return sb.toString();
+    }
+
+    @Override
+    public void run() {
+      HttpURLConnection connection = null;
+
+      try {
+        connection = (HttpURLConnection) new URL(url).openConnection();
+
+        connection.connect();
+        toString(connection.getInputStream());
+      } catch (MalformedURLException e) {
+        throw new RuntimeException(e);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      } finally {
+        if (connection != null) {
+          connection.disconnect();
+        }
+      }
+    }    
   }
 
   private long getTimestamp(String file) {

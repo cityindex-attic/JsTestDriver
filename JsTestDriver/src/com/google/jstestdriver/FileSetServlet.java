@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.Stack;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServlet;
@@ -38,6 +40,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class FileSetServlet extends HttpServlet implements Observer {
+
+  private static final int HEARTBEAT_TIMEOUT = 2000;
 
   private final Gson gson = new Gson();
   private final CapturedBrowsers capturedBrowsers;
@@ -54,32 +58,54 @@ public class FileSetServlet extends HttpServlet implements Observer {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     String id = req.getParameter("id");
     String session = req.getParameter("session");
+    String sessionId = req.getParameter("sessionId");
 
-    if (session.equals("start")) {
-      startSession(id, resp.getWriter());
-    } else if (session.equals("stop")) {
-      stopSession(id, resp.getWriter());
+    if (session == null && sessionId != null) {
+      sessionHeartBeat(id, sessionId);
+    } else { 
+      if (session.equals("start")) {
+        startSession(id, resp.getWriter());
+      } else if (session.equals("stop")) {
+        stopSession(id, sessionId, resp.getWriter());
+      }
     }
   }
 
-  public void stopSession(String id, PrintWriter writer) {
+  private void sessionHeartBeat(String id, String sessionId) {
     Lock lock = locks.get(id);
 
-    lock.unlock();
+    if (lock.getSessionId().equals(sessionId)) {
+      lock.setLastHeartBeat(new Date().getTime());
+    } else {
+      // who are you??
+    }
+  }
+
+  public void stopSession(String id, String sessionId, PrintWriter writer) {
+    Lock lock = locks.get(id);
+
+    lock.unlock(sessionId);
     writer.flush();
   }
 
   public void startSession(String id, PrintWriter writer) {
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
     Lock lock = locks.get(id);
+    String sessionId = UUID.randomUUID().toString();
 
-    if (lock.tryLock()) {
-      writer.write("OK");
+    if (lock.tryLock(sessionId)) {
+      writer.write(sessionId);
     } else {
       // session is probably staled
-      if (!browser.isCommandRunning() && browser.peekCommand() == null) {
-        lock.unlock();
-        writer.write(lock.tryLock() ? "OK" : "FAILED");
+      if ((!browser.isCommandRunning() && browser.peekCommand() == null) ||
+          ((new Date().getTime() - lock.getLastHeartBeat()) > HEARTBEAT_TIMEOUT)) {
+        lock.forceUnlock();
+        SlaveBrowser slaveBrowser = capturedBrowsers.getBrowser(id);
+
+        slaveBrowser.clearCommandRunning();
+        slaveBrowser.clearResponseQueue();
+        files.clear();
+        writer.write(lock.tryLock(sessionId) ? sessionId : "FAILED");
       } else {
         writer.write("FAILED");
       }

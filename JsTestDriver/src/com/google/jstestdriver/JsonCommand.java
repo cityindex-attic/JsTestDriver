@@ -42,11 +42,22 @@ public class JsonCommand {
     }
   }
 
-  private final String command;
-  private final List<String> parameters;
+  private String command;
+  private List<String> parameters;
+
+  public JsonCommand() {
+  }
 
   public JsonCommand(CommandType command, List<String> parameters) {
     this.command = command.getCommand();
     this.parameters = parameters;
+  }
+
+  public String getCommand() {
+    return command;
+  }
+
+  public List<String> getParameters() {
+    return parameters;
   }
 }

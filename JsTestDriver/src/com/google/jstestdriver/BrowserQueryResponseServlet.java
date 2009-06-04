@@ -73,25 +73,23 @@ public class BrowserQueryResponseServlet extends HttpServlet {
           return;
         }
       }
+      Command command = null;
+
       if (start != null) {
         browser.resetFileSet();
-        if (browser.isCommandRunning()) {
-          browser.clearCommandRunning();
-          // put a response for the client so it dies
-          Response killResponse = new Response();
+        Command commandRunning = browser.getCommandRunning();
 
-          killResponse.setBrowser(browser.getBrowserInfo());
-          killResponse.setError("PANIC");
-          killResponse.setExecutionTime(0L);
-          killResponse.setResponse("JsTestDriver Panic, killing client");
-          browser.addResponse(gson.toJson(killResponse), true);
-          writer.print(NOOP);
-          writer.flush();
-          return;
+        if (commandRunning != null) {
+          JsonCommand jsonCommand =
+            gson.fromJson(commandRunning.getCommand(), JsonCommand.class);
+
+          if (jsonCommand.getCommand().equals(JsonCommand.CommandType.RESET.getCommand())) {
+            command = browser.getLastDequeuedCommand();
+          }
         }
+      } else {
+        command = browser.dequeueCommand();
       }
-      Command command = browser.dequeueCommand();
-
       writer.print(command != null ? command.getCommand() : NOOP);
     }
     writer.flush();

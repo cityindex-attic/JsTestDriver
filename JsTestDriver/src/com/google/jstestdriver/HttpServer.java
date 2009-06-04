@@ -108,11 +108,11 @@ public class HttpServer implements Server {
     return sb.toString();
   }
 
-  public boolean startSession(String baseUrl, String id) {
-    return fetch(baseUrl + "/fileSet?id=" + id + "&session=start").equals("OK");
+  public String startSession(String baseUrl, String id) {
+    return fetch(baseUrl + "/fileSet?id=" + id + "&session=start");
   }
 
-  public void stopSession(String baseUrl, String id) {
-    fetch(baseUrl + "/fileSet?id=" + id + "&session=stop");
+  public void stopSession(String baseUrl, String id, String sessionId) {
+    fetch(baseUrl + "/fileSet?id=" + id + "&session=stop" + "&sessionId=" + sessionId);
   }
 }

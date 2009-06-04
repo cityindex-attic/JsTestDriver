@@ -25,6 +25,6 @@ public interface Server {
 
   String fetch(String url);
   String post(String url, Map<String, String> params);
-  boolean startSession(String baseUrl, String id);
-  void stopSession(String baseUrl, String id);
+  String startSession(String baseUrl, String id);
+  void stopSession(String baseUrl, String id, String sessionId);
 }

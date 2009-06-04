@@ -25,8 +25,7 @@ import java.util.Map;
 public class MockServer implements Server {
 
   private Map<String, String> expectations = new HashMap<String, String>();
-  private boolean startSessionStatus = true;
-  
+
   public void expect(String url, String response) {
     expectations.put(url, response);
   }
@@ -47,15 +46,11 @@ public class MockServer implements Server {
     return response;
   }
 
-  public void setStartSessionStatus(boolean startSessionStatus) {
-    this.startSessionStatus = startSessionStatus;
+  public String startSession(String baseUrl, String id) {
+    return "ID";
   }
 
-  public boolean startSession(String baseUrl, String id) {
-    return startSessionStatus;
-  }
-
-  public void stopSession(String baseUrl, String id) {
+  public void stopSession(String baseUrl, String id, String sessionId) {
     // noop
   }
 }

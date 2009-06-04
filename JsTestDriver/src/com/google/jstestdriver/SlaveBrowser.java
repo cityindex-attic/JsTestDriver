@@ -39,7 +39,8 @@ public class SlaveBrowser {
   private Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
   private final BlockingQueue<CommandResponse> responses =
     new LinkedBlockingQueue<CommandResponse>();
-  private boolean commandRunning = false;
+  private Command commandRunning = null;
+  private Command lastCommandDequeued;
 
   public SlaveBrowser(Time time, String id, BrowserInfo browserInfo) {
     this.time = time;
@@ -84,12 +85,13 @@ public class SlaveBrowser {
     }
   }
 
-  public Command dequeueCommand() {
+  public synchronized Command dequeueCommand() {
     try {
       Command command = commandsToRun.poll(timeout, timeUnit);
 
       if (command != null) {
-        commandRunning = true;
+        commandRunning = command;
+        lastCommandDequeued = command;
       }
       return command;
     } catch (InterruptedException e) {
@@ -98,6 +100,10 @@ public class SlaveBrowser {
     return null;
   }
 
+  public Command getLastDequeuedCommand() {
+    return lastCommandDequeued;
+  }
+  
   public BrowserInfo getBrowserInfo() {
     return browserInfo;
   }
@@ -138,7 +144,7 @@ public class SlaveBrowser {
 
   public void addResponse(String response, boolean isLast) {
     if (isLast) {
-      commandRunning = false;
+      commandRunning = null;
     }
     responses.offer(new CommandResponse(response, isLast));
   }
@@ -148,6 +154,10 @@ public class SlaveBrowser {
   }
 
   public boolean isCommandRunning() {
+    return commandRunning != null;
+  }
+
+  public synchronized Command getCommandRunning() {
     return commandRunning;
   }
 
@@ -170,8 +180,8 @@ public class SlaveBrowser {
   }
 
   public void clearCommandRunning() {
-    if (commandRunning) {
-      commandRunning = false;
+    if (commandRunning != null) {
+      commandRunning = null;
       commandsToRun.clear();
       responses.clear();
     }
