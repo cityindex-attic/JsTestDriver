@@ -37,6 +37,7 @@ public class FlagsImpl implements Flags {
   private boolean displayHelp = false;
   private boolean verbose = false;
   private boolean captureConsole = false;
+  private boolean preloadFiles = false;
   @Argument
   private List<String> arguments = new ArrayList<String>();
 
@@ -133,5 +134,14 @@ public class FlagsImpl implements Flags {
 
   public boolean getCaptureConsole() {
     return captureConsole;
+  }
+
+  @Option(name="--preloadFiles", usage="Preload the js files")
+  public void setPreloadFiles(boolean preloadFiles) {
+    this.preloadFiles = preloadFiles;
+  }
+
+  public boolean getPreloadFiles() {
+    return preloadFiles;
   }
 }

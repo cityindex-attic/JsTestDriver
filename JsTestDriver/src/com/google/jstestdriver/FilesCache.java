@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,32 +15,32 @@
  */
 package com.google.jstestdriver;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public interface Flags {
+public class FilesCache {
 
-  public Integer getPort();
+  private final Map<String, String> files;
 
-  public String getServer();
+  public FilesCache(Map<String, String> files) {
+    this.files = files;
+  }
 
-  public List<String> getArguments();
+  public String getFileContent(String fileName) {
+    return files.get(fileName);
+  }
 
-  public String getTestOutput();
+  public void clear() {
+    files.clear();
+  }
 
-  public List<String> getBrowser();
+  public void addFile(String path, String fileData) {
+    files.put(path, fileData);
+  }
 
-  public boolean getReset();
-
-  public String getConfig();
-
-  public List<String> getTests();
-
-  public boolean getVerbose();
-
-  public boolean getCaptureConsole();
-
-  public boolean getPreloadFiles();
+  public int getFilesNumber() {
+    return files.size();
+  }
 }

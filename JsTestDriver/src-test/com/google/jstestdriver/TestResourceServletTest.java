@@ -31,18 +31,20 @@ public class TestResourceServletTest extends TestCase {
   private PrintWriter writer = new PrintWriter(out);
 
   public void testEmptyReturnWhenFileNotPresent() throws Exception {
-    TestResourceServlet servlet = new TestResourceServlet(new HashMap<String, String>());
+    TestResourceServlet servlet =
+        new TestResourceServlet(new FilesCache(new HashMap<String, String>()));
 
     servlet.service("nothing", writer);
     assertEquals(0, out.toString().length());
   }
 
   public void testServeFile() throws Exception {
-    Map<String, String> filesToServe = new HashMap<String, String>();
+    Map<String, String> files = new HashMap<String, String>();
 
-    filesToServe.put("dummy.js", "data");
-    filesToServe.put("dummytoo.js", "more data");
-    TestResourceServlet resourceServlet = new TestResourceServlet(filesToServe);
+    files.put("dummy.js", "data");
+    files.put("dummytoo.js", "more data");
+    FilesCache filesCache = new FilesCache(files);
+    TestResourceServlet resourceServlet = new TestResourceServlet(filesCache);
 
     resourceServlet.service("dummy.js", writer);
     assertEquals("data", out.toString());

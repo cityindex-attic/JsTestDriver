@@ -26,15 +26,17 @@ import java.util.Map;
 public class FileSetServletTest extends TestCase {
 
   public void testAddFilesNameAndDataToMap() throws Exception {
-    Map<String, String> files = new HashMap<String, String>();
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     capturedBrowsers.addSlave(new SlaveBrowser(new MockTime(0), "1", new BrowserInfo()));
-    FileSetServlet fileSetServlet = new FileSetServlet(capturedBrowsers, files);
+    Map<String, String> files = new HashMap<String, String>(); 
+    FilesCache filesCache = new FilesCache(files);
+    FileSetServlet fileSetServlet =
+        new FileSetServlet(capturedBrowsers, filesCache);
 
     fileSetServlet.uploadFiles("1", "[ { 'file': 'dummy.js', 'data': 'some data' }," +
         "{ 'file': 'dummytoo.js', 'data': 'some more data' }]");
-    assertEquals(2, files.size());
-    assertEquals("some data", files.get("dummy.js"));
-    assertEquals("some more data", files.get("dummytoo.js"));
+    assertEquals(2, filesCache.getFilesNumber());
+    assertEquals("some data", filesCache.getFileContent("dummy.js"));
+    assertEquals("some more data", filesCache.getFileContent("dummytoo.js"));
   }
 }

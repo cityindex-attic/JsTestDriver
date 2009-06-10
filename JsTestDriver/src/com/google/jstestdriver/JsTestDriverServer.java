@@ -25,9 +25,7 @@ import org.mortbay.jetty.servlet.ServletHolder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
 
@@ -43,10 +41,13 @@ public class JsTestDriverServer extends Observable {
 
   private final int port;
   private final CapturedBrowsers capturedBrowsers;
+  private final FilesCache filesCache;
 
-  public JsTestDriverServer(int port, CapturedBrowsers capturedBrowsers) {
+  public JsTestDriverServer(int port, CapturedBrowsers capturedBrowsers,
+      FilesCache preloadedFilesCache) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
+    this.filesCache = preloadedFilesCache;
     initJetty(this.port);
     initServlets();
   }
@@ -59,10 +60,9 @@ public class JsTestDriverServer extends Observable {
     addServlet("/slave/*", new SlaveResourceServlet(SlaveResourceServlet.RESOURCE_LOCATION));
     addServlet("/cmd", new CommandServlet(capturedBrowsers));
     addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers));
-    Map<String, String> filesToServe = new HashMap<String, String>();
 
-    addServlet("/test/*", new TestResourceServlet(filesToServe));
-    addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesToServe));
+    addServlet("/test/*", new TestResourceServlet(filesCache));
+    addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesCache));
     addServlet("/", new HomeServlet(capturedBrowsers));
   }
 
@@ -115,23 +115,23 @@ public class JsTestDriverServer extends Observable {
       Set<String> fileSet = new LinkedHashSet<String>();
       String defaultServerAddress = null;
 
-      if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty()) {
-        if (config.exists()) {
-          ConfigurationParser configParser = new ConfigurationParser(config.getParentFile());
+//      if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty()) {
+      if (config.exists()) {
+        ConfigurationParser configParser = new ConfigurationParser(config.getParentFile());
 
-          try {
-            configParser.parse(new FileInputStream(flags.getConfig()));
-            fileSet = configParser.getFilesList();
-            defaultServerAddress = configParser.getServer();
-          } catch (FileNotFoundException e) {
-            System.err.println(e);
-            System.exit(1);
-          }
+        try {
+          configParser.parse(new FileInputStream(flags.getConfig()));
+          fileSet = configParser.getFilesList();
+          defaultServerAddress = configParser.getServer();
+        } catch (FileNotFoundException e) {
+          System.err.println(e);
+          System.exit(1);
         }
       }
+//      }
       ActionRunner runner =
-          new ActionRunner(new ActionParser(new ActionFactory()).parseFlags(flags, fileSet,
-              defaultServerAddress));
+        new ActionRunner(new ActionParser(new ActionFactory()).parseFlags(flags, fileSet,
+            defaultServerAddress));
 
       runner.runActions();
     } catch (CmdLineException e) {

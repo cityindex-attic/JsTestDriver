@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -29,7 +30,9 @@ import java.util.Set;
  */
 public class JsTestDriverServerTest extends TestCase {
 
-  private JsTestDriverServer server = new JsTestDriverServer(4224, new CapturedBrowsers());
+  private JsTestDriverServer server =
+      new JsTestDriverServer(4224, new CapturedBrowsers(), new FilesCache(
+          new HashMap<String, String>()));
 
   @Override
   protected void tearDown() throws Exception {

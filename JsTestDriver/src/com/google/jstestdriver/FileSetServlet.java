@@ -45,12 +45,14 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
   private final Gson gson = new Gson();
   private final CapturedBrowsers capturedBrowsers;
-  private final Map<String, String> files;
   private final Map<String, Lock> locks = new ConcurrentHashMap<String, Lock>();
 
-  public FileSetServlet(CapturedBrowsers capturedBrowsers, Map<String, String> files) {
+  // Shared with the TestResourceServlet
+  private final FilesCache filesCache;
+
+  public FileSetServlet(CapturedBrowsers capturedBrowsers, FilesCache filesCache) {
     this.capturedBrowsers = capturedBrowsers;
-    this.files = files;
+    this.filesCache = filesCache;
     this.capturedBrowsers.addObserver(this);
   }
 
@@ -104,7 +106,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
         slaveBrowser.clearCommandRunning();
         slaveBrowser.clearResponseQueue();
-        files.clear();
+        filesCache.clear();
         writer.write(lock.tryLock(sessionId) ? sessionId : "FAILED");
       } else {
         writer.write("FAILED");
@@ -181,8 +183,8 @@ public class FileSetServlet extends HttpServlet implements Observer {
       String path = f.getFile();
       String fileData = f.getData();
 
-      files.put(path, fileData);
-      files.put(resolvePath(path), fileData);
+      filesCache.addFile(path, fileData);
+      filesCache.addFile(resolvePath(path), fileData);
       filesUploaded.add(new FileInfo(f.getFile(), f.getTimestamp(), false));
     }
     browser.addFiles(filesUploaded);

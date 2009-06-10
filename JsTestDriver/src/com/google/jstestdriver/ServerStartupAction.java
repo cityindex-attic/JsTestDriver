@@ -26,12 +26,15 @@ public class ServerStartupAction implements ObservableAction {
 
   private final int port;
   private final CapturedBrowsers capturedBrowsers;
+  private final FilesCache preloadedFilesCache;
   private JsTestDriverServer server;
   private List<Observer> observerList = new LinkedList<Observer>();
 
-  public ServerStartupAction(int port, CapturedBrowsers capturedBrowsers) {
+  public ServerStartupAction(int port, CapturedBrowsers capturedBrowsers,
+      FilesCache preloadedFilesCache) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
+    this.preloadedFilesCache = preloadedFilesCache;
   }
 
   public JsTestDriverServer getServer() {
@@ -39,7 +42,7 @@ public class ServerStartupAction implements ObservableAction {
   }
 
   public void run() {
-    server = new JsTestDriverServer(port, capturedBrowsers);
+    server = new JsTestDriverServer(port, capturedBrowsers, preloadedFilesCache);
     for (Observer o : observerList) {
       server.addObserver(o);
     }

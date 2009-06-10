@@ -15,9 +15,14 @@
  */
 package com.google.jstestdriver;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
@@ -47,7 +52,16 @@ public class ActionParser {
       serverAddress = flags.getServer();
     }
     if (flags.getPort() != -1) {
-      serverStartupAction = actionFactory.getServerStartupAction(flags.getPort(), capturedBrowsers);
+      Map<String, String> files = new HashMap<String, String>();
+
+      if (flags.getPreloadFiles()) {
+        for (String file : fileSet) {
+          files.put(file, readFile(file));
+        }
+      }
+      serverStartupAction =
+        actionFactory.getServerStartupAction(flags.getPort(), capturedBrowsers, new FilesCache(
+            files));
 
       actions.add(serverStartupAction);
     }
@@ -107,5 +121,28 @@ public class ActionParser {
       actions.add(serverShutdownAction);
     }
     return actions;
+  }
+
+  private String readFile(String file) {
+    BufferedInputStream bis = null;
+    try {
+      bis = new BufferedInputStream(new FileInputStream(file));
+      StringBuilder sb = new StringBuilder();
+
+      for (int c = bis.read(); c != -1; c = bis.read()) {
+        sb.append((char) c);
+      }
+      return sb.toString();
+    } catch (IOException e) {
+      throw new RuntimeException("Impossible to read file: " + file, e);
+    } finally {
+      if (bis != null) {
+        try {
+          bis.close();
+        } catch (IOException e) {
+          // ignore
+        }
+      }
+    }
   }
 }

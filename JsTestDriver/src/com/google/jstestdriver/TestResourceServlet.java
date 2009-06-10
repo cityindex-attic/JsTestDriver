@@ -17,7 +17,6 @@ package com.google.jstestdriver;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,10 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 public class TestResourceServlet extends HttpServlet {
 
   private static final String TIME_IN_THE_PAST = "Sat, 22 Sep 1984 00:00:00 GMT";
-  private final Map<String, String> filesToServe;
+  private final FilesCache filesCache;
 
-  public TestResourceServlet(Map<String, String> filesToServe) {
-    this.filesToServe = filesToServe;
+  public TestResourceServlet(FilesCache filesCache) {
+    this.filesCache = filesCache;
   }
 
   @Override
@@ -44,7 +43,7 @@ public class TestResourceServlet extends HttpServlet {
   }
 
   public void service(String fileName, PrintWriter writer) {
-    String data = filesToServe.get(fileName);
+    String data = filesCache.getFileContent(fileName);
 
     if (data != null) {
       writer.write(data);
