@@ -177,7 +177,6 @@ public class FileSetServlet extends HttpServlet implements Observer {
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
     Collection<FileData> filesData = gson.fromJson(data, new TypeToken<Collection<FileData>>()
         {}.getType());
-    LinkedHashSet<FileInfo> filesUploaded = new LinkedHashSet<FileInfo>();
 
     for (FileData f : filesData) {
       String path = f.getFile();
@@ -185,9 +184,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
       filesCache.addFile(path, fileData);
       filesCache.addFile(resolvePath(path), fileData);
-      filesUploaded.add(new FileInfo(f.getFile(), f.getTimestamp(), false));
     }
-    browser.addFiles(filesUploaded);
   }
 
   private String resolvePath(String path) {

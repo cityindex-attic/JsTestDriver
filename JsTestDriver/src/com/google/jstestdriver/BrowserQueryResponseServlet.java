@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -54,8 +55,15 @@ public class BrowserQueryResponseServlet extends HttpServlet {
       if (response != null && browser.isCommandRunning()) {
         Response res = gson.fromJson(response, Response.class);
 
-        if (res.getResponse().contains("errorFiles:")) {
+        if (res.getResponse().contains("\"errorFiles\":")) {
           LoadedFiles loadedFiles = gson.fromJson(res.getResponse(), LoadedFiles.class);
+          Collection<FileSource> successFiles = loadedFiles.getSuccessFiles();
+          LinkedHashSet<FileInfo> fileInfos = new LinkedHashSet<FileInfo>();
+
+          for (FileSource f : successFiles) {
+            fileInfos.add(new FileInfo(f.getFileSrc().substring(6), f.getTimestamp(), false));
+          }
+          browser.addFiles(fileInfos);
           Collection<String> errorFiles = loadedFiles.getErrorFiles();
 
           if (errorFiles.size() > 0) {

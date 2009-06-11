@@ -93,14 +93,14 @@ jstestdriver.CommandExecutor.prototype.execute = function(cmd) {
 };
 
 
-jstestdriver.CommandExecutor.prototype.findScriptTagsToRemove_ = function(dom, files) {
+jstestdriver.CommandExecutor.prototype.findScriptTagsToRemove_ = function(dom, fileSrcs) {
   var scripts = dom.getElementsByTagName('script');
-  var filesSize = files.length;
+  var filesSize = fileSrcs.length;
   var scriptsSize = scripts.length;
   var scriptTagsToRemove = [];
 
   for (var i = 0; i < filesSize; i++) {
-    var f = files[i];
+    var f = fileSrcs[i].fileSrc;
 
     for (var j = 0; j < scriptsSize; j++) {
       var s = scripts[j];
@@ -127,16 +127,18 @@ jstestdriver.CommandExecutor.prototype.removeScriptTags_ = function(dom, scriptT
 };
 
 
-jstestdriver.CommandExecutor.prototype.removeScripts = function(dom, files) {
-  this.removeScriptTags_(dom, this.findScriptTagsToRemove_(dom, files));
+jstestdriver.CommandExecutor.prototype.removeScripts = function(dom, fileSrcs) {
+  this.removeScriptTags_(dom, this.findScriptTagsToRemove_(dom, fileSrcs));
 };
 
 
 jstestdriver.CommandExecutor.prototype.loadTest = function(files) {
-  this.removeScripts(document, files);
+  var fileSrcs = jsonParse('{"f":' + files + '}').f;
+
+  this.removeScripts(document, fileSrcs);
   var fileLoader = new jstestdriver.FileLoader(document);
 
-  fileLoader.load(files, this.boundOnFileLoaded_);
+  fileLoader.load(fileSrcs, this.boundOnFileLoaded_);
 };
 
 

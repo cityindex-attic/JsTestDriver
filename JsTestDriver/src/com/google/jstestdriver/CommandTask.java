@@ -122,7 +122,7 @@ public class CommandTask {
         server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
       }
       List<FileData> filesData = new ArrayList<FileData>();
-      List<String> filesSrc = new ArrayList<String>();
+      List<FileSource> filesSrc = new ArrayList<FileSource>();
       Set<String> finalFilesToUpload = new LinkedHashSet<String>();
 
       for (String file : filesToUpload) {
@@ -133,10 +133,11 @@ public class CommandTask {
         long timestamp = -1;
 
         if (file.startsWith("http://") || file.startsWith("https://")) {
-          filesSrc.add(file);
+          filesSrc.add(new FileSource(file, -1));
           fileContent.append("none");
         } else {
-          filesSrc.add("/test/" + file);
+          timestamp = getTimestamp(file);
+          filesSrc.add(new FileSource("/test/" + file, timestamp));
           fileContent.append(filter.filterFile(readFile(file), !shouldReset));
           List<String> patches = patchMap.get(file);
 
@@ -145,7 +146,6 @@ public class CommandTask {
               fileContent.append(readFile(patch));
             }
           }
-          timestamp = getTimestamp(file);
         }
         filesData.add(new FileData(file, fileContent.toString(), timestamp));
       }
@@ -154,7 +154,10 @@ public class CommandTask {
       loadFileParams.put("id", params.get("id"));
       loadFileParams.put("data", gson.toJson(filesData));
       server.post(baseUrl + "/fileSet", loadFileParams);
-      JsonCommand cmd = new JsonCommand(CommandType.LOADTEST, filesSrc);
+      List<String> loadParameters = new LinkedList<String>();
+
+      loadParameters.add(gson.toJson(filesSrc));
+      JsonCommand cmd = new JsonCommand(CommandType.LOADTEST, loadParameters);
 
       loadFileParams.put("data", gson.toJson(cmd));
       server.post(baseUrl + "/cmd", loadFileParams);

@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,26 +15,27 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Collection;
-
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class LoadedFiles {
+public class FileSource {
 
-  private String message;
-  private Collection<FileSource> successFiles;
-  private Collection<String> errorFiles;
+  private String fileSrc;
+  private long timestamp;
 
-  public String getMessage() {
-    return message;
+  public FileSource() {
   }
 
-  public Collection<FileSource> getSuccessFiles() {
-    return successFiles;
+  public FileSource(String fileSrc, long timestamp) {
+    this.fileSrc = fileSrc;
+    this.timestamp = timestamp;
   }
 
-  public Collection<String> getErrorFiles() {
-    return errorFiles;
-  }  
+  public String getFileSrc() {
+    return fileSrc;
+  }
+
+  public long getTimestamp() {
+    return timestamp;
+  }
 }

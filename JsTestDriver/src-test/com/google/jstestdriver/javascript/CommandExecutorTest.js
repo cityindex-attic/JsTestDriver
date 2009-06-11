@@ -181,7 +181,7 @@ commandExecutorTest.prototype.testRemoveScriptTags = function() {
 
   script.src = "file1";
   head.appendChild(script);
-  files.push("file1");
+  files.push({fileSrc: "file1", timestamp: 42});
   executor.removeScripts(dom, files);
   assertEquals(0, head.childNodes.length);
 };

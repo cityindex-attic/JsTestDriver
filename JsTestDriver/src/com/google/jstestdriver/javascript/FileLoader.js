@@ -19,6 +19,7 @@ jstestdriver.FileLoader = function(dom) {
   this.savedDocumentWrite_ = dom.write;
   this.boundOnError_ = jstestdriver.bind(this, this.onError);
   this.loadMsg_ = '';
+  this.successFiles_ = [];
   this.errorFiles_ = [];
   window.onerror = this.boundOnError_;
 };
@@ -52,12 +53,17 @@ jstestdriver.FileLoader.prototype.load = function(files, onAllFilesLoaded) {
 
 jstestdriver.FileLoader.prototype.onFileLoaded = function(fileLoaded) {
   if (fileLoaded && fileLoaded == this.fileLoading_) {
+    this.successFiles_.push(fileLoaded);
     if (this.files_.length == 0) {
       var onAllFilesLoaded = this.onAllFilesLoaded_;
 
       this.onAllFilesLoaded_ = null;
       this.dom_.write = this.savedDocumentWrite_;
-      onAllFilesLoaded(JSON.stringify({ message: this.loadMsg_, files: this.errorFiles_ }));
+      onAllFilesLoaded(JSON.stringify( {
+        message : this.loadMsg_,
+        successFiles : this.successFiles_,
+        errorFiles : this.errorFiles_
+      }));
     } else {
       this.createTag(this.files_.shift());
     }
@@ -66,9 +72,9 @@ jstestdriver.FileLoader.prototype.onFileLoaded = function(fileLoaded) {
 
 
 jstestdriver.FileLoader.prototype.createTag = function(file) {
-  if (file.match(/\.js$/)) {
+  if (file.fileSrc.match(/\.js$/)) {
     this.createScript(this.dom_, file, this.boundOnFileLoaded_);
-  } else if (file.match(/\.css$/)) {
+  } else if (file.fileSrc.match(/\.css$/)) {
     this.createLink(this.dom_, file, this.boundOnFileLoaded_);
   }
 };
@@ -86,7 +92,7 @@ jstestdriver.FileLoader.prototype.createScript = function(dom, file, callback) {
     }
   };
   script.type = "text/javascript";
-  script.src = file;
+  script.src = file.fileSrc;
   this.fileLoading_ = file;
   head.appendChild(script);
 };
@@ -105,7 +111,7 @@ jstestdriver.FileLoader.prototype.createLink = function(dom, file, callback) {
   };
   link.type = "text/css";
   link.rel = "stylesheet";
-  link.href = file;
+  link.href = file.fileSrc;
   this.fileLoading_ = file;
   head.appendChild(link);
 
