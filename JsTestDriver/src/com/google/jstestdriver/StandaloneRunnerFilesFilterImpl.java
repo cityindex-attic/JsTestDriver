@@ -22,7 +22,6 @@ import java.util.Set;
  */
 public class StandaloneRunnerFilesFilterImpl implements StandaloneRunnerFilesFilter {
 
-  @Override
   public Set<String> filter(String path, FilesCache cache) {
     return cache.getAllFileNames();
   }
