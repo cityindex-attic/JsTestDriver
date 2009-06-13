@@ -157,6 +157,7 @@ public class CommandTask {
       List<String> loadParameters = new LinkedList<String>();
 
       loadParameters.add(gson.toJson(filesSrc));
+      loadParameters.add("false");
       JsonCommand cmd = new JsonCommand(CommandType.LOADTEST, loadParameters);
 
       loadFileParams.put("data", gson.toJson(cmd));

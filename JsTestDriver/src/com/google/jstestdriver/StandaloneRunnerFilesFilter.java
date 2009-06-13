@@ -15,37 +15,12 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Map;
 import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class FilesCache {
+public interface StandaloneRunnerFilesFilter {
 
-  private final Map<String, String> files;
-
-  public FilesCache(Map<String, String> files) {
-    this.files = files;
-  }
-
-  public String getFileContent(String fileName) {
-    return files.get(fileName);
-  }
-
-  public void clear() {
-    files.clear();
-  }
-
-  public void addFile(String path, String fileData) {
-    files.put(path, fileData);
-  }
-
-  public int getFilesNumber() {
-    return files.size();
-  }
-
-  public Set<String> getAllFileNames() {
-    return files.keySet();
-  }
+  public Set<String> filter(String path, FilesCache cache);
 }

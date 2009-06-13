@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,37 +15,22 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Map;
-import java.util.Set;
+import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class FilesCache {
+public class BrowserHunterTest extends TestCase {
 
-  private final Map<String, String> files;
+  public void testCaptureAndGenerateUrl() throws Exception {
+    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers());
+    SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version", "os");
+    BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
 
-  public FilesCache(Map<String, String> files) {
-    this.files = files;
-  }
-
-  public String getFileContent(String fileName) {
-    return files.get(fileName);
-  }
-
-  public void clear() {
-    files.clear();
-  }
-
-  public void addFile(String path, String fileData) {
-    files.put(path, fileData);
-  }
-
-  public int getFilesNumber() {
-    return files.size();
-  }
-
-  public Set<String> getAllFileNames() {
-    return files.keySet();
+    assertEquals("name", browserInfo.getName());
+    assertEquals("version", browserInfo.getVersion());
+    assertEquals("os", browserInfo.getOs());
+    assertEquals("/slave/1/RemoteConsoleRunner.html", browserHunter.getCaptureUrl(
+        slaveBrowser.getId()));
   }
 }

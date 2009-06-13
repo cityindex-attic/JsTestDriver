@@ -168,7 +168,7 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/heartbeat?id=1", "OK");
     server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
     server.expect("http://localhost/cmd?POST?{data={\"command\":\"runAllTests\"," +
-    		"\"parameters\":[\"false\"]}, id=1}", "");
+    		"\"parameters\":[\"false\",\"false\"]}, id=1}", "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\"," +
     		"\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123}," +
     		"\"last\":true}");

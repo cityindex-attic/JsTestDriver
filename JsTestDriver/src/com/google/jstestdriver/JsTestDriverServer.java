@@ -55,8 +55,9 @@ public class JsTestDriverServer extends Observable {
   private void initServlets() {
     addServlet("/hello", new HelloServlet());
     addServlet("/heartbeat", new HeartbeatServlet(capturedBrowsers, new TimeImpl()));
-    addServlet("/capture", new CaptureServlet(String.format("%s/capture.html",
-        SlaveResourceServlet.RESOURCE_LOCATION), capturedBrowsers));
+    addServlet("/capture", new CaptureServlet(new BrowserHunter(capturedBrowsers)));
+    addServlet("/runner", new StandaloneRunnerServlet(new BrowserHunter(capturedBrowsers),
+        filesCache, new StandaloneRunnerFilesFilterImpl()));
     addServlet("/slave/*", new SlaveResourceServlet(SlaveResourceServlet.RESOURCE_LOCATION));
     addServlet("/cmd", new CommandServlet(capturedBrowsers));
     addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers));
@@ -115,20 +116,21 @@ public class JsTestDriverServer extends Observable {
       Set<String> fileSet = new LinkedHashSet<String>();
       String defaultServerAddress = null;
 
-//      if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty()) {
-      if (config.exists()) {
-        ConfigurationParser configParser = new ConfigurationParser(config.getParentFile());
+      if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty() ||
+          flags.getPreloadFiles()) {
+        if (config.exists()) {
+          ConfigurationParser configParser = new ConfigurationParser(config.getParentFile());
 
-        try {
-          configParser.parse(new FileInputStream(flags.getConfig()));
-          fileSet = configParser.getFilesList();
-          defaultServerAddress = configParser.getServer();
-        } catch (FileNotFoundException e) {
-          System.err.println(e);
-          System.exit(1);
+          try {
+            configParser.parse(new FileInputStream(flags.getConfig()));
+            fileSet = configParser.getFilesList();
+            defaultServerAddress = configParser.getServer();
+          } catch (FileNotFoundException e) {
+            System.err.println(e);
+            System.exit(1);
+          }
         }
       }
-//      }
       ActionRunner runner =
         new ActionRunner(new ActionParser(new ActionFactory()).parseFlags(flags, fileSet,
             defaultServerAddress));

@@ -15,14 +15,7 @@
  */
 package com.google.jstestdriver;
 
-import static org.mortbay.resource.Resource.newClassPathResource;
-
-import org.mortbay.resource.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,48 +26,24 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CaptureServlet extends HttpServlet {
 
-  private final Logger logger = LoggerFactory.getLogger(CaptureServlet.class.getName());
+  private final BrowserHunter browserHunter;
 
-  private final String resourceLocation;
-  private final CapturedBrowsers browsers;
-
-  public CaptureServlet(String baseResourceLocation, CapturedBrowsers browsers) {
-    this.resourceLocation = baseResourceLocation;
-    this.browsers = browsers;
+  public CaptureServlet(BrowserHunter browserHunter) {
+    this.browserHunter = browserHunter;
   }
 
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    if (req.getParameterMap().isEmpty()) {
-      serviceStaticPage(resp.getOutputStream());
-    } else {
-      String userAgent = req.getHeader("User-Agent");
-      resp.sendRedirect(serviceRemoteConsoleRunner(userAgent, req.getParameter("version"),
-          req.getParameter("os")));
-    }
+    resp.sendRedirect(service(req.getHeader("User-Agent")));
   }
 
-  public String serviceRemoteConsoleRunner(String name, String version, String os) {
-    String id = browsers.getUniqueId();
-    BrowserInfo browserInfo = new BrowserInfo();
+  public String service(String userAgent) {
+    UserAgentParser parser = new UserAgentParser();
 
-    browserInfo.setId(Integer.valueOf(id));
-    browserInfo.setName(name);
-    browserInfo.setVersion(version);
-    browserInfo.setOs(os);
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, browserInfo);
+    parser.parse(userAgent);
+    SlaveBrowser slaveBrowser =
+      browserHunter.captureBrowser(parser.getName(), parser.getVersion(), parser.getOs());
 
-    browsers.addSlave(slave);
-    logger.info("Browser Captured: {} version {} ({})", new Object[] {name, version, id});
-    return String.format("/slave/%s/RemoteConsoleRunner.html", id);
-  }
-
-  public void serviceStaticPage(OutputStream out) throws IOException {
-    Resource resource = newClassPathResource(resourceLocation);
-
-    if (resource == null) {
-      throw new IllegalArgumentException("Resource doesn't exist");
-    }
-    resource.writeTo(out, 0, resource.length());
+    return browserHunter.getCaptureUrl(slaveBrowser.getId());
   }
 }

@@ -114,7 +114,8 @@ public class MainUI {
       Set<String> fileSet = new LinkedHashSet<String>();
       String defaultServerAddress = null;
 
-      if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty()) {
+      if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty() ||
+          flags.getPreloadFiles()) {
         if (config.exists()) {
           ConfigurationParser configParser = new ConfigurationParser(config.getParentFile());
 

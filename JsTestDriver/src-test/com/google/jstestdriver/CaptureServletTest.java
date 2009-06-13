@@ -17,45 +17,15 @@ package com.google.jstestdriver;
 
 import junit.framework.TestCase;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class CaptureServletTest extends TestCase {
 
-  public void testRequestingCaptureUrlCausesRedirectToUniqueURL() throws Exception {
-    CapturedBrowsers browsers = new CapturedBrowsers();
-    File tmpDir =
-      File.createTempFile("test", "JsTestDriver", new File(System.getProperty("java.io.tmpdir")));
+  public void testRedirectUrl() throws Exception {
+    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
+    CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers));
 
-    tmpDir.delete();
-    tmpDir.mkdir();
-    tmpDir.deleteOnExit();
-    CaptureServlet servlet = new CaptureServlet("Test.file", browsers);
-    String redirectURL = servlet.serviceRemoteConsoleRunner("name", "version", "os");
-
-    assertEquals("/slave/1/RemoteConsoleRunner.html", redirectURL);
-    SlaveBrowser browser = browsers.getBrowser("1");
-
-    assertNotNull(browser);
-    BrowserInfo browserInfo = browser.getBrowserInfo();
-
-    assertNotNull(browserInfo);
-    assertEquals("name", browserInfo.getName());
-    assertEquals("version", browserInfo.getVersion());
-    assertEquals("os", browserInfo.getOs());
-  }
-
-  public void testServeStaticCapturePage() throws Exception {
-    CapturedBrowsers browsers = new CapturedBrowsers();
-    String location = getClass().getPackage().getName().replace(".", "/");
-    CaptureServlet servlet = new CaptureServlet(String.format("%s/Test.file", location), browsers);
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-    servlet.serviceStaticPage(out);
-    assertTrue(out.toString().length() > 0);
-    out.close();
+    assertEquals("/slave/1/RemoteConsoleRunner.html", servlet.service("Chrome/2.0"));
   }
 }

@@ -59,11 +59,11 @@ jstestdriver.FileLoader.prototype.onFileLoaded = function(fileLoaded) {
 
       this.onAllFilesLoaded_ = null;
       this.dom_.write = this.savedDocumentWrite_;
-      onAllFilesLoaded(JSON.stringify( {
+      onAllFilesLoaded({
         message : this.loadMsg_,
         successFiles : this.successFiles_,
         errorFiles : this.errorFiles_
-      }));
+      });
     } else {
       this.createTag(this.files_.shift());
     }

@@ -40,6 +40,7 @@ jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager) {
   this.__boundSendData = jstestdriver.bind(this, this.sendData);
   this.boundCleanTestManager = jstestdriver.bind(this, this.cleanTestManager);
   this.boundOnFileLoaded_ = jstestdriver.bind(this, this.onFileLoaded);
+  this.boundOnFileLoadedRunnerMode_ = jstestdriver.bind(this, this.onFileLoadedRunnerMode);
   this.commandMap_ = {
       loadLibraries: jstestdriver.bind(this, this.loadLibraries),
       execute: jstestdriver.bind(this, this.execute),
@@ -51,6 +52,8 @@ jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager) {
   };
   this.boundOnTestDone = jstestdriver.bind(this, this.onTestDone_);
   this.boundOnComplete = jstestdriver.bind(this, this.onComplete_);
+  this.boundOnTestDoneRunnerMode = jstestdriver.bind(this, this.onTestDoneRunnerMode_);
+  this.boundOnCompleteRunnerMode = jstestdriver.bind(this, this.onCompleteRunnerMode_);
   this.boundSendTestResults = jstestdriver.bind(this, this.sendTestResults_);
   this.boundOnDataSent = jstestdriver.bind(this, this.onDataSent_);
   this.testsDone_ = [];
@@ -132,13 +135,16 @@ jstestdriver.CommandExecutor.prototype.removeScripts = function(dom, fileSrcs) {
 };
 
 
-jstestdriver.CommandExecutor.prototype.loadTest = function(files) {
+jstestdriver.CommandExecutor.prototype.loadTest = function(args) {
+  var files = args[0];
+  var runnerMode = args[1] == "true" ? true : false;
   var fileSrcs = jsonParse('{"f":' + files + '}').f;
 
   this.removeScripts(document, fileSrcs);
   var fileLoader = new jstestdriver.FileLoader(document);
 
-  fileLoader.load(fileSrcs, this.boundOnFileLoaded_);
+  fileLoader.load(fileSrcs, !runnerMode ? this.boundOnFileLoaded_ :
+    this.boundOnFileLoadedRunnerMode_);
 };
 
 
@@ -146,7 +152,7 @@ jstestdriver.CommandExecutor.prototype.onFileLoaded = function(status) {
   var data = {
       done: '',
       response: {
-        response: status,
+        response: JSON.stringify(status),
         browser: {
           "id": this.__id,
           "name": jstestdriver.getBrowserFriendlyName(),
@@ -159,10 +165,61 @@ jstestdriver.CommandExecutor.prototype.onFileLoaded = function(status) {
   this.sendData(data);
 };
 
+jstestdriver.CommandExecutor.prototype.onFileLoadedRunnerMode = function(status) {
+  if (!top.testRunner) {
+    top.testRunner = {
 
-jstestdriver.CommandExecutor.prototype.runAllTests = function(captureConsole) {
+      finished_: false,
+      success_: true,
+      report_: [],
+      filesLoaded_: 0,
+
+      isFinished: function() {
+        return this.finished_;
+      },
+
+      isSuccess: function() {
+        return this.success_;
+      },
+
+      getReport: function() {
+        return this.report_;
+      },
+
+      getNumFilesLoaded: function() {
+        return this.filesLoaded_;
+      },
+
+      setIsFinished: function(finished) {
+        this.finished_ = finished;
+      },
+
+      setIsSuccess: function(success) {
+        this.success_ = success;
+      },
+
+      addReport: function(report) {
+        this.report_.push(report);
+      },
+
+      setNumFilesLoaded: function(filesLoaded) {
+        this.filesLoaded_ = filesLoaded;
+      }
+    };
+  }
+  var testRunner = top.testRunner;
+
+  testRunner.setNumFilesLoaded(status.successFiles.length);
+  this.__sendRequest(this.__url, null, this.__boundExecuteCommand);
+};
+
+
+jstestdriver.CommandExecutor.prototype.runAllTests = function(args) {
+  var captureConsole = args[0];
+  var runnerMode = args[1] == "true" ? true : false;
+
   this.runTestCases_(this.__testCaseManager.getTestCases(), captureConsole == "true" ? true :
-    false);
+    false, runnerMode);
 };
 
 
@@ -171,14 +228,36 @@ jstestdriver.CommandExecutor.prototype.runTests = function(args) {
   var captureConsole = args[1];
 
   this.runTestCases_(jsonParse('{"testCases":' + testCases + '}').testCases,
-      captureConsole == "true" ? true : false);
+      captureConsole == "true" ? true : false, false);
 };
 
 
-jstestdriver.CommandExecutor.prototype.runTestCases_ = function(testCases, captureConsole) {
+jstestdriver.CommandExecutor.prototype.runTestCases_ = function(testCases, captureConsole,
+    runnerMode) {
   this.startTestInterval_(jstestdriver.TIMEOUT);
-  this.__testCaseManager.runTests(testCases, this.boundOnTestDone, this.boundOnComplete,
-      captureConsole);  
+  if (!runnerMode) {
+    this.__testCaseManager.runTests(testCases, this.boundOnTestDone, this.boundOnComplete,
+        captureConsole);
+  } else {
+    this.__testCaseManager.runTests(testCases, this.boundOnTestDoneRunnerMode,
+        this.boundOnCompleteRunnerMode, captureConsole);
+  }
+};
+
+
+jstestdriver.CommandExecutor.prototype.onTestDoneRunnerMode_ = function(result) {
+  var testRunner = top.testRunner;
+
+  testRunner.setIsSuccess(testRunner.isSuccess() & (result.result == 'passed'));
+  testRunner.addReport(result);
+};
+
+
+jstestdriver.CommandExecutor.prototype.onCompleteRunnerMode_ = function(result) {
+  var testRunner = top.testRunner;
+
+  testRunner.setIsFinished(true);
+  this.__sendRequest(this.__url, null, this.__boundExecuteCommand);
 };
 
 

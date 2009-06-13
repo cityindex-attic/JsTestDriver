@@ -19,9 +19,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.JsonCommand.CommandType;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +32,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class JsTestDriverClientImpl implements JsTestDriverClient {
   
-  private static final List<String> EMPTY_ARRAYLIST = new ArrayList<String>();
+  private static final List<String> EMPTY_LIST = new LinkedList<String>();
 
   private final Gson gson = new Gson();
 
@@ -67,7 +67,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   }
 
   public void eval(String id, ResponseStreamFactory factory, String cmd) {
-    List<String> parameters = new ArrayList<String>();
+    List<String> parameters = new LinkedList<String>();
 
     parameters.add(cmd);
     JsonCommand jsonCmd = new JsonCommand(CommandType.EXECUTE, parameters);
@@ -76,23 +76,24 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   }
 
   public void runAllTests(String id, ResponseStreamFactory factory, boolean captureConsole) {
-    List<String> parameters = new ArrayList<String>();
+    List<String> parameters = new LinkedList<String>();
 
     parameters.add(String.valueOf(captureConsole));
+    parameters.add("false");
     JsonCommand cmd = new JsonCommand(CommandType.RUNALLTESTS, parameters);
 
     sendCommand(id, factory.getRunTestsActionResponseStream(), gson.toJson(cmd));
   }
 
   public void reset(String id, ResponseStreamFactory factory) {
-    JsonCommand cmd = new JsonCommand(CommandType.RESET, EMPTY_ARRAYLIST);
+    JsonCommand cmd = new JsonCommand(CommandType.RESET, EMPTY_LIST);
 
     sendCommand(id, factory.getResetActionResponseStream(), gson.toJson(cmd));
   }
 
   public void registerCommand(String id, ResponseStreamFactory factory, String name,
       String function) {
-    List<String> parameters = new ArrayList<String>();
+    List<String> parameters = new LinkedList<String>();
 
     parameters.add(name);
     parameters.add(function);
@@ -104,7 +105,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
   public void runTests(String id, ResponseStreamFactory factory, List<TestCase> tests,
       boolean captureConsole) {
-    List<String> parameters = new ArrayList<String>();
+    List<String> parameters = new LinkedList<String>();
 
     parameters.add(gson.toJson(tests));
     parameters.add(String.valueOf(captureConsole));
