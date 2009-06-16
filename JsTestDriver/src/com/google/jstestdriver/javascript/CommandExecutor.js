@@ -166,12 +166,12 @@ jstestdriver.CommandExecutor.prototype.onFileLoaded = function(status) {
 };
 
 jstestdriver.CommandExecutor.prototype.onFileLoadedRunnerMode = function(status) {
-  if (!top.testRunner) {
-    top.testRunner = {
+  if (!parent.G_testRunner) {
+    parent.G_testRunner = {
 
       finished_: false,
       success_: true,
-      report_: [],
+      report_: '',
       filesLoaded_: 0,
 
       isFinished: function() {
@@ -198,8 +198,8 @@ jstestdriver.CommandExecutor.prototype.onFileLoadedRunnerMode = function(status)
         this.success_ = success;
       },
 
-      addReport: function(report) {
-        this.report_.push(report);
+      setReport: function(report) {
+        this.report_ = report;
       },
 
       setNumFilesLoaded: function(filesLoaded) {
@@ -207,7 +207,7 @@ jstestdriver.CommandExecutor.prototype.onFileLoadedRunnerMode = function(status)
       }
     };
   }
-  var testRunner = top.testRunner;
+  var testRunner = parent.G_testRunner;
 
   testRunner.setNumFilesLoaded(status.successFiles.length);
   this.__sendRequest(this.__url, null, this.__boundExecuteCommand);
@@ -246,16 +246,19 @@ jstestdriver.CommandExecutor.prototype.runTestCases_ = function(testCases, captu
 
 
 jstestdriver.CommandExecutor.prototype.onTestDoneRunnerMode_ = function(result) {
-  var testRunner = top.testRunner;
+  var testRunner = parent.G_testRunner;
 
   testRunner.setIsSuccess(testRunner.isSuccess() & (result.result == 'passed'));
-  testRunner.addReport(result);
+  this.testsDone_.push(result);
 };
 
 
 jstestdriver.CommandExecutor.prototype.onCompleteRunnerMode_ = function(result) {
-  var testRunner = top.testRunner;
+  var testRunner = parent.G_testRunner;
 
+  this.testsDone_.push(result);
+  testRunner.setReport(JSON.stringify(this.testDone_));
+  this.testsDone_ = [];
   testRunner.setIsFinished(true);
   this.__sendRequest(this.__url, null, this.__boundExecuteCommand);
 };
