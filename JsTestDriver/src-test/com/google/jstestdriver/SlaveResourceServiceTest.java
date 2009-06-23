@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2009 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -23,19 +23,15 @@ import java.io.OutputStream;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class SlaveResourceServletTest extends TestCase {
+public class SlaveResourceServiceTest extends TestCase {
 
-  public void testIdChoppedOffFromThePath() throws Exception {
+  public void testServeResource() throws Exception {
     String location = getClass().getPackage().getName().replace(".", "/");
-    SlaveResourceServlet servlet = new SlaveResourceServlet(new SlaveResourceService(location));
-    OutputStream oStream = new ByteArrayOutputStream();
+    SlaveResourceService service = new SlaveResourceService(location);
+    OutputStream out = new ByteArrayOutputStream();
 
-    servlet.service("/XXX/Test.file", oStream);
-    assertTrue(oStream.toString().length() > 0);
-    oStream.close();
-  }
-
-  public void testStripOffId() throws Exception {
-    assertEquals("/B/C", SlaveResourceServlet.stripId("/X/B/C"));
+    service.serve("/Test.file", out);
+    assertTrue(out.toString().length() > 0);
+    out.close();
   }
 }

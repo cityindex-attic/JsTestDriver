@@ -56,9 +56,11 @@ public class JsTestDriverServer extends Observable {
     addServlet("/hello", new HelloServlet());
     addServlet("/heartbeat", new HeartbeatServlet(capturedBrowsers, new TimeImpl()));
     addServlet("/capture", new CaptureServlet(new BrowserHunter(capturedBrowsers)));
-    addServlet("/runner", new StandaloneRunnerServlet(new BrowserHunter(capturedBrowsers),
-        filesCache, new StandaloneRunnerFilesFilterImpl()));
-    addServlet("/slave/*", new SlaveResourceServlet(SlaveResourceServlet.RESOURCE_LOCATION));
+    addServlet("/runner/*", new StandaloneRunnerServlet(new BrowserHunter(capturedBrowsers),
+        filesCache, new StandaloneRunnerFilesFilterImpl(),
+        new SlaveResourceService(SlaveResourceService.RESOURCE_LOCATION)));
+    addServlet("/slave/*", new SlaveResourceServlet(
+        new SlaveResourceService(SlaveResourceService.RESOURCE_LOCATION)));
     addServlet("/cmd", new CommandServlet(capturedBrowsers));
     addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers));
 

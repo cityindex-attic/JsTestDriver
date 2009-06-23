@@ -170,7 +170,7 @@ jstestdriver.CommandExecutor.prototype.onFileLoadedRunnerMode = function(status)
     parent.G_testRunner = {
 
       finished_: false,
-      success_: true,
+      success_: 1,
       report_: '',
       filesLoaded_: 0,
 
@@ -234,8 +234,8 @@ jstestdriver.CommandExecutor.prototype.runTests = function(args) {
 
 jstestdriver.CommandExecutor.prototype.runTestCases_ = function(testCases, captureConsole,
     runnerMode) {
-  this.startTestInterval_(jstestdriver.TIMEOUT);
   if (!runnerMode) {
+    this.startTestInterval_(jstestdriver.TIMEOUT);
     this.__testCaseManager.runTests(testCases, this.boundOnTestDone, this.boundOnComplete,
         captureConsole);
   } else {
@@ -253,14 +253,13 @@ jstestdriver.CommandExecutor.prototype.onTestDoneRunnerMode_ = function(result) 
 };
 
 
-jstestdriver.CommandExecutor.prototype.onCompleteRunnerMode_ = function(result) {
+jstestdriver.CommandExecutor.prototype.onCompleteRunnerMode_ = function() {
   var testRunner = parent.G_testRunner;
 
-  this.testsDone_.push(result);
-  testRunner.setReport(JSON.stringify(this.testDone_));
+  testRunner.setReport(JSON.stringify(this.testsDone_));
   this.testsDone_ = [];
+  testRunner.setIsSuccess(testRunner.isSuccess() == 1 ? true : false);
   testRunner.setIsFinished(true);
-  this.__sendRequest(this.__url, null, this.__boundExecuteCommand);
 };
 
 
@@ -341,10 +340,7 @@ jstestdriver.CommandExecutor.prototype.sendTestResultsOnComplete_ = function() {
   this.__sendRequest(this.__url, data, this.__boundExecuteCommand);  
 };
 
-jstestdriver.CommandExecutor.prototype.onComplete_ = function(result) {
-  if (result) {
-    this.testsDone_.push(result);
-  }
+jstestdriver.CommandExecutor.prototype.onComplete_ = function() {
   this.done_ = true;
   if (this.sentOn_ == -1) {
     this.sendTestResultsOnComplete_();

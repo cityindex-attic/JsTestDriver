@@ -76,7 +76,7 @@ jstestdriver.bind = function(context, func) {
 
 
 jstestdriver.extractId = function(url) {
-  return url.match(/\/slave\/(\d+)\//)[1];
+  return url.match(/\/(slave|runner)\/(\d+)\//)[2];
 };
 
 

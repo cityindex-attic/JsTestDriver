@@ -36,10 +36,10 @@ public class StandaloneRunnerServletTest extends TestCase {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     StandaloneRunnerServlet runnerServlet =
         new StandaloneRunnerServlet(new BrowserHunter(capturedBrowsers), cache,
-            new StandaloneRunnerFilesFilterImpl());
-    String redirectUrl = runnerServlet.service("Chrome/2.0", "/runner");
+            new StandaloneRunnerFilesFilterImpl(), new SlaveResourceService(""));
+    runnerServlet.service("Chrome/2.0", "/runner", "1");
     SlaveBrowser slaveBrowser = capturedBrowsers.getBrowser("1");
-    
+
     assertNotNull(slaveBrowser.peekCommand());
     Command cmd = slaveBrowser.dequeueCommand();
 
@@ -54,7 +54,7 @@ public class StandaloneRunnerServletTest extends TestCase {
     assertNotNull(slaveBrowser.peekCommand());
     cmd = slaveBrowser.dequeueCommand();
     assertNotNull(cmd);
-    assertEquals("{\"command\":\"runAllTests\",\"parameters\":[\"false\",\"true\"]}", cmd.getCommand());
-    assertEquals("/slave/1/RemoteConsoleRunner.html", redirectUrl);
+    assertEquals("{\"command\":\"runAllTests\",\"parameters\":[\"false\",\"true\"]}",
+        cmd.getCommand());
   }
 }

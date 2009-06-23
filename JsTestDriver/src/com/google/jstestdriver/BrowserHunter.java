@@ -32,7 +32,14 @@ public class BrowserHunter {
   }
 
   public SlaveBrowser captureBrowser(String name, String version, String os) {
-    String id = capturedBrowsers.getUniqueId();
+    return captureBrowser(capturedBrowsers.getUniqueId(), name, version, os);
+  }
+
+  public String getCaptureUrl(String id) {
+    return String.format("/slave/%s/RemoteConsoleRunner.html", id);
+  }
+
+  public SlaveBrowser captureBrowser(String id, String name, String version, String os) {
     BrowserInfo browserInfo = new BrowserInfo();
 
     browserInfo.setId(Integer.valueOf(id));
@@ -46,7 +53,7 @@ public class BrowserHunter {
     return slave;
   }
 
-  public String getCaptureUrl(String id) {
-    return String.format("/slave/%s/RemoteConsoleRunner.html", id);
+  public boolean isBrowserCaptured(String id) {
+    return capturedBrowsers.getBrowser(id) != null;
   }
 }

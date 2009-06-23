@@ -15,10 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import static org.mortbay.resource.Resource.newClassPathResource;
-
-import org.mortbay.resource.Resource;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.regex.Matcher;
@@ -33,12 +29,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SlaveResourceServlet extends HttpServlet {
 
-  public static final String RESOURCE_LOCATION = "/com/google/jstestdriver/javascript";
+  private final SlaveResourceService service;
 
-  private final String baseResourceLocation;
-
-  public SlaveResourceServlet(String baseResourceLocation) {
-    this.baseResourceLocation = baseResourceLocation;
+  public SlaveResourceServlet(SlaveResourceService service) {
+    this.service = service;
   }
 
   @Override
@@ -47,13 +41,7 @@ public class SlaveResourceServlet extends HttpServlet {
   }
 
   public void service(String pathInfo, OutputStream out) throws IOException {
-    String name = stripId(pathInfo);
-    Resource resource = newClassPathResource(baseResourceLocation + name);
-
-    if (resource == null) {
-      throw new IllegalArgumentException(name + ": resource is null");
-    }
-    resource.writeTo(out, 0, resource.length());
+    service.serve(stripId(pathInfo), out);
   }
 
   private final static Pattern PATHWITHOUTID = Pattern.compile("/.*?(/.*)$");
