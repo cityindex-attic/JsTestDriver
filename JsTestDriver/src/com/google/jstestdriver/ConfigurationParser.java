@@ -21,6 +21,7 @@ import org.jvyaml.YAML;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -47,7 +48,7 @@ public class ConfigurationParser {
   }
 
   @SuppressWarnings("unchecked")
-  public void parse(InputStream inputStream) {
+  public void parse(InputStream inputStream) throws IOException {
     Map<Object, Object> data =
         (Map<Object, Object>) YAML.load(new BufferedReader(new InputStreamReader(inputStream)));
     Set<String> resolvedFilesLoad = new LinkedHashSet<String>();
@@ -67,7 +68,7 @@ public class ConfigurationParser {
     filesList.removeAll(resolvedFilesExclude);
   }
 
-  private Set<String> resolveFiles(List<String> files) {
+  private Set<String> resolveFiles(List<String> files) throws IOException {
     if (files != null) {
       Set<String> resolvedFiles = new LinkedHashSet<String>();
 
@@ -82,11 +83,10 @@ public class ConfigurationParser {
         if (f.startsWith("http://") || f.startsWith("https://")) {
           resolvedFiles.add(f);
         } else {
-          File testFile = new File(f);
-          String relativeDir = testFile.getParent() == null ? "" : testFile.getParent();
           File file = basePath != null ? new File(basePath, f) : new File(f);
-          File dir = file.getParentFile() == null ? new File(".") : file.getParentFile();
-          final String pattern = file.getName();
+          File testFile = file.getCanonicalFile();
+          File dir = testFile.getParentFile();
+          final String pattern = testFile.getName();
           String[] filteredFiles = dir.list(new GlobFilenameFilter(pattern,
               GlobCompiler.DEFAULT_MASK | GlobCompiler.CASE_INSENSITIVE_MASK));
 
@@ -97,17 +97,10 @@ public class ConfigurationParser {
             System.exit(1);
           }
           Arrays.sort(filteredFiles, String.CASE_INSENSITIVE_ORDER);
-          String normalizedBasePath =
-              basePath != null ? basePath.getPath().replaceAll("\\\\", "/") + "/" : "";
 
           for (String filteredFile : filteredFiles) {
-            String normalizedRelativeDir = relativeDir.replaceAll("\\\\", "/");
-
-            if (normalizedRelativeDir.length() > 0) {
-              normalizedRelativeDir += "/";
-            }
-            String resolvedFile = String.format("%s%s%s", normalizedBasePath, normalizedRelativeDir,
-                filteredFile.replaceAll("\\\\", "/"));
+            String resolvedFile =
+                dir.getCanonicalFile() + "/" + filteredFile.replaceAll("\\\\", "/");
 
             if (isPatch) {
               resolvedFile = "patch:" + resolvedFile;
