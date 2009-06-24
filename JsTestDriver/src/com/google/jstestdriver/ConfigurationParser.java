@@ -21,7 +21,6 @@ import org.jvyaml.YAML;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -48,7 +47,7 @@ public class ConfigurationParser {
   }
 
   @SuppressWarnings("unchecked")
-  public void parse(InputStream inputStream) throws IOException {
+  public void parse(InputStream inputStream) {
     Map<Object, Object> data =
         (Map<Object, Object>) YAML.load(new BufferedReader(new InputStreamReader(inputStream)));
     Set<String> resolvedFilesLoad = new LinkedHashSet<String>();
@@ -68,7 +67,7 @@ public class ConfigurationParser {
     filesList.removeAll(resolvedFilesExclude);
   }
 
-  private Set<String> resolveFiles(List<String> files) throws IOException {
+  private Set<String> resolveFiles(List<String> files) {
     if (files != null) {
       Set<String> resolvedFiles = new LinkedHashSet<String>();
 
@@ -83,24 +82,32 @@ public class ConfigurationParser {
         if (f.startsWith("http://") || f.startsWith("https://")) {
           resolvedFiles.add(f);
         } else {
+          File testFile = new File(f);
+          String relativeDir = testFile.getParent() == null ? "" : testFile.getParent();
           File file = basePath != null ? new File(basePath, f) : new File(f);
-          File testFile = file.getCanonicalFile();
-          File dir = testFile.getParentFile();
-          final String pattern = testFile.getName();
+          File dir = file.getParentFile() == null ? new File(".") : file.getParentFile();
+          final String pattern = file.getName();
           String[] filteredFiles = dir.list(new GlobFilenameFilter(pattern,
               GlobCompiler.DEFAULT_MASK | GlobCompiler.CASE_INSENSITIVE_MASK));
 
           if (filteredFiles == null) {
             System.err.println("No files to load. The patterns/paths used in the configuration" +
-            		" file didn't match any file, the files patterns/paths need to be relative to" +
-            		" the configuration file.");
+                    " file didn't match any file, the files patterns/paths need to be relative to" +
+                    " the configuration file.");
             System.exit(1);
           }
           Arrays.sort(filteredFiles, String.CASE_INSENSITIVE_ORDER);
+          String normalizedBasePath =
+              basePath != null ? basePath.getPath().replaceAll("\\\\", "/") + "/" : "";
 
           for (String filteredFile : filteredFiles) {
-            String resolvedFile =
-                dir.getCanonicalFile() + "/" + filteredFile.replaceAll("\\\\", "/");
+            String normalizedRelativeDir = relativeDir.replaceAll("\\\\", "/");
+
+            if (normalizedRelativeDir.length() > 0) {
+              normalizedRelativeDir += "/";
+            }
+            String resolvedFile = String.format("%s%s%s", normalizedBasePath, normalizedRelativeDir,
+                filteredFile.replaceAll("\\\\", "/"));
 
             if (isPatch) {
               resolvedFile = "patch:" + resolvedFile;
