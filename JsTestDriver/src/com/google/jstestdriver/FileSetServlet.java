@@ -22,13 +22,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.Stack;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -183,38 +181,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
       String fileData = f.getData();
 
       filesCache.addFile(path, fileData);
-      filesCache.addFile(resolvePath(path), fileData);
+      filesCache.addFile(path, fileData);
     }
-  }
-
-  private String resolvePath(String path) {
-    Stack<String> resolvedPath = new Stack<String>();
-    String[] tokenizedPath = path.split("/");
-
-    for (String token : tokenizedPath) {
-      if (token.equals("..")) {
-        if (!resolvedPath.isEmpty()) {
-          resolvedPath.pop();
-          continue;
-        }
-      }
-      resolvedPath.push(token);
-    }
-    return join(resolvedPath);
-  }
-
-  private String join(Collection<String> collection) {
-    StringBuilder sb = new StringBuilder();
-    Iterator<String> iterator = collection.iterator();
-
-    if (iterator.hasNext()) {
-      sb.append(iterator.next());
-
-      while (iterator.hasNext()) {
-        sb.append("/");
-        sb.append(iterator.next());
-      }
-    }
-    return sb.toString();
   }
 }

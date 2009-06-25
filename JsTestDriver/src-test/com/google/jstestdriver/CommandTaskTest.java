@@ -19,10 +19,11 @@ import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
 
 import junit.framework.TestCase;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -48,11 +49,8 @@ public class CommandTaskTest extends TestCase {
         return content;
       }
 
-      public Set<String> resolveFilesDeps(String file) {
-        Set<String> set = new LinkedHashSet<String>();
-
-        set.add(file);
-        return set;
+      public List<String> resolveFilesDeps(String file) {
+        return Collections.singletonList(file);
       }
     }, stream, new LinkedHashSet<FileInfo>(), "http://localhost", server, params);
 

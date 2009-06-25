@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,6 @@ import java.util.Set;
  */
 public class ConfigurationParser { 
 
-  private static final Set<String> EMPTY_SET = new LinkedHashSet<String>();
   private final Set<String> filesList = new LinkedHashSet<String>();
   private final File basePath;
 
@@ -82,10 +82,9 @@ public class ConfigurationParser {
         if (f.startsWith("http://") || f.startsWith("https://")) {
           resolvedFiles.add(f);
         } else {
-          File testFile = new File(f);
-          String relativeDir = testFile.getParent() == null ? "" : testFile.getParent();
           File file = basePath != null ? new File(basePath, f) : new File(f);
-          File dir = file.getParentFile() == null ? new File(".") : file.getParentFile();
+          File testFile = file.getAbsoluteFile();
+          File dir = testFile.getParentFile().getAbsoluteFile();
           final String pattern = file.getName();
           String[] filteredFiles = dir.list(new GlobFilenameFilter(pattern,
               GlobCompiler.DEFAULT_MASK | GlobCompiler.CASE_INSENSITIVE_MASK));
@@ -97,17 +96,12 @@ public class ConfigurationParser {
             System.exit(1);
           }
           Arrays.sort(filteredFiles, String.CASE_INSENSITIVE_ORDER);
-          String normalizedBasePath =
-              basePath != null ? basePath.getPath().replaceAll("\\\\", "/") + "/" : "";
+          PathResolver pathResolver = new PathResolver();
 
           for (String filteredFile : filteredFiles) {
-            String normalizedRelativeDir = relativeDir.replaceAll("\\\\", "/");
-
-            if (normalizedRelativeDir.length() > 0) {
-              normalizedRelativeDir += "/";
-            }
-            String resolvedFile = String.format("%s%s%s", normalizedBasePath, normalizedRelativeDir,
-                filteredFile.replaceAll("\\\\", "/"));
+            String resolvedFile =
+                pathResolver.resolvePath(dir.getAbsolutePath() + "/"
+                    + filteredFile.replaceAll("\\\\", "/"));
 
             if (isPatch) {
               resolvedFile = "patch:" + resolvedFile;
@@ -118,7 +112,7 @@ public class ConfigurationParser {
       }
       return resolvedFiles;
     }
-    return EMPTY_SET;
+    return Collections.emptySet();
   }
 
   public Set<String> getFilesList() {

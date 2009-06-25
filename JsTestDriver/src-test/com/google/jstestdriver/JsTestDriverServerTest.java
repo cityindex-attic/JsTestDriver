@@ -21,9 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -68,11 +69,8 @@ public class JsTestDriverServerTest extends TestCase {
             return content;
           }
 
-          public Set<String> resolveFilesDeps(String file) {
-            Set<String> set = new LinkedHashSet<String>();
-
-            set.add(file);
-            return set;
+          public List<String> resolveFilesDeps(String file) {
+            return Collections.singletonList(file);
           }
         }), new LinkedHashSet<FileInfo>(), "http://localhost:4224", new HttpServer());
 

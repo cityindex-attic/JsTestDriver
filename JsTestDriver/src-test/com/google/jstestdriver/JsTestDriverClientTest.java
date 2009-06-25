@@ -19,9 +19,9 @@ import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -97,11 +97,8 @@ public class JsTestDriverClientTest extends TestCase {
             return content;
           }
 
-          public Set<String> resolveFilesDeps(String file) {
-            Set<String> set = new LinkedHashSet<String>();
-
-            set.add(file);
-            return set;
+          public List<String> resolveFilesDeps(String file) {
+            return Collections.singletonList(file);
           }
         }), new LinkedHashSet<FileInfo>(), "http://localhost", server);
     FakeResponseStream stream = new FakeResponseStream();
@@ -136,11 +133,8 @@ public class JsTestDriverClientTest extends TestCase {
             return content;
           }
 
-          public Set<String> resolveFilesDeps(String file) {
-            Set<String> set = new LinkedHashSet<String>();
-
-            set.add(file);
-            return set;
+          public List<String> resolveFilesDeps(String file) {
+            return Collections.singletonList(file);
           }
         }), new LinkedHashSet<FileInfo>(), "http://localhost", server);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
@@ -178,11 +172,8 @@ public class JsTestDriverClientTest extends TestCase {
             return content;
           }
 
-          public Set<String> resolveFilesDeps(String file) {
-            Set<String> set = new LinkedHashSet<String>();
-
-            set.add(file);
-            return set;
+          public List<String> resolveFilesDeps(String file) {
+            return Collections.singletonList(file);
           }
         }), new LinkedHashSet<FileInfo>(), "http://localhost", server);
     FakeResponseStreamFactory factory = new FakeResponseStreamFactory();
@@ -211,11 +202,8 @@ public class JsTestDriverClientTest extends TestCase {
             return content;
           }
 
-          public Set<String> resolveFilesDeps(String file) {
-            Set<String> set = new LinkedHashSet<String>();
-
-            set.add(file);
-            return set;
+          public List<String> resolveFilesDeps(String file) {
+            return Collections.singletonList(file);
           }
         }), new LinkedHashSet<FileInfo>(), "http://localhost", server);
     FakeResponseStreamFactory factory = new FakeResponseStreamFactory();

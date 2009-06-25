@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -54,11 +55,8 @@ public class ActionFactory {
         return content;
       }
 
-      public Set<String> resolveFilesDeps(String file) {
-        Set<String> set = new LinkedHashSet<String>();
-
-        set.add(file);
-        return set;
+      public List<String> resolveFilesDeps(String file) {
+        return Collections.singletonList(file);
       }
     }), filesInfo, serverAddress, new HttpServer());
   }

@@ -15,7 +15,7 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -24,5 +24,5 @@ public interface JsTestDriverFileFilter {
 
   public String filterFile(String content, boolean reload);
 
-  public Set<String> resolveFilesDeps(String file);
+  public Collection<String> resolveFilesDeps(String file);
 }

@@ -45,6 +45,7 @@ public class CommandTask {
 
   private static final List<String> EMPTY_ARRAYLIST = new ArrayList<String>();
   private static final long WAIT_INTERVAL = 500L;
+  private static final int CHUNK_SIZE = 50;
 
   private final Gson gson = new Gson();
 
@@ -111,6 +112,7 @@ public class CommandTask {
       Collection<String> filesToUpload = gson.fromJson(postResult,
           new TypeToken<Collection<String>>() {}.getType());
       boolean shouldReset = sameFiles(filesToUpload, patchLessFileSet);
+      Set<String> finalFilesToUpload = new LinkedHashSet<String>();
 
       if (shouldReset) {
         JsonCommand cmd = new JsonCommand(CommandType.RESET, EMPTY_ARRAYLIST);
@@ -120,14 +122,15 @@ public class CommandTask {
         resetParams.put("data", gson.toJson(cmd));
         server.post(baseUrl + "/cmd", resetParams);
         server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
+        finalFilesToUpload.addAll(filesToUpload);
+      } else {
+        for (String file : filesToUpload) {
+          finalFilesToUpload.addAll(filter.resolveFilesDeps(file));
+        }
       }
-      List<FileData> filesData = new ArrayList<FileData>();
-      List<FileSource> filesSrc = new ArrayList<FileSource>();
-      Set<String> finalFilesToUpload = new LinkedHashSet<String>();
+      List<FileData> filesData = new LinkedList<FileData>();
+      List<FileSource> filesSrc = new LinkedList<FileSource>();
 
-      for (String file : filesToUpload) {
-        finalFilesToUpload.addAll(filter.resolveFilesDeps(file));
-      }
       for (String file : finalFilesToUpload) {
         StringBuilder fileContent = new StringBuilder();
         long timestamp = -1;
@@ -149,27 +152,34 @@ public class CommandTask {
         }
         filesData.add(new FileData(file, fileContent.toString(), timestamp));
       }
-      Map<String, String> loadFileParams = new LinkedHashMap<String, String>();
+      int size = filesData.size();
 
-      loadFileParams.put("id", params.get("id"));
-      loadFileParams.put("data", gson.toJson(filesData));
-      server.post(baseUrl + "/fileSet", loadFileParams);
-      List<String> loadParameters = new LinkedList<String>();
+      for (int i = 0; i < size; i += CHUNK_SIZE) {
+        int chunkEndIndex = Math.min(i + CHUNK_SIZE, size);
+        List<FileData> filesDataChunk = filesData.subList(i, chunkEndIndex);
+        List<FileSource> filesSrcChunk = filesSrc.subList(i, chunkEndIndex);
+        Map<String, String> loadFileParams = new LinkedHashMap<String, String>();
 
-      loadParameters.add(gson.toJson(filesSrc));
-      loadParameters.add("false");
-      JsonCommand cmd = new JsonCommand(CommandType.LOADTEST, loadParameters);
+        loadFileParams.put("id", params.get("id"));
+        loadFileParams.put("data", gson.toJson(filesDataChunk));
+        server.post(baseUrl + "/fileSet", loadFileParams);
+        List<String> loadParameters = new LinkedList<String>();
 
-      loadFileParams.put("data", gson.toJson(cmd));
-      server.post(baseUrl + "/cmd", loadFileParams);
-      String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
-      StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
-      Response response = message.getResponse();
-      LoadedFiles loadedFiles = gson.fromJson(response.getResponse(), LoadedFiles.class);
-      String loadStatus = loadedFiles.getMessage();
+        loadParameters.add(gson.toJson(filesSrcChunk));
+        loadParameters.add("false");
+        JsonCommand cmd = new JsonCommand(CommandType.LOADTEST, loadParameters);
 
-      if (loadStatus.length() > 0) {
-        System.err.println(loadStatus);
+        loadFileParams.put("data", gson.toJson(cmd));
+        server.post(baseUrl + "/cmd", loadFileParams);
+        String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
+        StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
+        Response response = message.getResponse();
+        LoadedFiles loadedFiles = gson.fromJson(response.getResponse(), LoadedFiles.class);
+        String loadStatus = loadedFiles.getMessage();
+
+        if (loadStatus.length() > 0) {
+          System.err.println(loadStatus);
+        }
       }
     }
   }
