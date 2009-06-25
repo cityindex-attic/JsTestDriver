@@ -100,16 +100,16 @@ public class ConfigurationParser {
 
           for (String filteredFile : filteredFiles) {
             String resolvedFile =
-                pathResolver.resolvePath(dir.getAbsolutePath() + "/"
-                    + filteredFile.replaceAll("\\\\", "/"));
+                pathResolver.resolvePath(dir.getAbsolutePath() + "/" + filteredFile).replaceAll(
+                    "\\\\", "/");
 
-            if (!resolvedFile.startsWith("/")) {
-              int index = resolvedFile.indexOf("/");
-
-              if (index != -1) {
-                resolvedFile.substring(index + 1);
-              }
-            }
+//            if (!resolvedFile.startsWith("/")) {
+//              int index = resolvedFile.indexOf("/");
+//
+//              if (index != -1) {
+//                resolvedFile.substring(index + 1);
+//              }
+//            }
             System.out.println("[RESOLVEDFILE] ==> " + resolvedFile);
             if (isPatch) {
               resolvedFile = "patch:" + resolvedFile;
