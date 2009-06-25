@@ -103,7 +103,6 @@ public class ConfigurationParser {
                 pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\", "/") + "/"
                     + filteredFile.replaceAll("\\\\", "/"));
 
-            System.out.println("[RESOLVEDFILE] ==> " + resolvedFile);
             if (isPatch) {
               resolvedFile = "patch:" + resolvedFile;
             }
