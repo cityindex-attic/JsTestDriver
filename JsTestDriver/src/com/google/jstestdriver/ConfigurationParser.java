@@ -100,8 +100,8 @@ public class ConfigurationParser {
 
           for (String filteredFile : filteredFiles) {
             String resolvedFile =
-                pathResolver.resolvePath(dir.getAbsolutePath() + "/" + filteredFile).replaceAll(
-                    "\\\\", "/");
+                pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\", "/") + "/"
+                    + filteredFile.replaceAll("\\\\", "/"));
 
 //            if (!resolvedFile.startsWith("/")) {
 //              int index = resolvedFile.indexOf("/");
