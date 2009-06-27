@@ -45,7 +45,7 @@ public class CommandTask {
 
   private static final List<String> EMPTY_ARRAYLIST = new ArrayList<String>();
   private static final long WAIT_INTERVAL = 500L;
-  private static final int CHUNK_SIZE = 50;
+  public static final int CHUNK_SIZE = 150;
 
   private final Gson gson = new Gson();
 

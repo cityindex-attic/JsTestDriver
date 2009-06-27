@@ -20,6 +20,7 @@ import com.google.jstestdriver.JsonCommand.CommandType;
 
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,18 +76,26 @@ public class StandaloneRunnerServlet  extends HttpServlet  {
     parser.parse(userAgent);
     SlaveBrowser slaveBrowser =
         browserHunter.captureBrowser(id, parser.getName(), parser.getVersion(), parser.getOs());
-    LinkedList<String> loadFilesParameters = new LinkedList<String>();
-    LinkedList<String> runAllTestsParameters = new LinkedList<String>();
-    LinkedList<FileSource> filesSources = new LinkedList<FileSource>();
     Set<String> filesToload = filter.filter(path, cache);
+    LinkedList<FileSource> filesSources = new LinkedList<FileSource>();
 
     for (String f : filesToload) {
       filesSources.add(new FileSource("/test/" + f, -1));
     }
-    loadFilesParameters.add(gson.toJson(filesSources));
-    loadFilesParameters.add("true");
-    slaveBrowser.createCommand(gson.toJson(new JsonCommand(CommandType.LOADTEST,
-        loadFilesParameters)));
+    int size = filesSources.size();
+
+    for (int i = 0; i < size; i += CommandTask.CHUNK_SIZE) {
+      LinkedList<String> loadFilesParameters = new LinkedList<String>();
+      List<FileSource> chunkedFileSources =
+          filesSources.subList(i, Math.min(i + CommandTask.CHUNK_SIZE, size));
+
+      loadFilesParameters.add(gson.toJson(chunkedFileSources));
+      loadFilesParameters.add("true");
+      slaveBrowser.createCommand(gson.toJson(new JsonCommand(CommandType.LOADTEST,
+          loadFilesParameters)));
+    }
+    LinkedList<String> runAllTestsParameters = new LinkedList<String>();
+
     runAllTestsParameters.add("false");
     runAllTestsParameters.add("true");
     slaveBrowser.createCommand(gson.toJson(new JsonCommand(CommandType.RUNALLTESTS,
