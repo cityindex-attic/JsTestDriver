@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.DryRunAction.DryRunActionCallback;
 import com.google.jstestdriver.EvalAction.EvalActionCallback;
 import com.google.jstestdriver.ResetAction.ResetActionCallback;
 
@@ -51,5 +52,9 @@ public class ResponseStreamFactoryImpl implements ResponseStreamFactory {
 
   public ResponseStream getRunTestsActionResponseStream() {
     return new RunTestsActionResponseStream(printer);
+  }
+
+  public ResponseStream getDryRunActionResponseStream() {
+    return new SynchronousResponseStream(new DryRunActionCallback(), latch);
   }
 }

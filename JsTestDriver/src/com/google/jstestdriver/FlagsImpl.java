@@ -38,6 +38,7 @@ public class FlagsImpl implements Flags {
   private boolean verbose = false;
   private boolean captureConsole = false;
   private boolean preloadFiles = false;
+  private boolean dryRun = false;
   @Argument
   private List<String> arguments = new ArrayList<String>();
 
@@ -143,5 +144,15 @@ public class FlagsImpl implements Flags {
 
   public boolean getPreloadFiles() {
     return preloadFiles;
+  }
+
+  @Option(name="--dryRun", usage="Outputs the number of tests that are going to be run as well as" +
+  		" their names")
+  public void setDryRun(boolean dryRun) {
+    this.dryRun = dryRun;
+  }
+
+  public boolean getDryRun() {
+    return dryRun;
   }
 }

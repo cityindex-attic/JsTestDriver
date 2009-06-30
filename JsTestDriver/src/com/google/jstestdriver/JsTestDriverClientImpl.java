@@ -20,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.JsonCommand.CommandType;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,8 +32,6 @@ import java.util.concurrent.CountDownLatch;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class JsTestDriverClientImpl implements JsTestDriverClient {
-  
-  private static final List<String> EMPTY_LIST = new LinkedList<String>();
 
   private final Gson gson = new Gson();
 
@@ -40,8 +39,6 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   private final Set<FileInfo> fileSet;
   private final String baseUrl;
   private final Server server;
-
-
 
   public JsTestDriverClientImpl(CommandTaskFactory commandTaskFactory, Set<FileInfo> fileSet,
       String baseUrl, Server server) {
@@ -86,7 +83,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   }
 
   public void reset(String id, ResponseStreamFactory factory) {
-    JsonCommand cmd = new JsonCommand(CommandType.RESET, EMPTY_LIST);
+    JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
 
     sendCommand(id, factory.getResetActionResponseStream(), gson.toJson(cmd));
   }
@@ -113,4 +110,10 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
     sendCommand(id, factory.getRunTestsActionResponseStream(), gson.toJson(cmd));
   }
+
+  public void dryRun(String id, ResponseStreamFactory factory) {
+    JsonCommand cmd = new JsonCommand(CommandType.DRYRUN, Collections.<String>emptyList());
+
+    sendCommand(id, factory.getDryRunActionResponseStream(), gson.toJson(cmd));
+  }  
 }

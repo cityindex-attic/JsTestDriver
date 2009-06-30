@@ -23,4 +23,5 @@ public interface ResponseStreamFactory {
 
   public ResponseStream getRunTestsActionResponseStream();
 
+  public ResponseStream getDryRunActionResponseStream();
 }

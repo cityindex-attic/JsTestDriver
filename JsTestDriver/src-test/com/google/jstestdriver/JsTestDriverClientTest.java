@@ -55,6 +55,10 @@ public class JsTestDriverClientTest extends TestCase {
     public ResponseStream getRunTestsActionResponseStream() {
       return stream;
     }
+
+    public ResponseStream getDryRunActionResponseStream() {
+      return stream;
+    }
   }
 
   public static class FakeResponseStream implements ResponseStream {
@@ -221,7 +225,7 @@ public class JsTestDriverClientTest extends TestCase {
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }
-  
+
 /*  public void testRegisterCommand() throws Exception {
     MockServer server = new MockServer();
 

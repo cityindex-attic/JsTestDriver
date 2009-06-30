@@ -97,3 +97,24 @@ jstestdriver.TestCaseManager.prototype.runTests = function(testCases, onTestDone
   }
   onComplete();
 };
+
+
+jstestdriver.TestCaseManager.prototype.dryRun = function() {
+  var numberOfTests = 0;
+  var testNames = [];
+
+  for (var testCaseName in this.testCases_) {
+    var testCase = this.testCases_[testCaseName];
+
+    for (var element in testCase.prototype) {
+      if (element.indexOf('test') == 0) {
+        numberOfTests++;
+        testNames.push(testCaseName + '.' + element);
+      }
+    }
+  }
+  return {
+    numTests: numberOfTests,
+    testNames: testNames
+  };
+};

@@ -115,7 +115,7 @@ public class MainUI {
       String defaultServerAddress = null;
 
       if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty() ||
-          flags.getPreloadFiles()) {
+          flags.getPreloadFiles() || flags.getDryRun()) {
         if (config.exists()) {
           ConfigurationParser configParser = new ConfigurationParser(config.getParentFile());
 

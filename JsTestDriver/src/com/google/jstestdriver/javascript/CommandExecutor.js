@@ -48,7 +48,8 @@ jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager) {
       runTests: jstestdriver.bind(this, this.runTests),
       loadTest: jstestdriver.bind(this, this.loadTest),
       reset: jstestdriver.bind(this, this.reset),
-      registerCommand: jstestdriver.bind(this, this.registerCommand)
+      registerCommand: jstestdriver.bind(this, this.registerCommand),
+      dryRun: jstestdriver.bind(this, this.dryRun)
   };
   this.boundOnTestDone = jstestdriver.bind(this, this.onTestDone_);
   this.boundOnComplete = jstestdriver.bind(this, this.onComplete_);
@@ -379,6 +380,22 @@ jstestdriver.CommandExecutor.prototype.registerCommand = function(name, func) {
   this.sendData({
     response: {
       response: 'Command ' + name + ' registered.',
+      browser: {
+        "id": this.__id,
+        "name": jstestdriver.getBrowserFriendlyName(),
+        "version": jstestdriver.getBrowserFriendlyVersion(),
+        "os": navigator.platform
+      }
+    }
+  });
+};
+
+
+jstestdriver.CommandExecutor.prototype.dryRun = function() {
+  this.sendData({
+    done: '',
+    response: {
+      response: JSON.stringify(this.__testCaseManager.dryRun()),
       browser: {
         "id": this.__id,
         "name": jstestdriver.getBrowserFriendlyName(),

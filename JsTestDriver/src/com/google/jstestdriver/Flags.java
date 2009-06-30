@@ -43,4 +43,6 @@ public interface Flags {
   public boolean getCaptureConsole();
 
   public boolean getPreloadFiles();
+
+  public boolean getDryRun();
 }

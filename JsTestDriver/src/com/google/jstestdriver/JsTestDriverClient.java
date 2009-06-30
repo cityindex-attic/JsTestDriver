@@ -37,4 +37,6 @@ public interface JsTestDriverClient {
 
   public void runTests(String id, ResponseStreamFactory factory, List<TestCase> tests,
       boolean captureConsole);
+
+  public void dryRun(String id, ResponseStreamFactory factory);
 }

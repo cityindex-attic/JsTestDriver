@@ -214,3 +214,36 @@ testCaseManagerTest.prototype.testPassObjectAsPrototypeOnTestCaseInitWithSetUpAn
   assertTrue(barCalled);
   assertTrue(tearDownCalled);
 };
+
+
+testCaseManagerTest.prototype.testDryRunReturnsNumberOfTestsAndTestNames = function() {
+  var fakeDate = function() {};
+
+  fakeDate.prototype.getTime = function() {
+    return 0;
+  };
+  var testCaseManager = new jstestdriver.TestCaseManager(new jstestdriver.TestRunner(function() {},
+      fakeDate));
+  var testCase1 = TestCase('testCase1', {
+    testFoo: function() {
+    },
+    testBar: function() {
+    }
+  });
+  var testCase2 = TestCase('testCase2', {
+    testFu: function() {
+    },
+    testBaz: function() {
+    }
+  });
+  var dryRunInfo = testCaseManager.dryRun();
+
+  assertEquals(4, dryRunInfo.numTests);
+  var testNames = dryRunInfo.testNames;
+
+  assertEquals(4, testNames.length);
+  assertEquals('testCase1.testFoo', testNames[0]);
+  assertEquals('testCase1.testBar', testNames[1]);
+  assertEquals('testCase2.testFu', testNames[2]);
+  assertEquals('testCase2.testBaz', testNames[3]);
+};

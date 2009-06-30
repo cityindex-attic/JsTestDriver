@@ -18,7 +18,6 @@ package com.google.jstestdriver;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +26,8 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 
 /**
+ * TODO(jeremiele): needs a serious rewrite.
+ * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class ActionParser {
@@ -66,7 +67,8 @@ public class ActionParser {
       actions.add(serverStartupAction);
     }
     // client
-    if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty()) {
+    if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty() ||
+        flags.getDryRun()) {
       if (serverAddress != null && serverAddress.length() > 0) {
         client = actionFactory.getJsTestDriverClient(fileSet, serverAddress);
       } else {
@@ -81,11 +83,16 @@ public class ActionParser {
       capturedBrowsers.addObserver(browserStartupAction);
       actions.add(browserStartupAction);
     }
-    List<ThreadedAction> threadedActions = new ArrayList<ThreadedAction>();
+    List<ThreadedAction> threadedActions = new LinkedList<ThreadedAction>();
     if (flags.getReset()) {
       ResetAction resetAction = new ResetAction();
 
       threadedActions.add(resetAction);
+    }
+    if (flags.getDryRun()) {
+      DryRunAction dryRunAction = new DryRunAction();
+
+      threadedActions.add(dryRunAction);
     }
     RunTestsAction runTestsAction = null;
     List<String> tests = flags.getTests();
@@ -112,7 +119,8 @@ public class ActionParser {
 
       actions.add(actionsRunner);
     }
-    if (flags.getPort() != -1 && flags.getTests().size() > 0) {
+    if (flags.getPort() != -1 && (flags.getTests().size() > 0 || flags.getReset() ||
+        flags.getDryRun())) {
       Action browserShutdownAction = new BrowserShutdownAction(browserStartupAction);
       Action serverShutdownAction = new ServerShutdownAction(serverStartupAction,
           runTestsAction);
