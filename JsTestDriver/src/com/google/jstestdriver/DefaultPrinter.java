@@ -76,32 +76,24 @@ public class DefaultPrinter implements TestResultPrinter {
 
         for (TestResult testResult : problems) {
           if (!testResult.getResult().equals("passed")) {
-            String message = "";
-            String stack  = "";
+            FailureParser parser = new FailureParser();
 
-            try {
-              // TODO(jeremiele): do a better job at parsing the stack.
-              JsException exception = gson.fromJson(testResult.getMessage(), JsException.class);
+            parser.parse(testResult.getMessage());
+            String message = parser.getMessage();
+            List<String> stack = parser.getStack();
+            String formattedStack = "";
 
-              message = exception.getMessage();
-              String errorStack = exception.getStack();
-              String[] lines = errorStack.split("\n");
-              String errorLine = "";
+            if (stack.size() > 0) {
+              StringBuilder sb = new StringBuilder();
 
-              for (String l : lines) {
-                if (l.contains("/test/")) {
-                  errorLine += NEW_LINE + "      " + l;
-                }
+              for (String line : stack) {
+                sb.append(NEW_LINE + "      " + line);
               }
-              if (errorLine.length() > 0) {
-                stack = errorLine;
-              }
-            } catch (Exception e) {
-              message = testResult.getMessage();
+              formattedStack = sb.toString();
             }
             out.println(String.format("    %s.%s %s (%.2f ms): %s%s", testResult.getTestCaseName(),
                 testResult.getTestName(), testResult.getResult(), testResult.getTime(), message,
-                stack));
+                formattedStack));
           } else {
             out.println(String.format("    %s.%s %s (%.2f ms)", testResult.getTestCaseName(),
                 testResult.getTestName(), testResult.getResult(), testResult.getTime()));
