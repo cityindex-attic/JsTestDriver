@@ -81,16 +81,16 @@ jstestdriver.extractId = function(url) {
 
 
 jstestdriver.getBrowserFriendlyName = function() {
-  if (jQuery.browser.safari) {
+  if (jstestdriver.jQuery.browser.safari) {
     if (navigator.userAgent.indexOf('Chrome') != -1) {
       return 'Chrome';
     }
     return 'Safari';
-  } else if (jQuery.browser.opera) {
+  } else if (jstestdriver.jQuery.browser.opera) {
     return 'Opera';
-  } else if (jQuery.browser.msie) {
+  } else if (jstestdriver.jQuery.browser.msie) {
     return 'Internet Explorer';
-  } else if (jQuery.browser.mozilla) {
+  } else if (jstestdriver.jQuery.browser.mozilla) {
     if (navigator.userAgent.indexOf('Firefox') != -1) {
       return 'Firefox';
     }
@@ -100,14 +100,14 @@ jstestdriver.getBrowserFriendlyName = function() {
 
 
 jstestdriver.getBrowserFriendlyVersion = function() {
-  if (jQuery.browser.msie) {
+  if (jstestdriver.jQuery.browser.msie) {
     if (typeof XDomainRequest != 'undefined') {
       return '8.0';
     } 
-  } else if (jQuery.browser.safari) {
+  } else if (jstestdriver.jQuery.browser.safari) {
     if (navigator.appVersion.indexOf('Chrome/') != -1) {
       return navigator.appVersion.match(/Chrome\/(.*)\s/)[1];
     }
   }
-  return jQuery.browser.version;
+  return jstestdriver.jQuery.browser.version;
 };

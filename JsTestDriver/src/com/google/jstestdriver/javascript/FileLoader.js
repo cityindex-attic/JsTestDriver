@@ -116,7 +116,7 @@ jstestdriver.FileLoader.prototype.createLink = function(dom, file, callback) {
   head.appendChild(link);
 
   // Firefox and Safari don't seem to support onload or onreadystatechange for link
-  if (jQuery.browser.mozilla || jQuery.browser.safari) {
+  if (jstestdriver.jQuery.browser.mozilla || jstestdriver.jQuery.browser.safari) {
     this.onFileLoaded(file);
   }
 };

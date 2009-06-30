@@ -21,8 +21,8 @@ jstestdriver.listen = function() {
   var url = jstestdriver.SERVER_URL + id;
 
   jstestdriver.initializeTestCaseManager();
-  new jstestdriver.CommandExecutor(parseInt(id), url, jstestdriver.convertToJson(jQuery.post),
-      jstestdriver.testCaseManager).listen();
+  new jstestdriver.CommandExecutor(parseInt(id), url, jstestdriver.convertToJson(
+      jstestdriver.jQuery.post), jstestdriver.testCaseManager).listen();
 };
 
 
