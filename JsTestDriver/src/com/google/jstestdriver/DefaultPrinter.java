@@ -30,7 +30,6 @@ public class DefaultPrinter implements TestResultPrinter {
 
   private static final String NEW_LINE = System.getProperty("line.separator");
 
-  private final Gson gson = new Gson();
   private final PrintStream out;
   private final AtomicInteger browsers;
   private final boolean verbose;
