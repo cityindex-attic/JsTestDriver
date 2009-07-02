@@ -1,4 +1,6 @@
 /*
+QUnitAdapter
+Version: 1.0.1
 
 Run qunit tests using JS Test Driver
 
@@ -42,7 +44,7 @@ you need to set it up and tear it down in each test.
     };
     
     window.ok = function(actual, msg) {
-        assertTrue(msg ? msg : '', actual);
+        assertTrue(msg ? msg : '', !!actual);
     };
     
     window.equals = function(a, b, msg) {
