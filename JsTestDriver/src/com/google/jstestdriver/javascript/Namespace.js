@@ -24,20 +24,32 @@ if (typeof console.error == 'undefined') console.error = function() {};
 
 jstestdriver.globalSetTimeout = setTimeout;
 jstestdriver.setTimeout = function() {
-  return jstestdriver.globalSetTimeout.apply(window, arguments);
+  if (jstestdriver.globalSetTimeout.apply) {
+    return jstestdriver.globalSetTimeout.apply(window, arguments);
+  }
+  return jstestdriver.globalSetTimeout(arguments[0], arguments[1]);
 };
 
 jstestdriver.globalClearTimeout = clearTimeout;
 jstestdriver.clearTimeout = function() {
-  return jstestdriver.globalClearTimeout.apply(window, arguments);
+  if (jstestdriver.globalClearTimeout.apply) {
+    return jstestdriver.globalClearTimeout.apply(window, arguments);
+  }
+  return jstestdriver.globalClearTimeout(arguments[0], arguments[1]);
 };
 
 jstestdriver.globalSetInterval = setInterval;
 jstestdriver.setInterval = function() {
-  return jstestdriver.globalSetInterval.apply(window, arguments);
+  if (jstestdriver.globalSetInterval.apply) {
+    return jstestdriver.globalSetInterval.apply(window, arguments);
+  }
+  return jstestdriver.globalSetInterval(arguments[0], arguments[1]);
 };
 
 jstestdriver.globalClearInterval = clearInterval;
 jstestdriver.clearInterval = function() {
-  return jstestdriver.globalClearInterval.apply(window, arguments);
+  if (jstestdriver.globalClearInterval.apply) {
+    return jstestdriver.globalClearInterval.apply(window, arguments);
+  }
+  return jstestdriver.globalClearInterval(arguments[0], arguments[1]);
 };
