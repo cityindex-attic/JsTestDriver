@@ -35,7 +35,7 @@ jstestdriver.clearTimeout = function() {
   if (jstestdriver.globalClearTimeout.apply) {
     return jstestdriver.globalClearTimeout.apply(window, arguments);
   }
-  return jstestdriver.globalClearTimeout(arguments[0], arguments[1]);
+  return jstestdriver.globalClearTimeout(arguments[0]);
 };
 
 jstestdriver.globalSetInterval = setInterval;
@@ -51,5 +51,5 @@ jstestdriver.clearInterval = function() {
   if (jstestdriver.globalClearInterval.apply) {
     return jstestdriver.globalClearInterval.apply(window, arguments);
   }
-  return jstestdriver.globalClearInterval(arguments[0], arguments[1]);
+  return jstestdriver.globalClearInterval(arguments[0]);
 };
