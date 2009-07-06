@@ -21,3 +21,23 @@ if (typeof console.debug == 'undefined') console.debug = function() {};
 if (typeof console.info == 'undefined') console.info = function() {};
 if (typeof console.warn == 'undefined') console.warn = function() {};
 if (typeof console.error == 'undefined') console.error = function() {};
+
+jstestdriver.globalSetTimeout = setTimeout;
+jstestdriver.setTimeout = function() {
+  return jstestdriver.globalSetTimeout.apply(window, arguments);
+};
+
+jstestdriver.globalClearTimeout = clearTimeout;
+jstestdriver.clearTimeout = function() {
+  return jstestdriver.globalClearTimeout.apply(window, arguments);
+};
+
+jstestdriver.globalSetInterval = setInterval;
+jstestdriver.setInterval = function() {
+  return jstestdriver.globalSetInterval.apply(window, arguments);
+};
+
+jstestdriver.globalClearInterval = clearInterval;
+jstestdriver.clearInterval = function() {
+  return jstestdriver.globalClearInterval.apply(window, arguments);
+};

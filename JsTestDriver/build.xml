@@ -90,14 +90,18 @@
 			<fileset dir="${src.dir}/${javascript-resources}" includes="*.js" />
 			<mapper type="glob" from="*.js" to="*.js"></mapper>
 		</apply>
+		<concat destfile="${obj.dir}/${javascript-resources}/jstestdrivernamespace.js">
+		      <filelist dir="${obj.dir}/${javascript-resources}"
+		      files="Namespace.js" />
+		</concat>
 		<concat destfile="${obj.dir}/${javascript-resources}/runner.js">
 			<filelist dir="${obj.dir}/${javascript-resources}"
-		  files="Asserts.js,Namespace.js,Utils.js,Console.js,LibLoader.js,FileLoader.js,
+		  files="Asserts.js,Utils.js,Console.js,LibLoader.js,FileLoader.js,
 				CommandExecutor.js,TestRunner.js,TestCaseManager.js" />
 	  </concat>
 		<concat destfile="${obj.dir}/${javascript-resources}/heartbeatclient.js">
 		  <filelist dir="${obj.dir}/${javascript-resources}"
-		  files="Namespace.js,Utils.js,Heartbeat.js" />
+		  files="Utils.js,Heartbeat.js" />
 		</concat>
 	</target>
 
@@ -155,6 +159,7 @@
       <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
       <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
 			<fileset dir="${obj.dir}/">
+				<include name="${javascript-resources}/jstestdrivernamespace.js" />
 				<include name="${javascript-resources}/runner.js" />
 				<include name="${javascript-resources}/heartbeatclient.js" />
 				<include name="${javascript-resources}/lib/*.js" />

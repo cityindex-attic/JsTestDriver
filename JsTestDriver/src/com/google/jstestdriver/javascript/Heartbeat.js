@@ -34,7 +34,7 @@ jstestdriver.Heartbeat.prototype.start = function() {
 
 
 jstestdriver.Heartbeat.prototype.stop = function() {
-  clearTimeout(this.timeoutId_);
+  jstestdriver.clearTimeout(this.timeoutId_);
 };
 
 
@@ -49,8 +49,8 @@ jstestdriver.Heartbeat.prototype.heartbeatCallback = function() {
   this.sent_ = 0;
 
   if (elapsed < this.interval_) {
-    this.timeoutId_ = setTimeout('jstestdriver.heartbeat.sendHeartbeat()', this.interval_ -
-        elapsed);
+    this.timeoutId_ = jstestdriver.setTimeout('jstestdriver.heartbeat.sendHeartbeat()',
+        this.interval_ - elapsed);
   } else {
     this.sendHeartbeat();
   }

@@ -265,12 +265,12 @@ jstestdriver.CommandExecutor.prototype.onCompleteRunnerMode_ = function() {
 
 
 jstestdriver.CommandExecutor.prototype.startTestInterval_ = function(interval) {
-  this.timeout_ = setTimeout('jstestdriver.executor.boundSendTestResults()', interval);
+  this.timeout_ = jstestdriver.setTimeout('jstestdriver.executor.boundSendTestResults()', interval);
 };
 
 
 jstestdriver.CommandExecutor.prototype.stopTestInterval_ = function() {
-  clearTimeout(this.timeout_);
+  jstestdriver.clearTimeout(this.timeout_);
 };
 
 
