@@ -236,7 +236,8 @@ if (!this.JSON) {
 // If the value has a toJSON method, call it to obtain a replacement value.
 
         if (value && typeof value === 'object' &&
-                typeof value.toJSON === 'function') {
+                typeof value.toJSON === 'function' &&
+                Object.prototype.toString.apply(value) !== '[object Array]') {
             value = value.toJSON(key);
         }
 

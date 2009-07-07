@@ -1,0 +1,15 @@
+The version of jquery and json2 used have been slightly modified to handle
+corner cases when conflicting libraries are loaded.
+
+jQuery changes:
+ - tests for alert instead of setInterval to check if an object is window
+   (as the jstestdriver defines these functions) this change is probably
+   unnecessary as I don't see anyone wanting to call makeArray on the
+   jstestdriver object, but you never know !
+ - uses the jstestdriver.set{Timeout,Interval} and
+   jstestdriver.clear{Timeout,Interval} instead of the global ones
+
+json2 changes:
+ - to be compatible with prototype.js (http://www.prototypejs.org/) make sure
+   that in the function str the method toJson is not called when the object is
+   an array
