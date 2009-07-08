@@ -41,11 +41,15 @@ public class EvalAction implements ThreadedAction {
   public void run(String id, JsTestDriverClient client) {
     CountDownLatch latch = new CountDownLatch(1);
 
-    client.eval(id, new ResponseStreamFactoryImpl(latch), cmd);
+    client.eval(id, new ResponseStreamFactoryImpl(latch), getCmd());
     try {
       latch.await();
     } catch (InterruptedException e) {
       // uh
     }
+  }
+
+  public String getCmd() {
+    return cmd;
   }
 }

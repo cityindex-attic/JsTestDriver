@@ -21,16 +21,13 @@ package com.google.jstestdriver;
 public class ServerShutdownAction implements Action {
 
   private final ServerStartupAction serverStartupAction;
-  private final RunTestsAction runTestsAction;
 
-  public ServerShutdownAction(ServerStartupAction serverStartupAction,
-      RunTestsAction runTestsAction) {
+  public ServerShutdownAction(ServerStartupAction serverStartupAction) {
     this.serverStartupAction = serverStartupAction;
-    this.runTestsAction = runTestsAction;
   }
 
   public void run() {
     serverStartupAction.getServer().stop();
-    System.exit(runTestsAction != null && runTestsAction.failures() ? 1 : 0);
+    System.exit(0);
   }
 }

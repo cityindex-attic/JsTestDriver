@@ -91,6 +91,14 @@ public class RunTestsAction implements ThreadedAction {
     return testCases;
   }
 
+  public List<String> getTests() {
+    return tests;
+  }
+
+  public boolean isCaptureConsole() {
+    return captureConsole;
+  }
+
   public boolean failures() {
     return failures;
   }

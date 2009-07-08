@@ -56,4 +56,21 @@ public class ThreadedActionsRunner implements Action {
       System.exit(1);
     }
   }
+  
+  public List<ThreadedAction> getActions() {
+    return actions;
+  }
+  
+  public RunTestsAction getRunTestsAction() {
+    for (ThreadedAction action : actions) {
+      if (action instanceof RunTestsAction) {
+        return (RunTestsAction) action;
+      }
+    }
+    return null;
+  }
+  
+  public JsTestDriverClient getClient() {
+    return client;
+  }
 }

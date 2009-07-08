@@ -46,4 +46,8 @@ public class ThreadedActionRunner implements Runnable {
       latch.countDown();
     }
   }
+  
+  public List<ThreadedAction> getActions() {
+    return actions;
+  }
 }

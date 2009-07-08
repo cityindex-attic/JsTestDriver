@@ -27,6 +27,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Starts a list of browsers when run.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class BrowserStartupAction implements Action, Observer {
@@ -75,5 +76,13 @@ public class BrowserStartupAction implements Action, Observer {
 
   public void update(Observable o, Object arg) {
     latch.countDown();
+  }
+  
+  public List<String> getBrowserPath() {
+    return browserPath;
+  }
+  
+  public String getServerAddress() {
+    return serverAddress;
   }
 }

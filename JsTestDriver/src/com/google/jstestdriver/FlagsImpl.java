@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * FlagsParser for the JsTestDriver.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class FlagsImpl implements Flags {
