@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="default">
+  <property environment="env"/>
+  <target name="default">
+    <java jar="${env.ECLIPSE_LAUNCHER_JAR}" fork="true" failonerror="true">
+      <arg value="-application"/>
+      <arg value="org.eclipse.ant.core.antRunner"/>
+      <arg value="-buildfile"/>
+      <arg value="${env.ECLIPSE_PDE_XML}"/>
+      <arg value="-Dbuilder=${basedir}"/>
+      <arg value="-DbuildDirectory=${basedir}"/>
+      <arg value="-DbaseLocation=${env.ECLIPSE_BASE_DIR}"/>
+      <arg value="-Dbase=${env.ECLIPSE_BASE_DIR}"/>
+      <arg value="-DJ2SE-1.5=${env.JAVA_HOME}/jre/lib/rt.jar"/>
+   </java>
+ </target>
+ <target name="clean">
+  <delete includeemptydirs="true" failonerror="false" verbose="true">
+    <fileset dir="target" id="targetFolder"/>
+    <fileset dir="tmp" id="tmpFolder"/>
+    <fileset dir="." id="assembleFiles" includes="assemble*"/>
+    <fileset dir="." id="finalFiles" includes="final*"/>
+    <fileset dir="." id="packageFiles" includes="package*"/>
+    <fileset dir="." id="compilerArgs" includes="**/javaCompiler...args"/>
+    <fileset dir="plugins" id="genPluginsBuildXml" includes="**/build.xml"/>
+    <fileset dir="features" id="genFeaturesBuildXml" includes="**/build.xml"/>
+    <fileset dir="features" id="genFeaturesZip" includes="**/*.zip"/>
+  </delete>
+ </target>
+</project>
