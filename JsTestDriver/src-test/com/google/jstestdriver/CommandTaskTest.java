@@ -15,15 +15,17 @@
  */
 package com.google.jstestdriver;
 
-import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
-
-import junit.framework.TestCase;
-
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
+import com.google.gson.Gson;
+import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -36,23 +38,16 @@ public class CommandTaskTest extends TestCase {
     server.expect("http://localhost/heartbeat?id=1", "OK");
     server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
     server.expect("http://localhost/cmd?POST?{data={mooh}, id=1}", "");
-    server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"response\"," +
-    		"\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123}," +
-    		"\"last\":true}");
+    server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"response\","
+        + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
+        + "\"last\":true}");
     Map<String, String> params = new LinkedHashMap<String, String>();
 
     params.put("data", "{mooh}");
     params.put("id", "1");
     FakeResponseStream stream = new FakeResponseStream();
-    CommandTask task = new CommandTask(new JsTestDriverFileFilter() {
-      public String filterFile(String content, boolean reload) {
-        return content;
-      }
-
-      public List<String> resolveFilesDeps(String file) {
-        return Collections.singletonList(file);
-      }
-    }, stream, new LinkedHashSet<FileInfo>(), "http://localhost", server, params);
+    CommandTask task = new CommandTask(new ActionFactory.ActionFactoryFileFilter(), stream,
+        new LinkedHashSet<FileInfo>(), "http://localhost", server, params, null);
 
     task.run();
     Response response = stream.getResponse();
@@ -61,5 +56,57 @@ public class CommandTaskTest extends TestCase {
     assertEquals("browser", response.getBrowser().getName());
     assertEquals("error", response.getError());
     assertEquals(123L, response.getExecutionTime());
+  }
+
+  public void testUploadFiles() throws Exception {
+    MockServer server = new MockServer();
+    Gson gson = new Gson();
+    FileInfo fileInfo = new FileInfo("foo.js", 1232, false);
+
+    server.expect("http://localhost/heartbeat?id=1", "OK");
+    server.expect("http://localhost/fileSet?POST?{id=1, fileSet="
+        + gson.toJson(Arrays.asList(fileInfo)) + "}", "");
+    server.expect("http://localhost/cmd?POST?{data={mooh}, id=1}", "");
+    server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"response\","
+        + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
+        + "\"last\":true}");
+    Map<String, String> params = new LinkedHashMap<String, String>();
+
+    params.put("data", "{mooh}");
+    params.put("id", "1");
+    FakeResponseStream stream = new FakeResponseStream();
+    MockFileReader fileReader = new MockFileReader();
+    fileReader.addExpectation(fileInfo.getFileName(), "foobar");
+    CommandTask task = new CommandTask(new ActionFactory.ActionFactoryFileFilter(), stream,
+        new LinkedHashSet<FileInfo>(Arrays.asList(fileInfo)), "http://localhost", server, params,
+        fileReader);
+
+    task.run();
+    Response response = stream.getResponse();
+
+    assertEquals("response", response.getResponse());
+    assertEquals("browser", response.getBrowser().getName());
+    assertEquals("error", response.getError());
+    assertEquals(123L, response.getExecutionTime());
+  }
+
+  private class MockFileReader implements FileReader {
+    private HashMap<String, String> expected;
+
+    public MockFileReader() {
+      expected = new HashMap<String, String>();
+    }
+
+    public void addExpectation(String fileName, String contents) {
+      expected.put(fileName, contents);
+    }
+
+    public String readFile(String file) {
+      if (!expected.containsKey(file)) {
+        Assert.fail(String.format("%s not found in %s", file, expected.keySet()));
+      }
+      return expected.get(file);
+    }
+
   }
 }

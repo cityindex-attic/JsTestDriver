@@ -20,7 +20,7 @@
   <property name="SERVERADDRESS" value="http://localhost:9876" />
   <property name="BROWSERPATH" value="${defaultbrowser}" />
   <property name="TESTPATH" value="." />
-	<property name="CONFIGURATIONFILE" value="jsTestDriver.conf" />
+  <property name="CONFIGURATIONFILE" value="jsTestDriver.conf" />
 
   <property name="svn.trunkUrl" value="https://js-test-driver.googlecode.com/svn/trunk"/>
   <property name="svn.tagsUrl" value="https://js-test-driver.googlecode.com/svn/tags"/>
@@ -30,15 +30,17 @@
   </target>
 
   <path id="classpath">
+    <pathelement location="${lib.dir}/args4j-2.0.1/args4j-2.0.1.jar" />
+    <pathelement location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
+    <pathelement location="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
+    <pathelement location="${lib.dir}/guice/guice-2.0-no_aop.jar" />
+    <pathelement location="${lib.dir}/guice/guice-multibindings-2.0.jar" />
+    <pathelement location="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
     <pathelement location="${lib.dir}/jetty/jetty-6.1.14.jar" />
     <pathelement location="${lib.dir}/jetty/jetty-util-6.1.14.jar" />
     <pathelement location="${lib.dir}/jetty/servlet-api-2.5-6.1.14.jar" />
-    <pathelement location="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
-    <pathelement location="${lib.dir}/args4j-2.0.1/args4j-2.0.1.jar" />
     <pathelement location="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
     <pathelement location="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
-    <pathelement location="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
-    <pathelement location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
     <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
     <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
   </path>
@@ -68,42 +70,42 @@
     <mkdir dir="${testability-explorer.reports.dir}" />
   </target>
 
-	<target name="compile" depends="init">
-		<javac srcdir="${src.dir}" destdir="${obj.dir}" classpathref="classpath">
-		</javac>
-		<copy todir="${obj.dir}">
-			<fileset dir="${src.dir}">
-				<exclude name="**/*.java" />
-				<exclude name="${javascript-resources}/*.js"/>
-			</fileset>
-		</copy>
-		<apply executable="java" dest="${obj.dir}/${javascript-resources}">
-			<arg value="-jar"/>
-			<arg value="${lib.dir}/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar" />
-			<arg value="-v" />
-			<arg value="--type" />
-			<arg value="js" />
-			<arg value="--disable-optimizations" />
-			<arg value="-o" />
-			<targetfile/>
-			<srcfile/>
-			<fileset dir="${src.dir}/${javascript-resources}" includes="*.js" />
-			<mapper type="glob" from="*.js" to="*.js"></mapper>
-		</apply>
-		<concat destfile="${obj.dir}/${javascript-resources}/jstestdrivernamespace.js">
-		      <filelist dir="${obj.dir}/${javascript-resources}"
-		      files="Namespace.js" />
-		</concat>
-		<concat destfile="${obj.dir}/${javascript-resources}/runner.js">
-			<filelist dir="${obj.dir}/${javascript-resources}"
-		  files="Asserts.js,Utils.js,Console.js,LibLoader.js,FileLoader.js,
-				CommandExecutor.js,TestRunner.js,TestCaseManager.js" />
-	  </concat>
-		<concat destfile="${obj.dir}/${javascript-resources}/heartbeatclient.js">
-		  <filelist dir="${obj.dir}/${javascript-resources}"
-		  files="Utils.js,Heartbeat.js" />
-		</concat>
-	</target>
+  <target name="compile" depends="init">
+    <javac srcdir="${src.dir}" destdir="${obj.dir}" classpathref="classpath">
+    </javac>
+    <copy todir="${obj.dir}">
+      <fileset dir="${src.dir}">
+        <exclude name="**/*.java" />
+        <exclude name="${javascript-resources}/*.js"/>
+      </fileset>
+    </copy>
+    <apply executable="java" dest="${obj.dir}/${javascript-resources}">
+      <arg value="-jar"/>
+      <arg value="${lib.dir}/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar" />
+      <arg value="-v" />
+      <arg value="--type" />
+      <arg value="js" />
+      <arg value="--disable-optimizations" />
+      <arg value="-o" />
+      <targetfile/>
+      <srcfile/>
+      <fileset dir="${src.dir}/${javascript-resources}" includes="*.js" />
+      <mapper type="glob" from="*.js" to="*.js"></mapper>
+    </apply>
+    <concat destfile="${obj.dir}/${javascript-resources}/jstestdrivernamespace.js">
+          <filelist dir="${obj.dir}/${javascript-resources}"
+          files="Namespace.js" />
+    </concat>
+    <concat destfile="${obj.dir}/${javascript-resources}/runner.js">
+      <filelist dir="${obj.dir}/${javascript-resources}"
+      files="Asserts.js,Utils.js,Console.js,LibLoader.js,FileLoader.js,
+        CommandExecutor.js,TestRunner.js,TestCaseManager.js" />
+    </concat>
+    <concat destfile="${obj.dir}/${javascript-resources}/heartbeatclient.js">
+      <filelist dir="${obj.dir}/${javascript-resources}"
+      files="Utils.js,Heartbeat.js" />
+    </concat>
+  </target>
 
   <target name="compile-test" depends="compile">
     <javac srcdir="${src-test.dir}" destdir="${obj-test.dir}" classpathref="classpath">
@@ -141,31 +143,33 @@
     </junit>
   </target>
 
-	<target name="jar" depends="compile">
-		<jar destfile="${bin.dir}/${ant.project.name}.jar" basedir="${obj.dir}" excludes="**/*.js"
-			duplicate="preserve">
-			<manifest>
-				<attribute name="Main-Class" value="${main-class}" />
-			</manifest>
-			<zipfileset src="${lib.dir}/jetty/servlet-api-2.5-6.1.14.jar" />
-			<zipfileset src="${lib.dir}/jetty/jetty-6.1.14.jar" />
-			<zipfileset src="${lib.dir}/jetty/jetty-util-6.1.14.jar" />
-			<zipfileset src="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
-			<zipfileset src="${lib.dir}/args4j-2.0.1/args4j-2.0.1.jar" />
-			<zipfileset src="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
-			<zipfileset src="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
-			<zipfileset src="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
+  <target name="jar" depends="compile">
+    <jar destfile="${bin.dir}/${ant.project.name}.jar" basedir="${obj.dir}" excludes="**/*.js"
+      duplicate="preserve">
+      <manifest>
+        <attribute name="Main-Class" value="${main-class}" />
+      </manifest>
+      <zipfileset src="${lib.dir}/jetty/servlet-api-2.5-6.1.14.jar" />
+      <zipfileset src="${lib.dir}/jetty/jetty-6.1.14.jar" />
+      <zipfileset src="${lib.dir}/jetty/jetty-util-6.1.14.jar" />
+      <zipfileset src="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
+      <zipfileset src="${lib.dir}/guice/guice-2.0-no_aop.jar" />
+      <zipfileset src="${lib.dir}/guice/guice-multibindings-2.0.jar" />
+      <zipfileset src="${lib.dir}/args4j-2.0.1/args4j-2.0.1.jar" />
+      <zipfileset src="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
+      <zipfileset src="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
+      <zipfileset src="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
       <zipfileset src="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
       <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
       <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
-			<fileset dir="${obj.dir}/">
-				<include name="${javascript-resources}/jstestdrivernamespace.js" />
-				<include name="${javascript-resources}/runner.js" />
-				<include name="${javascript-resources}/heartbeatclient.js" />
-				<include name="${javascript-resources}/lib/*.js" />
-			</fileset>
-		</jar>
-	</target>
+      <fileset dir="${obj.dir}/">
+        <include name="${javascript-resources}/jstestdrivernamespace.js" />
+        <include name="${javascript-resources}/runner.js" />
+        <include name="${javascript-resources}/heartbeatclient.js" />
+        <include name="${javascript-resources}/lib/*.js" />
+      </fileset>
+    </jar>
+  </target>
 
   <!-- TODO: also have a JNLP launcher for the CBuild latest code - set deploy.codebase to
              http://build.hevery.com/job/JsTestDriver/lastSuccessfulBuild/artifact/target/bin -->

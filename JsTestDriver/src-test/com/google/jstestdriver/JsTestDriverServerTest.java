@@ -15,25 +15,22 @@
  */
 package com.google.jstestdriver;
 
-import junit.framework.TestCase;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
+
+import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class JsTestDriverServerTest extends TestCase {
 
-  private JsTestDriverServer server =
-      new JsTestDriverServer(4224, new CapturedBrowsers(), new FilesCache(
-          new HashMap<String, String>()));
+  private JsTestDriverServer server = new JsTestDriverServer(4224, new CapturedBrowsers(),
+      new FilesCache(new HashMap<String, String>()));
 
   @Override
   protected void tearDown() throws Exception {
@@ -63,16 +60,9 @@ public class JsTestDriverServerTest extends TestCase {
   }
 
   public void testListBrowsers() throws Exception {
-    JsTestDriverClient client =
-        new JsTestDriverClientImpl(new CommandTaskFactory(new JsTestDriverFileFilter() {
-          public String filterFile(String content, boolean reload) {
-            return content;
-          }
-
-          public List<String> resolveFilesDeps(String file) {
-            return Collections.singletonList(file);
-          }
-        }), new LinkedHashSet<FileInfo>(), "http://localhost:4224", new HttpServer());
+    JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
+        new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
+        "http://localhost:4224", new HttpServer());
 
     server.start();
     Collection<BrowserInfo> browsers = client.listBrowsers();

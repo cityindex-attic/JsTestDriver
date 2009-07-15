@@ -28,6 +28,8 @@ import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.ServerStartupAction;
+import com.google.jstestdriver.HookedFileReader;
+import com.google.jstestdriver.hooks.FileReaderHook;
 
 import org.apache.commons.logging.LogFactory;
 import org.kohsuke.args4j.CmdLineException;
@@ -38,6 +40,7 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -106,7 +109,9 @@ public class MainUI {
     LogPanelLog.LogPanelHolder.setLogPanel(logPanel);
 
     try {
-      ActionFactory actionFactory = new ActionFactory();
+      // TODO(corysmith): Guicefy.
+      ActionFactory actionFactory =
+          new ActionFactory(new HookedFileReader(Collections.<FileReaderHook>emptySet()));
       actionFactory.registerListener(ServerStartupAction.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, capturedBrowsersPanel);

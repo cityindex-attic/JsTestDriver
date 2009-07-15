@@ -15,12 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.jstestdriver.JsonCommand.CommandType;
-
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -37,6 +31,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.JsonCommand.CommandType;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -55,15 +53,17 @@ public class CommandTask {
   private final String baseUrl;
   private final Server server;
   private final Map<String, String> params;
+  private FileReader fileReader;
 
   public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
-      String baseUrl, Server server, Map<String, String> params) {
+      String baseUrl, Server server, Map<String, String> params, FileReader fileReader) {
     this.filter = filter;
     this.stream = stream;
     this.fileSet = fileSet;
     this.baseUrl = baseUrl;
     this.server = server;
     this.params = params;
+    this.fileReader = fileReader;
   }
 
   private String startSession() {
@@ -305,25 +305,6 @@ public class CommandTask {
   }
 
   private String readFile(String file) {
-    BufferedInputStream bis = null;
-    try {
-      bis = new BufferedInputStream(new FileInputStream(file));
-      StringBuilder sb = new StringBuilder();
-
-      for (int c = bis.read(); c != -1; c = bis.read()) {
-        sb.append((char) c);
-      }
-      return sb.toString();
-    } catch (IOException e) {
-      throw new RuntimeException("Impossible to read file: " + file, e);
-    } finally {
-      if (bis != null) {
-        try {
-          bis.close();
-        } catch (IOException e) {
-          // ignore
-        }
-      }
-    }
+    return fileReader.readFile(file);
   }
 }

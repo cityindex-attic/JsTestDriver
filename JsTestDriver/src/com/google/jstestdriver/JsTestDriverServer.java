@@ -15,6 +15,16 @@
  */
 package com.google.jstestdriver;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Observable;
+import java.util.Set;
+
+import javax.servlet.http.HttpServlet;
+
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.mortbay.jetty.Server;
@@ -22,14 +32,8 @@ import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.LinkedHashSet;
-import java.util.Observable;
-import java.util.Set;
-
-import javax.servlet.http.HttpServlet;
+import com.google.inject.Guice;
+import com.google.inject.Module;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -57,10 +61,10 @@ public class JsTestDriverServer extends Observable {
     addServlet("/heartbeat", new HeartbeatServlet(capturedBrowsers, new TimeImpl()));
     addServlet("/capture", new CaptureServlet(new BrowserHunter(capturedBrowsers)));
     addServlet("/runner/*", new StandaloneRunnerServlet(new BrowserHunter(capturedBrowsers),
-        filesCache, new StandaloneRunnerFilesFilterImpl(),
-        new SlaveResourceService(SlaveResourceService.RESOURCE_LOCATION)));
-    addServlet("/slave/*", new SlaveResourceServlet(
-        new SlaveResourceService(SlaveResourceService.RESOURCE_LOCATION)));
+        filesCache, new StandaloneRunnerFilesFilterImpl(), new SlaveResourceService(
+            SlaveResourceService.RESOURCE_LOCATION)));
+    addServlet("/slave/*", new SlaveResourceServlet(new SlaveResourceService(
+        SlaveResourceService.RESOURCE_LOCATION)));
     addServlet("/cmd", new CommandServlet(capturedBrowsers));
     addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers));
 
@@ -116,28 +120,28 @@ public class JsTestDriverServer extends Observable {
       }
       File config = new File(flags.getConfig());
       Set<String> fileSet = new LinkedHashSet<String>();
+      List<Class<? extends Module>> plugins = null;
       String defaultServerAddress = null;
 
-      if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty() ||
-          flags.getPreloadFiles() || flags.getDryRun()) {
+      if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty()
+          || flags.getPreloadFiles() || flags.getDryRun()) {
         if (config.exists()) {
           ConfigurationParser configParser = new ConfigurationParser(config.getParentFile());
+          PluginLoader pluginLoader = new PluginLoader();
 
           try {
             configParser.parse(new FileInputStream(flags.getConfig()));
             fileSet = configParser.getFilesList();
             defaultServerAddress = configParser.getServer();
+            plugins = pluginLoader.load(configParser.getPlugins());
           } catch (FileNotFoundException e) {
             System.err.println(e);
             System.exit(1);
           }
         }
       }
-      ActionRunner runner =
-        new ActionRunner(new ActionParser(new ActionFactory()).parseFlags(flags, fileSet,
-            defaultServerAddress));
-
-      runner.runActions();
+      Guice.createInjector(new JsTestDriverModule(flags, fileSet, defaultServerAddress, plugins))
+          .getInstance(ActionRunner.class).runActions();
     } catch (CmdLineException e) {
       System.err.println(e.getMessage());
       parser.printUsage(System.err);

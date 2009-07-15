@@ -15,10 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import org.apache.oro.io.GlobFilenameFilter;
-import org.apache.oro.text.GlobCompiler;
-import org.jvyaml.YAML;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -26,21 +22,27 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.oro.io.GlobFilenameFilter;
+import org.apache.oro.text.GlobCompiler;
+import org.jvyaml.YAML;
 
 /**
  * TODO: needs to give more feedback when something goes wrong...
  * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class ConfigurationParser { 
+public class ConfigurationParser {
 
   private final Set<String> filesList = new LinkedHashSet<String>();
   private final File basePath;
 
   private String server = "";
+  private List<Plugin> plugins = new LinkedList<Plugin>();
 
   public ConfigurationParser(File basePath) {
     this.basePath = basePath;
@@ -48,8 +50,8 @@ public class ConfigurationParser {
 
   @SuppressWarnings("unchecked")
   public void parse(InputStream inputStream) {
-    Map<Object, Object> data =
-        (Map<Object, Object>) YAML.load(new BufferedReader(new InputStreamReader(inputStream)));
+    Map<Object, Object> data = (Map<Object, Object>) YAML.load(new BufferedReader(
+        new InputStreamReader(inputStream)));
     Set<String> resolvedFilesLoad = new LinkedHashSet<String>();
     Set<String> resolvedFilesExclude = new LinkedHashSet<String>();
 
@@ -61,6 +63,11 @@ public class ConfigurationParser {
     }
     if (data.containsKey("server")) {
       this.server = (String) data.get("server");
+    }
+    if (data.containsKey("plugin")) {
+      for (Map<String, String> value: (List<Map<String, String>>) data.get("plugin")) {
+        plugins.add(new Plugin(value.get("name"), value.get("jar"), value.get("module")));
+      }
     }
 
     filesList.addAll(resolvedFilesLoad);
@@ -90,18 +97,18 @@ public class ConfigurationParser {
               GlobCompiler.DEFAULT_MASK | GlobCompiler.CASE_INSENSITIVE_MASK));
 
           if (filteredFiles == null) {
-            System.err.println("No files to load. The patterns/paths used in the configuration" +
-                    " file didn't match any file, the files patterns/paths need to be relative to" +
-                    " the configuration file.");
+            System.err.println("No files to load. The patterns/paths used in the configuration"
+                + " file didn't match any file, the files patterns/paths need to be relative to"
+                + " the configuration file.");
             System.exit(1);
           }
           Arrays.sort(filteredFiles, String.CASE_INSENSITIVE_ORDER);
           PathResolver pathResolver = new PathResolver();
 
           for (String filteredFile : filteredFiles) {
-            String resolvedFile =
-                pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\", "/") + "/"
-                    + filteredFile.replaceAll("\\\\", "/"));
+            String resolvedFile = pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\",
+                "/")
+                + "/" + filteredFile.replaceAll("\\\\", "/"));
 
             if (isPatch) {
               resolvedFile = "patch:" + resolvedFile;
@@ -121,5 +128,9 @@ public class ConfigurationParser {
 
   public String getServer() {
     return server;
+  }
+
+  public List<Plugin> getPlugins() {
+    return plugins;
   }
 }

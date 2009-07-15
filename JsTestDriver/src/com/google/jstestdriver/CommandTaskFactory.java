@@ -24,13 +24,15 @@ import java.util.Set;
 public class CommandTaskFactory {
 
   private final JsTestDriverFileFilter filter;
+  private FileReader fileReader;
 
-  public CommandTaskFactory(JsTestDriverFileFilter filter) {
+  public CommandTaskFactory(JsTestDriverFileFilter filter, FileReader fileReader) {
     this.filter = filter;
+    this.fileReader = fileReader;
   }
 
   public CommandTask getCommandTask(ResponseStream stream, Set<FileInfo> fileSet,
       String baseUrl, Server server, Map<String, String> params) {
-    return new CommandTask(filter, stream, fileSet, baseUrl, server, params);
+    return new CommandTask(filter, stream, fileSet, baseUrl, server, params, fileReader);
   }
 }

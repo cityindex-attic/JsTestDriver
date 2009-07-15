@@ -25,15 +25,24 @@ import java.util.Map;
 import java.util.Observer;
 import java.util.Set;
 
+import com.google.inject.Inject;
+
 /**
  * Produces instances of Actions, so they can have observers, and other stuff.
- *
+ * 
  * @author alexeagle@google.com (Alex Eagle)
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+
 public class ActionFactory {
 
   Map<Class<?>, List<Observer>> observers = new HashMap<Class<?>, List<Observer>>();
+  private final FileReader fileReader;
+
+  @Inject
+  public ActionFactory(FileReader fileReader) {
+    this.fileReader = fileReader;
+  }
 
   public JsTestDriverClient getJsTestDriverClient(Set<String> files, String serverAddress) {
     Set<FileInfo> filesInfo = new LinkedHashSet<FileInfo>();
@@ -47,24 +56,17 @@ public class ActionFactory {
         file = tokens[1].trim();
       }
       filesInfo.add(new FileInfo(file,
-          (file.startsWith("http://") || file.startsWith("https://")) ?
-              -1 : new File(file).lastModified(), isPatch));
+          (file.startsWith("http://") || file.startsWith("https://")) ? -1 : new File(file)
+              .lastModified(), isPatch));
     }
-    return new JsTestDriverClientImpl(new CommandTaskFactory(new JsTestDriverFileFilter() {
-      public String filterFile(String content, boolean reload) {
-        return content;
-      }
-
-      public List<String> resolveFilesDeps(String file) {
-        return Collections.singletonList(file);
-      }
-    }), filesInfo, serverAddress, new HttpServer());
+    return new JsTestDriverClientImpl(new CommandTaskFactory(new ActionFactoryFileFilter(),
+        fileReader), filesInfo, serverAddress, new HttpServer());
   }
 
   public ServerStartupAction getServerStartupAction(Integer port,
       CapturedBrowsers capturedBrowsers, FilesCache preloadedFilesCache) {
-    ServerStartupAction serverStartupAction =
-        new ServerStartupAction(port, capturedBrowsers, preloadedFilesCache);
+    ServerStartupAction serverStartupAction = new ServerStartupAction(port, capturedBrowsers,
+        preloadedFilesCache);
     if (observers.containsKey(CapturedBrowsers.class)) {
       for (Observer o : observers.get(CapturedBrowsers.class)) {
         capturedBrowsers.addObserver(o);
@@ -81,5 +83,15 @@ public class ActionFactory {
       observers.put(clazz, new LinkedList<Observer>());
     }
     observers.get(clazz).add(observer);
+  }
+
+  public static class ActionFactoryFileFilter implements JsTestDriverFileFilter {
+    public String filterFile(String content, boolean reload) {
+      return content;
+    }
+
+    public List<String> resolveFilesDeps(String file) {
+      return Collections.singletonList(file);
+    }
   }
 }

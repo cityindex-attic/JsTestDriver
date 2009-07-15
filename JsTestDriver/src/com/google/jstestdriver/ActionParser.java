@@ -32,7 +32,7 @@ public class ActionParser {
   }
 
   public List<Action> parseFlags(Flags flags, Set<String> fileSet, String defaultServerAddress) {
-    ActionSequenceBuilder builder = new ActionSequenceBuilder(actionFactory);
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(actionFactory, null);
     builder.usingFiles(fileSet, flags.getPreloadFiles())
            .addTests(flags.getTests(),
                      flags.getTestOutput(),

@@ -15,9 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,6 +43,9 @@ public class ActionSequenceBuilder {
       throw new IllegalArgumentException(msg);
     }
   }
+  public static String readFile(ActionSequenceBuilder actionSequenceBuilder, String file) {
+    return actionSequenceBuilder.readFile(file);
+  }
   private final ActionFactory actionFactory;
   private List<String> browsers = new LinkedList<String>();
   private boolean captureConsole;
@@ -63,10 +63,13 @@ public class ActionSequenceBuilder {
 
   private String xmlOutputDir;
   private List<String> commands = new LinkedList<String>();
+  private FileReader fileReader;
   
-  /** Begins the building of an action sequence. */
-  public ActionSequenceBuilder(ActionFactory actionFactory) {
+  /** Begins the building of an action sequence. 
+   * @param fileReader TODO*/
+  public ActionSequenceBuilder(ActionFactory actionFactory, FileReader fileReader) {
     this.actionFactory = actionFactory;
+    this.fileReader = fileReader;
   }
 
   /** Add the Browser startup and shutdown actions to the actions stack. */
@@ -82,7 +85,7 @@ public class ActionSequenceBuilder {
   private void addServerActions(List<Action> actions, boolean leaveServerRunning) {
     if (preloadFiles) {
       for (String file : fileSet) {
-        files.put(file, readFile(file));
+        files.put(file, ActionSequenceBuilder.readFile(this, file));
       }
     }
     ServerStartupAction serverStartupAction = actionFactory.getServerStartupAction(localServerPort,
@@ -185,29 +188,6 @@ public class ActionSequenceBuilder {
     return this;
   }
 
-  private String readFile(String file) {
-    BufferedInputStream bis = null;
-    try {
-      bis = new BufferedInputStream(new FileInputStream(file));
-      StringBuilder sb = new StringBuilder();
-
-      for (int c = bis.read(); c != -1; c = bis.read()) {
-        sb.append((char) c);
-      }
-      return sb.toString();
-    } catch (IOException e) {
-      throw new RuntimeException("Impossible to read file: " + file, e);
-    } finally {
-      if (bis != null) {
-        try {
-          bis.close();
-        } catch (IOException e) {
-          // ignore
-        }
-      }
-    }
-  }
-
   /**
    * Indicates that the browser should be reset before executing the tests.
    */
@@ -248,5 +228,10 @@ public class ActionSequenceBuilder {
   public ActionSequenceBuilder addCommands(List<String> commands) {
     this.commands.addAll(commands);
     return this;
+  }
+  
+  private String readFile(String file)  {
+    String readFile = fileReader.readFile(file);
+    return readFile;
   }
 }
