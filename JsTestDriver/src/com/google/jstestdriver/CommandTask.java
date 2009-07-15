@@ -50,16 +50,19 @@ public class CommandTask {
   private final JsTestDriverFileFilter filter;
   private final ResponseStream stream;
   private final Set<FileInfo> fileSet;
+  private final Set<String> filesToServe;
   private final String baseUrl;
   private final Server server;
   private final Map<String, String> params;
   private FileReader fileReader;
 
   public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
-      String baseUrl, Server server, Map<String, String> params, FileReader fileReader) {
+      Set<String> filesToServe, String baseUrl, Server server, Map<String, String> params,
+      FileReader fileReader) {
     this.filter = filter;
     this.stream = stream;
     this.fileSet = fileSet;
+    this.filesToServe = filesToServe;
     this.baseUrl = baseUrl;
     this.server = server;
     this.params = params;
@@ -163,9 +166,10 @@ public class CommandTask {
         loadFileParams.put("id", params.get("id"));
         loadFileParams.put("data", gson.toJson(filesDataChunk));
         server.post(baseUrl + "/fileSet", loadFileParams);
+        List<FileSource> filesToLoad = filterFilesToLoad(filesSrcChunk);
         List<String> loadParameters = new LinkedList<String>();
 
-        loadParameters.add(gson.toJson(filesSrcChunk));
+        loadParameters.add(gson.toJson(filesToLoad));
         loadParameters.add("false");
         JsonCommand cmd = new JsonCommand(CommandType.LOADTEST, loadParameters);
 
@@ -182,6 +186,17 @@ public class CommandTask {
         }
       }
     }
+  }
+
+  private List<FileSource> filterFilesToLoad(List<FileSource> fileSources) {
+    List<FileSource> filteredFileSources = new LinkedList<FileSource>();
+
+    for (FileSource fileSrc : fileSources) {
+      if (!filesToServe.contains(fileSrc.getFileSrc().substring(6))) {
+        filteredFileSources.add(fileSrc);
+      }
+    }
+    return filteredFileSources;
   }
 
   private List<FileInfo> createPatchLessFileSet(Set<FileInfo> originalFileSet,

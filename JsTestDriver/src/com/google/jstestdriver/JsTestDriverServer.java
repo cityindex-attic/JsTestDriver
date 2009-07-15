@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Set;
@@ -120,7 +121,8 @@ public class JsTestDriverServer extends Observable {
       }
       File config = new File(flags.getConfig());
       Set<String> fileSet = new LinkedHashSet<String>();
-      List<Class<? extends Module>> plugins = null;
+      Set<String> filesToServe = new LinkedHashSet<String>();
+      List<Class<? extends Module>> plugins = new LinkedList<Class<? extends Module>>();
       String defaultServerAddress = null;
 
       if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty()
@@ -132,6 +134,7 @@ public class JsTestDriverServer extends Observable {
           try {
             configParser.parse(new FileInputStream(flags.getConfig()));
             fileSet = configParser.getFilesList();
+            filesToServe = configParser.getServeFilesList();
             defaultServerAddress = configParser.getServer();
             plugins = pluginLoader.load(configParser.getPlugins());
           } catch (FileNotFoundException e) {
@@ -140,8 +143,8 @@ public class JsTestDriverServer extends Observable {
           }
         }
       }
-      Guice.createInjector(new JsTestDriverModule(flags, fileSet, defaultServerAddress, plugins))
-          .getInstance(ActionRunner.class).runActions();
+      Guice.createInjector(new JsTestDriverModule(flags, fileSet, filesToServe,
+          defaultServerAddress, plugins)).getInstance(ActionRunner.class).runActions();
     } catch (CmdLineException e) {
       System.err.println(e.getMessage());
       parser.printUsage(System.err);

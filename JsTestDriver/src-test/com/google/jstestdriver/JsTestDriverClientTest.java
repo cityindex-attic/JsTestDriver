@@ -96,7 +96,7 @@ public class JsTestDriverClientTest extends TestCase {
 
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+        new LinkedHashSet<String>(), "http://localhost", server);
     FakeResponseStream stream = new FakeResponseStream();
     FakeResponseStreamFactory factory = new FakeResponseStreamFactory();
 
@@ -125,7 +125,7 @@ public class JsTestDriverClientTest extends TestCase {
         + "{\"id\":1, \"name\":\"name1\", \"version\":\"ver1\", \"os\":\"os1\"}]");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+        new LinkedHashSet<String>(), "http://localhost", server);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
     List<BrowserInfo> browsers = new ArrayList<BrowserInfo>(browsersCollection);
 
@@ -157,7 +157,7 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"last\":true}");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+        new LinkedHashSet<String>(), "http://localhost", server);
     FakeResponseStreamFactory factory = new FakeResponseStreamFactory();
     FakeResponseStream stream = new FakeResponseStream();
 
@@ -180,7 +180,7 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"last\":true}");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+        new LinkedHashSet<String>(), "http://localhost", server);
     FakeResponseStreamFactory factory = new FakeResponseStreamFactory();
     FakeResponseStream stream = new FakeResponseStream();
 

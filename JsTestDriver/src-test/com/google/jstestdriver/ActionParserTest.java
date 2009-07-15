@@ -37,7 +37,8 @@ public class ActionParserTest extends TestCase {
     }
 
     flags.setPort(9876);
-    List<Action> actions = parser.parseFlags(flags, new LinkedHashSet<String>(), "");
+    List<Action> actions = parser.parseFlags(flags, new LinkedHashSet<String>(),
+        new LinkedHashSet<String>(), "");
 
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -61,7 +62,8 @@ public class ActionParserTest extends TestCase {
     expectedActions.add(ThreadedActionsRunner.class);
     expectedActions.add(BrowserShutdownAction.class);
 
-    List<Action> actions = parser.parseFlags(flags, new LinkedHashSet<String>(), "");
+    List<Action> actions = parser.parseFlags(flags, new LinkedHashSet<String>(),
+        new LinkedHashSet<String>(), "");
     assertSequence(expectedActions, actions);
 
     ThreadedActionsRunner action = findAction(actions, ThreadedActionsRunner.class);
@@ -83,7 +85,8 @@ public class ActionParserTest extends TestCase {
 
     String serverAddress = "http://otherserver:8989";
     flags.setServer(serverAddress);
-    List<Action> actions = parser.parseFlags(flags, new LinkedHashSet<String>(), "");
+    List<Action> actions = parser.parseFlags(flags, new LinkedHashSet<String>(),
+        new LinkedHashSet<String>(), "");
 
     BrowserStartupAction action = findAction(actions, BrowserStartupAction.class);
     assertNotNull("Server action not created", action);
@@ -97,7 +100,7 @@ public class ActionParserTest extends TestCase {
     flags.setBrowser("browser");
     flags.setTests("foo.testBar");
     try {
-      parser.parseFlags(flags, new LinkedHashSet<String>(), "");
+      parser.parseFlags(flags, new LinkedHashSet<String>(), new LinkedHashSet<String>(), "");
       fail("expected no server and no port exception");
     } catch (IllegalArgumentException e) {
       // pass
@@ -122,7 +125,8 @@ public class ActionParserTest extends TestCase {
     flags.setPort(9876);
     flags.setTestOutput("/out");
 
-    List<Action> actions = parser.parseFlags(flags, new HashSet<String>(), "");
+    List<Action> actions = parser.parseFlags(flags, new HashSet<String>(),
+        new LinkedHashSet<String>(), "");
     assertSequence(expectedActions, actions);
 
     ThreadedActionsRunner testRunner = findAction(actions, ThreadedActionsRunner.class);

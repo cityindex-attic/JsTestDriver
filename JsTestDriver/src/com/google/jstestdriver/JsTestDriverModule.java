@@ -13,18 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package com.google.jstestdriver;
 
-import java.util.List;
-import java.util.Set;
-
 import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.multibindings.Multibinder;
 import com.google.jstestdriver.hooks.FileReaderHook;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Guice module for configuring JsTestDriver.
@@ -37,12 +35,14 @@ public class JsTestDriverModule extends AbstractModule {
   private final FlagsImpl flags;
   private final String defaultServerAddress;
   private final Set<String> fileSet;
+  private final Set<String> filesToServe;
   private final List<Class<? extends Module>> plugins;
 
-  public JsTestDriverModule(FlagsImpl flags, Set<String> fileSet, String defaultServerAddress,
-      List<Class<? extends Module>> plugins) {
+  public JsTestDriverModule(FlagsImpl flags, Set<String> fileSet, Set<String> filesToServe,
+      String defaultServerAddress, List<Class<? extends Module>> plugins) {
     this.flags = flags;
     this.fileSet = fileSet;
+    this.filesToServe = filesToServe;
     this.defaultServerAddress = defaultServerAddress;
     this.plugins = plugins;
   }
@@ -64,9 +64,8 @@ public class JsTestDriverModule extends AbstractModule {
     bind(FileReader.class).to(HookedFileReader.class);
   }
 
-  @Inject
   @Provides
   public List<Action> createActions(ActionFactory factory) {
-    return new ActionParser(factory).parseFlags(flags, fileSet, defaultServerAddress);
+    return new ActionParser(factory).parseFlags(flags, fileSet, filesToServe, defaultServerAddress);
   }
 }

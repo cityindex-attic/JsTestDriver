@@ -108,4 +108,49 @@ public class ConfigurationParserTest extends TestCase {
     List<Plugin> plugins = parser.getPlugins();
     assertEquals(expected, plugins);
   }
+
+  public void testServeFile() throws Exception {
+    File tmpDir = File.createTempFile("test", "JsTestDriver", new File(System
+        .getProperty("java.io.tmpdir")));
+
+    tmpDir.delete();
+    tmpDir.mkdir();
+    tmpDir.deleteOnExit();
+    File codeDir = new File(tmpDir, "code");
+    File testDir = new File(tmpDir, "test");
+
+    codeDir.mkdir();
+    codeDir.deleteOnExit();
+    testDir.mkdir();
+    testDir.deleteOnExit();
+    File code = new File(codeDir, "code.js");
+    File code2 = new File(codeDir, "code2.js");
+    File test = new File(testDir, "test.js");
+    File test2 = new File(testDir, "test2.js");
+    File test3 = new File(testDir, "test3.js");
+
+    code.createNewFile();
+    code.deleteOnExit();
+    code2.createNewFile();
+    code2.deleteOnExit();
+    test.createNewFile();
+    test.deleteOnExit();
+    test2.createNewFile();
+    test2.deleteOnExit();
+    test3.createNewFile();
+    test3.deleteOnExit();
+    ConfigurationParser parser = new ConfigurationParser(tmpDir);
+    String configFile = "serve:\n - code/*.js\n - test/*.js\nexclude:\n"
+        + " - code/code2.js\n - test/test2.js";
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+
+    parser.parse(bais);
+    Set<String> files = parser.getServeFilesList();
+    List<String> listFiles = new ArrayList<String>(files);
+
+    assertEquals(3, files.size());
+    assertTrue(listFiles.get(0).endsWith("code/code.js"));
+    assertTrue(listFiles.get(1).endsWith("test/test.js"));
+    assertTrue(listFiles.get(2).endsWith("test/test3.js"));
+  }
 }

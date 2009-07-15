@@ -31,9 +31,11 @@ public class ActionParser {
     this.actionFactory = actionFactory;
   }
 
-  public List<Action> parseFlags(Flags flags, Set<String> fileSet, String defaultServerAddress) {
+  public List<Action> parseFlags(Flags flags, Set<String> fileSet, Set<String> filesToServe,
+      String defaultServerAddress) {
     ActionSequenceBuilder builder = new ActionSequenceBuilder(actionFactory, null);
     builder.usingFiles(fileSet, flags.getPreloadFiles())
+           .servingFiles(filesToServe)
            .addTests(flags.getTests(),
                      flags.getTestOutput(),
                      flags.getVerbose(), 

@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,7 @@ public class ActionSequenceBuilder {
   private boolean dryRun;
   private Map<String, String> files = new HashMap<String, String>();
   private Set<String> fileSet;
+  private Set<String> filesToServe;
   private int localServerPort = -1;
   private boolean preloadFiles = false;
   private String remoteServerAddress;
@@ -64,7 +66,7 @@ public class ActionSequenceBuilder {
   private String xmlOutputDir;
   private List<String> commands = new LinkedList<String>();
   private FileReader fileReader;
-  
+
   /** Begins the building of an action sequence. 
    * @param fileReader TODO*/
   public ActionSequenceBuilder(ActionFactory actionFactory, FileReader fileReader) {
@@ -123,8 +125,10 @@ public class ActionSequenceBuilder {
   public List<Action> build() {
     List<Action> actions = new LinkedList<Action>();
     require(getServerAddress(), "Oh snap! the Server address was never defined!");
-    JsTestDriverClient client = actionFactory.getJsTestDriverClient(fileSet, getServerAddress());
-    
+    JsTestDriverClient client = actionFactory.getJsTestDriverClient(fileSet, filesToServe == null ?
+        new LinkedHashSet<String>() : filesToServe,
+        getServerAddress());
+
     threadedActions = createThreadedActions(client);
 
     if (!threadedActions.isEmpty()) {
@@ -205,6 +209,11 @@ public class ActionSequenceBuilder {
   public ActionSequenceBuilder usingFiles(Set<String> fileSet, boolean preloadFiles) {
     this.fileSet = fileSet;
     this.preloadFiles = preloadFiles;
+    return this;
+  }
+
+  public ActionSequenceBuilder servingFiles(Set<String> filesToServe) {
+    this.filesToServe = filesToServe;
     return this;
   }
 

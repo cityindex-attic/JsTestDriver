@@ -85,7 +85,8 @@ public class ActionSequenceBuilderTest extends TestCase {
 
     ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
     assertEquals(2, runner.getActions().size());
-    List<Class<? extends ThreadedAction>> expectedThreadedActions = new ArrayList<Class<? extends ThreadedAction>>();
+    List<Class<? extends ThreadedAction>> expectedThreadedActions =
+        new ArrayList<Class<? extends ThreadedAction>>();
     expectedThreadedActions.add(DryRunAction.class);
     expectedThreadedActions.add(RunTestsAction.class);
     this.<ThreadedAction> assertSequence(expectedThreadedActions, runner.getActions());
@@ -99,7 +100,8 @@ public class ActionSequenceBuilderTest extends TestCase {
 
     ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
     assertEquals(2, runner.getActions().size());
-    List<Class<? extends ThreadedAction>> expectedThreadedActions = new ArrayList<Class<? extends ThreadedAction>>();
+    List<Class<? extends ThreadedAction>> expectedThreadedActions =
+        new ArrayList<Class<? extends ThreadedAction>>();
     expectedThreadedActions.add(ResetAction.class);
     expectedThreadedActions.add(RunTestsAction.class);
     this.<ThreadedAction> assertSequence(expectedThreadedActions, runner.getActions());
@@ -113,7 +115,8 @@ public class ActionSequenceBuilderTest extends TestCase {
 
     ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
     assertEquals(3, runner.getActions().size());
-    List<Class<? extends ThreadedAction>> expectedThreadedActions = new ArrayList<Class<? extends ThreadedAction>>();
+    List<Class<? extends ThreadedAction>> expectedThreadedActions =
+        new ArrayList<Class<? extends ThreadedAction>>();
     expectedThreadedActions.add(ResetAction.class);
     expectedThreadedActions.add(DryRunAction.class);
     expectedThreadedActions.add(RunTestsAction.class);
@@ -130,7 +133,8 @@ public class ActionSequenceBuilderTest extends TestCase {
     assertNotNull(runner);
     List<ThreadedAction> actions = runner.getActions();
     assertEquals(2, actions.size());
-    List<Class<? extends ThreadedAction>> expectedThreadedActions = new ArrayList<Class<? extends ThreadedAction>>();
+    List<Class<? extends ThreadedAction>> expectedThreadedActions =
+        new ArrayList<Class<? extends ThreadedAction>>();
     expectedThreadedActions.add(EvalAction.class);
     expectedThreadedActions.add(EvalAction.class);
     this.<ThreadedAction> assertSequence(expectedThreadedActions, actions);

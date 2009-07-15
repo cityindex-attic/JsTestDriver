@@ -37,13 +37,15 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
   private final CommandTaskFactory commandTaskFactory;
   private final Set<FileInfo> fileSet;
+  private final Set<String> filesToServe;
   private final String baseUrl;
   private final Server server;
 
   public JsTestDriverClientImpl(CommandTaskFactory commandTaskFactory, Set<FileInfo> fileSet,
-      String baseUrl, Server server) {
+      Set<String> filesToServe, String baseUrl, Server server) {
     this.commandTaskFactory = commandTaskFactory;
     this.fileSet = fileSet;
+    this.filesToServe = filesToServe;
     this.baseUrl = baseUrl;
     this.server = server;
   }
@@ -58,7 +60,8 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
     params.put("data", cmd);
     params.put("id", id);
-    CommandTask task = commandTaskFactory.getCommandTask(stream, fileSet, baseUrl, server, params);
+    CommandTask task = commandTaskFactory.getCommandTask(stream, fileSet, filesToServe,
+        baseUrl, server, params);
 
     task.run();
   }
