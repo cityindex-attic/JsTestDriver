@@ -13,21 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.eclipse.core;
+package com.google.jstestdriver.eclipse.ui.views;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
-public class Activator extends AbstractUIPlugin {
+public class ViewLabelProvider extends LabelProvider {
+    private ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 
-    public static final String PLUGIN_ID = "com.google.jstestdriver.eclipse.core";
-
-    public void start(BundleContext context) throws Exception {
-        super.start(context);
+    public String getText(Object obj) {
+        return obj.toString();
     }
-
-    public void stop(BundleContext context) throws Exception {
-        super.stop(context);
+    public Image getImage(Object obj) {
+        String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
+        return sharedImages.getImage(imageKey);
     }
-
 }

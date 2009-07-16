@@ -13,21 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.eclipse.core;
+package com.google.jstestdriver.eclipse.ui.views;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
+import org.eclipse.jface.viewers.ViewerSorter;
 
-public class Activator extends AbstractUIPlugin {
-
-    public static final String PLUGIN_ID = "com.google.jstestdriver.eclipse.core";
-
-    public void start(BundleContext context) throws Exception {
-        super.start(context);
-    }
-
-    public void stop(BundleContext context) throws Exception {
-        super.stop(context);
-    }
-
+public class NameSorter extends ViewerSorter {
 }
