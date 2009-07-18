@@ -160,9 +160,30 @@ public class FileSetServlet extends HttpServlet implements Observer {
           filesToRequest.add(info.getFileName());
         }
       }
-      writer.write(gson.toJson(filesToRequest));
+      // TODO(jeremiele): remove when Cory's FileInfo refactoring is in
+      Set<String> filteredFilesToRequest = filterServeOnlyFiles(clientFileSet, filesToRequest);
+      writer.write(gson.toJson(filteredFilesToRequest));
     }
     writer.flush();
+  }
+
+  // TODO(jeremiele): remove when Cory's FileInfo refactoring is in
+  private Set<String> filterServeOnlyFiles(Collection<FileInfo> clientFileSet,
+      Set<String> filesToRequest) {
+    Set<String> filteredFilesToRequest = new LinkedHashSet<String>();
+    Set<String> cachedFiles = filesCache.getAllFileNames();
+
+    for (FileInfo fileInfo : clientFileSet) {
+      String fileName = fileInfo.getFileName();
+
+      if (filesToRequest.contains(fileName)) {
+        if (!fileInfo.isServeOnly() || !cachedFiles.contains(fileName) ||
+            filesCache.getFileData(fileName).getTimestamp() < fileInfo.getTimestamp()) {
+          filteredFilesToRequest.add(fileName);
+        }
+      }
+    }
+    return filteredFilesToRequest;
   }
 
   public void update(Observable o, Object arg) {
@@ -177,9 +198,9 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
     for (FileData f : filesData) {
       String path = f.getFile();
-      String fileData = f.getData();
+//      String fileData = f.getData();
 
-      filesCache.addFile(path, fileData);
+      filesCache.addFile(path, f);
     }
   }
 }

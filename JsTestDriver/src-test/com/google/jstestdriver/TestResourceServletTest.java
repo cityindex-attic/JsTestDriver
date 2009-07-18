@@ -32,17 +32,17 @@ public class TestResourceServletTest extends TestCase {
 
   public void testEmptyReturnWhenFileNotPresent() throws Exception {
     TestResourceServlet servlet =
-        new TestResourceServlet(new FilesCache(new HashMap<String, String>()));
+        new TestResourceServlet(new FilesCache(new HashMap<String, FileData>()));
 
     servlet.service("nothing", writer);
     assertEquals(0, out.toString().length());
   }
 
   public void testServeFile() throws Exception {
-    Map<String, String> files = new HashMap<String, String>();
+    Map<String, FileData> files = new HashMap<String, FileData>();
 
-    files.put("dummy.js", "data");
-    files.put("dummytoo.js", "more data");
+    files.put("dummy.js", new FileData("dummy.js", "data", -1));
+    files.put("dummytoo.js", new FileData("dummytoo.js", "more data", 20));
     FilesCache filesCache = new FilesCache(files);
     TestResourceServlet resourceServlet = new TestResourceServlet(filesCache);
 

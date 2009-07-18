@@ -26,12 +26,12 @@ import java.util.Map;
 public class StandaloneRunnerServletTest extends TestCase {
 
   public void testCaptureAddFilesToLoadAndRun() throws Exception {
-    Map<String, String> files = new LinkedHashMap<String, String>();
+    Map<String, FileData> files = new LinkedHashMap<String, FileData>();
 
-    files.put("file1.js", "content1");
-    files.put("file2.js", "content2");
-    files.put("file3.js", "content3");
-    files.put("file4.js", "content4");
+    files.put("file1.js", new FileData("file1.js", "content1", 30));
+    files.put("file2.js", new FileData("file2.js", "content2", 5));
+    files.put("file3.js", new FileData("file3.js", "content3", 53));
+    files.put("file4.js", new FileData("file4.js", "content4", 1));
     FilesCache cache = new FilesCache(files);
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     StandaloneRunnerServlet runnerServlet =

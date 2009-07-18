@@ -149,9 +149,9 @@ public class ActionSequenceBuilderTest extends TestCase {
         .usingFiles(files, false).build();
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
-    expectedActions.add(BrowserStartupAction.class);
+//    expectedActions.add(BrowserStartupAction.class);
     expectedActions.add(ThreadedActionsRunner.class);
-    expectedActions.add(BrowserShutdownAction.class);
+//    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
     this.<Action>assertSequence(expectedActions, actions);
   }

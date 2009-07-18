@@ -23,14 +23,16 @@ public class FileInfo {
   private String fileName;
   private Long timestamp;
   private boolean isPatch;
+  private boolean serveOnly;
 
   public FileInfo() {
   }
 
-  public FileInfo(String fileName, long timestamp, boolean isPatch) {
+  public FileInfo(String fileName, long timestamp, boolean isPatch, boolean serveOnly) {
     this.fileName = fileName;
     this.timestamp = timestamp;
     this.isPatch = isPatch;
+    this.serveOnly = serveOnly;
   }
 
   public String getFileName() {
@@ -43,6 +45,10 @@ public class FileInfo {
 
   public boolean isPatch() {
     return isPatch;
+  }
+
+  public boolean isServeOnly() {
+    return serveOnly;
   }
 
   @Override

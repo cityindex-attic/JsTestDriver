@@ -58,12 +58,12 @@ public class ActionFactory {
       }
       filesInfo.add(new FileInfo(file,
           (file.startsWith("http://") || file.startsWith("https://")) ? -1 : new File(file)
-              .lastModified(), isPatch));
+              .lastModified(), isPatch, false));
     }
     for (String file : filesToServe) {
       filesInfo.add(new FileInfo(file,
           (file.startsWith("http://") || file.startsWith("https://")) ? -1 : new File(file)
-              .lastModified(), false));
+              .lastModified(), false, true));
     }
     return new JsTestDriverClientImpl(new CommandTaskFactory(new ActionFactoryFileFilter(),
         fileReader), filesInfo, filesToServe, serverAddress, new HttpServer());

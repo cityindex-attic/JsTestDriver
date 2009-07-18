@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class ActionSequenceBuilder {
   private boolean captureConsole;
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
   private boolean dryRun;
-  private Map<String, String> files = new HashMap<String, String>();
+  private Map<String, FileData> files = new HashMap<String, FileData>();
   private Set<String> fileSet;
   private Set<String> filesToServe;
   private int localServerPort = -1;
@@ -76,18 +77,21 @@ public class ActionSequenceBuilder {
 
   /** Add the Browser startup and shutdown actions to the actions stack. */
   private void addBrowserControlActions(List<Action> actions) {
-    BrowserStartupAction browserStartupAction = new BrowserStartupAction(browsers,
-        getServerAddress());
-    capturedBrowsers.addObserver(browserStartupAction);
-    actions.add(0, browserStartupAction);
-    actions.add(new BrowserShutdownAction(browserStartupAction));
+    if (!browsers.isEmpty()) {
+      BrowserStartupAction browserStartupAction = new BrowserStartupAction(browsers,
+          getServerAddress());
+      capturedBrowsers.addObserver(browserStartupAction);
+      actions.add(0, browserStartupAction);
+      actions.add(new BrowserShutdownAction(browserStartupAction));
+    }
   }
 
   /** Wraps the current sequence of actions with the server start and stop actions. */
   private void addServerActions(List<Action> actions, boolean leaveServerRunning) {
     if (preloadFiles) {
       for (String file : fileSet) {
-        files.put(file, ActionSequenceBuilder.readFile(this, file));
+        files.put(file, new FileData(file, ActionSequenceBuilder.readFile(this, file), new File(
+            file).lastModified()));
       }
     }
     ServerStartupAction serverStartupAction = actionFactory.getServerStartupAction(localServerPort,

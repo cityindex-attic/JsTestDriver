@@ -62,7 +62,7 @@ public class CommandTaskTest extends TestCase {
   public void testUploadFiles() throws Exception {
     MockServer server = new MockServer();
     Gson gson = new Gson();
-    FileInfo fileInfo = new FileInfo("foo.js", 1232, false);
+    FileInfo fileInfo = new FileInfo("foo.js", 1232, false, false);
 
     server.expect("http://localhost/heartbeat?id=1", "OK");
     server.expect("http://localhost/fileSet?POST?{id=1, fileSet="
