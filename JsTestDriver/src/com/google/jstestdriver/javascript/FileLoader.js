@@ -46,7 +46,7 @@ jstestdriver.FileLoader.prototype.load = function(files, onAllFilesLoaded) {
     this.dom_.write = function() {};
     this.createTag(this.files_.shift());
   } else {
-    onAllFilesLoaded('no files to load');
+    onAllFilesLoaded({ message: 'no files to load', successFiles: [], errorFiles: [] });
   }
 };
 
