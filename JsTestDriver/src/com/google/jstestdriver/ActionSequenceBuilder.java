@@ -43,9 +43,7 @@ public class ActionSequenceBuilder {
       throw new IllegalArgumentException(msg);
     }
   }
-  public static String readFile(ActionSequenceBuilder actionSequenceBuilder, String file) {
-    return actionSequenceBuilder.readFile(file);
-  }
+
   private final ActionFactory actionFactory;
   private List<String> browsers = new LinkedList<String>();
   private boolean captureConsole;
