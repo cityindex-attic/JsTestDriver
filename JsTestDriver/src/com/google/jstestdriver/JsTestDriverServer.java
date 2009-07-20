@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Set;
@@ -120,8 +119,8 @@ public class JsTestDriverServer extends Observable {
         System.exit(0);
       }
       File config = new File(flags.getConfig());
-      Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
-      List<Class<? extends Module>> plugins = new LinkedList<Class<? extends Module>>();
+      Set<String> fileSet = new LinkedHashSet<String>();
+      List<Class<? extends Module>> plugins = null;
       String defaultServerAddress = null;
 
       if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty()
