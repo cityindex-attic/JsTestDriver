@@ -266,11 +266,8 @@ public class CommandTask {
   }
 
   private boolean sameFiles(Collection<FileInfo> filesToUpload, List<FileInfo> fileSet) {
-    if (filesToUpload.size() != fileSet.size()) {
-      return false;
-    }
     for (FileInfo info : fileSet) {
-      if (!filesToUpload.contains(info)) {
+      if (!info.isServeOnly() && !filesToUpload.contains(info)) {
         return false;
       }
     }

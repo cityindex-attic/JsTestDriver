@@ -73,5 +73,9 @@ public class UserAgentParserTest extends TestCase {
     parser = new UserAgentParser();
     parser.parse(IE_WINDOWS);
     assertEquals("Microsoft Internet Explorer", parser.getName());
+
+    parser = new UserAgentParser();
+    parser.parse("Some weird unrecognized user-agent");
+    assertEquals("Some weird unrecognized user-agent", parser.getName());
   }
 }

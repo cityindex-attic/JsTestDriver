@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class UserAgentParser {
 
   private static final Pattern BROWSER_NAME_AND_VERSION =
-      Pattern.compile("(Safari|Firefox)/([0-9\\.]+)");
+      Pattern.compile("(Safari|Firefox|Opera|Konqueror)/([0-9\\.]+)");
   private static final Pattern CHROME_VERSION = Pattern.compile("Chrome/([0-9\\.]+)");
   private static final Pattern MSIE_VERSION = Pattern.compile("; MSIE ([0-9\\.]+);");
 
@@ -62,6 +62,8 @@ public class UserAgentParser {
       if (matcher.find()) {
         userAgentName = matcher.group(1);
         userAgentVersion = matcher.group(2);
+      } else {
+        userAgentName = userAgent;
       }
     }
   }

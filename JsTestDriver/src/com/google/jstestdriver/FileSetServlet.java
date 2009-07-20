@@ -156,20 +156,21 @@ public class FileSetServlet extends HttpServlet implements Observer {
       }
     }
     if (!filesToRequest.isEmpty()) {
-      if (browser.getBrowserInfo().getName().contains("Safari")) {
+      if (browser.getBrowserInfo().getName().contains("Safari")
+          || browser.getBrowserInfo().getName().contains("Opera")
+          || browser.getBrowserInfo().getName().contains("Konqueror")) {
         filesToRequest.clear();
         for (FileInfo info : clientFileSet) {
           filesToRequest.add(info);
         }
       }
-      // TODO(jeremiele): remove when Cory's FileInfo refactoring is in
       Set<FileInfo> filteredFilesToRequest = filterServeOnlyFiles(clientFileSet, filesToRequest);
+
       writer.write(gson.toJson(filteredFilesToRequest));
     }
     writer.flush();
   }
 
-  // TODO(jeremiele): remove when Cory's FileInfo refactoring is in
   private Set<FileInfo> filterServeOnlyFiles(Collection<FileInfo> clientFileSet,
       Set<FileInfo> filesToRequest) {
     Set<FileInfo> filteredFilesToRequest = new LinkedHashSet<FileInfo>();
@@ -177,8 +178,10 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
     for (FileInfo fileInfo : clientFileSet) {
       if (filesToRequest.contains(fileInfo)) {
-        if (!fileInfo.isServeOnly() || !cachedFiles.contains(fileInfo.getFileName()) ||
-            filesCache.getFileData(fileInfo.getFileName()).getTimestamp() < fileInfo.getTimestamp()) {
+        if (!fileInfo.isServeOnly()
+            || !cachedFiles.contains(fileInfo.getFileName())
+            || filesCache.getFileData(fileInfo.getFileName()).getTimestamp() < fileInfo
+                .getTimestamp()) {
           filteredFilesToRequest.add(fileInfo);
         }
       }
@@ -198,7 +201,6 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
     for (FileData f : filesData) {
       String path = f.getFile();
-//      String fileData = f.getData();
 
       filesCache.addFile(path, f);
     }
