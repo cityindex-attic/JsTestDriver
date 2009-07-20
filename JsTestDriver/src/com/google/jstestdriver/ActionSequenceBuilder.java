@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
@@ -50,7 +49,7 @@ public class ActionSequenceBuilder {
   private boolean captureConsole;
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
   private boolean dryRun;
-  private Map<String, String> files = new HashMap<String, String>();
+  private HashMap<String,FileData> files = new HashMap<String, FileData>();
   private Set<FileInfo> fileSet;
   private int localServerPort = -1;
   private boolean preloadFiles = false;
@@ -84,9 +83,9 @@ public class ActionSequenceBuilder {
   /** Wraps the current sequence of actions with the server start and stop actions. */
   private void addServerActions(List<Action> actions, boolean leaveServerRunning) {
     if (preloadFiles) {
-      for (String file : fileSet) {
-        files.put(file, new FileData(file, fileReader.readFile(this, file), new File(
-            file).lastModified()));
+      for (FileInfo file : fileSet) {
+        files.put(file.getFileName(), new FileData(file.getFileName(), fileReader.readFile(file
+            .getFileName()), new File(file.getFileName()).lastModified()));
       }
     }
     ServerStartupAction serverStartupAction = actionFactory.getServerStartupAction(localServerPort,

@@ -163,25 +163,23 @@ public class FileSetServlet extends HttpServlet implements Observer {
         }
       }
       // TODO(jeremiele): remove when Cory's FileInfo refactoring is in
-      Set<String> filteredFilesToRequest = filterServeOnlyFiles(clientFileSet, filesToRequest);
+      Set<FileInfo> filteredFilesToRequest = filterServeOnlyFiles(clientFileSet, filesToRequest);
       writer.write(gson.toJson(filteredFilesToRequest));
     }
     writer.flush();
   }
 
   // TODO(jeremiele): remove when Cory's FileInfo refactoring is in
-  private Set<String> filterServeOnlyFiles(Collection<FileInfo> clientFileSet,
-      Set<String> filesToRequest) {
-    Set<String> filteredFilesToRequest = new LinkedHashSet<String>();
+  private Set<FileInfo> filterServeOnlyFiles(Collection<FileInfo> clientFileSet,
+      Set<FileInfo> filesToRequest) {
+    Set<FileInfo> filteredFilesToRequest = new LinkedHashSet<FileInfo>();
     Set<String> cachedFiles = filesCache.getAllFileNames();
 
     for (FileInfo fileInfo : clientFileSet) {
-      String fileName = fileInfo.getFileName();
-
-      if (filesToRequest.contains(fileName)) {
-        if (!fileInfo.isServeOnly() || !cachedFiles.contains(fileName) ||
-            filesCache.getFileData(fileName).getTimestamp() < fileInfo.getTimestamp()) {
-          filteredFilesToRequest.add(fileName);
+      if (filesToRequest.contains(fileInfo)) {
+        if (!fileInfo.isServeOnly() || !cachedFiles.contains(fileInfo.getFileName()) ||
+            filesCache.getFileData(fileInfo.getFileName()).getTimestamp() < fileInfo.getTimestamp()) {
+          filteredFilesToRequest.add(fileInfo);
         }
       }
     }
