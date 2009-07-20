@@ -111,10 +111,12 @@ public class ConfigurationParser {
           Arrays.sort(filteredFiles, String.CASE_INSENSITIVE_ORDER);
 
           for (String filteredFile : filteredFiles) {
-            String resolvedFile = pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\",
-                "/")
-                + "/" + filteredFile.replaceAll("\\\\", "/"));
-            resolvedFiles.add(new FileInfo(resolvedFile, file.lastModified(), isPatch, serveOnly));
+            String resolvedFilePath = pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\",
+                "/") + "/" + filteredFile.replaceAll("\\\\", "/"));
+            File resolvedFile = new File(resolvedFilePath);
+
+            resolvedFiles.add(new FileInfo(resolvedFilePath, resolvedFile.lastModified(), isPatch,
+                serveOnly));
           }
         }
       }

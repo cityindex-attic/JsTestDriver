@@ -139,4 +139,28 @@ public class ConfigurationParserTest extends TestCase {
     assertTrue(serveFiles.get(3).getFileName().endsWith("serve/serve1.js"));
     assertTrue(serveFiles.get(3).isServeOnly());
   }
+
+  public void testCheckValidTimeStamp() throws Exception {
+    File codeDir = createTmpSubDir("code");
+    File testDir = createTmpSubDir("test");
+    createTmpFile(codeDir, "code.js");
+    createTmpFile(codeDir, "code2.js");
+    createTmpFile(testDir, "test.js");
+    createTmpFile(testDir, "test2.js");
+    createTmpFile(testDir, "test3.js");
+
+    ConfigurationParser parser = new ConfigurationParser(tmpDir);
+    String configFile = "load:\n - code/*.js\n - test/*.js\nexclude:\n"
+        + " - code/code2.js\n - test/test2.js";
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+
+    parser.parse(bais);
+    Set<FileInfo> files = parser.getFilesList();
+    List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
+
+    assertEquals(3, files.size());
+    assertTrue(listFiles.get(0).getTimestamp() > 0);
+    assertTrue(listFiles.get(1).getTimestamp() > 0);
+    assertTrue(listFiles.get(2).getTimestamp() > 0);
+  }
 }
