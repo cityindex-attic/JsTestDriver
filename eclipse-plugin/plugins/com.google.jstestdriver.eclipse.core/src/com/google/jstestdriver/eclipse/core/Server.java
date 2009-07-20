@@ -15,12 +15,24 @@
  */
 package com.google.jstestdriver.eclipse.core;
 
-import com.google.jstestdriver.PathResolver;
+import java.util.HashMap;
+
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.FilesCache;
+import com.google.jstestdriver.ServerStartupAction;
 
 public class Server {
 
-    public Server() {
-        Class clazz = PathResolver.class;
-    }
+  private ServerStartupAction startupAction;
 
+  public void start() {
+    // TODO(shyamseshadri): Get rid of this and use the builder when we have something substantial.
+    startupAction = new ServerStartupAction(4224, new CapturedBrowsers(),
+        new FilesCache(new HashMap<String, String>()));
+    startupAction.run();
+  }
+
+  public void stop() {
+    startupAction.getServer().stop();
+  }
 }

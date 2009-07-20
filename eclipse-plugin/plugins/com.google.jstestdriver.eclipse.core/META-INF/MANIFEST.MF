@@ -10,3 +10,4 @@ Require-Bundle: org.eclipse.ui,
  com.google.jstestdriver;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
+Export-Package: com.google.jstestdriver.eclipse.core

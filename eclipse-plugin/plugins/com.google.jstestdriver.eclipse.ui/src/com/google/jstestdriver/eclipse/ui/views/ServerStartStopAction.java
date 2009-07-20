@@ -17,27 +17,39 @@ package com.google.jstestdriver.eclipse.ui.views;
 
 import org.eclipse.jface.action.Action;
 
+import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
 
 public final class ServerStartStopAction extends Action {
-    private final Icons icons;
-    private boolean isRunning = false;
+  private final Icons icons;
+  private boolean isRunning = false;
+  private final Server server;
 
-    public ServerStartStopAction(Icons icons) {
-        this.icons = icons;
-        run();
+  public ServerStartStopAction(Server server, Icons icons) {
+    this.server = server;
+    this.icons = icons;
+    setStartServerState();
+  }
+
+  @Override
+  public void run() {
+    isRunning = !isRunning;
+    if (isRunning) {
+      setStopServerState();
+      server.start();
+    } else {
+      setStartServerState();
+      server.stop();
     }
+  }
 
+  private void setStopServerState() {
+    setText("Stop Server");
+    setImageDescriptor(icons.stopServerIcon());
+  }
 
-   @Override
-    public void run() {
-        if (isRunning) {
-            setText("Stop Server");
-            setImageDescriptor(icons.stopServerIcon());
-        } else {
-            setText("Start Server");
-            setImageDescriptor(icons.startServerIcon());
-        }
-        isRunning = !isRunning;
-    }
+  private void setStartServerState() {
+    setText("Start Server");
+    setImageDescriptor(icons.startServerIcon());
+  }
 }

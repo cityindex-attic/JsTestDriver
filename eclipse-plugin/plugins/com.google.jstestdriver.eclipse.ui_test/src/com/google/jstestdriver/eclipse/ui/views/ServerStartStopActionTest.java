@@ -15,26 +15,31 @@
  */
 package com.google.jstestdriver.eclipse.ui.views;
 
+import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
 
 import junit.framework.TestCase;
 
 public class ServerStartStopActionTest extends TestCase {
 
-    public void testClickingOnActionToglesIconAndTextBetweenStartStop() {
-        ServerStartStopAction action = new ServerStartStopAction(new Icons());
-        assertEquals("Start Server", action.getText());
-        assertTrue(action.getImageDescriptor().toString().contains("StartServer.png"));
+  public void testClickingOnActionToglesIconAndTextBetweenStartStop() {
+    ServerStartStopAction action = new ServerStartStopAction(new Server(),
+        new Icons());
+    assertEquals("Start Server", action.getText());
+    assertTrue(action.getImageDescriptor().toString().contains(
+        "StartServer.png"));
 
-        action.run();
+    action.run();
 
-        assertEquals("Stop Server", action.getText());
-        assertTrue(action.getImageDescriptor().toString().contains("StopServer.png"));
+    assertEquals("Stop Server", action.getText());
+    assertTrue(action.getImageDescriptor().toString()
+        .contains("StopServer.png"));
 
-        action.run();
+    action.run();
 
-        assertEquals("Start Server", action.getText());
-        assertTrue(action.getImageDescriptor().toString().contains("StartServer.png"));
-    }
+    assertEquals("Start Server", action.getText());
+    assertTrue(action.getImageDescriptor().toString().contains(
+        "StartServer.png"));
+  }
 
 }

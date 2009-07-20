@@ -26,51 +26,55 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
 
 public class JsTestDriverView extends ViewPart {
 
-    public static final String ID = "com.google.jstestdriver.eclipse.ui.views.JsTestDriverView";
+  public static final String ID = "com.google.jstestdriver.eclipse.ui.views.JsTestDriverView";
 
-    private final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench().getHelpSystem();
+  private final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench()
+      .getHelpSystem();
 
-    private TreeViewer viewer;
-    private Action startStopServer;
+  private TreeViewer viewer;
+  private Action startStopServer;
 
-    private Icons icons = new Icons();
+  private Icons icons = new Icons();
 
-    public void createPartControl(Composite parent) {
-        viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        viewer.setContentProvider(new ViewContentProvider());
-        viewer.setLabelProvider(new ViewLabelProvider());
-        viewer.setSorter(new NameSorter());
-        viewer.setInput(getViewSite());
+  public void createPartControl(Composite parent) {
+    viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+    viewer.setContentProvider(new ViewContentProvider());
+    viewer.setLabelProvider(new ViewLabelProvider());
+    viewer.setSorter(new NameSorter());
+    viewer.setInput(getViewSite());
 
-        helpSystem.setHelp(viewer.getControl(), "com.google.jstestdriver.eclipse.ui.viewer");
+    helpSystem.setHelp(viewer.getControl(),
+        "com.google.jstestdriver.eclipse.ui.viewer");
 
-        createActions();
-        contributeToActionBars();
-    }
+    createActions();
+    contributeToActionBars();
+  }
 
-    private void createActions() {
-        startStopServer = new ServerStartStopAction(icons);
-    }
+  private void createActions() {
+    Server server = new Server();
+    startStopServer = new ServerStartStopAction(server, icons);
+  }
 
-    private void contributeToActionBars() {
-        IActionBars bars = getViewSite().getActionBars();
-        fillLocalPullDown(bars.getMenuManager());
-        fillLocalToolBar(bars.getToolBarManager());
-    }
+  private void contributeToActionBars() {
+    IActionBars bars = getViewSite().getActionBars();
+    fillLocalPullDown(bars.getMenuManager());
+    fillLocalToolBar(bars.getToolBarManager());
+  }
 
-    private void fillLocalPullDown(IMenuManager manager) {
-        manager.add(startStopServer);
-    }
+  private void fillLocalPullDown(IMenuManager manager) {
+    manager.add(startStopServer);
+  }
 
-    private void fillLocalToolBar(IToolBarManager manager) {
-        manager.add(startStopServer);
-    }
+  private void fillLocalToolBar(IToolBarManager manager) {
+    manager.add(startStopServer);
+  }
 
-    public void setFocus() {
-        viewer.getControl().setFocus();
-    }
+  public void setFocus() {
+    viewer.getControl().setFocus();
+  }
 }
