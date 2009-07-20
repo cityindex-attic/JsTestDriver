@@ -119,7 +119,7 @@ public class JsTestDriverServer extends Observable {
         System.exit(0);
       }
       File config = new File(flags.getConfig());
-      Set<String> fileSet = new LinkedHashSet<String>();
+      Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
       List<Class<? extends Module>> plugins = null;
       String defaultServerAddress = null;
 

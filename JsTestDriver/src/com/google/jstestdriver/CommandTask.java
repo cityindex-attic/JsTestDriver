@@ -136,8 +136,23 @@ public class CommandTask {
       }
       List<FileData> filesData = new LinkedList<FileData>();
       List<FileInfo> filesSrc = new LinkedList<FileInfo>(finalFilesToUpload);
+      for (FileInfo file : finalFilesToUpload) {
+        StringBuilder fileContent = new StringBuilder();
+        long timestamp = -1;
+        if (!file.isRemote()) {
+          timestamp = file.getTimestamp();
+          fileContent.append(filter.filterFile(fileReader.readFile(file.getFileName()), !shouldReset));
+          List<String> patches = patchMap.get(file);
 
-      loadFiles(patchMap, shouldReset, finalFilesToUpload, filesData, filesSrc);
+          if (patches != null) {
+            for (String patch : patches) {
+              fileContent.append(fileReader.readFile(patch));
+            }
+          }
+        }
+        filesData.add(new FileData(file.getFileName(), fileContent.toString(), timestamp));
+      }
+
       int size = filesData.size();
 
       for (int i = 0; i < size; i += CHUNK_SIZE) {
@@ -260,9 +275,5 @@ public class CommandTask {
       }
     }
     return true;
-  }
-
-  private String readFile(String file) {
-    return fileReader.readFile(file);
   }
 }
