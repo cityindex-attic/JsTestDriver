@@ -16,11 +16,6 @@
 package com.google.jstestdriver;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,8 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -56,17 +49,21 @@ public class CommandTask {
   private final String baseUrl;
   private final Server server;
   private final Map<String, String> params;
-  private FileReader fileReader;
+  private final FileReader fileReader;
+  private final HeartBeatManager heartBeatManager;
 
   public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
-      String baseUrl, Server server, Map<String, String> params, FileReader fileReader) {
+      Set<FileInfo> filesToServe, String baseUrl, Server server, Map<String, String> params,
+      FileReader fileReader, HeartBeatManager heartBeatManager) {
     this.filter = filter;
     this.stream = stream;
     this.fileSet = fileSet;
+    this.filesToServe = filesToServe;
     this.baseUrl = baseUrl;
     this.server = server;
     this.params = params;
     this.fileReader = fileReader;
+    this.heartBeatManager = heartBeatManager;
   }
 
   private String startSession() {
@@ -196,7 +193,7 @@ public class CommandTask {
     List<FileInfo> deps = new LinkedList<FileInfo>();
     for (String fileName : filter.resolveFilesDeps(file.getFileName())) {
       // TODO(corysmith): Replace this with a loadFile method.
-      deps.add(new FileInfo(fileName, new File(fileName).lastModified(), false));
+      deps.add(new FileInfo(fileName, new File(fileName).lastModified(), false, false));
     }
     return deps;
   }
@@ -210,31 +207,6 @@ public class CommandTask {
       }
     }
     return filteredFileSources;
-  }
-
-  private void loadFiles(Map<String, List<String>> patchMap, boolean shouldReset,
-      Set<String> finalFilesToUpload, List<FileData> filesData, List<FileSource> filesSrc) {
-    for (String file : finalFilesToUpload) {
-      StringBuilder fileContent = new StringBuilder();
-      long timestamp = -1;
-
-      if (file.startsWith("http://") || file.startsWith("https://")) {
-        filesSrc.add(new FileSource(file, -1));
-        fileContent.append("none");
-      } else {
-        timestamp = getTimestamp(file);
-        filesSrc.add(new FileSource("/test/" + file, timestamp));
-        fileContent.append(filter.filterFile(readFile(file), !shouldReset));
-        List<String> patches = patchMap.get(file);
-
-        if (patches != null) {
-          for (String patch : patches) {
-            fileContent.append(readFile(patch));
-          }
-        }
-      }
-      filesData.add(new FileData(file, fileContent.toString(), timestamp));
-    }
   }
 
   private List<FileInfo> createPatchLessFileSet(Set<FileInfo> originalFileSet,
@@ -265,7 +237,7 @@ public class CommandTask {
   }
 
   public void run() {
-    Timer timer = new Timer(true);
+    heartBeatManager.startTimer();
     String browserId = params.get("id");
     String sessionId = null;
 
@@ -273,8 +245,7 @@ public class CommandTask {
       sessionId = startSession();
 
       if (!sessionId.equals("")) {
-        timer.schedule(new HeartBeat(
-            (baseUrl + "/fileSet?id=" + browserId + "&sessionId=" + sessionId)), 0, 500);
+        heartBeatManager.startHeartBeat(baseUrl, browserId, sessionId);
       }
       if (!isBrowserAlive()) {
         return;
@@ -291,49 +262,10 @@ public class CommandTask {
       } while (streamMessage != null && !streamMessage.isLast());
     } finally {
       stream.finish();
-      timer.cancel();
+      heartBeatManager.cancelTimer();
+      
       stopSession(sessionId);
     }
-  }
-
-  private static class HeartBeat extends TimerTask {
-
-    private final String url;
-
-    public HeartBeat(String url) {
-      this.url = url;
-    }
-
-    private String toString(InputStream inputStream) throws IOException {
-      StringBuilder sb = new StringBuilder();
-      int ch;
-
-      while ((ch = inputStream.read()) != -1) {
-        sb.append((char) ch);
-      }
-      inputStream.close();
-      return sb.toString();
-    }
-
-    @Override
-    public void run() {
-      HttpURLConnection connection = null;
-
-      try {
-        connection = (HttpURLConnection) new URL(url).openConnection();
-
-        connection.connect();
-        toString(connection.getInputStream());
-      } catch (MalformedURLException e) {
-        throw new RuntimeException(e);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      } finally {
-        if (connection != null) {
-          connection.disconnect();
-        }
-      }
-    }    
   }
 
   private boolean sameFiles(Collection<FileInfo> filesToUpload, List<FileInfo> fileSet) {

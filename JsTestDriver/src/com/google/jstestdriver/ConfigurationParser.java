@@ -60,10 +60,10 @@ public class ConfigurationParser {
     Set<FileInfo> resolvedFilesServe = new LinkedHashSet<FileInfo>();
 
     if (data.containsKey("load")) {
-      resolvedFilesLoad.addAll(resolveFiles((List<String>) data.get("load")));
+      resolvedFilesLoad.addAll(resolveFiles((List<String>) data.get("load"), false));
     }
     if (data.containsKey("exclude")) {
-      resolvedFilesExclude.addAll(resolveFiles((List<String>) data.get("exclude")));
+      resolvedFilesExclude.addAll(resolveFiles((List<String>) data.get("exclude"), false));
     }
     if (data.containsKey("server")) {
       this.server = (String) data.get("server");
@@ -74,7 +74,9 @@ public class ConfigurationParser {
       }
     }
     if (data.containsKey("serve")) {
-      resolvedFilesServe.addAll(resolveFiles((List<String>) data.get("serve")));
+      Set<FileInfo> resolvedServeFiles = resolveFiles((List<String>) data.get("serve"), true);
+      resolvedFilesLoad.addAll(resolvedServeFiles);
+      resolvedFilesServe.addAll(resolvedServeFiles);
     }
 
     filesList.addAll(resolvedFilesLoad);
@@ -83,7 +85,7 @@ public class ConfigurationParser {
     serveFilesList.removeAll(resolvedFilesExclude);
   }
 
-  private Set<FileInfo> resolveFiles(List<String> files) {
+  private Set<FileInfo> resolveFiles(List<String> files, boolean serveOnly) {
     if (files != null) {
       Set<FileInfo> resolvedFiles = new LinkedHashSet<FileInfo>();
 
@@ -96,7 +98,7 @@ public class ConfigurationParser {
           f = tokens[1].trim();
         }
         if (f.startsWith("http://") || f.startsWith("https://")) {
-          resolvedFiles.add(new FileInfo(f, -1, false));
+          resolvedFiles.add(new FileInfo(f, -1, false, false));
         } else {
           File file = basePath != null ? new File(basePath, f) : new File(f);
           File testFile = file.getAbsoluteFile();
@@ -117,7 +119,7 @@ public class ConfigurationParser {
             String resolvedFile = pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\",
                 "/")
                 + "/" + filteredFile.replaceAll("\\\\", "/"));
-            resolvedFiles.add(new FileInfo(resolvedFile, file.lastModified(), isPatch));
+            resolvedFiles.add(new FileInfo(resolvedFile, file.lastModified(), isPatch, serveOnly));
           }
         }
       }

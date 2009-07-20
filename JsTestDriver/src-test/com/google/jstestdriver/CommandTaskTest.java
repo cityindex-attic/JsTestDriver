@@ -46,9 +46,8 @@ public class CommandTaskTest extends TestCase {
     params.put("data", "{mooh}");
     params.put("id", "1");
     FakeResponseStream stream = new FakeResponseStream();
-    CommandTask task = new CommandTask(new ActionFactory.ActionFactoryFileFilter(), stream,
-        new LinkedHashSet<FileInfo>(), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server, params, null);
+    LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
+    CommandTask task = createCommandTask(server, files, files, params, stream, null);
 
     task.run();
     Response response = stream.getResponse();
@@ -78,9 +77,8 @@ public class CommandTaskTest extends TestCase {
     FakeResponseStream stream = new FakeResponseStream();
     MockFileReader fileReader = new MockFileReader();
     fileReader.addExpectation(fileInfo.getFileName(), "foobar");
-    CommandTask task = new CommandTask(new ActionFactory.ActionFactoryFileFilter(), stream,
-        new LinkedHashSet<FileInfo>(Arrays.asList(fileInfo)), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server, params, fileReader);
+    CommandTask task = createCommandTask(server, new LinkedHashSet<FileInfo>(Arrays
+        .asList(fileInfo)), new LinkedHashSet<FileInfo>(), params, stream, fileReader);
 
     task.run();
     Response response = stream.getResponse();
@@ -94,34 +92,62 @@ public class CommandTaskTest extends TestCase {
   public void testUploadServeOnlyFiles() throws Exception {
     MockServer server = new MockServer();
     Gson gson = new Gson();
-    FileInfo loadInfo = new FileInfo("foo.js", 1232, false);
-    FileInfo serveInfo = new FileInfo("foo2.js", 1232, false);
+    FileInfo loadInfo = new FileInfo("foo.js", 1232, false, false);
+    FileInfo serveInfo = new FileInfo("foo2.js", 1232, false, false);
     
     server.expect("http://localhost/heartbeat?id=1", "OK");
     server.expect("http://localhost/fileSet?POST?{id=1, fileSet="
-        + gson.toJson(Arrays.asList(loadInfo)) + "}", "");
+        + gson.toJson(Arrays.asList(loadInfo, serveInfo)) + "}", gson.toJson(Arrays.asList(
+        loadInfo, serveInfo)));
     server.expect("http://localhost/cmd?POST?{data={mooh}, id=1}", "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
         + "\"last\":true}");
     Map<String, String> params = new LinkedHashMap<String, String>();
-    
+
     params.put("data", "{mooh}");
     params.put("id", "1");
     FakeResponseStream stream = new FakeResponseStream();
     MockFileReader fileReader = new MockFileReader();
     fileReader.addExpectation(loadInfo.getFileName(), "foobar");
-    CommandTask task = new CommandTask(new ActionFactory.ActionFactoryFileFilter(), stream,
-        new LinkedHashSet<FileInfo>(Arrays.asList(loadInfo)), new LinkedHashSet<FileInfo>(Arrays
-            .asList(serveInfo)), "http://localhost", server, params, fileReader);
+    CommandTask task = createCommandTask(server, new LinkedHashSet<FileInfo>(Arrays.asList(
+        loadInfo, serveInfo)), new LinkedHashSet<FileInfo>(Arrays.asList(serveInfo)), params,
+        stream, fileReader);
 
     task.run();
     Response response = stream.getResponse();
-    
+
     assertEquals("response", response.getResponse());
     assertEquals("browser", response.getBrowser().getName());
     assertEquals("error", response.getError());
     assertEquals(123L, response.getExecutionTime());
+  }
+
+  private CommandTask createCommandTask(MockServer server, LinkedHashSet<FileInfo> files,
+      LinkedHashSet<FileInfo> serveFiles, Map<String, String> params, FakeResponseStream stream,
+      MockFileReader fileReader) {
+    CommandTask task = new CommandTask(new ActionFactory.ActionFactoryFileFilter(), stream, files,
+        serveFiles, "http://localhost", server, params, fileReader, new HeartBeatManagerStub());
+    return task;
+  }  
+  
+  
+  /**
+   * Simple stub to allow us to test the CommandTask without throwing socket exceptions, or
+   * starting a timer.
+   * @author corysmith@google.com (Cory Smith)
+   */
+  // TODO(corysmith): Flesh this into a Mock or a Fake.
+  private static class HeartBeatManagerStub implements HeartBeatManager {
+
+    public void cancelTimer() {
+    }
+
+    public void startHeartBeat(String baseUrl, String browserId, String sessionId) {
+    }
+
+    public void startTimer() {
+    }
   }
   
   private class MockFileReader implements FileReader {

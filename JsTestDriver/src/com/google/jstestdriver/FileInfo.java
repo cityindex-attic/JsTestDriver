@@ -35,6 +35,10 @@ public class FileInfo {
     this.serveOnly = serveOnly;
   }
 
+  public boolean isServeOnly() {
+    return serveOnly;
+  }
+
   public String getFileName() {
     return fileName;
   }
@@ -45,10 +49,6 @@ public class FileInfo {
 
   public boolean isPatch() {
     return isPatch;
-  }
-
-  public boolean isServeOnly() {
-    return serveOnly;
   }
 
   @Override
