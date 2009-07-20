@@ -44,7 +44,6 @@ public class ConfigurationParser {
   private String server = "";
   private List<Plugin> plugins = new LinkedList<Plugin>();
 
-  private final Set<FileInfo> serveFilesList = new LinkedHashSet<FileInfo>();
   private PathResolver pathResolver = new PathResolver();
 
   public ConfigurationParser(File basePath) {
@@ -57,7 +56,6 @@ public class ConfigurationParser {
         new InputStreamReader(inputStream)));
     Set<FileInfo> resolvedFilesLoad = new LinkedHashSet<FileInfo>();
     Set<FileInfo> resolvedFilesExclude = new LinkedHashSet<FileInfo>();
-    Set<FileInfo> resolvedFilesServe = new LinkedHashSet<FileInfo>();
 
     if (data.containsKey("load")) {
       resolvedFilesLoad.addAll(resolveFiles((List<String>) data.get("load"), false));
@@ -76,13 +74,10 @@ public class ConfigurationParser {
     if (data.containsKey("serve")) {
       Set<FileInfo> resolvedServeFiles = resolveFiles((List<String>) data.get("serve"), true);
       resolvedFilesLoad.addAll(resolvedServeFiles);
-      resolvedFilesServe.addAll(resolvedServeFiles);
     }
 
     filesList.addAll(resolvedFilesLoad);
     filesList.removeAll(resolvedFilesExclude);
-    serveFilesList.addAll(resolvedFilesServe);
-    serveFilesList.removeAll(resolvedFilesExclude);
   }
 
   private Set<FileInfo> resolveFiles(List<String> files, boolean serveOnly) {
@@ -138,9 +133,5 @@ public class ConfigurationParser {
 
   public List<Plugin> getPlugins() {
     return plugins;
-  }
-
-  public Set<FileInfo> getServeFilesList() {
-    return serveFilesList;
   }
 }
