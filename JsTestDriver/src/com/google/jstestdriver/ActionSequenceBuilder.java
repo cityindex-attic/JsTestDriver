@@ -87,7 +87,7 @@ public class ActionSequenceBuilder {
   private void addServerActions(List<Action> actions, boolean leaveServerRunning) {
     if (preloadFiles) {
       for (String file : fileSet) {
-        files.put(file, new FileData(file, ActionSequenceBuilder.readFile(this, file), new File(
+        files.put(file, new FileData(file, fileReader.readFile(this, file), new File(
             file).lastModified()));
       }
     }
