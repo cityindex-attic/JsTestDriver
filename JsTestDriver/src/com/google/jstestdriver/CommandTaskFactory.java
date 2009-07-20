@@ -32,8 +32,8 @@ public class CommandTaskFactory {
   }
 
   public CommandTask getCommandTask(ResponseStream stream, Set<FileInfo> fileSet,
-      Set<FileInfo> filesToServe, String baseUrl, Server server, Map<String, String> params) {
-    return new CommandTask(filter, stream, fileSet, filesToServe, baseUrl, server, params,
-        fileReader, new SimpleHeartBeatManager());
+      String baseUrl, Server server, Map<String, String> params) {
+    return new CommandTask(filter, stream, fileSet, baseUrl, server, params, fileReader,
+        new SimpleHeartBeatManager());
   }
 }

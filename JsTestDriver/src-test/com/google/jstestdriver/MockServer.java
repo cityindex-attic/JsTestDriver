@@ -16,7 +16,9 @@
 package com.google.jstestdriver;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -24,10 +26,13 @@ import java.util.Map;
  */
 public class MockServer implements Server {
 
-  private Map<String, String> expectations = new HashMap<String, String>();
+  private HashMap<String,Queue<String>> expectations = new HashMap<String, Queue<String>>();
 
   public void expect(String url, String response) {
-    expectations.put(url, response);
+    if (!expectations.containsKey(url)) {
+      expectations.put(url, new LinkedList<String>());
+    }
+    expectations.get(url).add(response);
   }
 
   public String fetch(String url) {
@@ -39,11 +44,11 @@ public class MockServer implements Server {
   }
 
   private String get(String request) {
-    String response = expectations.get(request);
-    if (response == null) {
+    Queue<String> response = expectations.get(request);
+    if (response == null || response.size() == 0) {
       throw new IllegalArgumentException("Unexpected request: " + request);
     }
-    return response;
+    return response.remove();
   }
 
   public String startSession(String baseUrl, String id) {

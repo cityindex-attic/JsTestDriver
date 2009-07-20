@@ -62,7 +62,7 @@ public class JsTestDriverServerTest extends TestCase {
   public void testListBrowsers() throws Exception {
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
-        new LinkedHashSet<FileInfo>(), "http://localhost:4224", new HttpServer());
+        "http://localhost:4224", new HttpServer());
 
     server.start();
     Collection<BrowserInfo> browsers = client.listBrowsers();

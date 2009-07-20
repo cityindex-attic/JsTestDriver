@@ -35,7 +35,6 @@ public class ActionParser {
       String defaultServerAddress) {
     ActionSequenceBuilder builder = new ActionSequenceBuilder(actionFactory, null);
     builder.usingFiles(fileSet, flags.getPreloadFiles())
-           .servingFiles(filesToServe)
            .addTests(flags.getTests(),
                      flags.getTestOutput(),
                      flags.getVerbose(), 

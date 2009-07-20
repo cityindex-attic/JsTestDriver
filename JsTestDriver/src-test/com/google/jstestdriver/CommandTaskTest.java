@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -16,9 +16,12 @@
 package com.google.jstestdriver;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -26,19 +29,22 @@ import junit.framework.TestCase;
 
 import com.google.gson.Gson;
 import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
+import com.google.jstestdriver.JsonCommand.CommandType;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class CommandTaskTest extends TestCase {
+  private final String baseUrl = "http://localhost/";
+  private final Gson gson = new Gson();
 
   public void testConvertJsonResponseToObject() throws Exception {
     MockServer server = new MockServer();
 
-    server.expect("http://localhost/heartbeat?id=1", "OK");
-    server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
-    server.expect("http://localhost/cmd?POST?{data={mooh}, id=1}", "");
-    server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"response\","
+    server.expect(baseUrl + "heartbeat?id=1", "OK");
+    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet=[]}", "");
+    server.expect(baseUrl + "cmd?POST?{data={mooh}, id=1}", "");
+    server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
         + "\"last\":true}");
     Map<String, String> params = new LinkedHashMap<String, String>();
@@ -60,14 +66,13 @@ public class CommandTaskTest extends TestCase {
 
   public void testUploadFiles() throws Exception {
     MockServer server = new MockServer();
-    Gson gson = new Gson();
     FileInfo fileInfo = new FileInfo("foo.js", 1232, false, false);
 
-    server.expect("http://localhost/heartbeat?id=1", "OK");
-    server.expect("http://localhost/fileSet?POST?{id=1, fileSet="
+    server.expect(baseUrl + "heartbeat?id=1", "OK");
+    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet="
         + gson.toJson(Arrays.asList(fileInfo)) + "}", "");
-    server.expect("http://localhost/cmd?POST?{data={mooh}, id=1}", "");
-    server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"response\","
+    server.expect(baseUrl + "cmd?POST?{data={mooh}, id=1}", "");
+    server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
         + "\"last\":true}");
     Map<String, String> params = new LinkedHashMap<String, String>();
@@ -88,19 +93,46 @@ public class CommandTaskTest extends TestCase {
     assertEquals("error", response.getError());
     assertEquals(123L, response.getExecutionTime());
   }
-  
+
   public void testUploadServeOnlyFiles() throws Exception {
     MockServer server = new MockServer();
-    Gson gson = new Gson();
+
+
+    // test file data.
     FileInfo loadInfo = new FileInfo("foo.js", 1232, false, false);
-    FileInfo serveInfo = new FileInfo("foo2.js", 1232, false, false);
+    String loadInfoContents = "foobar";
+
+    FileInfo serveInfo = new FileInfo("foo2.js", 1232, false, true);
+    String serveInfoContents = "foobar2";
+    List<FileInfo> fileSet = Arrays.asList(loadInfo, serveInfo);
+
+    //server expects
+    server.expect(baseUrl + "heartbeat?id=1", "OK");
+    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet="
+        + gson.toJson(fileSet) + "}", gson.toJson(fileSet));
+
+    JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
+    Map<String, String> resetParams = new LinkedHashMap<String, String>();
+    resetParams.put("id", "1");
+    resetParams.put("data", gson.toJson(cmd));
+
+    server.expect(baseUrl + "cmd?POST?" + resetParams, "");
+    server.expect(baseUrl + "cmd?id=1", "ignore");
+    server.expect(baseUrl
+        + "fileSet?POST?{id=1, data="
+        + gson.toJson(Arrays.asList(
+            new FileData(loadInfo.getFileName(), loadInfoContents,
+                loadInfo.getTimestamp()),
+            new FileData(serveInfo.getFileName(), serveInfoContents,
+                serveInfo.getTimestamp()))) + "}", "");
     
-    server.expect("http://localhost/heartbeat?id=1", "OK");
-    server.expect("http://localhost/fileSet?POST?{id=1, fileSet="
-        + gson.toJson(Arrays.asList(loadInfo, serveInfo)) + "}", gson.toJson(Arrays.asList(
-        loadInfo, serveInfo)));
-    server.expect("http://localhost/cmd?POST?{data={mooh}, id=1}", "");
-    server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"response\","
+    String url = baseUrl + "cmd?POST?" + createLoadCommandString("1", CommandType.LOADTEST,
+            Arrays.asList(CommandTask.fileInfoToFileSource(loadInfo)));
+    server.expect(url, "ignore");
+    server.expect(baseUrl + "cmd?id=1", "{\"response\":"
+        + createLoadedFilesResponseString() + ", \"last\":true}");
+    server.expect(baseUrl + "cmd?POST?{data={mooh}, id=1}", "");
+    server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
         + "\"last\":true}");
     Map<String, String> params = new LinkedHashMap<String, String>();
@@ -109,9 +141,10 @@ public class CommandTaskTest extends TestCase {
     params.put("id", "1");
     FakeResponseStream stream = new FakeResponseStream();
     MockFileReader fileReader = new MockFileReader();
-    fileReader.addExpectation(loadInfo.getFileName(), "foobar");
-    CommandTask task = createCommandTask(server, new LinkedHashSet<FileInfo>(Arrays.asList(
-        loadInfo, serveInfo)), new LinkedHashSet<FileInfo>(Arrays.asList(serveInfo)), params,
+    fileReader.addExpectation(loadInfo.getFileName(), loadInfoContents);
+    fileReader.addExpectation(serveInfo.getFileName(), serveInfoContents);
+    CommandTask task = createCommandTask(server, new LinkedHashSet<FileInfo>(fileSet),
+        new LinkedHashSet<FileInfo>(Arrays.asList(serveInfo)), params,
         stream, fileReader);
 
     task.run();
@@ -122,16 +155,34 @@ public class CommandTaskTest extends TestCase {
     assertEquals("error", response.getError());
     assertEquals(123L, response.getExecutionTime());
   }
+  
+  private String createLoadedFilesResponseString() {
+    Response response = new Response();
+    LoadedFiles loadedFiles = new LoadedFiles();
+    loadedFiles.setMessage("");
+    response.setResponse(gson.toJson(loadedFiles));
+    return gson.toJson(response);
+  }
+
+  private String createLoadCommandString(String id, CommandType command, List<FileSource> filesToLoad) {
+    Map<String, String> loadFileParams = new LinkedHashMap<String, String>();
+    loadFileParams.put("id", id);
+    List<String> loadParameters = new LinkedList<String>();
+    loadParameters.add(gson.toJson(filesToLoad));
+    loadParameters.add("false");
+    loadFileParams.put("data", gson.toJson(new JsonCommand(CommandType.LOADTEST, loadParameters)));
+    return loadFileParams.toString();
+  }
 
   private CommandTask createCommandTask(MockServer server, LinkedHashSet<FileInfo> files,
       LinkedHashSet<FileInfo> serveFiles, Map<String, String> params, FakeResponseStream stream,
       MockFileReader fileReader) {
     CommandTask task = new CommandTask(new ActionFactory.ActionFactoryFileFilter(), stream, files,
-        serveFiles, "http://localhost", server, params, fileReader, new HeartBeatManagerStub());
+        "http://localhost", server, params, fileReader, new HeartBeatManagerStub());
     return task;
-  }  
-  
-  
+  }
+
+
   /**
    * Simple stub to allow us to test the CommandTask without throwing socket exceptions, or
    * starting a timer.
@@ -149,7 +200,7 @@ public class CommandTaskTest extends TestCase {
     public void startTimer() {
     }
   }
-  
+
   private class MockFileReader implements FileReader {
     private HashMap<String, String> expected;
 

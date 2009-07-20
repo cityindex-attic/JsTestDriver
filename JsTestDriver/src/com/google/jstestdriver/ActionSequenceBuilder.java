@@ -19,7 +19,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,6 @@ public class ActionSequenceBuilder {
   private boolean dryRun;
   private Map<String, String> files = new HashMap<String, String>();
   private Set<FileInfo> fileSet;
-  private Set<FileInfo> filesToServe;
   private int localServerPort = -1;
   private boolean preloadFiles = false;
   private String remoteServerAddress;
@@ -126,9 +124,7 @@ public class ActionSequenceBuilder {
   public List<Action> build() {
     List<Action> actions = new LinkedList<Action>();
     require(getServerAddress(), "Oh snap! the Server address was never defined!");
-    JsTestDriverClient client = actionFactory.getJsTestDriverClient(fileSet, filesToServe == null ?
-        new LinkedHashSet<FileInfo>() : filesToServe,
-        getServerAddress());
+    JsTestDriverClient client = actionFactory.getJsTestDriverClient(fileSet, getServerAddress());
 
     threadedActions = createThreadedActions(client);
 

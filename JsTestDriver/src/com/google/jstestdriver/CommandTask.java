@@ -45,7 +45,6 @@ public class CommandTask {
   private final JsTestDriverFileFilter filter;
   private final ResponseStream stream;
   private final Set<FileInfo> fileSet;
-  private final Set<FileInfo> filesToServe;
   private final String baseUrl;
   private final Server server;
   private final Map<String, String> params;
@@ -53,12 +52,11 @@ public class CommandTask {
   private final HeartBeatManager heartBeatManager;
 
   public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
-      Set<FileInfo> filesToServe, String baseUrl, Server server, Map<String, String> params,
-      FileReader fileReader, HeartBeatManager heartBeatManager) {
+      String baseUrl, Server server, Map<String, String> params, FileReader fileReader,
+      HeartBeatManager heartBeatManager) {
     this.filter = filter;
     this.stream = stream;
     this.fileSet = fileSet;
-    this.filesToServe = filesToServe;
     this.baseUrl = baseUrl;
     this.server = server;
     this.params = params;
@@ -99,7 +97,8 @@ public class CommandTask {
     return true;
   }
 
-  private FileSource fileInfoToFileSource(FileInfo info) {
+  // TODO(corysmith): remove this function once FileInfo is used exclusively. Hate static crap.
+  public static FileSource fileInfoToFileSource(FileInfo info) {
     if (info.getFileName().startsWith("http://")) {
       return new FileSource(info.getFileName(), info.getTimestamp());
     }
@@ -136,13 +135,11 @@ public class CommandTask {
         }
       }
       List<FileData> filesData = new LinkedList<FileData>();
-      List<FileSource> filesSrc = new LinkedList<FileSource>();
+      List<FileInfo> filesSrc = new LinkedList<FileInfo>(finalFilesToUpload);
 
       for (FileInfo file : finalFilesToUpload) {
         StringBuilder fileContent = new StringBuilder();
         long timestamp = -1;
-
-        filesSrc.add(fileInfoToFileSource(file));
         if (!file.isRemote()) {
           timestamp = file.getTimestamp();
           fileContent.append(filter.filterFile(readFile(file.getFileName()), !shouldReset));
@@ -161,7 +158,7 @@ public class CommandTask {
       for (int i = 0; i < size; i += CHUNK_SIZE) {
         int chunkEndIndex = Math.min(i + CHUNK_SIZE, size);
         List<FileData> filesDataChunk = filesData.subList(i, chunkEndIndex);
-        List<FileSource> filesSrcChunk = filesSrc.subList(i, chunkEndIndex);
+        List<FileInfo> filesSrcChunk = filesSrc.subList(i, chunkEndIndex);
         Map<String, String> loadFileParams = new LinkedHashMap<String, String>();
 
         loadFileParams.put("id", params.get("id"));
@@ -198,12 +195,12 @@ public class CommandTask {
     return deps;
   }
 
-  private List<FileSource> filterFilesToLoad(List<FileSource> fileSources) {
+  private List<FileSource> filterFilesToLoad(List<FileInfo> fileInfos) {
     List<FileSource> filteredFileSources = new LinkedList<FileSource>();
 
-    for (FileSource fileSrc : fileSources) {
-      if (!filesToServe.contains(fileSrc.getFileSrc().substring(6))) {
-        filteredFileSources.add(fileSrc);
+    for (FileInfo fileInfo : fileInfos) {
+      if (!fileInfo.isServeOnly()) {
+        filteredFileSources.add(fileInfoToFileSource(fileInfo));
       }
     }
     return filteredFileSources;

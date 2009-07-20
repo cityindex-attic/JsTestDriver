@@ -42,10 +42,9 @@ public class ActionFactory {
     this.fileReader = fileReader;
   }
 
-  public JsTestDriverClient getJsTestDriverClient(Set<FileInfo> files, Set<FileInfo> filesToServe,
-      String serverAddress) {
+  public JsTestDriverClient getJsTestDriverClient(Set<FileInfo> files, String serverAddress) {
     return new JsTestDriverClientImpl(new CommandTaskFactory(new ActionFactoryFileFilter(),
-        fileReader), files, filesToServe, serverAddress, new HttpServer());
+        fileReader), files, serverAddress, new HttpServer());
   }
 
   public ServerStartupAction getServerStartupAction(Integer port,

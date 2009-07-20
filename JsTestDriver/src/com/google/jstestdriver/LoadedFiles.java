@@ -36,5 +36,9 @@ public class LoadedFiles {
 
   public Collection<String> getErrorFiles() {
     return errorFiles;
-  }  
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
 }
