@@ -50,19 +50,16 @@ public class CommandTask {
   private final JsTestDriverFileFilter filter;
   private final ResponseStream stream;
   private final Set<FileInfo> fileSet;
-  private final Set<String> filesToServe;
   private final String baseUrl;
   private final Server server;
   private final Map<String, String> params;
   private FileReader fileReader;
 
   public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
-      Set<String> filesToServe, String baseUrl, Server server, Map<String, String> params,
-      FileReader fileReader) {
+      String baseUrl, Server server, Map<String, String> params, FileReader fileReader) {
     this.filter = filter;
     this.stream = stream;
     this.fileSet = fileSet;
-    this.filesToServe = filesToServe;
     this.baseUrl = baseUrl;
     this.server = server;
     this.params = params;
@@ -134,27 +131,7 @@ public class CommandTask {
       List<FileData> filesData = new LinkedList<FileData>();
       List<FileSource> filesSrc = new LinkedList<FileSource>();
 
-      for (String file : finalFilesToUpload) {
-        StringBuilder fileContent = new StringBuilder();
-        long timestamp = -1;
-
-        if (file.startsWith("http://") || file.startsWith("https://")) {
-          filesSrc.add(new FileSource(file, -1));
-          fileContent.append("none");
-        } else {
-          timestamp = getTimestamp(file);
-          filesSrc.add(new FileSource("/test/" + file, timestamp));
-          fileContent.append(filter.filterFile(readFile(file), !shouldReset));
-          List<String> patches = patchMap.get(file);
-
-          if (patches != null) {
-            for (String patch : patches) {
-              fileContent.append(readFile(patch));
-            }
-          }
-        }
-        filesData.add(new FileData(file, fileContent.toString(), timestamp));
-      }
+      loadFiles(patchMap, shouldReset, finalFilesToUpload, filesData, filesSrc);
       int size = filesData.size();
 
       for (int i = 0; i < size; i += CHUNK_SIZE) {
@@ -197,6 +174,31 @@ public class CommandTask {
       }
     }
     return filteredFileSources;
+  }
+
+  private void loadFiles(Map<String, List<String>> patchMap, boolean shouldReset,
+      Set<String> finalFilesToUpload, List<FileData> filesData, List<FileSource> filesSrc) {
+    for (String file : finalFilesToUpload) {
+      StringBuilder fileContent = new StringBuilder();
+      long timestamp = -1;
+
+      if (file.startsWith("http://") || file.startsWith("https://")) {
+        filesSrc.add(new FileSource(file, -1));
+        fileContent.append("none");
+      } else {
+        timestamp = getTimestamp(file);
+        filesSrc.add(new FileSource("/test/" + file, timestamp));
+        fileContent.append(filter.filterFile(readFile(file), !shouldReset));
+        List<String> patches = patchMap.get(file);
+
+        if (patches != null) {
+          for (String patch : patches) {
+            fileContent.append(readFile(patch));
+          }
+        }
+      }
+      filesData.add(new FileData(file, fileContent.toString(), timestamp));
+    }
   }
 
   private List<FileInfo> createPatchLessFileSet(Set<FileInfo> originalFileSet,

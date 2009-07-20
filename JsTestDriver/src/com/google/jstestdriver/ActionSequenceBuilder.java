@@ -45,9 +45,7 @@ public class ActionSequenceBuilder {
       throw new IllegalArgumentException(msg);
     }
   }
-  public static String readFile(ActionSequenceBuilder actionSequenceBuilder, String file) {
-    return actionSequenceBuilder.readFile(file);
-  }
+
   private final ActionFactory actionFactory;
   private List<String> browsers = new LinkedList<String>();
   private boolean captureConsole;
@@ -67,9 +65,8 @@ public class ActionSequenceBuilder {
   private String xmlOutputDir;
   private List<String> commands = new LinkedList<String>();
   private FileReader fileReader;
-
-  /** Begins the building of an action sequence. 
-   * @param fileReader TODO*/
+  
+  /** Begins the building of an action sequence. */
   public ActionSequenceBuilder(ActionFactory actionFactory, FileReader fileReader) {
     this.actionFactory = actionFactory;
     this.fileReader = fileReader;
@@ -129,10 +126,8 @@ public class ActionSequenceBuilder {
   public List<Action> build() {
     List<Action> actions = new LinkedList<Action>();
     require(getServerAddress(), "Oh snap! the Server address was never defined!");
-    JsTestDriverClient client = actionFactory.getJsTestDriverClient(fileSet, filesToServe == null ?
-        new LinkedHashSet<String>() : filesToServe,
-        getServerAddress());
-
+    JsTestDriverClient client = actionFactory.getJsTestDriverClient(fileSet, getServerAddress());
+    
     threadedActions = createThreadedActions(client);
 
     if (!threadedActions.isEmpty()) {
@@ -216,11 +211,6 @@ public class ActionSequenceBuilder {
     return this;
   }
 
-  public ActionSequenceBuilder servingFiles(Set<String> filesToServe) {
-    this.filesToServe = filesToServe;
-    return this;
-  }
-
   /**
    * Indicates that a local server should be started on the provided port.
    */
@@ -241,10 +231,5 @@ public class ActionSequenceBuilder {
   public ActionSequenceBuilder addCommands(List<String> commands) {
     this.commands.addAll(commands);
     return this;
-  }
-  
-  private String readFile(String file)  {
-    String readFile = fileReader.readFile(file);
-    return readFile;
   }
 }
