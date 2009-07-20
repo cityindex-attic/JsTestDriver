@@ -141,8 +141,8 @@ public class JsTestDriverServer extends Observable {
           }
         }
       }
-      Guice.createInjector(new JsTestDriverModule(flags, fileSet,
-          defaultServerAddress, plugins)).getInstance(ActionRunner.class).runActions();
+      Guice.createInjector(new JsTestDriverModule(flags, fileSet, defaultServerAddress, plugins))
+          .getInstance(ActionRunner.class).runActions();
     } catch (CmdLineException e) {
       System.err.println(e.getMessage());
       parser.printUsage(System.err);
