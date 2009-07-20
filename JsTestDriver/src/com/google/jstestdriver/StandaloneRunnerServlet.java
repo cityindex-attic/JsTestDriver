@@ -34,6 +34,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class StandaloneRunnerServlet  extends HttpServlet  {
 
+  private static final long serialVersionUID = 8525889760512657635L;
+
   private final Gson gson = new Gson();
   private final BrowserHunter browserHunter;
   private final FilesCache cache;

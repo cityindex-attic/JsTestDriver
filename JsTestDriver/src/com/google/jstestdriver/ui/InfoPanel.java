@@ -45,6 +45,7 @@ import javax.swing.JTextField;
 /**
  * @author alexeagle@google.com (Alex Eagle)
  */
+@SuppressWarnings("serial")
 public class InfoPanel extends JPanel {
 
   private String getHostName() {

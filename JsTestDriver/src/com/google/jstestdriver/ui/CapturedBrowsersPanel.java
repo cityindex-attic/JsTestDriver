@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 /**
  * @author alexeagle@google.com (Alex Eagle)
  */
+@SuppressWarnings("serial")
 public class CapturedBrowsersPanel extends JPanel implements Observer {
   private BrowserIcon chrome;
   private BrowserIcon ie;

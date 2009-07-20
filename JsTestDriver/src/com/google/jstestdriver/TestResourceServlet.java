@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class TestResourceServlet extends HttpServlet {
 
+  private static final long serialVersionUID = 3689888178162608893L;
+
   private static final String TIME_IN_THE_PAST = "Sat, 22 Sep 1984 00:00:00 GMT";
   private final FilesCache filesCache;
 

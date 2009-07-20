@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HomeServlet extends HttpServlet {
 
+  private static final long serialVersionUID = -5726088138365911141L;
+
   private final CapturedBrowsers capturedBrowsers;
 
   public HomeServlet(CapturedBrowsers capturedBrowsers) {

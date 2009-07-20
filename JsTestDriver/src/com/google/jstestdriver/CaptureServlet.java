@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CaptureServlet extends HttpServlet {
 
+  private static final long serialVersionUID = -6565114508964010323L;
+
   private final BrowserHunter browserHunter;
 
   public CaptureServlet(BrowserHunter browserHunter) {

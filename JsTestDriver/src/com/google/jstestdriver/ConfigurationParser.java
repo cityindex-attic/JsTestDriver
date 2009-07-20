@@ -38,13 +38,14 @@ import org.jvyaml.YAML;
  */
 public class ConfigurationParser {
 
-  private final Set<String> filesList = new LinkedHashSet<String>();
+  private final Set<FileInfo> filesList = new LinkedHashSet<FileInfo>();
   private final File basePath;
 
   private String server = "";
   private List<Plugin> plugins = new LinkedList<Plugin>();
 
-  private final Set<String> serveFilesList = new LinkedHashSet<String>();
+  private final Set<FileInfo> serveFilesList = new LinkedHashSet<FileInfo>();
+  private PathResolver pathResolver = new PathResolver();
 
   public ConfigurationParser(File basePath) {
     this.basePath = basePath;
@@ -54,9 +55,9 @@ public class ConfigurationParser {
   public void parse(InputStream inputStream) {
     Map<Object, Object> data = (Map<Object, Object>) YAML.load(new BufferedReader(
         new InputStreamReader(inputStream)));
-    Set<String> resolvedFilesLoad = new LinkedHashSet<String>();
-    Set<String> resolvedFilesExclude = new LinkedHashSet<String>();
-    Set<String> resolvedFilesServe = new LinkedHashSet<String>();
+    Set<FileInfo> resolvedFilesLoad = new LinkedHashSet<FileInfo>();
+    Set<FileInfo> resolvedFilesExclude = new LinkedHashSet<FileInfo>();
+    Set<FileInfo> resolvedFilesServe = new LinkedHashSet<FileInfo>();
 
     if (data.containsKey("load")) {
       resolvedFilesLoad.addAll(resolveFiles((List<String>) data.get("load")));
@@ -82,9 +83,9 @@ public class ConfigurationParser {
     serveFilesList.removeAll(resolvedFilesExclude);
   }
 
-  private Set<String> resolveFiles(List<String> files) {
+  private Set<FileInfo> resolveFiles(List<String> files) {
     if (files != null) {
-      Set<String> resolvedFiles = new LinkedHashSet<String>();
+      Set<FileInfo> resolvedFiles = new LinkedHashSet<FileInfo>();
 
       for (String f : files) {
         boolean isPatch = f.startsWith("patch");
@@ -95,7 +96,7 @@ public class ConfigurationParser {
           f = tokens[1].trim();
         }
         if (f.startsWith("http://") || f.startsWith("https://")) {
-          resolvedFiles.add(f);
+          resolvedFiles.add(new FileInfo(f, -1, false));
         } else {
           File file = basePath != null ? new File(basePath, f) : new File(f);
           File testFile = file.getAbsoluteFile();
@@ -111,17 +112,12 @@ public class ConfigurationParser {
             System.exit(1);
           }
           Arrays.sort(filteredFiles, String.CASE_INSENSITIVE_ORDER);
-          PathResolver pathResolver = new PathResolver();
 
           for (String filteredFile : filteredFiles) {
             String resolvedFile = pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\",
                 "/")
                 + "/" + filteredFile.replaceAll("\\\\", "/"));
-
-            if (isPatch) {
-              resolvedFile = "patch:" + resolvedFile;
-            }
-            resolvedFiles.add(resolvedFile);
+            resolvedFiles.add(new FileInfo(resolvedFile, file.lastModified(), isPatch));
           }
         }
       }
@@ -130,7 +126,7 @@ public class ConfigurationParser {
     return Collections.emptySet();
   }
 
-  public Set<String> getFilesList() {
+  public Set<FileInfo> getFilesList() {
     return filesList;
   }
 
@@ -142,7 +138,7 @@ public class ConfigurationParser {
     return plugins;
   }
 
-  public Set<String> getServeFilesList() {
+  public Set<FileInfo> getServeFilesList() {
     return serveFilesList;
   }
 }

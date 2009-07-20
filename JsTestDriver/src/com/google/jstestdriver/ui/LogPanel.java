@@ -27,6 +27,7 @@ import javax.swing.ScrollPaneConstants;
 /**
  * @author alexeagle@google.com (Alex Eagle)
  */
+@SuppressWarnings("serial")
 public class LogPanel extends JPanel implements LogPrinter {
   private JTextArea textArea;
 

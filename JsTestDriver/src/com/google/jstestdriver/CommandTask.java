@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -37,6 +38,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.JsonCommand.CommandType;
 
 /**
+ * Handles the communication of a command to the JsTestDriverServer from the JsTestDriverClient.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class CommandTask {
@@ -50,6 +52,7 @@ public class CommandTask {
   private final JsTestDriverFileFilter filter;
   private final ResponseStream stream;
   private final Set<FileInfo> fileSet;
+  private final Set<FileInfo> filesToServe;
   private final String baseUrl;
   private final Server server;
   private final Map<String, String> params;
@@ -99,6 +102,13 @@ public class CommandTask {
     return true;
   }
 
+  private FileSource fileInfoToFileSource(FileInfo info) {
+    if (info.getFileName().startsWith("http://")) {
+      return new FileSource(info.getFileName(), info.getTimestamp());
+    }
+    return new FileSource("/test/" + info.getFileName(), info.getTimestamp());
+  }
+
   private void uploadFileSet() {
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
     Map<String, List<String>> patchMap = new HashMap<String, List<String>>();
@@ -109,10 +119,10 @@ public class CommandTask {
     String postResult = server.post(baseUrl + "/fileSet", fileSetParams);
 
     if (postResult.length() > 0) {
-      Collection<String> filesToUpload = gson.fromJson(postResult,
-          new TypeToken<Collection<String>>() {}.getType());
+      Collection<FileInfo> filesToUpload = gson.fromJson(postResult,
+          new TypeToken<Collection<FileInfo>>() {}.getType());
       boolean shouldReset = sameFiles(filesToUpload, patchLessFileSet);
-      Set<String> finalFilesToUpload = new LinkedHashSet<String>();
+      Set<FileInfo> finalFilesToUpload = new LinkedHashSet<FileInfo>();
 
       if (shouldReset) {
         JsonCommand cmd = new JsonCommand(CommandType.RESET, EMPTY_ARRAYLIST);
@@ -124,14 +134,31 @@ public class CommandTask {
         server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
         finalFilesToUpload.addAll(filesToUpload);
       } else {
-        for (String file : filesToUpload) {
-          finalFilesToUpload.addAll(filter.resolveFilesDeps(file));
+        for (FileInfo file : filesToUpload) {
+          finalFilesToUpload.addAll(findDependencies(file));
         }
       }
       List<FileData> filesData = new LinkedList<FileData>();
       List<FileSource> filesSrc = new LinkedList<FileSource>();
 
-      loadFiles(patchMap, shouldReset, finalFilesToUpload, filesData, filesSrc);
+      for (FileInfo file : finalFilesToUpload) {
+        StringBuilder fileContent = new StringBuilder();
+        long timestamp = -1;
+
+        filesSrc.add(fileInfoToFileSource(file));
+        if (!file.isRemote()) {
+          timestamp = file.getTimestamp();
+          fileContent.append(filter.filterFile(readFile(file.getFileName()), !shouldReset));
+          List<String> patches = patchMap.get(file);
+
+          if (patches != null) {
+            for (String patch : patches) {
+              fileContent.append(readFile(patch));
+            }
+          }
+        }
+        filesData.add(new FileData(file.getFileName(), fileContent.toString(), timestamp));
+      }
       int size = filesData.size();
 
       for (int i = 0; i < size; i += CHUNK_SIZE) {
@@ -163,6 +190,15 @@ public class CommandTask {
         }
       }
     }
+  }
+
+  private Collection<FileInfo> findDependencies(FileInfo file) {
+    List<FileInfo> deps = new LinkedList<FileInfo>();
+    for (String fileName : filter.resolveFilesDeps(file.getFileName())) {
+      // TODO(corysmith): Replace this with a loadFile method.
+      deps.add(new FileInfo(fileName, new File(fileName).lastModified(), false));
+    }
+    return deps;
   }
 
   private List<FileSource> filterFilesToLoad(List<FileSource> fileSources) {
@@ -300,21 +336,12 @@ public class CommandTask {
     }    
   }
 
-  private long getTimestamp(String file) {
-    for (FileInfo info : fileSet) {
-      if (info.getFileName().equals(file)) {
-        return info.getTimestamp();
-      }
-    }
-    return 0;
-  }
-
-  private boolean sameFiles(Collection<String> filesToUpload, List<FileInfo> fileSet) {
+  private boolean sameFiles(Collection<FileInfo> filesToUpload, List<FileInfo> fileSet) {
     if (filesToUpload.size() != fileSet.size()) {
       return false;
     }
     for (FileInfo info : fileSet) {
-      if (!filesToUpload.contains(info.getFileName())) {
+      if (!filesToUpload.contains(info)) {
         return false;
       }
     }

@@ -24,6 +24,8 @@ import org.apache.commons.logging.impl.SimpleLog;
  */
 public class LogPanelLog extends SimpleLog {
 
+  private static final long serialVersionUID = 7287879335785320256L;
+
   public LogPanelLog(String s) {
     super(s);
   }

@@ -34,11 +34,11 @@ public class JsTestDriverModule extends AbstractModule {
 
   private final FlagsImpl flags;
   private final String defaultServerAddress;
-  private final Set<String> fileSet;
-  private final Set<String> filesToServe;
+  private final Set<FileInfo> fileSet;
+  private final Set<FileInfo> filesToServe;
   private final List<Class<? extends Module>> plugins;
 
-  public JsTestDriverModule(FlagsImpl flags, Set<String> fileSet, Set<String> filesToServe,
+  public JsTestDriverModule(FlagsImpl flags, Set<FileInfo> fileSet, Set<FileInfo> filesToServe,
       String defaultServerAddress, List<Class<? extends Module>> plugins) {
     this.flags = flags;
     this.fileSet = fileSet;

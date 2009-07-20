@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BrowserQueryResponseServlet extends HttpServlet {
 
+  private static final long serialVersionUID = 995720234973219411L;
+
   private static final String NOOP = "noop";
 
   private final Gson gson = new Gson();

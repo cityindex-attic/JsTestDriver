@@ -15,10 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.jstestdriver.JsonCommand.CommandType;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -26,7 +22,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.JsonCommand.CommandType;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -37,12 +36,12 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
   private final CommandTaskFactory commandTaskFactory;
   private final Set<FileInfo> fileSet;
-  private final Set<String> filesToServe;
+  private final Set<FileInfo> filesToServe;
   private final String baseUrl;
   private final Server server;
 
   public JsTestDriverClientImpl(CommandTaskFactory commandTaskFactory, Set<FileInfo> fileSet,
-      Set<String> filesToServe, String baseUrl, Server server) {
+      Set<FileInfo> filesToServe, String baseUrl, Server server) {
     this.commandTaskFactory = commandTaskFactory;
     this.fileSet = fileSet;
     this.filesToServe = filesToServe;
@@ -98,7 +97,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     parameters.add(name);
     parameters.add(function);
     JsonCommand cmd = new JsonCommand(CommandType.REGISTERCOMMAND, parameters);
-    CountDownLatch latch = new CountDownLatch(1);
+    // CountDownLatch latch = new CountDownLatch(1);
 
     sendCommand(id, null, gson.toJson(cmd));
   }

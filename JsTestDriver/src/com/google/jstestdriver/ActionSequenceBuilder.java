@@ -51,9 +51,9 @@ public class ActionSequenceBuilder {
   private boolean captureConsole;
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
   private boolean dryRun;
-  private Map<String, FileData> files = new HashMap<String, FileData>();
-  private Set<String> fileSet;
-  private Set<String> filesToServe;
+  private Map<String, String> files = new HashMap<String, String>();
+  private Set<FileInfo> fileSet;
+  private Set<FileInfo> filesToServe;
   private int localServerPort = -1;
   private boolean preloadFiles = false;
   private String remoteServerAddress;
@@ -126,8 +126,10 @@ public class ActionSequenceBuilder {
   public List<Action> build() {
     List<Action> actions = new LinkedList<Action>();
     require(getServerAddress(), "Oh snap! the Server address was never defined!");
-    JsTestDriverClient client = actionFactory.getJsTestDriverClient(fileSet, getServerAddress());
-    
+    JsTestDriverClient client = actionFactory.getJsTestDriverClient(fileSet, filesToServe == null ?
+        new LinkedHashSet<FileInfo>() : filesToServe,
+        getServerAddress());
+
     threadedActions = createThreadedActions(client);
 
     if (!threadedActions.isEmpty()) {
@@ -205,7 +207,7 @@ public class ActionSequenceBuilder {
    * @param preloadFiles Indicates if thes files should be preloaded into the server.
    * @return The current builder.
    */
-  public ActionSequenceBuilder usingFiles(Set<String> fileSet, boolean preloadFiles) {
+  public ActionSequenceBuilder usingFiles(Set<FileInfo> fileSet, boolean preloadFiles) {
     this.fileSet = fileSet;
     this.preloadFiles = preloadFiles;
     return this;

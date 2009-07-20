@@ -47,7 +47,7 @@ public class CommandTaskTest extends TestCase {
     params.put("id", "1");
     FakeResponseStream stream = new FakeResponseStream();
     CommandTask task = new CommandTask(new ActionFactory.ActionFactoryFileFilter(), stream,
-        new LinkedHashSet<FileInfo>(), new LinkedHashSet<String>(),
+        new LinkedHashSet<FileInfo>(), new LinkedHashSet<FileInfo>(),
         "http://localhost", server, params, null);
 
     task.run();
@@ -79,7 +79,7 @@ public class CommandTaskTest extends TestCase {
     MockFileReader fileReader = new MockFileReader();
     fileReader.addExpectation(fileInfo.getFileName(), "foobar");
     CommandTask task = new CommandTask(new ActionFactory.ActionFactoryFileFilter(), stream,
-        new LinkedHashSet<FileInfo>(Arrays.asList(fileInfo)), new LinkedHashSet<String>(),
+        new LinkedHashSet<FileInfo>(Arrays.asList(fileInfo)), new LinkedHashSet<FileInfo>(),
         "http://localhost", server, params, fileReader);
 
     task.run();

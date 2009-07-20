@@ -25,6 +25,7 @@ import com.google.jstestdriver.ActionParser;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.ConfigurationParser;
+import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.ServerStartupAction;
@@ -116,8 +117,8 @@ public class MainUI {
       actionFactory.registerListener(CapturedBrowsers.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, capturedBrowsersPanel);
       File config = new File(flags.getConfig());
-      Set<String> fileSet = new LinkedHashSet<String>();
-      Set<String> filesToServe = new LinkedHashSet<String>();
+      Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
+      Set<FileInfo> filesToServe = new LinkedHashSet<FileInfo>();
       String defaultServerAddress = null;
 
       if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty() ||
@@ -150,6 +151,7 @@ public class MainUI {
     appFrame.setVisible(true);
   }
 
+  @SuppressWarnings("serial")
   private JFrame buildMainAppFrame() {
     return new JFrame("JSTestDriver Browser Manager") {{
       add(new JSplitPane(JSplitPane.VERTICAL_SPLIT) {{

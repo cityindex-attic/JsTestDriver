@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SlaveResourceServlet extends HttpServlet {
 
+  private static final long serialVersionUID = 5205195140557748211L;
+
   private final SlaveResourceService service;
 
   public SlaveResourceServlet(SlaveResourceService service) {

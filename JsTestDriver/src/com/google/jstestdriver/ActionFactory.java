@@ -15,10 +15,8 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -44,28 +42,10 @@ public class ActionFactory {
     this.fileReader = fileReader;
   }
 
-  public JsTestDriverClient getJsTestDriverClient(Set<String> files, String serverAddress) {
-    Set<FileInfo> filesInfo = generateFileInfo(files);
+  public JsTestDriverClient getJsTestDriverClient(Set<FileInfo> files, Set<FileInfo> filesToServe,
+      String serverAddress) {
     return new JsTestDriverClientImpl(new CommandTaskFactory(new ActionFactoryFileFilter(),
-        fileReader), filesInfo, serverAddress, new HttpServer());
-  }
-
-  public Set<FileInfo> generateFileInfo(Set<String> files) {
-    Set<FileInfo> filesInfo = new LinkedHashSet<FileInfo>();
-
-    for (String file : files) {
-      boolean isPatch = file.startsWith("patch:");
-
-      if (isPatch) {
-        String[] tokens = file.split(":", 2);
-
-        file = tokens[1].trim();
-      }
-      filesInfo.add(new FileInfo(file,
-          (file.startsWith("http://") || file.startsWith("https://")) ? -1 : new File(file)
-              .lastModified(), isPatch));
-    }
-    return filesInfo;
+        fileReader), files, filesToServe, serverAddress, new HttpServer());
   }
 
   public ServerStartupAction getServerStartupAction(Integer port,

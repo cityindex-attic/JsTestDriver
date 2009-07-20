@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  */
 public class JsTestDriverClientTest extends TestCase {
 
-  private static class FakeResponseStreamFactory implements ResponseStreamFactory {
+  public static class ResponseStreamFactoryStub implements ResponseStreamFactory {
 
     private ResponseStream stream;
 
@@ -96,9 +96,9 @@ public class JsTestDriverClientTest extends TestCase {
 
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
-        new LinkedHashSet<String>(), "http://localhost", server);
+        new LinkedHashSet<FileInfo>(), "http://localhost", server);
     FakeResponseStream stream = new FakeResponseStream();
-    FakeResponseStreamFactory factory = new FakeResponseStreamFactory();
+    ResponseStreamFactoryStub factory = new ResponseStreamFactoryStub();
 
     factory.setResponseStream(stream);
     client.eval("1", factory, "cmd");
@@ -125,7 +125,7 @@ public class JsTestDriverClientTest extends TestCase {
         + "{\"id\":1, \"name\":\"name1\", \"version\":\"ver1\", \"os\":\"os1\"}]");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
-        new LinkedHashSet<String>(), "http://localhost", server);
+        new LinkedHashSet<FileInfo>(), "http://localhost", server);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
     List<BrowserInfo> browsers = new ArrayList<BrowserInfo>(browsersCollection);
 
@@ -157,8 +157,8 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"last\":true}");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
-        new LinkedHashSet<String>(), "http://localhost", server);
-    FakeResponseStreamFactory factory = new FakeResponseStreamFactory();
+        new LinkedHashSet<FileInfo>(), "http://localhost", server);
+    ResponseStreamFactoryStub factory = new ResponseStreamFactoryStub();
     FakeResponseStream stream = new FakeResponseStream();
 
     factory.setResponseStream(stream);
@@ -180,8 +180,8 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"last\":true}");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
-        new LinkedHashSet<String>(), "http://localhost", server);
-    FakeResponseStreamFactory factory = new FakeResponseStreamFactory();
+        new LinkedHashSet<FileInfo>(), "http://localhost", server);
+    ResponseStreamFactoryStub factory = new ResponseStreamFactoryStub();
     FakeResponseStream stream = new FakeResponseStream();
 
     factory.setResponseStream(stream);

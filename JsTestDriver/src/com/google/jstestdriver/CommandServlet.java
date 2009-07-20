@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CommandServlet extends HttpServlet {
 
+  private static final long serialVersionUID = 7210927357890630427L;
+
   private final CapturedBrowsers capturedBrowsers;
 
   public CommandServlet(CapturedBrowsers browsers) {

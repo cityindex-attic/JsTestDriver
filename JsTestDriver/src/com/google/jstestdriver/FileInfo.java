@@ -60,4 +60,8 @@ public class FileInfo {
   public int hashCode() {
     return fileName.hashCode();
   }
+  
+  public boolean isRemote() {
+    return fileName.startsWith("http://") || fileName.startsWith("https://");
+  }
 }

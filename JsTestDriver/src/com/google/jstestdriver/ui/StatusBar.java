@@ -31,6 +31,8 @@ import javax.swing.JPanel;
  */
 public class StatusBar extends JPanel implements Observer {
 
+  private static final long serialVersionUID = 8729866568493622493L;
+
   public enum Status {
     NOT_RUNNING {
 

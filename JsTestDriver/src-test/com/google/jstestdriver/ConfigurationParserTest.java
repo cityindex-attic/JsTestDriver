@@ -66,44 +66,36 @@ public class ConfigurationParserTest extends TestCase {
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
 
     parser.parse(bais);
-    Set<String> files = parser.getFilesList();
-    List<String> listFiles = new ArrayList<String>(files);
+    Set<FileInfo> files = parser.getFilesList();
+    List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
 
     assertEquals(3, files.size());
-    assertTrue(listFiles.get(0).endsWith("code/code.js"));
-    assertTrue(listFiles.get(1).endsWith("test/test.js"));
-    assertTrue(listFiles.get(2).endsWith("test/test3.js"));
+    assertTrue(listFiles.get(0).getFileName().endsWith("code/code.js"));
+    assertTrue(listFiles.get(1).getFileName().endsWith("test/test.js"));
+    assertTrue(listFiles.get(2).getFileName().endsWith("test/test3.js"));
   }
 
   public void testParsePlugin() {
     Plugin expected = new Plugin("test", "pathtojar", "com.test.PluginModule");
     ConfigurationParser parser = new ConfigurationParser(null);
-    String configFile = "plugin:\n"
-      + "  - name: test\n"
-      + "    jar: \"pathtojar\"\n"
-      + "    module: \"com.test.PluginModule\"\n";
+    String configFile = "plugin:\n" + "  - name: test\n" + "    jar: \"pathtojar\"\n"
+        + "    module: \"com.test.PluginModule\"\n";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
 
     parser.parse(bais);
     List<Plugin> plugins = parser.getPlugins();
     assertEquals(expected, plugins.get(0));
   }
-  
+
   public void testParsePlugins() {
-    List<Plugin> expected =
-        new LinkedList<Plugin>(
-            Arrays.asList(new Plugin("test", "pathtojar", "com.test.PluginModule"),
-                new Plugin("test2", "pathtojar2", "com.test.PluginModule2")));
+    List<Plugin> expected = new LinkedList<Plugin>(Arrays.asList(new Plugin("test", "pathtojar",
+        "com.test.PluginModule"), new Plugin("test2", "pathtojar2", "com.test.PluginModule2")));
     ConfigurationParser parser = new ConfigurationParser(null);
-    String configFile = "plugin:\n"
-      + "  - name: test\n"
-      + "    jar: \"pathtojar\"\n"
-      + "    module: \"com.test.PluginModule\"\n"
-      + "  - name: test2\n"
-      + "    jar: \"pathtojar2\"\n"
-      + "    module: \"com.test.PluginModule2\"\n";
+    String configFile = "plugin:\n" + "  - name: test\n" + "    jar: \"pathtojar\"\n"
+        + "    module: \"com.test.PluginModule\"\n" + "  - name: test2\n"
+        + "    jar: \"pathtojar2\"\n" + "    module: \"com.test.PluginModule2\"\n";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    
+
     parser.parse(bais);
     List<Plugin> plugins = parser.getPlugins();
     assertEquals(expected, plugins);
@@ -140,17 +132,21 @@ public class ConfigurationParserTest extends TestCase {
     test3.createNewFile();
     test3.deleteOnExit();
     ConfigurationParser parser = new ConfigurationParser(tmpDir);
-    String configFile = "serve:\n - code/*.js\n - test/*.js\nexclude:\n"
-        + " - code/code2.js\n - test/test2.js";
+    String configFile = "serve:\n" + 
+        " - code/*.js\n" +
+        " - test/*.js\n" +
+        "exclude:\n" +
+        " - code/code2.js\n" +
+        " - test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
 
     parser.parse(bais);
-    Set<String> files = parser.getServeFilesList();
-    List<String> listFiles = new ArrayList<String>(files);
+    Set<FileInfo> files = parser.getServeFilesList();
+    List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
 
     assertEquals(3, files.size());
-    assertTrue(listFiles.get(0).endsWith("code/code.js"));
-    assertTrue(listFiles.get(1).endsWith("test/test.js"));
-    assertTrue(listFiles.get(2).endsWith("test/test3.js"));
+    assertTrue(listFiles.get(0).getFileName().endsWith("code/code.js"));
+    assertTrue(listFiles.get(1).getFileName().endsWith("test/test.js"));
+    assertTrue(listFiles.get(2).getFileName().endsWith("test/test3.js"));
   }
 }

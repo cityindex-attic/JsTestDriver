@@ -39,6 +39,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class FileSetServlet extends HttpServlet implements Observer {
 
+  private static final long serialVersionUID = -5224290018208979639L;
+
   private static final int HEARTBEAT_TIMEOUT = 2000;
 
   private final Gson gson = new Gson();
@@ -130,24 +132,24 @@ public class FileSetServlet extends HttpServlet implements Observer {
       gson.fromJson(fileSet, new TypeToken<Collection<FileInfo>>() {}.getType());
     SlaveBrowser browser = capturedBrowsers.getBrowser(browserId);
     Set<FileInfo> browserFileSet = browser.getFileSet();
-    Set<String> filesToRequest = new LinkedHashSet<String>();
+    Set<FileInfo> filesToRequest = new LinkedHashSet<FileInfo>();
 
     if (browserFileSet.isEmpty() || !clientFileSet.containsAll(browserFileSet)) {
       for (FileInfo info : clientFileSet) {
-        filesToRequest.add(info.getFileName());
+        filesToRequest.add(info);
       }
     } else {
       Set<FileInfo> diff = new LinkedHashSet<FileInfo>(clientFileSet);
 
       diff.removeAll(browserFileSet);
       for (FileInfo info : diff) {
-        filesToRequest.add(info.getFileName());
+        filesToRequest.add(info);
       }
       for (FileInfo browserFileInfo : browserFileSet) {
         for (FileInfo clientFileInfo : clientFileSet) {
           if (clientFileInfo.equals(browserFileInfo) &&
               clientFileInfo.getTimestamp() > browserFileInfo.getTimestamp()) {
-            filesToRequest.add(clientFileInfo.getFileName());
+            filesToRequest.add(clientFileInfo);
             break;
           }
         }
@@ -157,7 +159,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
       if (browser.getBrowserInfo().getName().contains("Safari")) {
         filesToRequest.clear();
         for (FileInfo info : clientFileSet) {
-          filesToRequest.add(info.getFileName());
+          filesToRequest.add(info);
         }
       }
       // TODO(jeremiele): remove when Cory's FileInfo refactoring is in

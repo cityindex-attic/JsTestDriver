@@ -32,7 +32,7 @@ public class CommandTaskFactory {
   }
 
   public CommandTask getCommandTask(ResponseStream stream, Set<FileInfo> fileSet,
-      Set<String> filesToServe, String baseUrl, Server server, Map<String, String> params) {
+      Set<FileInfo> filesToServe, String baseUrl, Server server, Map<String, String> params) {
     return new CommandTask(filter, stream, fileSet, filesToServe, baseUrl, server, params,
         fileReader);
   }

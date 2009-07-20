@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 
 public class ActionSequenceBuilderTest extends TestCase {
 
-  private LinkedHashSet<String> files = new LinkedHashSet<String>();
+  private LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
 
   public void testAddTestsWithRemoteServerAddress() throws Exception {
     ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null), null);
