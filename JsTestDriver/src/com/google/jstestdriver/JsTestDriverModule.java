@@ -35,14 +35,12 @@ public class JsTestDriverModule extends AbstractModule {
   private final FlagsImpl flags;
   private final String defaultServerAddress;
   private final Set<FileInfo> fileSet;
-  private final Set<FileInfo> filesToServe;
   private final List<Class<? extends Module>> plugins;
 
-  public JsTestDriverModule(FlagsImpl flags, Set<FileInfo> fileSet, Set<FileInfo> filesToServe,
+  public JsTestDriverModule(FlagsImpl flags, Set<FileInfo> fileSet,
       String defaultServerAddress, List<Class<? extends Module>> plugins) {
     this.flags = flags;
     this.fileSet = fileSet;
-    this.filesToServe = filesToServe;
     this.defaultServerAddress = defaultServerAddress;
     this.plugins = plugins;
   }
@@ -66,6 +64,6 @@ public class JsTestDriverModule extends AbstractModule {
 
   @Provides
   public List<Action> createActions(ActionFactory factory) {
-    return new ActionParser(factory).parseFlags(flags, fileSet, filesToServe, defaultServerAddress);
+    return new ActionParser(factory).parseFlags(flags, fileSet, defaultServerAddress);
   }
 }

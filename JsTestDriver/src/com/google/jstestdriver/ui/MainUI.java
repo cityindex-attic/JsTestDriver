@@ -118,7 +118,6 @@ public class MainUI {
       actionFactory.registerListener(CapturedBrowsers.class, capturedBrowsersPanel);
       File config = new File(flags.getConfig());
       Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
-      Set<FileInfo> filesToServe = new LinkedHashSet<FileInfo>();
       String defaultServerAddress = null;
 
       if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty() ||
@@ -129,7 +128,6 @@ public class MainUI {
           try {
             configParser.parse(new FileInputStream(flags.getConfig()));
             fileSet = configParser.getFilesList();
-            filesToServe = configParser.getServeFilesList();
             defaultServerAddress = configParser.getServer();
           } catch (FileNotFoundException e) {
             System.err.println(e);
@@ -138,7 +136,7 @@ public class MainUI {
         }
       }
       List<Action> actions = new ActionParser(actionFactory).parseFlags(flags, fileSet,
-          filesToServe, defaultServerAddress);
+          defaultServerAddress);
       ActionRunner runner = new ActionRunner(actions);
       runner.runActions();
     } catch (Exception e) {

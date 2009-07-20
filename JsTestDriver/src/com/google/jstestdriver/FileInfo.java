@@ -20,6 +20,12 @@ package com.google.jstestdriver;
  */
 public class FileInfo {
 
+  @Override
+  public String toString() {
+    return "FileInfo [fileName=" + fileName + ", isPatch=" + isPatch + ", serveOnly=" + serveOnly
+        + ", timestamp=" + timestamp + "]";
+  }
+
   private String fileName;
   private Long timestamp;
   private boolean isPatch;
