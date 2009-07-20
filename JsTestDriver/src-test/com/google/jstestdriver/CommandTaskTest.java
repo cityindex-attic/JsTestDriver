@@ -99,7 +99,7 @@ public class CommandTaskTest extends TestCase {
     
     server.expect("http://localhost/heartbeat?id=1", "OK");
     server.expect("http://localhost/fileSet?POST?{id=1, fileSet="
-        + gson.toJson(Arrays.asList(loadInfo, serveInfo)) + "}", "");
+        + gson.toJson(Arrays.asList(loadInfo)) + "}", "");
     server.expect("http://localhost/cmd?POST?{data={mooh}, id=1}", "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
