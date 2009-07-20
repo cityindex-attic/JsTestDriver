@@ -44,8 +44,13 @@ public class ActionFactory {
     this.fileReader = fileReader;
   }
 
-  public JsTestDriverClient getJsTestDriverClient(Set<String> files, Set<String> filesToServe,
-      String serverAddress) {
+  public JsTestDriverClient getJsTestDriverClient(Set<String> files, String serverAddress) {
+    Set<FileInfo> filesInfo = generateFileInfo(files);
+    return new JsTestDriverClientImpl(new CommandTaskFactory(new ActionFactoryFileFilter(),
+        fileReader), filesInfo, serverAddress, new HttpServer());
+  }
+
+  public Set<FileInfo> generateFileInfo(Set<String> files) {
     Set<FileInfo> filesInfo = new LinkedHashSet<FileInfo>();
 
     for (String file : files) {
@@ -58,15 +63,9 @@ public class ActionFactory {
       }
       filesInfo.add(new FileInfo(file,
           (file.startsWith("http://") || file.startsWith("https://")) ? -1 : new File(file)
-              .lastModified(), isPatch, false));
+              .lastModified(), isPatch));
     }
-    for (String file : filesToServe) {
-      filesInfo.add(new FileInfo(file,
-          (file.startsWith("http://") || file.startsWith("https://")) ? -1 : new File(file)
-              .lastModified(), false, true));
-    }
-    return new JsTestDriverClientImpl(new CommandTaskFactory(new ActionFactoryFileFilter(),
-        fileReader), filesInfo, filesToServe, serverAddress, new HttpServer());
+    return filesInfo;
   }
 
   public ServerStartupAction getServerStartupAction(Integer port,

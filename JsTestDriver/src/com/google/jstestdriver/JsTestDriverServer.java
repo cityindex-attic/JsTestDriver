@@ -121,7 +121,6 @@ public class JsTestDriverServer extends Observable {
       }
       File config = new File(flags.getConfig());
       Set<String> fileSet = new LinkedHashSet<String>();
-      Set<String> filesToServe = new LinkedHashSet<String>();
       List<Class<? extends Module>> plugins = new LinkedList<Class<? extends Module>>();
       String defaultServerAddress = null;
 
@@ -134,7 +133,6 @@ public class JsTestDriverServer extends Observable {
           try {
             configParser.parse(new FileInputStream(flags.getConfig()));
             fileSet = configParser.getFilesList();
-            filesToServe = configParser.getServeFilesList();
             defaultServerAddress = configParser.getServer();
             plugins = pluginLoader.load(configParser.getPlugins());
           } catch (FileNotFoundException e) {
@@ -143,8 +141,8 @@ public class JsTestDriverServer extends Observable {
           }
         }
       }
-      Guice.createInjector(new JsTestDriverModule(flags, fileSet, filesToServe,
-          defaultServerAddress, plugins)).getInstance(ActionRunner.class).runActions();
+      Guice.createInjector(new JsTestDriverModule(flags, fileSet, defaultServerAddress, plugins))
+          .getInstance(ActionRunner.class).runActions();
     } catch (CmdLineException e) {
       System.err.println(e.getMessage());
       parser.printUsage(System.err);
