@@ -18,6 +18,7 @@ package com.google.jstestdriver.eclipse.core;
 import java.util.HashMap;
 
 import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.FileData;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ServerStartupAction;
 
@@ -28,7 +29,7 @@ public class Server {
   public void start() {
     // TODO(shyamseshadri): Get rid of this and use the builder when we have something substantial.
     startupAction = new ServerStartupAction(4224, new CapturedBrowsers(),
-        new FilesCache(new HashMap<String, String>()));
+        new FilesCache(new HashMap<String, FileData>()));
     startupAction.run();
   }
 

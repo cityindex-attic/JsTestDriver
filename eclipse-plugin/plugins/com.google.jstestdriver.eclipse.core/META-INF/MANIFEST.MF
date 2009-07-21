@@ -6,8 +6,12 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: com.google.jstestdriver.eclipse.core.Activator
 Bundle-Vendor: GOOGLE
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- com.google.jstestdriver;bundle-version="1.0.0"
+ org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: com.google.jstestdriver.eclipse.core
+Export-Package: com.google.jstestdriver,
+ com.google.jstestdriver.eclipse.core,
+ com.google.jstestdriver.hooks,
+ com.google.jstestdriver.ui
+Bundle-ClassPath: lib/JsTestDriver.jar,
+ .
