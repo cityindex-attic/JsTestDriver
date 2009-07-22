@@ -15,27 +15,29 @@
  */
 package com.google.jstestdriver.eclipse.ui.views;
 
+import org.eclipse.jface.action.Action;
+
 import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
 
 import junit.framework.TestCase;
 
-public class ServerStartStopActionTest extends TestCase {
+public class ServerStartStopViewActionDelegateTest extends TestCase {
 
   public void testClickingOnActionToglesIconAndTextBetweenStartStop() {
-    ServerStartStopAction action = new ServerStartStopAction(new Server(),
+    Server server = new Server();
+    ServerStartStopViewActionDelegate delegate = new ServerStartStopViewActionDelegate(server,
         new Icons());
-    assertEquals("Start Server", action.getText());
-    assertTrue(action.getImageDescriptor().toString().contains(
-        "StartServer.png"));
+    Action action = new Action() {
+    };
 
-    action.run();
+    delegate.run(action);
 
     assertEquals("Stop Server", action.getText());
     assertTrue(action.getImageDescriptor().toString()
         .contains("StopServer.png"));
 
-    action.run();
+    delegate.run(action);
 
     assertEquals("Start Server", action.getText());
     assertTrue(action.getImageDescriptor().toString().contains(

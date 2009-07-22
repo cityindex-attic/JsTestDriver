@@ -33,5 +33,22 @@
             file="contexts.xml">
       </contexts>
    </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="com.google.jstestdriver.eclipse.ui.jsTestDriverViewContribution"
+            targetID="com.google.jstestdriver.eclipse.ui.views.JsTestDriverView">
+         <action
+               class="com.google.jstestdriver.eclipse.ui.views.ServerStartStopViewActionDelegate"
+               icon="icons/startServer.png"
+               id="com.google.jstestdriver.eclipse.ui.serverStartStopAction"
+               label="Start Server"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Start Server">
+         </action>
+      </viewContribution>
+   </extension>
 
 </plugin>

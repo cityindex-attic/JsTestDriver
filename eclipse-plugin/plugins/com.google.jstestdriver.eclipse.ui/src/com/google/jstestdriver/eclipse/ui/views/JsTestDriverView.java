@@ -15,19 +15,12 @@
  */
 package com.google.jstestdriver.eclipse.ui.views;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.part.ViewPart;
-
-import com.google.jstestdriver.eclipse.core.Server;
-import com.google.jstestdriver.eclipse.ui.icon.Icons;
 
 public class JsTestDriverView extends ViewPart {
 
@@ -37,9 +30,6 @@ public class JsTestDriverView extends ViewPart {
       .getHelpSystem();
 
   private TreeViewer viewer;
-  private Action startStopServer;
-
-  private Icons icons = new Icons();
 
   public void createPartControl(Composite parent) {
     viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -50,28 +40,6 @@ public class JsTestDriverView extends ViewPart {
 
     helpSystem.setHelp(viewer.getControl(),
         "com.google.jstestdriver.eclipse.ui.viewer");
-
-    createActions();
-    contributeToActionBars();
-  }
-
-  private void createActions() {
-    Server server = new Server();
-    startStopServer = new ServerStartStopAction(server, icons);
-  }
-
-  private void contributeToActionBars() {
-    IActionBars bars = getViewSite().getActionBars();
-    fillLocalPullDown(bars.getMenuManager());
-    fillLocalToolBar(bars.getToolBarManager());
-  }
-
-  private void fillLocalPullDown(IMenuManager manager) {
-    manager.add(startStopServer);
-  }
-
-  private void fillLocalToolBar(IToolBarManager manager) {
-    manager.add(startStopServer);
   }
 
   public void setFocus() {

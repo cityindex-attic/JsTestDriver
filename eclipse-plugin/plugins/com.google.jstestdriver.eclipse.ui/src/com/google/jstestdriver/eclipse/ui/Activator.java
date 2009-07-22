@@ -15,19 +15,54 @@
  */
 package com.google.jstestdriver.eclipse.ui;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 public class Activator extends AbstractUIPlugin {
 
-    public static final String PLUGIN_ID = "com.google.jstestdriver.eclipse.ui";
+  public static final String PLUGIN_ID = "com.google.jstestdriver.eclipse.ui";
+  private Map<String, ImageDescriptor> descriptors = new HashMap<String, ImageDescriptor>();
+  private static Activator plugin;
 
-    public void start(BundleContext context) throws Exception {
-        super.start(context);
-    }
+  public void start(BundleContext context) throws Exception {
+    super.start(context);
+    plugin = this;
+  }
 
-    public void stop(BundleContext context) throws Exception {
-        super.stop(context);
+  public void stop(BundleContext context) throws Exception {
+    plugin = null;
+    super.stop(context);
+  }
+
+  public static Activator getDefault() {
+    return plugin;
+  }
+
+  public ImageDescriptor getImageDescriptor(String path)
+      throws ImageNotFoundException {
+    ImageDescriptor descriptor = descriptors.get(path);
+    if (descriptor == null) {
+      String pluginLocation = Activator.getDefault().getBundle().getLocation();
+      if (pluginLocation.startsWith("reference:")) {
+        pluginLocation = pluginLocation.substring(10);
+      }
+      URL url;
+      try {
+        url = new URL(pluginLocation + path);
+      } catch (MalformedURLException e) {
+        throw new ImageNotFoundException("Image : " + path + " not found");
+      }
+
+      descriptor = ImageDescriptor.createFromURL(url);
+      descriptors.put(path, descriptor);
     }
+    return descriptor;
+  }
 
 }
