@@ -202,3 +202,31 @@ testRunnerTest.prototype.testTearDownError = function() {
   assertEquals("error", result.result);
   assertEquals("a big tearDown error", jsonParse(result.message).message);
 };
+
+
+testRunnerTest.prototype.testTearDownCalledWhenTestFails = function() {
+  var fakeDate = function() {};
+
+  fakeDate.prototype.getTime = function() {
+    return 0;
+  };
+  var testRunner = new jstestdriver.TestRunner(function() {}, fakeDate);
+  var testCaseManager = new jstestdriver.TestCaseManager(testRunner);
+  var testCaseClass = testCaseManager.TestCase('test');
+  var tearDownCalled = false;
+
+  testCaseClass.prototype.setUp = function() {};
+  testCaseClass.prototype.tearDown = function() {
+    tearDownCalled = true;
+  };
+  testCaseClass.prototype.testFoo = function() {
+    var err = new Error('test error');
+
+    err.name = 'AssertError';
+    throw err;
+  };
+  var result = testRunner.runTest('test', testCaseClass, 'testFoo');
+
+  assertEquals("failed", result.result);
+  assertTrue(tearDownCalled);
+};

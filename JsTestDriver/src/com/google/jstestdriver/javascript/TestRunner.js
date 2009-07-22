@@ -63,7 +63,6 @@ jstestdriver.TestRunner.prototype.runTest = function(testCaseName, testCase, tes
       err.name = 'AssertError';
       throw err;
     }
-    testCaseInstance.tearDown();
   } catch (e) {
     if (e.name == 'AssertError') {
       res = 'failed';
@@ -72,6 +71,12 @@ jstestdriver.TestRunner.prototype.runTest = function(testCaseName, testCase, tes
     }
     msg = JSON.stringify(e);
   } finally {
+    try {
+      testCaseInstance.tearDown();
+    } catch (e) {
+      res = 'error';
+      msg = JSON.stringify(e);
+    }
     if (captureConsole) {
       this.resetConsole_();
     }
