@@ -8,6 +8,7 @@
   <property name="test-resources" value="com/google/jstestdriver" />
   <property name="target.dir" value="target" />
   <property name="obj.dir" value="${target.dir}/obj" />
+  <property name="obj-debug.dir" value="${target.dir}/obj-debug" />
   <property name="obj-test.dir" value="${target.dir}/obj-test" />
   <property name="bin.dir" value="${target.dir}/bin" />
   <property name="emma.dir" value="${target.dir}/emma" />
@@ -80,55 +81,69 @@
   <target name="init">
     <mkdir dir="${obj.dir}" />
     <mkdir dir="${obj-test.dir}" />
+    <mkdir dir="${obj-debug.dir}" />
     <mkdir dir="${bin.dir}" />
     <mkdir dir="${junit.reports.dir}" />
     <mkdir dir="${jstestdriver.reports.dir}" />
     <mkdir dir="${testability-explorer.reports.dir}" />
+    <mkdir dir="${emma.dir}"/>
+    <mkdir dir="${emma-bin.dir}"/>
   </target>
+
+  <macrodef name="macro-compile">
+    <attribute name="destdir"/>
+    <attribute name="debug" default="false" />
+    <sequential>
+      <javac srcdir="${src.dir}" destdir="@{destdir}" classpathref="classpath" debug="@{debug}" />
+      <copy todir="@{destdir}">
+        <fileset dir="${src.dir}">
+          <exclude name="**/*.java" />
+          <exclude name="${javascript-resources}/*.js"/>
+        </fileset>
+      </copy>
+      <apply executable="java" dest="@{destdir}/${javascript-resources}">
+        <arg value="-jar"/>
+        <arg value="${lib.dir}/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar" />
+        <arg value="-v" />
+        <arg value="--type" />
+        <arg value="js" />
+        <arg value="--disable-optimizations" />
+        <arg value="-o" />
+        <targetfile/>
+        <srcfile/>
+        <fileset dir="${src.dir}/${javascript-resources}" includes="*.js" />
+        <mapper type="glob" from="*.js" to="*.js"></mapper>
+      </apply>
+      <concat destfile="@{destdir}/${javascript-resources}/jstestdrivernamespace.js">
+            <filelist dir="@{destdir}/${javascript-resources}"
+            files="Namespace.js" />
+      </concat>
+      <concat destfile="@{destdir}/${javascript-resources}/runner.js">
+        <filelist dir="@{destdir}/${javascript-resources}"
+        files="Asserts.js,Utils.js,Console.js,LibLoader.js,FileLoader.js,
+          CommandExecutor.js,TestRunner.js,TestCaseManager.js" />
+      </concat>
+      <concat destfile="@{destdir}/${javascript-resources}/heartbeatclient.js">
+        <filelist dir="@{destdir}/${javascript-resources}"
+        files="Utils.js,Heartbeat.js" />
+      </concat>
+    </sequential>
+  </macrodef>
 
   <target name="compile" depends="init">
-    <javac srcdir="${src.dir}" destdir="${obj.dir}" classpathref="classpath">
-    </javac>
-    <copy todir="${obj.dir}">
-      <fileset dir="${src.dir}">
-        <exclude name="**/*.java" />
-        <exclude name="${javascript-resources}/*.js"/>
-      </fileset>
-    </copy>
-    <apply executable="java" dest="${obj.dir}/${javascript-resources}">
-      <arg value="-jar"/>
-      <arg value="${lib.dir}/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar" />
-      <arg value="-v" />
-      <arg value="--type" />
-      <arg value="js" />
-      <arg value="--disable-optimizations" />
-      <arg value="-o" />
-      <targetfile/>
-      <srcfile/>
-      <fileset dir="${src.dir}/${javascript-resources}" includes="*.js" />
-      <mapper type="glob" from="*.js" to="*.js"></mapper>
-    </apply>
-    <concat destfile="${obj.dir}/${javascript-resources}/jstestdrivernamespace.js">
-          <filelist dir="${obj.dir}/${javascript-resources}"
-          files="Namespace.js" />
-    </concat>
-    <concat destfile="${obj.dir}/${javascript-resources}/runner.js">
-      <filelist dir="${obj.dir}/${javascript-resources}"
-      files="Asserts.js,Utils.js,Console.js,LibLoader.js,FileLoader.js,
-        CommandExecutor.js,TestRunner.js,TestCaseManager.js" />
-    </concat>
-    <concat destfile="${obj.dir}/${javascript-resources}/heartbeatclient.js">
-      <filelist dir="${obj.dir}/${javascript-resources}"
-      files="Utils.js,Heartbeat.js" />
-    </concat>
+    <macro-compile destdir="${obj.dir}" debug="false"/>
   </target>
-  
 
-  <target name="compile-test" depends="compile">
-    <javac srcdir="${src-test.dir}" destdir="${obj-test.dir}" classpathref="classpath">
+  <target name="compile-debug" depends="init">
+    <macro-compile destdir="${obj-debug.dir}" debug="true"/>
+  </target>
+
+  <target name="compile-test" depends="compile-debug">
+    <javac srcdir="${src-test.dir}" destdir="${obj-test.dir}" classpathref="classpath"
+        debug="true">
       <classpath refid="classpath-test" />
       <classpath>
-        <pathelement path="${obj.dir}" />
+        <pathelement path="${obj-debug.dir}" />
       </classpath>
     </javac>
     <copy todir="${obj-test.dir}">
@@ -136,7 +151,7 @@
         <exclude name="**/*.java" />
       </fileset>
     </copy>
-    <copy todir="${obj.dir}">
+    <copy todir="$obj-debug.dir}">
       <fileset dir="${src-test.dir}">
         <exclude name="**/*.java" />
       </fileset>
@@ -144,17 +159,15 @@
   </target>
 
   <target name="instrument" depends="compile-test">
-    <mkdir dir="${emma.dir}"/>
-    <mkdir dir="${emma-bin.dir}"/>
-    <path id="coveragepath">
-      <pathelement location="${obj.dir}"/>
-      <pathelement location="${obj-test.dir}"/>
-    </path>
     <emma>
-      <instr instrpathref="coveragepath"
-             destdir="${emma-bin.dir}"
+      <instr destdir="${emma-bin.dir}"
              metadatafile="${emma.dir}/metadata.emma"
-             merge="true" />
+             merge="true">
+        <instrpath>
+          <pathelement location="${obj-debug.dir}"/>
+          <pathelement location="${obj-test.dir}"/>
+        </instrpath>
+      </instr>
     </emma>
   </target>
 
@@ -167,7 +180,7 @@
       <classpath refid="classpath" />
       <classpath refid="classpath-test" />
       <classpath>
-        <pathelement location="${obj.dir}" />
+        <pathelement location="${obj-debug.dir}" />
         <pathelement location="${obj-test.dir}" />
       </classpath>
       <jvmarg value="-Demma.coverage.out.file=${emma.dir}/test.emma" />
@@ -183,7 +196,11 @@
 
   <target name="coverage" depends="test">
     <emma>
-      <report sourcepath="${all-source}" >
+      <report>
+        <sourcepath>
+          <pathelement location="${src.dir}"/>
+          <pathelement location="${src-test.dir}"/>
+        </sourcepath>
         <fileset dir="${emma.dir}" >
           <include name="*.emma" />
         </fileset>
