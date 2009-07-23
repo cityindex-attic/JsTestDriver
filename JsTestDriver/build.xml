@@ -12,6 +12,7 @@
   <property name="bin.dir" value="${target.dir}/bin" />
   <property name="emma.dir" value="${target.dir}/emma" />
   <property name="emma-bin.dir" value="${target.dir}/bin" />
+  <property name="emma-reports.dir" value="${target.dir}/reports/emma" />
   <property name="junit.reports.dir" value="${target.dir}/reports/junit" />
   <property name="jstestdriver.reports.dir" value="${target.dir}/reports/jstestdriver" />
   <property name="jstests.dir" value="src-test/com/google/jstestdriver/javascript" />
@@ -50,6 +51,11 @@
   <path id="emma">
     <pathelement location="${lib.dir}/emma-2.0.5312-lib/emma.jar" />
     <pathelement location="${lib.dir}/emma-2.0.5312-lib/emma_ant.jar" />
+  </path>
+  
+  <path id="all-source">
+    <pathelement location="${src.dir}"/>
+    <pathelement location="${src-test.dir}"/>
   </path>
 
   <path id="classpath-test">
@@ -177,13 +183,13 @@
 
   <target name="coverage" depends="test">
     <emma>
-      <report sourcepath="src" >
-        <fileset dir="target/emma" >
+      <report sourcepath="${all-source}" >
+        <fileset dir="${emma.dir}" >
           <include name="*.emma" />
         </fileset>
-        <txt outfile="${emma.dir}/report/coverage.txt" />
-        <html outfile="${emma.dir}/report/coverage.html" />
-        <xml outfile="${emma.dir}/report/coverage.xml" />
+        <txt outfile="${emma-reports.dir}/coverage.txt" />
+        <html outfile="${emma-reports.dir}/coverage.html" />
+        <xml outfile="${emma-reports.dir}/coverage.xml" />
       </report>
     </emma>
   </target>
