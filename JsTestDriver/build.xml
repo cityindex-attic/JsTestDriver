@@ -175,6 +175,19 @@
     </junit>
   </target>
 
+  <target name="coverage" depends="test">
+    <emma>
+      <report sourcepath="src" >
+        <fileset dir="target/emma" >
+          <include name="*.emma" />
+        </fileset>
+        <txt outfile="${emma.dir}/report/coverage.txt" />
+        <html outfile="${emma.dir}/report/coverage.html" />
+        <xml outfile="${emma.dir}/report/coverage.xml" />
+      </report>
+    </emma>
+  </target>
+
   <target name="jar" depends="compile">
     <jar destfile="${bin.dir}/${ant.project.name}.jar" basedir="${obj.dir}" excludes="**/*.js"
       duplicate="preserve">
