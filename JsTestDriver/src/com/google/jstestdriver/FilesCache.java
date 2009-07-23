@@ -23,19 +23,19 @@ import java.util.Set;
  */
 public class FilesCache {
 
-  private final Map<String, FileData> files;
+  private final Map<String, FileInfo> files;
 
-  public FilesCache(Map<String, FileData> files) {
+  public FilesCache(Map<String, FileInfo> files) {
     this.files = files;
   }
 
   public String getFileContent(String fileName) {
-    FileData fileData = files.get(fileName);
+    FileInfo FileInfo = files.get(fileName);
 
-    return fileData != null ? fileData.getData() : "";
+    return FileInfo != null ? FileInfo.getData() : "";
   }
 
-  public FileData getFileData(String fileName) {
+  public FileInfo getFileInfo(String fileName) {
     return files.get(fileName);
   }
 
@@ -43,8 +43,8 @@ public class FilesCache {
     files.clear();
   }
 
-  public void addFile(String path, FileData fileData) {
-    files.put(path, fileData);
+  public void addFile(String path, FileInfo FileInfo) {
+    files.put(path, FileInfo);
   }
 
   public int getFilesNumber() {

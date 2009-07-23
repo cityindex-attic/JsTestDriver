@@ -35,16 +35,15 @@ import com.google.inject.Inject;
 public class ActionFactory {
 
   Map<Class<?>, List<Observer>> observers = new HashMap<Class<?>, List<Observer>>();
-  private final FileReader fileReader;
+  private final CommandTaskFactory commandTaskFactory;
 
   @Inject
-  public ActionFactory(FileReader fileReader) {
-    this.fileReader = fileReader;
+  public ActionFactory(CommandTaskFactory commandTaskFactory) {
+    this.commandTaskFactory = commandTaskFactory;
   }
 
   public JsTestDriverClient getJsTestDriverClient(Set<FileInfo> files, String serverAddress) {
-    return new JsTestDriverClientImpl(new CommandTaskFactory(new ActionFactoryFileFilter(),
-        fileReader), files, serverAddress, new HttpServer());
+    return new JsTestDriverClientImpl(commandTaskFactory, files, serverAddress, new HttpServer());
   }
 
   public ServerStartupAction getServerStartupAction(Integer port,

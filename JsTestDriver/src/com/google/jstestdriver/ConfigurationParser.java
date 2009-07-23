@@ -75,9 +75,26 @@ public class ConfigurationParser {
       Set<FileInfo> resolvedServeFiles = resolveFiles((List<String>) data.get("serve"), true);
       resolvedFilesLoad.addAll(resolvedServeFiles);
     }
-
-    filesList.addAll(resolvedFilesLoad);
+    
+    filesList.addAll(consolidatePatches(resolvedFilesLoad));
     filesList.removeAll(resolvedFilesExclude);
+  }
+
+  private Set<FileInfo> consolidatePatches(Set<FileInfo> resolvedFilesLoad) {
+    Set<FileInfo> consolidated = new LinkedHashSet<FileInfo>(resolvedFilesLoad.size());
+    FileInfo currentNonPatch = null;
+    for (FileInfo fileInfo : resolvedFilesLoad) {
+      if (fileInfo.isPatch()) {
+        if (currentNonPatch == null) {
+          throw new IllegalStateException("Patch " + fileInfo + " without a core file to patch");
+        }
+        currentNonPatch.addPatch(fileInfo);
+      } else {
+        consolidated.add(fileInfo);
+        currentNonPatch = fileInfo;
+      }
+    }
+    return consolidated;
   }
 
   private Set<FileInfo> resolveFiles(List<String> files, boolean serveOnly) {
@@ -93,7 +110,7 @@ public class ConfigurationParser {
           f = tokens[1].trim();
         }
         if (f.startsWith("http://") || f.startsWith("https://")) {
-          resolvedFiles.add(new FileInfo(f, -1, false, false));
+          resolvedFiles.add(new FileInfo(f, -1, false, false, null));
         } else {
           File file = basePath != null ? new File(basePath, f) : new File(f);
           File testFile = file.getAbsoluteFile();
@@ -114,9 +131,8 @@ public class ConfigurationParser {
             String resolvedFilePath = pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\",
                 "/") + "/" + filteredFile.replaceAll("\\\\", "/"));
             File resolvedFile = new File(resolvedFilePath);
-
             resolvedFiles.add(new FileInfo(resolvedFilePath, resolvedFile.lastModified(), isPatch,
-                serveOnly));
+                serveOnly, null));
           }
         }
       }

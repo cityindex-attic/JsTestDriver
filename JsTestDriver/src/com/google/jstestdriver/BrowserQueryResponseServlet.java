@@ -63,7 +63,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
           LinkedHashSet<FileInfo> fileInfos = new LinkedHashSet<FileInfo>();
 
           for (FileSource f : successFiles) {
-            fileInfos.add(new FileInfo(f.getFileSrc().substring(6), f.getTimestamp(), false, false));
+            fileInfos.add(new FileInfo(f.getFileSrc().substring(6), f.getTimestamp(), false, false, null));
           }
           browser.addFiles(fileInfos);
           Collection<String> errorFiles = loadedFiles.getErrorFiles();

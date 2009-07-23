@@ -29,8 +29,6 @@ import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.ServerStartupAction;
-import com.google.jstestdriver.HookedFileReader;
-import com.google.jstestdriver.hooks.FileReaderHook;
 
 import org.apache.commons.logging.LogFactory;
 import org.kohsuke.args4j.CmdLineException;
@@ -41,7 +39,6 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -112,7 +109,7 @@ public class MainUI {
     try {
       // TODO(corysmith): Guicefy.
       ActionFactory actionFactory =
-          new ActionFactory(new HookedFileReader(Collections.<FileReaderHook>emptySet()));
+          new ActionFactory(null);
       actionFactory.registerListener(ServerStartupAction.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, capturedBrowsersPanel);
@@ -135,7 +132,7 @@ public class MainUI {
           }
         }
       }
-      List<Action> actions = new ActionParser(actionFactory).parseFlags(flags, fileSet,
+      List<Action> actions = new ActionParser(actionFactory, null).parseFlags(flags, fileSet,
           defaultServerAddress);
       ActionRunner runner = new ActionRunner(actions);
       runner.runActions();

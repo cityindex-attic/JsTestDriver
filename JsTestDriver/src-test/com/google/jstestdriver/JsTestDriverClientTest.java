@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import com.google.inject.Provider;
+
 import junit.framework.TestCase;
 
 /**
@@ -95,7 +97,11 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"error\":\"error2\",\"executionTime\":6},\"last\":true}");
 
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
+        new ActionFactory.ActionFactoryFileFilter(), null, new Provider<HeartBeatManager>() {
+          public HeartBeatManager get() {
+            return new HeartBeatManagerStub();
+          }
+        }), new LinkedHashSet<FileInfo>(),
         "http://localhost", server);
     FakeResponseStream stream = new FakeResponseStream();
     ResponseStreamFactoryStub factory = new ResponseStreamFactoryStub();
@@ -124,7 +130,11 @@ public class JsTestDriverClientTest extends TestCase {
         + "{\"id\":0, \"name\":\"name0\", \"version\":\"ver0\", \"os\":\"os0\"},"
         + "{\"id\":1, \"name\":\"name1\", \"version\":\"ver1\", \"os\":\"os1\"}]");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
+        new ActionFactory.ActionFactoryFileFilter(), null, new Provider<HeartBeatManager>() {
+          public HeartBeatManager get() {
+            return new HeartBeatManagerStub();
+          }
+        }), new LinkedHashSet<FileInfo>(),
         "http://localhost", server);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
     List<BrowserInfo> browsers = new ArrayList<BrowserInfo>(browsersCollection);
@@ -156,7 +166,11 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
+        new ActionFactory.ActionFactoryFileFilter(), null, new Provider<HeartBeatManager>() {
+          public HeartBeatManager get() {
+            return new HeartBeatManagerStub();
+          }
+        }), new LinkedHashSet<FileInfo>(),
         "http://localhost", server);
     ResponseStreamFactoryStub factory = new ResponseStreamFactoryStub();
     FakeResponseStream stream = new FakeResponseStream();
@@ -179,7 +193,11 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
+        new ActionFactory.ActionFactoryFileFilter(), null, new Provider<HeartBeatManager>() {
+          public HeartBeatManager get() {
+            return new HeartBeatManagerStub();
+          }
+        }), new LinkedHashSet<FileInfo>(),
         "http://localhost", server);
     ResponseStreamFactoryStub factory = new ResponseStreamFactoryStub();
     FakeResponseStream stream = new FakeResponseStream();

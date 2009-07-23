@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
@@ -22,23 +25,49 @@ public class FileInfo {
 
   @Override
   public String toString() {
-    return "FileInfo [fileName=" + fileName + ", isPatch=" + isPatch + ", serveOnly=" + serveOnly
+    return "FileInfo [file=" + file + ", isPatch=" + isPatch + ", serveOnly=" + serveOnly
         + ", timestamp=" + timestamp + "]";
   }
 
-  private String fileName;
+  private String file;
   private Long timestamp;
-  private boolean isPatch;
+  private transient boolean isPatch;
   private boolean serveOnly;
+  private List<FileInfo> patches;
+  private String data;
+
+  public String getData() {
+    return data;
+  }
+
+  public void setData(String data) {
+    this.data = data;
+  }
 
   public FileInfo() {
   }
 
-  public FileInfo(String fileName, long timestamp, boolean isPatch, boolean serveOnly) {
-    this.fileName = fileName;
+  public FileInfo(String fileName, long timestamp, boolean isPatch,
+      boolean serveOnly, String data) {
+    this.file = fileName;
     this.timestamp = timestamp;
     this.isPatch = isPatch;
     this.serveOnly = serveOnly;
+    this.data = data;
+  }
+
+  public List<FileInfo> getPatches() {
+    if (patches != null) {
+      return new LinkedList<FileInfo>(patches);
+    }
+    return new LinkedList<FileInfo>();
+  }
+
+  public void addPatch(FileInfo patch) {
+    if (patches == null) {
+      patches = new LinkedList<FileInfo>();
+    }
+    this.patches.add(patch);
   }
 
   public boolean isServeOnly() {
@@ -46,7 +75,7 @@ public class FileInfo {
   }
 
   public String getFileName() {
-    return fileName;
+    return file;
   }
 
   public long getTimestamp() {
@@ -56,6 +85,10 @@ public class FileInfo {
   public boolean isPatch() {
     return isPatch;
   }
+  
+  public boolean isRemote() {
+    return file.startsWith("http://") || file.startsWith("https://");
+  }
 
   @Override
   public boolean equals(Object obj) {
@@ -64,10 +97,6 @@ public class FileInfo {
 
   @Override
   public int hashCode() {
-    return fileName.hashCode();
-  }
-  
-  public boolean isRemote() {
-    return fileName.startsWith("http://") || fileName.startsWith("https://");
+    return file.hashCode();
   }
 }

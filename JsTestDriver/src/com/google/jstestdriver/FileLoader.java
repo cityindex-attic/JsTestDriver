@@ -13,13 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package com.google.jstestdriver;
 
+import java.util.List;
+import java.util.Set;
+
+import com.google.inject.ImplementedBy;
+
 /**
- * Defines the interface for the FileReader
+ * Defines the interface for all FileLoaders. Used by JsTestDriver to load files from disk.
+ * Separated to allow easy mocking.
  * @author corysmith
+ *
  */
-public interface FileReader {
-  public String readFile(String file);
+@ImplementedBy(SimpleFileLoader.class)
+public interface FileLoader {
+  public List<FileInfo> loadFiles(Set<FileInfo> filesToLoad, boolean shouldReset);
 }

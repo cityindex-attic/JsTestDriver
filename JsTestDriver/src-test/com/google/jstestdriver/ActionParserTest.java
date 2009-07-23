@@ -28,7 +28,7 @@ import junit.framework.TestCase;
 public class ActionParserTest extends TestCase {
 
   public void testParseFlagsAndCreateActionQueue() throws Exception {
-    ActionParser parser = new ActionParser(new ActionFactory(null));
+    ActionParser parser = new ActionParser(new ActionFactory(null), null);
     FlagsImpl flags = new FlagsImpl();
     List<String> browserPaths = new ArrayList<String>();
     browserPaths.add("browser");
@@ -48,7 +48,7 @@ public class ActionParserTest extends TestCase {
   }
 
   public void testParseWithServerAndReset() throws Exception {
-    ActionParser parser = new ActionParser(new ActionFactory(null));
+    ActionParser parser = new ActionParser(new ActionFactory(null), null);
 
     FlagsImpl flags = new FlagsImpl();
     String serverAddress = "http://otherserver:8989";
@@ -72,7 +72,7 @@ public class ActionParserTest extends TestCase {
   }
 
   public void testParseFlagsWithServer() throws Exception {
-    ActionParser parser = new ActionParser(new ActionFactory(null));
+    ActionParser parser = new ActionParser(new ActionFactory(null), null);
     FlagsImpl flags = new FlagsImpl();
     List<String> browserPaths = new ArrayList<String>();
     browserPaths.add("browser");
@@ -91,7 +91,7 @@ public class ActionParserTest extends TestCase {
   }
 
   public void testParseFlagsNoPortNoServer() throws Exception {
-    ActionParser parser = new ActionParser(new ActionFactory(null));
+    ActionParser parser = new ActionParser(new ActionFactory(null), null);
     FlagsImpl flags = new FlagsImpl();
 
     flags.setBrowser("browser");
@@ -105,7 +105,7 @@ public class ActionParserTest extends TestCase {
   }
 
   public void testParseFlagsAndCreateTestActions() throws Exception {
-    ActionParser parser = new ActionParser(new ActionFactory(null));
+    ActionParser parser = new ActionParser(new ActionFactory(null), null);
     FlagsImpl flags = new FlagsImpl();
     List<String> tests = new ArrayList<String>();
     tests.add("foo.testBar");

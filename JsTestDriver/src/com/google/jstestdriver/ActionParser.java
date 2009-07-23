@@ -26,13 +26,15 @@ import java.util.Set;
 public class ActionParser {
 
   private final ActionFactory actionFactory;
+  private final FileLoader fileLoader;
 
-  public ActionParser(ActionFactory actionFactory) {
+  public ActionParser(ActionFactory actionFactory, FileLoader fileLoader) {
     this.actionFactory = actionFactory;
+    this.fileLoader = fileLoader;
   }
 
   public List<Action> parseFlags(Flags flags, Set<FileInfo> fileSet, String defaultServerAddress) {
-    ActionSequenceBuilder builder = new ActionSequenceBuilder(actionFactory, null);
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(actionFactory, fileLoader);
     builder.usingFiles(fileSet, flags.getPreloadFiles())
            .addTests(flags.getTests(),
                      flags.getTestOutput(),

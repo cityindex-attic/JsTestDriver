@@ -23,8 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import com.google.gson.Gson;
@@ -66,11 +66,11 @@ public class CommandTaskTest extends TestCase {
 
   public void testUploadFiles() throws Exception {
     MockServer server = new MockServer();
-    FileInfo fileInfo = new FileInfo("foo.js", 1232, false, false);
+    FileInfo fileInfo = new FileInfo("foo.js", 1232, false, false, null);
 
     server.expect(baseUrl + "heartbeat?id=1", "OK");
-    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet="
-        + gson.toJson(Arrays.asList(fileInfo)) + "}", "");
+    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet=" + gson.toJson(Arrays.asList(fileInfo))
+        + "}", "");
     server.expect(baseUrl + "cmd?POST?{data={mooh}, id=1}", "");
     server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
@@ -80,8 +80,8 @@ public class CommandTaskTest extends TestCase {
     params.put("data", "{mooh}");
     params.put("id", "1");
     FakeResponseStream stream = new FakeResponseStream();
-    MockFileReader fileReader = new MockFileReader();
-    fileReader.addExpectation(fileInfo.getFileName(), "foobar");
+    MockFileLoader fileReader = new MockFileLoader();
+    fileReader.addExpectation(fileInfo, "foobar");
     CommandTask task = createCommandTask(server, new LinkedHashSet<FileInfo>(Arrays
         .asList(fileInfo)), new LinkedHashSet<FileInfo>(), params, stream, fileReader);
 
@@ -97,21 +97,20 @@ public class CommandTaskTest extends TestCase {
   public void testUploadServeOnlyFiles() throws Exception {
     MockServer server = new MockServer();
 
-
     // test file data.
-    FileInfo loadInfo = new FileInfo("foo.js", 1232, false, false);
+    FileInfo loadInfo = new FileInfo("foo.js", 1232, false, false, null);
     String loadInfoContents = "foobar";
 
-    FileInfo serveInfo = new FileInfo("foo2.js", 1232, false, true);
+    FileInfo serveInfo = new FileInfo("foo2.js", 1232, false, true, null);
     String serveInfoContents = "foobar2";
     List<FileInfo> fileSet = Arrays.asList(loadInfo, serveInfo);
 
-    //server expects
+    // server expects
     server.expect(baseUrl + "heartbeat?id=1", "OK");
-    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet="
-        + gson.toJson(fileSet) + "}", gson.toJson(fileSet));
+    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet=" + gson.toJson(fileSet) + "}", gson
+        .toJson(fileSet));
 
-    JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
+    JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String> emptyList());
     Map<String, String> resetParams = new LinkedHashMap<String, String>();
     resetParams.put("id", "1");
     resetParams.put("data", gson.toJson(cmd));
@@ -120,17 +119,18 @@ public class CommandTaskTest extends TestCase {
     server.expect(baseUrl + "cmd?id=1", "ignore");
     server.expect(baseUrl
         + "fileSet?POST?{id=1, data="
-        + gson.toJson(Arrays.asList(
-            new FileData(loadInfo.getFileName(), loadInfoContents,
-                loadInfo.getTimestamp()),
-            new FileData(serveInfo.getFileName(), serveInfoContents,
-                serveInfo.getTimestamp()))) + "}", "");
-    
-    String url = baseUrl + "cmd?POST?" + createLoadCommandString("1", CommandType.LOADTEST,
-            Arrays.asList(CommandTask.fileInfoToFileSource(loadInfo)));
+        + gson.toJson(Arrays.asList(new FileInfo(loadInfo.getFileName(), loadInfo.getTimestamp(),
+            loadInfo.isPatch(), loadInfo.isServeOnly(), loadInfoContents), new FileInfo(serveInfo
+            .getFileName(), serveInfo.getTimestamp(), serveInfo.isPatch(), serveInfo.isServeOnly(),
+            serveInfoContents))) + "}", "");
+
+    String url = baseUrl
+        + "cmd?POST?"
+        + createLoadCommandString("1", CommandType.LOADTEST, Arrays.asList(CommandTask
+            .fileInfoToFileSource(loadInfo)));
     server.expect(url, "ignore");
-    server.expect(baseUrl + "cmd?id=1", "{\"response\":"
-        + createLoadedFilesResponseString() + ", \"last\":true}");
+    server.expect(baseUrl + "cmd?id=1", "{\"response\":" + createLoadedFilesResponseString()
+        + ", \"last\":true}");
     server.expect(baseUrl + "cmd?POST?{data={mooh}, id=1}", "");
     server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
@@ -140,12 +140,11 @@ public class CommandTaskTest extends TestCase {
     params.put("data", "{mooh}");
     params.put("id", "1");
     FakeResponseStream stream = new FakeResponseStream();
-    MockFileReader fileReader = new MockFileReader();
-    fileReader.addExpectation(loadInfo.getFileName(), loadInfoContents);
-    fileReader.addExpectation(serveInfo.getFileName(), serveInfoContents);
+    MockFileLoader fileReader = new MockFileLoader();
+    fileReader.addExpectation(loadInfo, loadInfoContents);
+    fileReader.addExpectation(serveInfo, serveInfoContents);
     CommandTask task = createCommandTask(server, new LinkedHashSet<FileInfo>(fileSet),
-        new LinkedHashSet<FileInfo>(Arrays.asList(serveInfo)), params,
-        stream, fileReader);
+        new LinkedHashSet<FileInfo>(Arrays.asList(serveInfo)), params, stream, fileReader);
 
     task.run();
     Response response = stream.getResponse();
@@ -155,7 +154,7 @@ public class CommandTaskTest extends TestCase {
     assertEquals("error", response.getError());
     assertEquals(123L, response.getExecutionTime());
   }
-  
+
   private String createLoadedFilesResponseString() {
     Response response = new Response();
     LoadedFiles loadedFiles = new LoadedFiles();
@@ -164,7 +163,8 @@ public class CommandTaskTest extends TestCase {
     return gson.toJson(response);
   }
 
-  private String createLoadCommandString(String id, CommandType command, List<FileSource> filesToLoad) {
+  private String createLoadCommandString(String id, CommandType command,
+      List<FileSource> filesToLoad) {
     Map<String, String> loadFileParams = new LinkedHashMap<String, String>();
     loadFileParams.put("id", id);
     List<String> loadParameters = new LinkedList<String>();
@@ -176,48 +176,28 @@ public class CommandTaskTest extends TestCase {
 
   private CommandTask createCommandTask(MockServer server, LinkedHashSet<FileInfo> files,
       LinkedHashSet<FileInfo> serveFiles, Map<String, String> params, FakeResponseStream stream,
-      MockFileReader fileReader) {
+      MockFileLoader fileLoader) {
     CommandTask task = new CommandTask(new ActionFactory.ActionFactoryFileFilter(), stream, files,
-        "http://localhost", server, params, fileReader, new HeartBeatManagerStub());
+        "http://localhost", server, params, new HeartBeatManagerStub(), fileLoader);
     return task;
   }
 
+  private class MockFileLoader implements FileLoader {
+    private HashMap<FileInfo, String> expected = new HashMap<FileInfo, String>();
 
-  /**
-   * Simple stub to allow us to test the CommandTask without throwing socket exceptions, or
-   * starting a timer.
-   * @author corysmith@google.com (Cory Smith)
-   */
-  // TODO(corysmith): Flesh this into a Mock or a Fake.
-  private static class HeartBeatManagerStub implements HeartBeatManager {
-
-    public void cancelTimer() {
+    public void addExpectation(FileInfo file, String contents) {
+      expected.put(file, contents);
     }
 
-    public void startHeartBeat(String baseUrl, String browserId, String sessionId) {
-    }
-
-    public void startTimer() {
-    }
-  }
-
-  private class MockFileReader implements FileReader {
-    private HashMap<String, String> expected;
-
-    public MockFileReader() {
-      expected = new HashMap<String, String>();
-    }
-
-    public void addExpectation(String fileName, String contents) {
-      expected.put(fileName, contents);
-    }
-
-    public String readFile(String file) {
-      if (!expected.containsKey(file)) {
-        Assert.fail(String.format("%s not found in %s", file, expected.keySet()));
+    public List<FileInfo> loadFiles(Set<FileInfo> filesToLoad, boolean shouldReset) {
+      List<FileInfo> loaded = new LinkedList<FileInfo>();
+      for (FileInfo info : filesToLoad) {
+        assertTrue("File " + info + " was not found in " + expected.keySet(), expected
+            .containsKey(info));
+        loaded.add(new FileInfo(info.getFileName(), info.getTimestamp(), info.isPatch(), info
+            .isServeOnly(), expected.get(info)));
       }
-      return expected.get(file);
+      return loaded;
     }
-
   }
 }

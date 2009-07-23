@@ -180,7 +180,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
       if (filesToRequest.contains(fileInfo)) {
         if (!fileInfo.isServeOnly()
             || !cachedFiles.contains(fileInfo.getFileName())
-            || filesCache.getFileData(fileInfo.getFileName()).getTimestamp() < fileInfo
+            || filesCache.getFileInfo(fileInfo.getFileName()).getTimestamp() < fileInfo
                 .getTimestamp()) {
           filteredFilesToRequest.add(fileInfo);
         }
@@ -196,11 +196,11 @@ public class FileSetServlet extends HttpServlet implements Observer {
   }
 
   public void uploadFiles(String id, String data) {
-    Collection<FileData> filesData = gson.fromJson(data, new TypeToken<Collection<FileData>>()
+    Collection<FileInfo> filesData = gson.fromJson(data, new TypeToken<Collection<FileInfo>>()
         {}.getType());
 
-    for (FileData f : filesData) {
-      String path = f.getFile();
+    for (FileInfo f : filesData) {
+      String path = f.getFileName();
 
       filesCache.addFile(path, f);
     }

@@ -29,10 +29,10 @@ jstestdriver.FileLoader.prototype.onError = function(msg, url, line) {
   var index = url.indexOf('/test/');
 
   if (index != -1) {
-    var fileName = url.substr(index + 6);
+    var fileSrc = url.substr(index + 6);
 
-    this.loadMsg_ += 'error loading file: ' + fileName + ':' + line + ' ' + msg + '\n';
-    this.errorFiles_.push(fileName);
+    this.loadMsg_ += 'error loading file: ' + fileSrc + ':' + line + ' ' + msg + '\n';
+    this.errorFiles_.push(fileSrc);
   } else if (!this.loadMsg_.length) {
     this.loadMsg_ = 'error loading file(s)';
   }
@@ -70,7 +70,11 @@ jstestdriver.FileLoader.prototype.onFileLoaded = function(fileLoaded) {
   }
 };
 
-
+/**
+ * Creates a tag to load the requested resource.
+ * @param {Object} file A json object from the server (com.google.jstestdriver.FileInfo) that has a
+ *    fileSrc property.
+ */
 jstestdriver.FileLoader.prototype.createTag = function(file) {
   if (file.fileSrc.match(/\.js$/)) {
     this.createScript(this.dom_, file, this.boundOnFileLoaded_);
@@ -79,7 +83,14 @@ jstestdriver.FileLoader.prototype.createTag = function(file) {
   }
 };
 
-
+/**
+ * Creates a script tag in the document for JavaScript resources.
+ * @param {document} dom The document where the script tag will be created.
+ * @param {Object} file A json object from the server (com.google.jstestdriver.FileInfo) that has a
+ *    fileSrc property.
+ * @param {function(Object):void} callback The function that will be executed when the script is 
+ *    done loading.
+ */
 jstestdriver.FileLoader.prototype.createScript = function(dom, file, callback) {
   var head = dom.getElementsByTagName('head')[0];
   var script = dom.createElement('script');
@@ -97,7 +108,14 @@ jstestdriver.FileLoader.prototype.createScript = function(dom, file, callback) {
   head.appendChild(script);
 };
 
-
+/**
+ * Creates a link in the document for css resources.
+ * @param {document} dom The document where the script tag will be created.
+ * @param {Object} file A json object from the server (com.google.jstestdriver.FileInfo) that has a
+ *    fileSrc property.
+ * @param {function(Object):void} callback The function that will be executed when the script is 
+ *    done loading.
+ */
 jstestdriver.FileLoader.prototype.createLink = function(dom, file, callback) {
   var head = dom.getElementsByTagName('head')[0];
   var link = dom.createElement('link');

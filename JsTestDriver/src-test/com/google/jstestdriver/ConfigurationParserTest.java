@@ -79,6 +79,69 @@ public class ConfigurationParserTest extends TestCase {
     assertTrue(listFiles.get(2).getFileName().endsWith("test/test3.js"));
   }
 
+  public void testParseConfigFileAndHaveListOfFilesWithPatches() throws Exception {
+    File codeDir = createTmpSubDir("code");
+    File testDir = createTmpSubDir("test");
+    createTmpFile(codeDir, "code.js");
+    createTmpFile(codeDir, "code2.js");
+    createTmpFile(codeDir, "patch.js");
+    createTmpFile(testDir, "test.js");
+    createTmpFile(testDir, "test2.js");
+    createTmpFile(testDir, "test3.js");
+    
+    ConfigurationParser parser = new ConfigurationParser(tmpDir);
+    String configFile = 
+        "load:\n" +
+        "- code/code.js\n" +
+        "- patch code/patch.js\n" +
+		"- code/code2.js\n" +
+		"- test/*.js\n" +
+		"exclude:\n" +
+		"- code/code2.js\n" +
+		"- test/test2.js";
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    
+    parser.parse(bais);
+    Set<FileInfo> files = parser.getFilesList();
+    List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
+    
+    assertEquals(3, files.size());
+    assertTrue(listFiles.get(0).getFileName().endsWith("code/code.js"));
+    assertTrue(listFiles.get(1).getFileName().endsWith("test/test.js"));
+    assertTrue(listFiles.get(2).getFileName().endsWith("test/test3.js"));
+    assertTrue(listFiles.get(0).getPatches().get(0).getFileName().endsWith("code/patch.js"));
+  }
+
+  public void testParseConfigFileAndHaveListOfFilesWithUnassociatedPatch() throws Exception {
+    File codeDir = createTmpSubDir("code");
+    File testDir = createTmpSubDir("test");
+    createTmpFile(codeDir, "code.js");
+    createTmpFile(codeDir, "code2.js");
+    createTmpFile(codeDir, "patch.js");
+    createTmpFile(testDir, "test.js");
+    createTmpFile(testDir, "test2.js");
+    createTmpFile(testDir, "test3.js");
+    
+    ConfigurationParser parser = new ConfigurationParser(tmpDir);
+    String configFile = 
+      "load:\n" +
+      "- patch code/patch.js\n" +
+      "- code/code.js\n" +
+      "- code/code2.js\n" +
+      "- test/*.js\n" +
+      "exclude:\n" +
+      "- code/code2.js\n" +
+      "- test/test2.js";
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    
+    try {
+      parser.parse(bais);
+      fail("should have thrown an exception due to patching a non-existant file");
+    } catch (IllegalStateException e) {
+      //pass 
+    }
+  }
+
   public void testParsePlugin() {
     Plugin expected = new Plugin("test", "pathtojar", "com.test.PluginModule");
     ConfigurationParser parser = new ConfigurationParser(null);

@@ -18,22 +18,29 @@ package com.google.jstestdriver;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class CommandTaskFactory {
 
   private final JsTestDriverFileFilter filter;
-  private FileReader fileReader;
+  private final Provider<HeartBeatManager> heartBeatProvider;
+  private final FileLoader fileLoader;
 
-  public CommandTaskFactory(JsTestDriverFileFilter filter, FileReader fileReader) {
+  @Inject
+  public CommandTaskFactory(JsTestDriverFileFilter filter, FileLoader fileLoader,
+      Provider<HeartBeatManager> heartBeatProvider) {
     this.filter = filter;
-    this.fileReader = fileReader;
+    this.fileLoader = fileLoader;
+    this.heartBeatProvider = heartBeatProvider;
   }
 
-  public CommandTask getCommandTask(ResponseStream stream, Set<FileInfo> fileSet,
-      String baseUrl, Server server, Map<String, String> params) {
-    return new CommandTask(filter, stream, fileSet, baseUrl, server, params, fileReader,
-        new SimpleHeartBeatManager());
+  public CommandTask getCommandTask(ResponseStream stream, Set<FileInfo> fileSet, String baseUrl,
+      Server server, Map<String, String> params) {
+    return new CommandTask(filter, stream, fileSet, baseUrl, server, params, heartBeatProvider.get(),
+        fileLoader);
   }
 }

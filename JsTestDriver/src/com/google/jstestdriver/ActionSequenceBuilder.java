@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,7 +48,7 @@ public class ActionSequenceBuilder {
   private boolean captureConsole;
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
   private boolean dryRun;
-  private HashMap<String,FileData> files = new HashMap<String, FileData>();
+  private HashMap<String, FileInfo> files = new HashMap<String, FileInfo>();
   private Set<FileInfo> fileSet;
   private int localServerPort = -1;
   private boolean preloadFiles = false;
@@ -61,12 +60,12 @@ public class ActionSequenceBuilder {
 
   private String xmlOutputDir;
   private List<String> commands = new LinkedList<String>();
-  private FileReader fileReader;
-  
+  private final FileLoader fileLoader;
+
   /** Begins the building of an action sequence. */
-  public ActionSequenceBuilder(ActionFactory actionFactory, FileReader fileReader) {
+  public ActionSequenceBuilder(ActionFactory actionFactory, FileLoader fileLoader) {
     this.actionFactory = actionFactory;
-    this.fileReader = fileReader;
+    this.fileLoader = fileLoader;
   }
 
   /** Add the Browser startup and shutdown actions to the actions stack. */
@@ -80,12 +79,14 @@ public class ActionSequenceBuilder {
     }
   }
 
-  /** Wraps the current sequence of actions with the server start and stop actions. */
+  /**
+   * Wraps the current sequence of actions with the server start and stop
+   * actions.
+   */
   private void addServerActions(List<Action> actions, boolean leaveServerRunning) {
     if (preloadFiles) {
-      for (FileInfo file : fileSet) {
-        files.put(file.getFileName(), new FileData(file.getFileName(), fileReader.readFile(file
-            .getFileName()), new File(file.getFileName()).lastModified()));
+      for (FileInfo file : fileLoader.loadFiles(fileSet, true)) {
+        files.put(file.getFileName(), file);
       }
     }
     ServerStartupAction serverStartupAction = actionFactory.getServerStartupAction(localServerPort,
@@ -97,11 +98,16 @@ public class ActionSequenceBuilder {
   }
 
   /**
-   * Adds tests to the action sequence. 
-   * @param tests The list of tests to be executed during this sequence.
-   * @param xmlOutputDir The directory to store the test results in.
-   * @param verbose Indicates if the test output should be verbose.
-   * @param captureConsole Indicates if the console messaging should be included in the test.
+   * Adds tests to the action sequence.
+   * 
+   * @param tests
+   *          The list of tests to be executed during this sequence.
+   * @param xmlOutputDir
+   *          The directory to store the test results in.
+   * @param verbose
+   *          Indicates if the test output should be verbose.
+   * @param captureConsole
+   *          Indicates if the console messaging should be included in the test.
    * @return the current builder.
    */
   public ActionSequenceBuilder addTests(List<String> tests, String xmlOutputDir, boolean verbose,
@@ -128,8 +134,8 @@ public class ActionSequenceBuilder {
     threadedActions = createThreadedActions(client);
 
     if (!threadedActions.isEmpty()) {
-      actions.add(new ThreadedActionsRunner(client,
-          threadedActions, Executors.newCachedThreadPool()));
+      actions.add(new ThreadedActionsRunner(client, threadedActions, Executors
+          .newCachedThreadPool()));
     }
 
     // wrap the actions with the setup/teardown actions.
@@ -139,7 +145,7 @@ public class ActionSequenceBuilder {
     }
     return actions;
   }
-  
+
   /** Method that derives whether or not to leave the server running. */
   private boolean leaveServerRunning() {
     return tests.isEmpty() && commands.isEmpty() && !dryRun && !reset;
@@ -181,7 +187,8 @@ public class ActionSequenceBuilder {
   }
 
   /**
-   * Indicates a list of browsers that the actions should be executed in. This is required.
+   * Indicates a list of browsers that the actions should be executed in. This
+   * is required.
    */
   public ActionSequenceBuilder onBrowsers(List<String> browsers) {
     this.browsers.addAll(browsers);
@@ -198,8 +205,11 @@ public class ActionSequenceBuilder {
 
   /**
    * Defines a list of files that should be loaded into the list of browsers.
-   * @param fileSet The files to be loaded into the browser.
-   * @param preloadFiles Indicates if thes files should be preloaded into the server.
+   * 
+   * @param fileSet
+   *          The files to be loaded into the browser.
+   * @param preloadFiles
+   *          Indicates if thes files should be preloaded into the server.
    * @return The current builder.
    */
   public ActionSequenceBuilder usingFiles(Set<FileInfo> fileSet, boolean preloadFiles) {
@@ -224,7 +234,10 @@ public class ActionSequenceBuilder {
     return this;
   }
 
-  /** Adds a list commands to executed in the browser and the results to be returned. */
+  /**
+   * Adds a list commands to executed in the browser and the results to be
+   * returned.
+   */
   public ActionSequenceBuilder addCommands(List<String> commands) {
     this.commands.addAll(commands);
     return this;

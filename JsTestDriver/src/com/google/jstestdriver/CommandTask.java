@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -18,7 +18,6 @@ package com.google.jstestdriver;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -31,7 +30,9 @@ import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.JsonCommand.CommandType;
 
 /**
- * Handles the communication of a command to the JsTestDriverServer from the JsTestDriverClient.
+ * Handles the communication of a command to the JsTestDriverServer from the
+ * JsTestDriverClient.
+ * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class CommandTask {
@@ -48,20 +49,20 @@ public class CommandTask {
   private final String baseUrl;
   private final Server server;
   private final Map<String, String> params;
-  private final FileReader fileReader;
   private final HeartBeatManager heartBeatManager;
+  private final FileLoader fileLoader;
 
   public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
-      String baseUrl, Server server, Map<String, String> params, FileReader fileReader,
-      HeartBeatManager heartBeatManager) {
+      String baseUrl, Server server, Map<String, String> params, HeartBeatManager heartBeatManager,
+      FileLoader fileLoader) {
     this.filter = filter;
     this.stream = stream;
     this.fileSet = fileSet;
     this.baseUrl = baseUrl;
     this.server = server;
     this.params = params;
-    this.fileReader = fileReader;
     this.heartBeatManager = heartBeatManager;
+    this.fileLoader = fileLoader;
   }
 
   private String startSession() {
@@ -77,7 +78,7 @@ public class CommandTask {
           return "";
         }
         sessionId = server.startSession(baseUrl, browserId);
-      } 
+      }
     }
     return sessionId;
   }
@@ -90,14 +91,15 @@ public class CommandTask {
     String alive = server.fetch(baseUrl + "/heartbeat?id=" + params.get("id"));
 
     if (!alive.equals("OK")) {
-      System.err.println("The browser " + params.get("id") + " is not available anymore, " +
-          "you might want to re-capture it");
+      System.err.println("The browser " + params.get("id") + " is not available anymore, "
+          + "you might want to re-capture it");
       return false;
     }
     return true;
   }
 
-  // TODO(corysmith): remove this function once FileInfo is used exclusively. Hate static crap.
+  // TODO(corysmith): remove this function once FileInfo is used exclusively.
+  // Hate static crap.
   public static FileSource fileInfoToFileSource(FileInfo info) {
     if (info.getFileName().startsWith("http://")) {
       return new FileSource(info.getFileName(), info.getTimestamp());
@@ -107,17 +109,16 @@ public class CommandTask {
 
   private void uploadFileSet() {
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
-    Map<String, List<String>> patchMap = new HashMap<String, List<String>>();
-    List<FileInfo> patchLessFileSet = createPatchLessFileSet(fileSet, patchMap);
 
     fileSetParams.put("id", params.get("id"));
-    fileSetParams.put("fileSet", gson.toJson(patchLessFileSet));
+    fileSetParams.put("fileSet", gson.toJson(fileSet));
     String postResult = server.post(baseUrl + "/fileSet", fileSetParams);
 
     if (postResult.length() > 0) {
       Collection<FileInfo> filesToUpload = gson.fromJson(postResult,
-          new TypeToken<Collection<FileInfo>>() {}.getType());
-      boolean shouldReset = sameFiles(filesToUpload, patchLessFileSet);
+          new TypeToken<Collection<FileInfo>>() {
+          }.getType());
+      boolean shouldReset = sameFiles(filesToUpload, fileSet);
       Set<FileInfo> finalFilesToUpload = new LinkedHashSet<FileInfo>();
 
       if (shouldReset) {
@@ -134,44 +135,27 @@ public class CommandTask {
           finalFilesToUpload.addAll(findDependencies(file));
         }
       }
-      List<FileData> filesData = new LinkedList<FileData>();
-      List<FileInfo> filesSrc = new LinkedList<FileInfo>(finalFilesToUpload);
-      for (FileInfo file : finalFilesToUpload) {
-        StringBuilder fileContent = new StringBuilder();
-        long timestamp = -1;
-        if (!file.isRemote()) {
-          timestamp = file.getTimestamp();
-          fileContent.append(filter.filterFile(fileReader.readFile(file.getFileName()), !shouldReset));
-          List<String> patches = patchMap.get(file);
+      List<FileInfo> loadedfiles = fileLoader.loadFiles(finalFilesToUpload, shouldReset);
 
-          if (patches != null) {
-            for (String patch : patches) {
-              fileContent.append(fileReader.readFile(patch));
-            }
-          }
-        }
-        filesData.add(new FileData(file.getFileName(), fileContent.toString(), timestamp));
-      }
+      Map<String, String> uploadFileParams = new LinkedHashMap<String, String>();
+      uploadFileParams.put("id", params.get("id"));
+      uploadFileParams.put("data", gson.toJson(loadedfiles));
+      server.post(baseUrl + "/fileSet", uploadFileParams);
 
-      int size = filesData.size();
-
-      for (int i = 0; i < size; i += CHUNK_SIZE) {
-        int chunkEndIndex = Math.min(i + CHUNK_SIZE, size);
-        List<FileData> filesDataChunk = filesData.subList(i, chunkEndIndex);
-        List<FileInfo> filesSrcChunk = filesSrc.subList(i, chunkEndIndex);
-        Map<String, String> loadFileParams = new LinkedHashMap<String, String>();
-
-        loadFileParams.put("id", params.get("id"));
-        loadFileParams.put("data", gson.toJson(filesDataChunk));
-        server.post(baseUrl + "/fileSet", loadFileParams);
-        List<FileSource> filesToLoad = filterFilesToLoad(filesSrcChunk);
+      List<FileSource> filesSrc = new LinkedList<FileSource>(filterFilesToLoad(finalFilesToUpload));
+      int numberOfFilesToLoad = filesSrc.size();
+      for (int i = 0; i < numberOfFilesToLoad; i += CHUNK_SIZE) {
+        int chunkEndIndex = Math.min(i + CHUNK_SIZE, numberOfFilesToLoad);
         List<String> loadParameters = new LinkedList<String>();
-
+        List<FileSource> filesToLoad = filesSrc.subList(i, chunkEndIndex);
         loadParameters.add(gson.toJson(filesToLoad));
         loadParameters.add("false");
         JsonCommand cmd = new JsonCommand(CommandType.LOADTEST, loadParameters);
 
+        Map<String, String> loadFileParams = new LinkedHashMap<String, String>();
+        loadFileParams.put("id", params.get("id"));
         loadFileParams.put("data", gson.toJson(cmd));
+
         server.post(baseUrl + "/cmd", loadFileParams);
         String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
@@ -188,14 +172,14 @@ public class CommandTask {
 
   private Collection<FileInfo> findDependencies(FileInfo file) {
     List<FileInfo> deps = new LinkedList<FileInfo>();
+    // TODO(jeremiele): replace filter with a plugin
     for (String fileName : filter.resolveFilesDeps(file.getFileName())) {
-      // TODO(corysmith): Replace this with a loadFile method.
-      deps.add(new FileInfo(fileName, new File(fileName).lastModified(), false, false));
+      deps.add(new FileInfo(fileName, new File(fileName).lastModified(), false, false, null));
     }
     return deps;
   }
 
-  private List<FileSource> filterFilesToLoad(List<FileInfo> fileInfos) {
+  private List<FileSource> filterFilesToLoad(Collection<FileInfo> fileInfos) {
     List<FileSource> filteredFileSources = new LinkedList<FileSource>();
 
     for (FileInfo fileInfo : fileInfos) {
@@ -204,33 +188,6 @@ public class CommandTask {
       }
     }
     return filteredFileSources;
-  }
-
-  private List<FileInfo> createPatchLessFileSet(Set<FileInfo> originalFileSet,
-      Map<String, List<String>> patchMap) {
-    List<FileInfo> patchLessFileSet = new LinkedList<FileInfo>();
-
-    for (FileInfo i : originalFileSet) {
-      if (i.isPatch()) {
-        int size = patchLessFileSet.size();
-
-        if (size > 0) {
-          FileInfo prev = patchLessFileSet.get(size - 1);
-          List<String> patches = patchMap.get(prev.getFileName());
-
-          if (patches == null) {
-            patches = new LinkedList<String>();
-            patchMap.put(prev.getFileName(), patches);
-          }
-          patches.add(i.getFileName());
-        } else {
-          patchLessFileSet.add(i);
-        }
-      } else {
-        patchLessFileSet.add(i);
-      }
-    }
-    return patchLessFileSet;
   }
 
   public void run() {
@@ -260,12 +217,12 @@ public class CommandTask {
     } finally {
       stream.finish();
       heartBeatManager.cancelTimer();
-      
+
       stopSession(sessionId);
     }
   }
 
-  private boolean sameFiles(Collection<FileInfo> filesToUpload, List<FileInfo> fileSet) {
+  private boolean sameFiles(Collection<FileInfo> filesToUpload, Collection<FileInfo> fileSet) {
     for (FileInfo info : fileSet) {
       if (!info.isServeOnly() && !filesToUpload.contains(info)) {
         return false;

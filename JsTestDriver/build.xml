@@ -10,6 +10,8 @@
   <property name="obj.dir" value="${target.dir}/obj" />
   <property name="obj-test.dir" value="${target.dir}/obj-test" />
   <property name="bin.dir" value="${target.dir}/bin" />
+  <property name="emma.dir" value="${target.dir}/emma" />
+  <property name="emma-bin.dir" value="${target.dir}/bin" />
   <property name="junit.reports.dir" value="${target.dir}/reports/junit" />
   <property name="jstestdriver.reports.dir" value="${target.dir}/reports/jstestdriver" />
   <property name="jstests.dir" value="src-test/com/google/jstestdriver/javascript" />
@@ -44,12 +46,19 @@
     <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
     <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
   </path>
+  
+  <path id="emma">
+    <pathelement location="${lib.dir}/emma-2.0.5312-lib/emma.jar" />
+    <pathelement location="${lib.dir}/emma-2.0.5312-lib/emma_ant.jar" />
+  </path>
 
   <path id="classpath-test">
     <pathelement location="${lib.dir}/junit/junit.jar" />
   </path>
 
+
   <path id="ant-tasks" description="Jars containing ant extensions">
+    <path refid="emma"/>
     <pathelement location="${lib.dir}/testability-explorer/testability-explorer-1.3.0-r275.jar"/>
     <pathelement location="${lib.dir}/testability-explorer/ant-testability-explorer-1.3.0-r275.jar"/>
     <pathelement location="${lib.dir}/svnant-1.2.1/lib/svnant.jar"/>
@@ -58,6 +67,7 @@
     <pathelement location="${lib.dir}/ant-googlecode-0.0.2/ant-googlecode-0.0.2.jar"/>
   </path>
 
+  <taskdef resource="emma_ant.properties" classpathref="ant-tasks" />
   <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="ant-tasks"/>
 
 
@@ -106,6 +116,7 @@
       files="Utils.js,Heartbeat.js" />
     </concat>
   </target>
+  
 
   <target name="compile-test" depends="compile">
     <javac srcdir="${src-test.dir}" destdir="${obj-test.dir}" classpathref="classpath">
@@ -126,14 +137,35 @@
     </copy>
   </target>
 
-  <target name="test" depends="compile-test">
+  <target name="instrument" depends="compile-test">
+    <mkdir dir="${emma.dir}"/>
+    <mkdir dir="${emma-bin.dir}"/>
+    <path id="coveragepath">
+      <pathelement location="${obj.dir}"/>
+      <pathelement location="${obj-test.dir}"/>
+    </path>
+    <emma>
+      <instr instrpathref="coveragepath"
+             destdir="${emma-bin.dir}"
+             metadatafile="${emma.dir}/metadata.emma"
+             merge="true" />
+    </emma>
+  </target>
+
+  <target name="test" depends="compile-test, instrument">
     <junit printsummary="true" haltonfailure="true" fork="true">
+      <classpath>
+        <pathelement location="${emma-bin.dir}" />
+      </classpath>
+      <classpath refid="emma" />
       <classpath refid="classpath" />
       <classpath refid="classpath-test" />
       <classpath>
         <pathelement location="${obj.dir}" />
         <pathelement location="${obj-test.dir}" />
       </classpath>
+      <jvmarg value="-Demma.coverage.out.file=${emma.dir}}/test.emma" />
+      <jvmarg value="-Demma.coverage.out.merge=true" />
       <formatter type="xml" usefile="true" />
       <batchtest fork="true" haltonfailure="true" todir="${junit.reports.dir}">
         <fileset dir="${src-test.dir}">

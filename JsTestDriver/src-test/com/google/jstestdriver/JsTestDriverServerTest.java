@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 public class JsTestDriverServerTest extends TestCase {
 
   private JsTestDriverServer server = new JsTestDriverServer(4224, new CapturedBrowsers(),
-      new FilesCache(new HashMap<String, FileData>()));
+      new FilesCache(new HashMap<String, FileInfo>()));
 
   @Override
   protected void tearDown() throws Exception {
@@ -61,7 +61,7 @@ public class JsTestDriverServerTest extends TestCase {
 
   public void testListBrowsers() throws Exception {
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new ActionFactory.ActionFactoryFileFilter(), null), new LinkedHashSet<FileInfo>(),
+        new ActionFactory.ActionFactoryFileFilter(), null, null), new LinkedHashSet<FileInfo>(),
         "http://localhost:4224", new HttpServer());
 
     server.start();
