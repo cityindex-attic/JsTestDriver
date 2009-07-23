@@ -308,7 +308,7 @@
     </java>
   </target>
 
-  <target name="cbuild" depends="clean, testability-explorer, jstestdriver, test" />
+  <target name="cbuild" depends="clean, testability-explorer, jstestdriver, test, coverage" />
 
   <target name="testability-explorer" depends="jar">
     <taskdef name="testability" classname="com.google.ant.TestabilityTask" classpathref="ant-tasks"/>
