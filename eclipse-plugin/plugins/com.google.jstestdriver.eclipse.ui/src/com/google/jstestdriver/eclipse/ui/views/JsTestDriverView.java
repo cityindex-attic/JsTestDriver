@@ -15,13 +15,17 @@
  */
 package com.google.jstestdriver.eclipse.ui.views;
 
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.part.ViewPart;
 
+/**
+ * The main JS Test Driver View.
+ * 
+ * @author shyamseshadri@google.com (Shyam Seshadri)
+ */
 public class JsTestDriverView extends ViewPart {
 
   public static final String ID = "com.google.jstestdriver.eclipse.ui.views.JsTestDriverView";
@@ -29,20 +33,25 @@ public class JsTestDriverView extends ViewPart {
   private final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench()
       .getHelpSystem();
 
-  private TreeViewer viewer;
+  private ServerInfoPanel serverInfoPanel;
 
   public void createPartControl(Composite parent) {
-    viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-    viewer.setContentProvider(new ViewContentProvider());
-    viewer.setLabelProvider(new ViewLabelProvider());
-    viewer.setSorter(new NameSorter());
-    viewer.setInput(getViewSite());
+    serverInfoPanel = new ServerInfoPanel(parent, SWT.NONE);
 
-    helpSystem.setHelp(viewer.getControl(),
-        "com.google.jstestdriver.eclipse.ui.viewer");
+//    helpSystem.setHelp(viewer.getControl(),
+//        "com.google.jstestdriver.eclipse.ui.viewer");
+  }
+
+  public void setServerStatus(String status) {
+    serverInfoPanel.setServerStatus(status);
   }
 
   public void setFocus() {
-    viewer.getControl().setFocus();
+    serverInfoPanel.getParent().setFocus();
+    //viewer.getControl().setFocus();
+  }
+
+  public ServerInfoPanel getServerInfoPanel() {
+    return serverInfoPanel;
   }
 }

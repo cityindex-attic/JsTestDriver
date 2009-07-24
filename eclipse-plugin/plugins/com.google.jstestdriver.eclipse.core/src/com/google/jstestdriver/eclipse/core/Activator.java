@@ -20,14 +20,14 @@ import org.osgi.framework.BundleContext;
 
 public class Activator extends AbstractUIPlugin {
 
-    public static final String PLUGIN_ID = "com.google.jstestdriver.eclipse.core";
+  public static final String PLUGIN_ID = "com.google.jstestdriver.eclipse.core";
 
-    public void start(BundleContext context) throws Exception {
-        super.start(context);
-    }
+  public void start(BundleContext context) throws Exception {
+    super.start(context);
+  }
 
-    public void stop(BundleContext context) throws Exception {
-        super.stop(context);
-    }
+  public void stop(BundleContext context) throws Exception {
+    super.stop(context);
+  }
 
 }

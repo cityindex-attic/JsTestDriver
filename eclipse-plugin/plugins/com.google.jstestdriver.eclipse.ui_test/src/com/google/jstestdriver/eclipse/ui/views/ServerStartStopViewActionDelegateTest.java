@@ -15,33 +15,53 @@
  */
 package com.google.jstestdriver.eclipse.ui.views;
 
+import junit.framework.TestCase;
+
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
 
-import junit.framework.TestCase;
-
 public class ServerStartStopViewActionDelegateTest extends TestCase {
+
+  protected boolean startServerIconCalled = false;
+  protected boolean stopServerIconCalled = false;
 
   public void testClickingOnActionToglesIconAndTextBetweenStartStop() {
     Server server = new Server();
-    ServerStartStopViewActionDelegate delegate = new ServerStartStopViewActionDelegate(server,
-        new Icons());
+    ServerStartStopViewActionDelegate delegate = new ServerStartStopViewActionDelegate(
+        server, new Icons() {
+
+          @Override
+          public ImageDescriptor startServerIcon() {
+            startServerIconCalled = true;
+            stopServerIconCalled = false;
+            return null;
+          }
+
+          @Override
+          public ImageDescriptor stopServerIcon() {
+            startServerIconCalled = false;
+            stopServerIconCalled = true;
+            return null;
+          }
+
+        });
     Action action = new Action() {
     };
 
     delegate.run(action);
 
     assertEquals("Stop Server", action.getText());
-    assertTrue(action.getImageDescriptor().toString()
-        .contains("StopServer.png"));
+    assertTrue(stopServerIconCalled);
+    assertFalse(startServerIconCalled);
 
     delegate.run(action);
 
     assertEquals("Start Server", action.getText());
-    assertTrue(action.getImageDescriptor().toString().contains(
-        "StartServer.png"));
+    assertTrue(startServerIconCalled);
+    assertFalse(stopServerIconCalled);
   }
 
 }

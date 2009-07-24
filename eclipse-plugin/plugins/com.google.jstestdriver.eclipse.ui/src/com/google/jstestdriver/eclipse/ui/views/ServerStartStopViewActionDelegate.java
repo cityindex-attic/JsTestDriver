@@ -21,16 +21,20 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 import com.google.jstestdriver.eclipse.core.Server;
+import com.google.jstestdriver.eclipse.core.SlaveBrowserRootData;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
 
 /**
- * @author shyamseshadri
+ * ViewActionDelegate which responds to whenever the start or stop server button is pressed.
+ * 
+ * @author shyamseshadri@google.com (Shyam Seshadri)
  */
 public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
 
   private boolean isRunning = false;
-  private final Server server;
+  private Server server;
   private final Icons icons;
+  private JsTestDriverView view;
   
   public ServerStartStopViewActionDelegate() {
     server = new Server();
@@ -43,6 +47,12 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
   }
 
   public void init(IViewPart view) {
+    if (view instanceof JsTestDriverView) {
+      this.view = (JsTestDriverView) view;
+      SlaveBrowserRootData data = SlaveBrowserRootData.getInstance();
+      server.getCapturedBrowsers().addObserver(data);
+      data.addObserver(this.view.getServerInfoPanel());
+    }
   }
 
   public void run(IAction action) {
@@ -60,12 +70,19 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
     action.setText("Stop Server");
     action.setToolTipText("Stop Server");
     action.setImageDescriptor(icons.stopServerIcon());
+    if (view != null) {
+      view.setServerStatus(Server.SERVER_URL);
+    }
   }
 
   private void setStartServerState(IAction action) {
     action.setText("Start Server");
     action.setToolTipText("Start Server");
     action.setImageDescriptor(icons.startServerIcon());
+    if (view != null) {
+      view.setServerStatus("Down");
+    }
+    SlaveBrowserRootData.getInstance().clear();
   }
 
   public void selectionChanged(IAction action, ISelection selection) {

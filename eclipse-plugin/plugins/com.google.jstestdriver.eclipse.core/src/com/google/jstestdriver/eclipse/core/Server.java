@@ -25,10 +25,21 @@ import com.google.jstestdriver.ServerStartupAction;
 public class Server {
 
   private ServerStartupAction startupAction;
+  public static final int SERVER_PORT = 4224;
+  public static final String SERVER_URL = "http://localhost:" + SERVER_PORT + "/capture";
+  private final CapturedBrowsers capturedBrowsers;
+  
+  public Server() {
+    capturedBrowsers = new CapturedBrowsers();
+  }
+  
+  public CapturedBrowsers getCapturedBrowsers() {
+    return capturedBrowsers;
+  }
 
   public void start() {
     // TODO(shyamseshadri): Get rid of this and use the builder when we have something substantial.
-    startupAction = new ServerStartupAction(4224, new CapturedBrowsers(),
+    startupAction = new ServerStartupAction(SERVER_PORT, capturedBrowsers,
         new FilesCache(new HashMap<String, FileData>()));
     startupAction.run();
   }
