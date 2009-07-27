@@ -7,9 +7,13 @@ Bundle-Activator: com.google.jstestdriver.eclipse.ui.Activator
 Bundle-Vendor: GOOGLE
 Require-Bundle: com.google.jstestdriver.eclipse.core;bundle-version="1.0.0",
  org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.debug.core;bundle-version="3.4.0",
+ org.eclipse.debug.ui;bundle-version="3.4.0",
+ org.eclipse.jface.text;bundle-version="3.4.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: com.google.jstestdriver.eclipse.ui,
  com.google.jstestdriver.eclipse.ui.icon,
+ com.google.jstestdriver.eclipse.ui.launch,
  com.google.jstestdriver.eclipse.ui.views

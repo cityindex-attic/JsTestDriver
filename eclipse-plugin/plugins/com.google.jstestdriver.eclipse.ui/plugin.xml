@@ -50,5 +50,54 @@
          </action>
       </viewContribution>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="com.google.jstestdriver.eclipse.ui.launch.JsTestDriverLaunchConfigurationDelegate"
+            id="com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration"
+            modes="run"
+            name="Js Test Driver Test"
+            public="true">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            class="com.google.jstestdriver.eclipse.ui.launch.JavascriptSourceLocator"
+            id="com.google.jstestdriver.eclipse.ui.jstdSourceLocator"
+            name="JsSourceLocator">
+      </sourceLocator>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourcePathComputers">
+      <sourcePathComputer
+            class="com.google.jstestdriver.eclipse.ui.launch.JavascriptSourcePathComputer"
+            id="com.google.jstestdriver.eclipse.ui.jstdSourcePathComputer">
+      </sourcePathComputer>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceContainerTypes">
+      <sourceContainerType
+            class="com.google.jstestdriver.eclipse.ui.launch.JavascriptSourceContainer"
+            id="com.google.jstestdriver.eclipse.ui.jstdSourceContainer"
+            name="JavascriptSourceContainer">
+      </sourceContainerType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration"
+            icon="icons/JsTestDriver.png"
+            id="com.google.jstestdriver.eclipse.ui.jsLaunchConfigurationTypeImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="com.google.jstestdriver.eclipse.ui.launch.JsTestDriverLaunchTabGroup"
+            id="com.google.jstestdriver.eclipse.ui.jstdLaunchConfigurationTabGroup"
+            type="com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration">
+      </launchConfigurationTabGroup>
+   </extension>
 
 </plugin>

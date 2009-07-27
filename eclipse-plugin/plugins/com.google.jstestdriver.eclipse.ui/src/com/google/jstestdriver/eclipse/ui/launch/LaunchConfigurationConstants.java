@@ -13,28 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.eclipse.core;
+package com.google.jstestdriver.eclipse.ui.launch;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
+/**
+ * @author shyamseshadri@google.com (Shyam Seshadri)
+ */
+public class LaunchConfigurationConstants {
 
-public class Activator extends AbstractUIPlugin {
-
-  public static final String PLUGIN_ID = "com.google.jstestdriver.eclipse.core";
-  private static Activator plugin;
-
-  public void start(BundleContext context) throws Exception {
-    super.start(context);
-    plugin = this;
-  }
-
-  public void stop(BundleContext context) throws Exception {
-    plugin = null;
-    super.stop(context);
-  }
+  private LaunchConfigurationConstants() {}
   
-  public static Activator getDefault() {
-    return plugin;
-  }
-
+  public static final String PROJECT_NAME = "com.google.jstestdriver.eclipse.ui.projectName";
+  public static final String CONF_FILENAME = "com.google.jstestdriver.eclipse.ui.confFileName";
 }

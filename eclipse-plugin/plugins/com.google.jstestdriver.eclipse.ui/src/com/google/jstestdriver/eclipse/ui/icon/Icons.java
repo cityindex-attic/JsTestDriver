@@ -13,5 +13,12 @@ public class Icons {
   public ImageDescriptor stopServerIcon() {
     return Activator.getDefault().getImageDescriptor("icons/stopServer.png");
   }
+  
+  public ImageDescriptor configurationFileIcon() {
+    return Activator.getDefault().getImageDescriptor("icons/configuration.png");
+  }
 
+  public ImageDescriptor projectIcon() {
+    return Activator.getDefault().getImageDescriptor("icons/projects.gif");
+  }
 }

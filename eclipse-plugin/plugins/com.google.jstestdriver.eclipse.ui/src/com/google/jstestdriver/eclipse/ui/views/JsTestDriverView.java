@@ -17,8 +17,6 @@ package com.google.jstestdriver.eclipse.ui.views;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -30,8 +28,8 @@ public class JsTestDriverView extends ViewPart {
 
   public static final String ID = "com.google.jstestdriver.eclipse.ui.views.JsTestDriverView";
 
-  private final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench()
-      .getHelpSystem();
+//  private final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench()
+//      .getHelpSystem();
 
   private ServerInfoPanel serverInfoPanel;
 
