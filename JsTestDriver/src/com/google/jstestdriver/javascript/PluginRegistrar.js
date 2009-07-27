@@ -1,0 +1,145 @@
+/*
+ * Copyright 2009 Google Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+jstestdriver.initializePluginRegistrar = function() {
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader(window, document);
+  var stylesheetLoader = new jstestdriver.plugins.StylesheetLoader(window, document,
+          jstestdriver.jQuery.browser.mozilla || jstestdriver.jQuery.browser.safari);
+  var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
+  var defaultPlugin = new jstestdriver.plugins.DefaultPlugin(fileLoaderPlugin);
+  jstestdriver.pluginRegistrar = new jstestdriver.PluginRegistrar(defaultPlugin);
+};
+
+/**
+ * The PluginRegistrar allows developers to load their own plugins to perform certain actions.
+ * A plugin must define methods with specific names in order for it to be used.
+ * A plugin must define a name, by defining a property name.
+ * 
+ * A simple plugin supporting the loadSource method for example could look as follow:
+ * 
+ * var myPlugin = {
+ *   name: 'myPlugin',
+ *   loadSource: function(file, onSourceLoad) {
+ *     // do some cool stuff
+ *   }
+ * };
+ * 
+ * To then register it one needs to call:
+ * 
+ * jstestdriver.pluginRegistrar.register(myPlugin);
+ * 
+ * The list of supported methods is:
+ * - loadSource
+ * 
+ * For more information regarding the supported method just read the documentation for the method
+ * in this class.
+ */
+jstestdriver.PluginRegistrar = function(defaultPlugin) {
+  this.plugins_ = [];
+  this.plugins_.push(defaultPlugin);
+};
+
+
+jstestdriver.PluginRegistrar.LOAD_SOURCE = 'loadSource';
+
+
+jstestdriver.PluginRegistrar.prototype.register = function(plugin) {
+  this.plugins_.splice(this.plugins_.length - 1, 0, plugin);
+};
+
+
+jstestdriver.PluginRegistrar.prototype.unregister = function(plugin) {
+  var index = this.getIndexOfPlugin_(plugin.name);
+
+  if (index != -1) {
+    this.plugins_.splice(index, 1);
+  }
+};
+
+
+jstestdriver.PluginRegistrar.prototype.getPlugin = function(name) {
+  var index = this.getIndexOfPlugin_(name);
+
+  return index != -1 ? this.plugins_[index] : null;
+};
+
+
+jstestdriver.PluginRegistrar.prototype.getNumberOfRegisteredPlugins = function() {
+  return this.plugins_.length;
+};
+
+
+jstestdriver.PluginRegistrar.prototype.dispatch_ = function(method, parameters) {
+  var size = this.plugins_.length;
+
+  for (var i = 0; i < size; i++) {
+    var plugin = this.plugins_[i];
+
+    if (plugin[method]) {
+      if (plugin[method].apply(plugin, parameters)) {
+        return;
+      }
+    }
+  }
+};
+
+
+jstestdriver.PluginRegistrar.prototype.getIndexOfPlugin_ = function(name) {
+  var size = this.plugins_.length;
+
+  for (var i = 0; i < size; i++) {
+    var plugin = this.plugins_[i];
+
+    if (plugin.name == name) {
+      return i;
+    }
+  }
+  return -1;
+};
+
+
+/**
+ * loadSource
+ * 
+ * By defining the method loadSource a plugin can implement its own way of loading certain types of
+ * files.
+ * 
+ * loadSource takes 2 parameters:
+ *  - file: A file object defined as -> { fileSrc: string, timestamp: number }
+ *    fileSrc is the name of the file
+ *    timestamp is the last modified date of the file
+ *  - onSourceLoad: A callback that must be called once the file has been loaded the callback takes
+ *    1 parameter defined as -> { file: file object, success: boolean, message: string }
+ *    file: A file object
+ *    success: a boolean, true if the file was loaded successfully, false otherwise
+ *    message: an error message if the file wasn't loaded properly
+ *  
+ *  loadSource must return a boolean:
+ *  - true if the plugin knows how to and loaded the file
+ *  - false if the plugin doesn't know how to load the file
+ *  
+ *  A simple loadSource plugin would look like:
+ *  
+ *  var myPlugin = {
+ *    name: 'myPlugin',
+ *    loadSource: function(file, onSourceLoad) {
+ *      // load the file
+ *      return true;
+ *    }
+ *  }
+ */
+jstestdriver.PluginRegistrar.prototype.loadSource = function(file, onSourceLoad) {
+  this.dispatch_(jstestdriver.PluginRegistrar.LOAD_SOURCE, arguments);
+};

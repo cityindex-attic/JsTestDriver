@@ -59,19 +59,25 @@ public class BrowserQueryResponseServlet extends HttpServlet {
 
         if (res.getResponse().contains("\"errorFiles\":")) {
           LoadedFiles loadedFiles = gson.fromJson(res.getResponse(), LoadedFiles.class);
-          Collection<FileSource> successFiles = loadedFiles.getSuccessFiles();
-          LinkedHashSet<FileInfo> fileInfos = new LinkedHashSet<FileInfo>();
+          Collection<FileResult> allLoadedFiles = loadedFiles.getLoadedFiles();
+          if (!allLoadedFiles.isEmpty()) {
+            LinkedHashSet<FileInfo> fileInfos = new LinkedHashSet<FileInfo>();
+            Collection<FileSource> errorFiles = new LinkedHashSet<FileSource>();
 
-          for (FileSource f : successFiles) {
-            fileInfos.add(new FileInfo(f.getFileSrc().substring(6), f.getTimestamp(), false, false, null));
-          }
-          browser.addFiles(fileInfos);
-          Collection<String> errorFiles = loadedFiles.getErrorFiles();
+            for (FileResult fileResult : allLoadedFiles) {
+              FileSource fileSource = fileResult.getFileSource();
 
-          if (errorFiles.size() > 0) {
-            browser.removeFiles(errorFiles);
-          } else if (loadedFiles.getMessage().equals("error loading file(s)")) {
-            browser.resetFileSet();
+              if (fileResult.isSuccess()) {
+                fileInfos.add(new FileInfo(fileSource.getBasePath(), fileSource.getTimestamp(),
+                    false, false, null));
+              } else {
+                errorFiles.add(fileSource);
+              }
+            }
+            browser.addFiles(fileInfos);
+            if (errorFiles.size() > 0) {
+              browser.removeFiles(errorFiles);
+            }
           }
         }
         boolean isLast = done != null;

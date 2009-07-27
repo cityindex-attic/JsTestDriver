@@ -161,12 +161,12 @@ public class SlaveBrowser {
     return commandRunning;
   }
 
-  public void removeFiles(Collection<String> errorFiles) {
+  public void removeFiles(Collection<FileSource> errorFiles) {
     Set<FileInfo> filesInfoToRemove = new LinkedHashSet<FileInfo>();
 
-    for (String f : errorFiles) {
+    for (FileSource f : errorFiles) {
       for (FileInfo info : fileSet) {
-        if (info.getFileName().equals(f)) {
+        if (info.getFileName().equals(f.getBasePath())) {
           filesInfoToRemove.add(info);
           break;
         }

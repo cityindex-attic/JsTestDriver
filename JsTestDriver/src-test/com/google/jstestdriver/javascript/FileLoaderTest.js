@@ -16,12 +16,107 @@
 var fileLoaderTest = jstestdriver.testCaseManager.TestCase('fileLoaderTest');
 
 fileLoaderTest.prototype.testNoFilesToLoad = function() {
-  var mockDOM = new jstestdriver.MockDOM();
-  var fileLoader = new jstestdriver.FileLoader(mockDOM);
-
-  fileLoader.load([], function(res) {
-    assertEquals('no files to load', res.message);
-    assertEquals(0, res.successFiles.length);
-    assertEquals(0, res.errorFiles.length);
+  var fileLoader = new jstestdriver.FileLoader({}, function(res) {
+    assertNotNull(res.loadedFiles);
+    assertEquals(0, res.loadedFiles.length);
   });
+
+  fileLoader.load([]);
+};
+
+
+fileLoaderTest.prototype.testFilesToLoad = function() {
+  var mockDOM = new jstestdriver.MockDOM();
+  var head = mockDOM.createElement('head');
+  var win = {};
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM);
+  var stylesheetLoader = new jstestdriver.plugins.StylesheetLoader(win, mockDOM);
+  var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
+  var defaultPlugin = new jstestdriver.plugins.DefaultPlugin(fileLoaderPlugin);
+  var pluginRegistrar = new jstestdriver.PluginRegistrar(defaultPlugin);
+  var fileLoader = new jstestdriver.FileLoader(pluginRegistrar, function(res) {
+    var loadedFiles = res.loadedFiles;
+
+    assertNotNull(loadedFiles);
+    assertEquals(6, loadedFiles.length);
+    var fileResult1 = loadedFiles[0];
+    var fileResult2 = loadedFiles[1];
+    var fileResult3 = loadedFiles[2];
+    var fileResult4 = loadedFiles[3];
+    var fileResult5 = loadedFiles[4];
+    var fileResult6 = loadedFiles[5];
+
+    assertNotNull(fileResult1.file);
+    assertNotNull(fileResult2.file);
+    assertNotNull(fileResult3.file);
+    assertNotNull(fileResult4.file);
+    assertNotNull(fileResult5.file);
+    assertNotNull(fileResult6.file);
+
+    assertEquals('file1.js', fileResult1.file.fileSrc);
+    assertEquals(42, fileResult1.file.timestamp);
+    assertTrue(fileResult1.success);
+    assertEquals('', fileResult1.message);
+
+    assertEquals('file2.css', fileResult2.file.fileSrc);
+    assertEquals(98, fileResult2.file.timestamp);
+    assertTrue(fileResult2.success);
+    assertEquals('', fileResult2.message);
+
+    assertEquals('file3.js', fileResult3.file.fileSrc);
+    assertEquals(22, fileResult3.file.timestamp);
+    assertFalse(fileResult3.success);
+    assertEquals('error loading file: file3.js:78: mooh', fileResult3.message);
+
+    assertEquals('file4.js', fileResult4.file.fileSrc);
+    assertEquals(674, fileResult4.file.timestamp);
+    assertTrue(fileResult4.success);
+    assertEquals('', fileResult4.message);
+    
+    assertEquals('file5.css', fileResult5.file.fileSrc);
+    assertEquals(24, fileResult5.file.timestamp);
+    assertFalse(fileResult5.success);
+    assertEquals('error loading file: file5.css:82: meuh', fileResult5.message);
+    
+    assertEquals('file6.css', fileResult6.file.fileSrc);
+    assertEquals(1675, fileResult6.file.timestamp);
+    assertTrue(fileResult6.success);
+    assertEquals('', fileResult6.message);
+  });
+  var files = [];
+
+  files.push(new jstestdriver.FileSource('file1.js', 42));
+  files.push(new jstestdriver.FileSource('file2.css', 98));
+  files.push(new jstestdriver.FileSource('file3.js', 22));
+  files.push(new jstestdriver.FileSource('file4.js', 674));
+  files.push(new jstestdriver.FileSource('file5.css', 24));
+  files.push(new jstestdriver.FileSource('file6.css', 1675));
+  fileLoader.load(files);
+  if (jstestdriver.jQuery.browser.opera) {
+    head.childNodes[0].readyState = 'loaded';
+    head.childNodes[0].onreadystatechange();
+    head.childNodes[1].readyState = 'loaded';
+    head.childNodes[1].onreadystatechange();
+  } else {
+    head.childNodes[0].onload();
+    head.childNodes[1].onload();
+  }
+  head.childNodes[2].onerror('mooh', 'url', 78);
+  if (jstestdriver.jQuery.browser.opera) {
+    head.childNodes[2].readyState = 'loaded';
+    head.childNodes[2].onreadystatechange();
+  } else {
+    head.childNodes[2].onload();
+  }
+  head.childNodes[3].readyState = 'loaded';
+  head.childNodes[3].onreadystatechange();
+  head.childNodes[4].onerror('meuh', 'url', 82);
+  if (jstestdriver.jQuery.browser.opera) {
+    head.childNodes[4].readyState = 'loaded';
+    head.childNodes[4].onreadystatechange();
+  } else {
+    head.childNodes[4].onload();
+  }
+  head.childNodes[5].readyState = 'loaded';
+  head.childNodes[5].onreadystatechange();
 };

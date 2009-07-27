@@ -158,7 +158,7 @@ public class CommandTaskTest extends TestCase {
   private String createLoadedFilesResponseString() {
     Response response = new Response();
     LoadedFiles loadedFiles = new LoadedFiles();
-    loadedFiles.setMessage("");
+
     response.setResponse(gson.toJson(loadedFiles));
     return gson.toJson(response);
   }

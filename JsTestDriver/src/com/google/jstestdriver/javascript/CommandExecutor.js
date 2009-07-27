@@ -21,19 +21,24 @@ jstestdriver.listen = function() {
   var url = jstestdriver.SERVER_URL + id;
 
   jstestdriver.initializeTestCaseManager();
-  new jstestdriver.CommandExecutor(parseInt(id), url, jstestdriver.convertToJson(
-      jstestdriver.jQuery.post), jstestdriver.testCaseManager).listen();
+  jstestdriver.initializePluginRegistrar();
+  new jstestdriver.CommandExecutor(parseInt(id),
+      url,
+      jstestdriver.convertToJson(jstestdriver.jQuery.post),
+      jstestdriver.testCaseManager,
+      jstestdriver.pluginRegistrar).listen();
 };
 
 
 jstestdriver.TIMEOUT = 500;
 
 
-jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager) {
+jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager, pluginRegistrar) {
   this.__id = id;
   this.__url = url;
   this.__sendRequest = sendRequest;
   this.__testCaseManager = testCaseManager;
+  this.__pluginRegistrar = pluginRegistrar;
   this.__boundExecuteCommand = jstestdriver.bind(this, this.executeCommand);
   this.__boundExecute = jstestdriver.bind(this, this.execute);
   this.__boundEvaluateCommand = jstestdriver.bind(this, this.evaluateCommand);
@@ -142,10 +147,10 @@ jstestdriver.CommandExecutor.prototype.loadTest = function(args) {
   var fileSrcs = jsonParse('{"f":' + files + '}').f;
 
   this.removeScripts(document, fileSrcs);
-  var fileLoader = new jstestdriver.FileLoader(document);
+  var fileLoader = new jstestdriver.FileLoader(this.__pluginRegistrar,
+    !runnerMode ? this.boundOnFileLoaded_ : this.boundOnFileLoadedRunnerMode_);
 
-  fileLoader.load(fileSrcs, !runnerMode ? this.boundOnFileLoaded_ :
-    this.boundOnFileLoadedRunnerMode_);
+  fileLoader.load(fileSrcs);
 };
 
 

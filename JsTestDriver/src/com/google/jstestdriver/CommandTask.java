@@ -15,6 +15,10 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.JsonCommand.CommandType;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,10 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.jstestdriver.JsonCommand.CommandType;
 
 /**
  * Handles the communication of a command to the JsTestDriverServer from the
@@ -161,10 +161,17 @@ public class CommandTask {
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
         LoadedFiles loadedFiles = gson.fromJson(response.getResponse(), LoadedFiles.class);
-        String loadStatus = loadedFiles.getMessage();
 
-        if (loadStatus.length() > 0) {
-          System.err.println(loadStatus);
+        if (loadedFiles.getLoadedFiles().isEmpty()) {
+          System.err.println("No files were loaded.");
+        } else {
+          if (loadedFiles.hasError()) {
+            for (FileResult fileResult : loadedFiles.getLoadedFiles()) {
+              if (!fileResult.isSuccess()) {
+                System.err.println(fileResult.getMessage());
+              }
+            }
+          }
         }
       }
     }

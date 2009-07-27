@@ -14,6 +14,7 @@
  * the License.
  */
 jstestdriver = {};
+jstestdriver.plugins = {};
 
 if (typeof console == 'undefined') console = {};
 if (typeof console.log == 'undefined') console.log = function() {};
@@ -53,3 +54,5 @@ jstestdriver.clearInterval = function() {
   }
   return jstestdriver.globalClearInterval(arguments[0]);
 };
+
+jstestdriver.EMPTY_FUNC = function() {};

@@ -1,40 +1,28 @@
 /*
  * Copyright 2009 Google Inc.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+jstestdriver.plugins.FileLoaderPlugin = function(scriptLoader, stylesheetLoader) {
+  this.scriptLoader_ = scriptLoader;
+  this.stylesheetLoader_ = stylesheetLoader;
+};
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
 
-/**
- * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
- */
-public class LoadedFiles {
-
-  private Collection<FileResult> loadedFiles = new LinkedHashSet<FileResult>();
-
-  public Collection<FileResult> getLoadedFiles() {
-    return loadedFiles;
+jstestdriver.plugins.FileLoaderPlugin.prototype.loadSource = function(file, onSourceLoaded) {  
+  if (file.fileSrc.match(/\.js$/)) {
+    this.scriptLoader_.load(file, onSourceLoaded);
+  } else if (file.fileSrc.match(/\.css$/)) {
+    this.stylesheetLoader_.load(file, onSourceLoaded);
   }
-
-  public boolean hasError() {
-    for (FileResult fileResult : loadedFiles) {
-      if (!fileResult.isSuccess()) {
-        return true;
-      }
-    }
-    return false;
-  }
-}
+};

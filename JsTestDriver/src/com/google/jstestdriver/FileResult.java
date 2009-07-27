@@ -18,32 +18,21 @@ package com.google.jstestdriver;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class FileSource {
+public class FileResult {
 
-  private String fileSrc;
-  private String basePath;
-  private long timestamp;
+  private FileSource fileSource;
+  private boolean success;
+  private String message;
 
-  public FileSource() {
+  public FileSource getFileSource() {
+    return fileSource;
   }
 
-  public FileSource(String fileSrc, long timestamp) {
-    this.fileSrc = fileSrc;
-    this.timestamp = timestamp;
+  public boolean isSuccess() {
+    return success;
   }
 
-  public String getFileSrc() {
-    return fileSrc;
-  }
-
-  public long getTimestamp() {
-    return timestamp;
-  }
-
-  public String getBasePath() {
-    if (basePath.equals("")) {
-      basePath = fileSrc.substring(6);
-    }
-    return basePath;
+  public String getMessage() {
+    return message;
   }
 }

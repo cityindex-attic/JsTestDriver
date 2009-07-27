@@ -13,3 +13,11 @@ json2 changes:
  - to be compatible with prototype.js (http://www.prototypejs.org/) make sure
    that in the function str the method toJson is not called when the object is
    an array
+
+
+Compatibility issues:
+* Opera seems to just stop interpreting and running JavasSript when it encounters a JavaScript file
+  with errors which sucks as we could just continue to run fine with the files we already have
+  loaded.
+
+* Konqueror just doesn't seem to like us at all in all sorts of ways.

@@ -13,128 +13,46 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.FileLoader = function(dom) {
-  this.dom_ = dom;
-  this.boundOnFileLoaded_ = jstestdriver.bind(this, this.onFileLoaded);
-  this.savedDocumentWrite_ = dom.write;
-  this.boundOnError_ = jstestdriver.bind(this, this.onError);
-  this.loadMsg_ = '';
-  this.successFiles_ = [];
-  this.errorFiles_ = [];
-  window.onerror = this.boundOnError_;
+jstestdriver.FileLoader = function(pluginRegistrar, onAllFilesLoaded) {
+  this.pluginRegistrar_ = pluginRegistrar;
+  this.onAllFilesLoaded_ = onAllFilesLoaded;
+  this.boundOnFileLoaded = jstestdriver.bind(this, this.onFileLoaded_);
+  this.loadedFiles_ = [];
 };
 
 
-jstestdriver.FileLoader.prototype.onError = function(msg, url, line) {
-  var index = url.indexOf('/test/');
-
-  if (index != -1) {
-    var fileSrc = url.substr(index + 6);
-
-    this.loadMsg_ += 'error loading file: ' + fileSrc + ':' + line + ' ' + msg + '\n';
-    this.errorFiles_.push(fileSrc);
-  } else if (!this.loadMsg_.length) {
-    this.loadMsg_ = 'error loading file(s)';
-  }
-};
-
-
-jstestdriver.FileLoader.prototype.load = function(files, onAllFilesLoaded) {
+/**
+ * Load files.
+ * 
+ * files is an array containing jstestdriver.FileSource objects.
+ */
+jstestdriver.FileLoader.prototype.load = function(files) {
   this.files_ = files;
   if (this.files_.length > 0) {
-    this.onAllFilesLoaded_ = onAllFilesLoaded;
-    this.dom_.write = function() {};
-    this.createTag(this.files_.shift());
+    this.loadFile_(this.files_.shift());
   } else {
-    onAllFilesLoaded({ message: 'no files to load', successFiles: [], errorFiles: [] });
+    this.onAllFilesLoaded_({ loadedFiles: [] });
   }
 };
 
 
-jstestdriver.FileLoader.prototype.onFileLoaded = function(fileLoaded) {
-  if (fileLoaded && fileLoaded == this.fileLoading_) {
-    this.successFiles_.push(fileLoaded);
-    if (this.files_.length == 0) {
-      var onAllFilesLoaded = this.onAllFilesLoaded_;
-
-      this.onAllFilesLoaded_ = null;
-      this.dom_.write = this.savedDocumentWrite_;
-      onAllFilesLoaded({
-        message : this.loadMsg_,
-        successFiles : this.successFiles_,
-        errorFiles : this.errorFiles_
-      });
-    } else {
-      this.createTag(this.files_.shift());
-    }
-  }
+jstestdriver.FileLoader.prototype.loadFile_ = function(file) {
+  this.pluginRegistrar_.loadSource(file, this.boundOnFileLoaded);
 };
 
 /**
- * Creates a tag to load the requested resource.
- * @param {Object} file A json object from the server (com.google.jstestdriver.FileInfo) that has a
- *    fileSrc property.
+ * This method is called once a file has been loaded. It then either load the next file or if none
+ * are left sends back the list of loaded files to the server.
+ * 
+ * @param {Object} file A jstestdriver.FileResult object
  */
-jstestdriver.FileLoader.prototype.createTag = function(file) {
-  if (file.fileSrc.match(/\.js$/)) {
-    this.createScript(this.dom_, file, this.boundOnFileLoaded_);
-  } else if (file.fileSrc.match(/\.css$/)) {
-    this.createLink(this.dom_, file, this.boundOnFileLoaded_);
-  }
-};
-
-/**
- * Creates a script tag in the document for JavaScript resources.
- * @param {document} dom The document where the script tag will be created.
- * @param {Object} file A json object from the server (com.google.jstestdriver.FileInfo) that has a
- *    fileSrc property.
- * @param {function(Object):void} callback The function that will be executed when the script is 
- *    done loading.
- */
-jstestdriver.FileLoader.prototype.createScript = function(dom, file, callback) {
-  var head = dom.getElementsByTagName('head')[0];
-  var script = dom.createElement('script');
-
-  script.onerror = this.boundOnError_;
-  script.onload = function() { callback(file); };
-  script.onreadystatechange = function() {
-    if (script.readyState == 'loaded') {
-      callback(file);
-    }
-  };
-  script.type = "text/javascript";
-  script.src = file.fileSrc;
-  this.fileLoading_ = file;
-  head.appendChild(script);
-};
-
-/**
- * Creates a link in the document for css resources.
- * @param {document} dom The document where the script tag will be created.
- * @param {Object} file A json object from the server (com.google.jstestdriver.FileInfo) that has a
- *    fileSrc property.
- * @param {function(Object):void} callback The function that will be executed when the script is 
- *    done loading.
- */
-jstestdriver.FileLoader.prototype.createLink = function(dom, file, callback) {
-  var head = dom.getElementsByTagName('head')[0];
-  var link = dom.createElement('link');
-
-  link.onerror = this.boundOnError_;
-  link.onload = function() { callback(file); };
-  link.onreadystatechange = function() {
-    if (link.readyState == 'loaded') {
-      callback(file);
-    }
-  };
-  link.type = "text/css";
-  link.rel = "stylesheet";
-  link.href = file.fileSrc;
-  this.fileLoading_ = file;
-  head.appendChild(link);
-
-  // Firefox and Safari don't seem to support onload or onreadystatechange for link
-  if (jstestdriver.jQuery.browser.mozilla || jstestdriver.jQuery.browser.safari) {
-    this.onFileLoaded(file);
+jstestdriver.FileLoader.prototype.onFileLoaded_ = function(fileLoaded) {
+  this.loadedFiles_.push(fileLoaded);
+  if (this.files_.length == 0) {
+    this.onAllFilesLoaded_({
+      loadedFiles: this.loadedFiles_
+    });
+  } else {
+    this.loadFile_(this.files_.shift());
   }
 };
