@@ -86,6 +86,8 @@ public class SlaveBrowserRootData extends Observable implements Observer {
     ieSlaves.clearSlaves();
     chromeSlaves.clearSlaves();
     safariSlaves.clearSlaves();
+    setChanged();
+    notifyObservers(this);
   }
   
   public String toString() {
