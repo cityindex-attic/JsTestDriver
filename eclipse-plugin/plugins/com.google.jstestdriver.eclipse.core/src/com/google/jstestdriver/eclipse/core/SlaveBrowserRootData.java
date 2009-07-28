@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver.eclipse.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -88,6 +90,15 @@ public class SlaveBrowserRootData extends Observable implements Observer {
     safariSlaves.clearSlaves();
     setChanged();
     notifyObservers(this);
+  }
+  
+  public List<String> getSlaveBrowserIds() {
+    List<String> ids = new ArrayList<String>();
+    ids.addAll(firefoxSlaves.getBrowserIds());
+    ids.addAll(chromeSlaves.getBrowserIds());
+    ids.addAll(ieSlaves.getBrowserIds());
+    ids.addAll(safariSlaves.getBrowserIds());
+    return ids;
   }
   
   public String toString() {

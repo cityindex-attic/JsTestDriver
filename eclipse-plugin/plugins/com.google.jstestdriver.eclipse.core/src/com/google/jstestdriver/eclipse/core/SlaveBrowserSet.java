@@ -68,4 +68,12 @@ public class SlaveBrowserSet {
       return "icons/" + browserName + ".png";
     }
   }
+  
+  public List<String> getBrowserIds() {
+    List<String> ids = new ArrayList<String>();
+    for (SlaveBrowser browser : slaves) {
+      ids.add(browser.getBrowserInfo().getId().toString());
+    }
+    return ids;
+  }
 }

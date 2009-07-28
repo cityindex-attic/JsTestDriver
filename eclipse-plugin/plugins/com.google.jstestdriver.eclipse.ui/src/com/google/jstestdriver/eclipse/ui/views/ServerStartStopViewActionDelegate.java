@@ -71,7 +71,7 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
     action.setToolTipText("Stop Server");
     action.setImageDescriptor(icons.stopServerIcon());
     if (view != null) {
-      view.setServerStatus(Server.SERVER_URL);
+      view.setServerStatus(Server.SERVER_CAPTURE_URL);
     }
   }
 

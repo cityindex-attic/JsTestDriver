@@ -160,7 +160,7 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
     dialog.setMessage("Choose config file:");
     if (dialog.open() == Window.OK) {
       IResource resource = (IResource) dialog.getFirstResult();
-      confFileText.setText(resource.getLocation().toOSString());
+      confFileText.setText(resource.getName());
       setTabDirty();
     }
   }

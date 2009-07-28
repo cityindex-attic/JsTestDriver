@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Core
-Bundle-SymbolicName: com.google.jstestdriver.eclipse.core
+Bundle-SymbolicName: com.google.jstestdriver.eclipse.core;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: com.google.jstestdriver.eclipse.core.Activator
 Bundle-Vendor: GOOGLE
@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources;bundle-version="3.4.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: com.google.jstestdriver,
+Export-Package: com.google.inject,
+ com.google.jstestdriver,
  com.google.jstestdriver.eclipse.core,
  com.google.jstestdriver.eclipse.internal.core,
  com.google.jstestdriver.hooks,
