@@ -15,9 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.util.Collection;
 
 /**
@@ -25,11 +22,13 @@ import java.util.Collection;
  */
 public class RunTestsActionResponseStream implements ResponseStream {
 
-  private final Gson gson = new Gson();
   private final TestResultPrinter printer;
+  private final TestResultGenerator testResultGenerator;
 
-  public RunTestsActionResponseStream(TestResultPrinter printer) {
+  public RunTestsActionResponseStream(TestResultPrinter printer,
+      TestResultGenerator testResultGenerator) {
     this.printer = printer;
+    this.testResultGenerator = testResultGenerator;
   }
   
   public void stream(Response response) {
@@ -37,13 +36,8 @@ public class RunTestsActionResponseStream implements ResponseStream {
       System.err.println(response.getResponse());
       System.exit(1);
     }
-    Collection<TestResult> results = gson.fromJson(response.getResponse(),
-        new TypeToken<Collection<TestResult>>() {}.getType());
-
-    for (TestResult result : results) {
-      BrowserInfo browserInfo = response.getBrowser();
-
-      result.setBrowserInfo(browserInfo);
+    Collection<TestResult> testResults = testResultGenerator.getTestResults(response);
+    for (TestResult result : testResults) {
       printer.print(result);
     }
   }

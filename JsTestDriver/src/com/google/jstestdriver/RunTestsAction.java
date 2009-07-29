@@ -81,7 +81,9 @@ public class RunTestsAction implements ThreadedAction {
     return testCaseMap;
   }
 
-  private List<TestCase> createTestCaseList(List<String> tests) {
+  // TODO(shyamseshadri): Protected for subclassing. Make it private again after
+  // ResponseStreamFactoryImpl is injected into this so that Eclipse can pass in its own impl.
+  protected List<TestCase> createTestCaseList(List<String> tests) {
     Map<String, List<String>> testCasesMap = createTestCaseMap(tests);
     List<TestCase> testCases = new ArrayList<TestCase>();
 

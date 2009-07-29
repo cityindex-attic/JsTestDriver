@@ -51,7 +51,7 @@ public class ResponseStreamFactoryImpl implements ResponseStreamFactory {
   }
 
   public ResponseStream getRunTestsActionResponseStream() {
-    return new RunTestsActionResponseStream(printer);
+    return new RunTestsActionResponseStream(printer, new TestResultGenerator());
   }
 
   public ResponseStream getDryRunActionResponseStream() {
