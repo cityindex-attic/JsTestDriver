@@ -64,7 +64,6 @@ public class IDEPluginActionBuilderTest extends TestCase {
       public void finish() {
       }
     };
-    builder.sendTestResultsTo(responseStream);
     builder.addAllTests();
     ActionRunner runner = builder.build();
 

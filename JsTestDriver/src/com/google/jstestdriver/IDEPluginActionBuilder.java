@@ -74,8 +74,4 @@ public class IDEPluginActionBuilder {
     }
     return threadedActions;
   }
-
-  public IDEPluginActionBuilder sendTestResultsTo(ResponseStream responseStream) {
-    return this;
-  }
 }

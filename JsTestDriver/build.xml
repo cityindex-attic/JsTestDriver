@@ -154,7 +154,7 @@
         <exclude name="**/*.java" />
       </fileset>
     </copy>
-    <copy todir="$obj-debug.dir}">
+    <copy todir="${obj-debug.dir}">
       <fileset dir="${src-test.dir}">
         <exclude name="**/*.java" />
       </fileset>
