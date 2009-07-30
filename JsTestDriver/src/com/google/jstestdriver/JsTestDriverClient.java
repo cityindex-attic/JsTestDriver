@@ -26,17 +26,14 @@ public interface JsTestDriverClient {
 
   public Collection<BrowserInfo> listBrowsers();
 
-  public void eval(String id, ResponseStreamFactory factory, String cmd);
+  public void eval(String id, ResponseStream responseStream, String cmd);
 
-  public void runAllTests(String id, ResponseStreamFactory factory, boolean captureConsole);
+  public void runAllTests(String id, ResponseStream responseStream, boolean captureConsole);
 
-  public void reset(String id, ResponseStreamFactory factory);
+  public void reset(String id, ResponseStream responseStream);
 
-  public void registerCommand(String id, ResponseStreamFactory factory, String name,
-      String function);
-
-  public void runTests(String id, ResponseStreamFactory factory, List<String> tests,
+  public void runTests(String id, ResponseStream responseStream, List<String> tests,
       boolean captureConsole);
 
-  public void dryRun(String id, ResponseStreamFactory factory);
+  public void dryRun(String id, ResponseStream responseStream);
 }

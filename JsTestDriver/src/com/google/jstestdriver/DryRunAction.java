@@ -18,14 +18,13 @@ package com.google.jstestdriver;
 import com.google.gson.Gson;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class DryRunAction implements ThreadedAction {
+public class DryRunAction extends ThreadedAction {
 
-  public static class DryRunActionCallback implements ActionResponseCallback {
+  public static class DryRunActionResponseStream implements ResponseStream {
 
     private final Gson gson = new Gson();
 
@@ -48,23 +47,24 @@ public class DryRunAction implements ThreadedAction {
       }      
     }
 
-    public void callback(Response response) {
+    public void finish() {
+    }
+
+    public void stream(Response response) {
       BrowserInfo browser = response.getBrowser();
       DryRunInfo dryRunInfo = gson.fromJson(response.getResponse(), DryRunInfo.class);
 
-      System.out.println(String.format("%s %s: %s tests %s", browser.getName(), browser.getVersion(), 
-          dryRunInfo.getNumTests(), dryRunInfo.getTestNames()));
+      System.out.println(String.format("%s %s: %s tests %s", browser.getName(), browser
+          .getVersion(), dryRunInfo.getNumTests(), dryRunInfo.getTestNames()));
     }
   }
 
-  public void run(String id, JsTestDriverClient client) {
-    CountDownLatch latch = new CountDownLatch(1);
+  public DryRunAction(ResponseStreamFactory responseStreamFactory) {
+    super(responseStreamFactory);
+  }
 
-    client.dryRun(id, new ResponseStreamFactoryImpl(latch));
-    try {
-      latch.await();
-    } catch (InterruptedException e) {
-      // uh
-    }
+  @Override
+  public void run(String id, JsTestDriverClient client) {
+    client.dryRun(id, responseStreamFactory.getDryRunActionResponseStream());
   }
 }

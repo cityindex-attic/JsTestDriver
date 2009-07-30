@@ -44,6 +44,9 @@ public class ActionSequenceBuilder {
   }
 
   private final ActionFactory actionFactory;
+  private final ResponseStreamFactory responseStreamFactory;
+  private final FileLoader fileLoader;
+
   private List<String> browsers = new LinkedList<String>();
   private boolean captureConsole;
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
@@ -57,13 +60,13 @@ public class ActionSequenceBuilder {
   private List<String> tests = new LinkedList<String>();
   private List<ThreadedAction> threadedActions;
   private boolean verbose;
-
   private String xmlOutputDir;
   private List<String> commands = new LinkedList<String>();
-  private final FileLoader fileLoader;
 
   /** Begins the building of an action sequence. */
-  public ActionSequenceBuilder(ActionFactory actionFactory, FileLoader fileLoader) {
+  public ActionSequenceBuilder(ResponseStreamFactory responseStreamFactory,
+      ActionFactory actionFactory, FileLoader fileLoader) {
+    this.responseStreamFactory = responseStreamFactory;
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
   }
@@ -154,19 +157,20 @@ public class ActionSequenceBuilder {
   /** Creates and returns all threaded actions. */
   private List<ThreadedAction> createThreadedActions(JsTestDriverClient client) {
     List<ThreadedAction> threadedActions = new ArrayList<ThreadedAction>();
+
     if (reset) {
-      threadedActions.add(new ResetAction());
+      threadedActions.add(new ResetAction(responseStreamFactory));
     }
     if (dryRun) {
-      threadedActions.add(new DryRunAction());
+      threadedActions.add(new DryRunAction(responseStreamFactory));
     }
     if (!tests.isEmpty()) {
-      threadedActions.add(new RunTestsAction(tests, new ResponsePrinterFactory(xmlOutputDir,
-          System.out, client, verbose), captureConsole));
+      threadedActions.add(new RunTestsAction(responseStreamFactory, new ResponsePrinterFactory(
+          xmlOutputDir, System.out, client, verbose), tests, captureConsole));
     }
     if (!commands.isEmpty()) {
       for (String cmd : commands) {
-        threadedActions.add(new EvalAction(cmd));
+        threadedActions.add(new EvalAction(responseStreamFactory, cmd));
       }
     }
     return threadedActions;

@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver;
 
+/**
+ * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
+ */
 public interface ResponseStreamFactory {
 
-  public ResponseStream getEvalActionResponseStream();
-
-  public ResponseStream getResetActionResponseStream();
-
-  public ResponseStream getRunTestsActionResponseStream();
-
-  public ResponseStream getDryRunActionResponseStream();
+  ResponseStream getRunTestsActionResponseStream();
+  ResponseStream getDryRunActionResponseStream();
+  ResponseStream getEvalActionResponseStream();
+  ResponseStream getResetActionResponseStream();
 }

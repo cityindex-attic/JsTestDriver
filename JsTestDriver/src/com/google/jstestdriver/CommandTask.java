@@ -224,7 +224,6 @@ public class CommandTask {
     } finally {
       stream.finish();
       heartBeatManager.cancelTimer();
-
       stopSession(sessionId);
     }
   }

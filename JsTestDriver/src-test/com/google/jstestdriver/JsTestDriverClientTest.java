@@ -104,10 +104,8 @@ public class JsTestDriverClientTest extends TestCase {
         }), new LinkedHashSet<FileInfo>(),
         "http://localhost", server);
     FakeResponseStream stream = new FakeResponseStream();
-    ResponseStreamFactoryStub factory = new ResponseStreamFactoryStub();
 
-    factory.setResponseStream(stream);
-    client.eval("1", factory, "cmd");
+    client.eval("1", stream, "cmd");
 
     Response response = stream.getResponse();
 
@@ -116,7 +114,7 @@ public class JsTestDriverClientTest extends TestCase {
     assertEquals("error1", response.getError());
     assertEquals(3L, response.getExecutionTime());
 
-    client.eval("2", factory, "cmd");
+    client.eval("2", stream, "cmd");
     response = stream.getResponse();
     assertEquals("2", stream.getResponse().getResponse());
     assertEquals("browser2", response.getBrowser().getName());
@@ -172,11 +170,9 @@ public class JsTestDriverClientTest extends TestCase {
           }
         }), new LinkedHashSet<FileInfo>(),
         "http://localhost", server);
-    ResponseStreamFactoryStub factory = new ResponseStreamFactoryStub();
     FakeResponseStream stream = new FakeResponseStream();
 
-    factory.setResponseStream(stream);
-    client.runAllTests("1", factory, false);
+    client.runAllTests("1", stream, false);
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }
@@ -199,15 +195,13 @@ public class JsTestDriverClientTest extends TestCase {
           }
         }), new LinkedHashSet<FileInfo>(),
         "http://localhost", server);
-    ResponseStreamFactoryStub factory = new ResponseStreamFactoryStub();
     FakeResponseStream stream = new FakeResponseStream();
 
-    factory.setResponseStream(stream);
     ArrayList<String> tests = new ArrayList<String>();
 
     tests.add("testCase.testFoo");
     tests.add("testCase.testBar");
-    client.runTests("1", factory, tests, false);
+    client.runTests("1", stream, tests, false);
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }

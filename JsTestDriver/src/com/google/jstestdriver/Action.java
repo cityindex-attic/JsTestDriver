@@ -20,5 +20,5 @@ package com.google.jstestdriver;
  */
 public interface Action {
 
-  public void run();
+  void run();
 }

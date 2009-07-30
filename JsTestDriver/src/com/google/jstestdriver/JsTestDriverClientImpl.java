@@ -63,44 +63,32 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     task.run();
   }
 
-  public void eval(String id, ResponseStreamFactory factory, String cmd) {
+  public void eval(String id, ResponseStream responseStream, String cmd) {
     List<String> parameters = new LinkedList<String>();
 
     parameters.add(cmd);
     JsonCommand jsonCmd = new JsonCommand(CommandType.EXECUTE, parameters);
 
-    sendCommand(id, factory.getEvalActionResponseStream(), gson.toJson(jsonCmd));
+    sendCommand(id, responseStream, gson.toJson(jsonCmd));
   }
 
-  public void runAllTests(String id, ResponseStreamFactory factory, boolean captureConsole) {
+  public void runAllTests(String id, ResponseStream responseStream, boolean captureConsole) {
     List<String> parameters = new LinkedList<String>();
 
     parameters.add(String.valueOf(captureConsole));
     parameters.add("false");
     JsonCommand cmd = new JsonCommand(CommandType.RUNALLTESTS, parameters);
 
-    sendCommand(id, factory.getRunTestsActionResponseStream(), gson.toJson(cmd));
+    sendCommand(id, responseStream, gson.toJson(cmd));
   }
 
-  public void reset(String id, ResponseStreamFactory factory) {
+  public void reset(String id, ResponseStream responseStream) {
     JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
 
-    sendCommand(id, factory.getResetActionResponseStream(), gson.toJson(cmd));
+    sendCommand(id, responseStream, gson.toJson(cmd));
   }
 
-  public void registerCommand(String id, ResponseStreamFactory factory, String name,
-      String function) {
-    List<String> parameters = new LinkedList<String>();
-
-    parameters.add(name);
-    parameters.add(function);
-    JsonCommand cmd = new JsonCommand(CommandType.REGISTERCOMMAND, parameters);
-    // CountDownLatch latch = new CountDownLatch(1);
-
-    sendCommand(id, null, gson.toJson(cmd));
-  }
-
-  public void runTests(String id, ResponseStreamFactory factory, List<String> tests,
+  public void runTests(String id, ResponseStream responseStream, List<String> tests,
       boolean captureConsole) {
     List<String> parameters = new LinkedList<String>();
 
@@ -108,12 +96,12 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     parameters.add(String.valueOf(captureConsole));
     JsonCommand cmd = new JsonCommand(CommandType.RUNTESTS, parameters);
 
-    sendCommand(id, factory.getRunTestsActionResponseStream(), gson.toJson(cmd));
+    sendCommand(id, responseStream, gson.toJson(cmd));
   }
 
-  public void dryRun(String id, ResponseStreamFactory factory) {
+  public void dryRun(String id, ResponseStream responseStream) {
     JsonCommand cmd = new JsonCommand(CommandType.DRYRUN, Collections.<String>emptyList());
 
-    sendCommand(id, factory.getDryRunActionResponseStream(), gson.toJson(cmd));
+    sendCommand(id, responseStream, gson.toJson(cmd));
   }  
 }

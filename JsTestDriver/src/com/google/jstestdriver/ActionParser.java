@@ -34,7 +34,8 @@ public class ActionParser {
   }
 
   public List<Action> parseFlags(Flags flags, Set<FileInfo> fileSet, String defaultServerAddress) {
-    ActionSequenceBuilder builder = new ActionSequenceBuilder(actionFactory, fileLoader);
+    ActionSequenceBuilder builder =
+        new ActionSequenceBuilder(new DefaultResponseStreamFactory(), actionFactory, fileLoader);
     builder.usingFiles(fileSet, flags.getPreloadFiles())
            .addTests(flags.getTests(),
                      flags.getTestOutput(),

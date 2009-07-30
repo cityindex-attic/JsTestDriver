@@ -15,22 +15,25 @@
  */
 package com.google.jstestdriver;
 
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class EvalAction implements ThreadedAction {
+public class EvalAction extends ThreadedAction {
 
   private final String cmd;
 
-  public EvalAction(String cmd) {
+  public EvalAction(ResponseStreamFactory responseStreamFactory, String cmd) {
+    super(responseStreamFactory);
     this.cmd = cmd;
   }
 
-  public static class EvalActionCallback implements ActionResponseCallback {
+  public static class EvalActionResponseStream implements ResponseStream {
 
-    public void callback(Response response) {
+    public void finish() {
+    }
+
+    public void stream(Response response) {
       BrowserInfo browser = response.getBrowser();
 
       System.out.println(String.format("%s %s: %s", browser.getName(), browser.getVersion(),
@@ -38,15 +41,9 @@ public class EvalAction implements ThreadedAction {
     }
   }
 
+  @Override
   public void run(String id, JsTestDriverClient client) {
-    CountDownLatch latch = new CountDownLatch(1);
-
-    client.eval(id, new ResponseStreamFactoryImpl(latch), getCmd());
-    try {
-      latch.await();
-    } catch (InterruptedException e) {
-      // uh
-    }
+    client.eval(id, responseStreamFactory.getEvalActionResponseStream(), getCmd());
   }
 
   public String getCmd() {

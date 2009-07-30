@@ -63,4 +63,8 @@ public class ResponsePrinterFactory {
       return defaultPrinter;    
     }
   }
+
+  public void close(String xmlFile) {
+    // need to close the printer
+  }
 }

@@ -15,29 +15,29 @@
  */
 package com.google.jstestdriver;
 
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class ResetAction implements ThreadedAction {
+public class ResetAction extends ThreadedAction {
 
-  public static class ResetActionCallback implements ActionResponseCallback {
+  public static class ResetActionResponseStream implements ResponseStream {
 
-    public void callback(Response response) {
+    public void finish() {
+    }
+
+    public void stream(Response response) {
       System.out.println(String.format("%s: %s", response.getBrowser().getName(),
           response.getResponse()));
     }
   }
 
-  public void run(String id, JsTestDriverClient client) {
-    CountDownLatch latch = new CountDownLatch(1);
+  public ResetAction(ResponseStreamFactory responseStreamFactory) {
+    super(responseStreamFactory);
+  }
 
-    client.reset(id, new ResponseStreamFactoryImpl(latch));
-    try {
-      latch.await();
-    } catch (InterruptedException e) {
-      // uh
-    }
+  @Override
+  public void run(String id, JsTestDriverClient client) {
+    client.reset(id, responseStreamFactory.getResetActionResponseStream());
   }
 }

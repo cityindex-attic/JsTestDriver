@@ -29,8 +29,8 @@ public class ThreadedActionRunner implements Runnable {
   private final CountDownLatch latch;
   private final List<ThreadedAction> actions;
 
-  public ThreadedActionRunner(String id, JsTestDriverClient client, CountDownLatch latch,
-      List<ThreadedAction> actions) {
+  public ThreadedActionRunner(String id, JsTestDriverClient client,
+      CountDownLatch latch, List<ThreadedAction> actions) {
     this.id = id;
     this.client = client;
     this.latch = latch;

@@ -22,12 +22,11 @@ import java.util.Collection;
  */
 public class RunTestsActionResponseStream implements ResponseStream {
 
-  private final TestResultPrinter printer;
   private final TestResultGenerator testResultGenerator;
 
-  public RunTestsActionResponseStream(TestResultPrinter printer,
-      TestResultGenerator testResultGenerator) {
-    this.printer = printer;
+  private TestResultPrinter printer;
+
+  public RunTestsActionResponseStream(TestResultGenerator testResultGenerator) {
     this.testResultGenerator = testResultGenerator;
   }
   
@@ -44,5 +43,9 @@ public class RunTestsActionResponseStream implements ResponseStream {
 
   public void finish() {
     printer.close();
+  }
+
+  public void setResponsePrinter(TestResultPrinter printer) {
+    this.printer = printer;
   }
 }

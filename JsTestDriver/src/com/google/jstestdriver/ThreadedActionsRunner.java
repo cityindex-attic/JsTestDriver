@@ -38,15 +38,16 @@ public class ThreadedActionsRunner implements Action {
 
   public void run() {
     Collection<BrowserInfo> browsers = client.listBrowsers();
+    int browsersNumber = browsers.size();
 
-    if (browsers.size() == 0) {
+    if (browsersNumber == 0) {
       System.err.println("No browsers were captured, nothing to run...");
     }
-    CountDownLatch latch = new CountDownLatch(browsers.size());
+    CountDownLatch latch = new CountDownLatch(browsersNumber);
 
     for (BrowserInfo browserInfo : browsers) {
-      executor.submit(new ThreadedActionRunner(browserInfo.getId().toString(), client, latch,
-          actions));
+      executor.submit(new ThreadedActionRunner(browserInfo.getId().toString(),
+          client, latch, actions));
     }
     executor.shutdown();
     try {

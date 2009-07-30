@@ -18,7 +18,13 @@ package com.google.jstestdriver;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public interface ThreadedAction {
+public abstract class ThreadedAction {
 
-  public void run(String id, JsTestDriverClient client);
+  protected final ResponseStreamFactory responseStreamFactory;
+
+  public ThreadedAction(ResponseStreamFactory responseStreamFactory) {
+    this.responseStreamFactory = responseStreamFactory;
+  }
+
+  public abstract void run(String id, JsTestDriverClient client);
 }

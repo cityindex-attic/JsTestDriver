@@ -28,17 +28,21 @@ import java.util.concurrent.Executors;
  */
 public class IDEPluginActionBuilder {
 
+  
   private final ConfigurationParser configParser;
   private final String serverAddress;
   private final ActionFactory actionFactory;
+  private final ResponseStreamFactory responseStreamFactory;
 
   private List<String> tests = new LinkedList<String>();
+  
 
   public IDEPluginActionBuilder(ConfigurationParser configParser, String serverAddress,
-                                ActionFactory actionFactory) {
+      ActionFactory actionFactory, ResponseStreamFactory responseStreamFactory) {
     this.configParser = configParser;
     this.serverAddress = serverAddress;
     this.actionFactory = actionFactory;
+    this.responseStreamFactory = responseStreamFactory;
   }
 
   public IDEPluginActionBuilder addAllTests() {
@@ -65,8 +69,8 @@ public class IDEPluginActionBuilder {
     List<ThreadedAction> threadedActions = new ArrayList<ThreadedAction>();
 
     if (!tests.isEmpty()) {
-      threadedActions.add(new RunTestsAction(tests,
-          new ResponsePrinterFactory("", System.out, client, false), true));
+      threadedActions.add(new RunTestsAction(responseStreamFactory, new ResponsePrinterFactory("",
+          System.out, client, false), tests, true));
     }
     return threadedActions;
   }
