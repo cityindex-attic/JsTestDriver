@@ -17,30 +17,27 @@ package com.google.jstestdriver.eclipse.ui.views;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 
-import com.google.jstestdriver.SlaveBrowser;
-import com.google.jstestdriver.eclipse.core.SlaveBrowserSet;
-import com.google.jstestdriver.eclipse.ui.Activator;
+import com.google.jstestdriver.eclipse.ui.launch.model.ResultModel;
 
-public class BrowserInfoLabelProvider extends LabelProvider {
-  private ISharedImages sharedImages = PlatformUI.getWorkbench()
-      .getSharedImages();
-
+/**
+ * Describe how labels and images are provided for the test results tree.
+ * 
+ * @author shyamseshadri@google.com (Shyam Seshadri)
+ */
+public class TestResultsTreeLabelProvider extends LabelProvider {
   public String getText(Object obj) {
-    if (obj instanceof SlaveBrowser) {
-      return ((SlaveBrowser) obj).getBrowserInfo().getId().toString();
+    if (obj instanceof ResultModel) {
+      return ((ResultModel) obj).getDisplayLabel();
     }
     return obj.toString();
   }
 
   public Image getImage(Object obj) {
-    if (obj instanceof SlaveBrowserSet) {
-      SlaveBrowserSet browserSet = (SlaveBrowserSet) obj;
-      return Activator.getDefault().getImageDescriptor(browserSet.getImagePath()).createImage();
+    if (obj instanceof ResultModel) {
+      ResultModel resultModel = (ResultModel) obj;
+      return resultModel.getDisplayImage();
     }
-    String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-    return sharedImages.getImage(imageKey);
+    return null;
   }
 }

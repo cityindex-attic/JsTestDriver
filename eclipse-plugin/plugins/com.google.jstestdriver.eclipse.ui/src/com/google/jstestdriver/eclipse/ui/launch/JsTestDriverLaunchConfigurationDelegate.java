@@ -31,6 +31,10 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -46,6 +50,8 @@ import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.core.SlaveBrowserRootData;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
 import com.google.jstestdriver.eclipse.internal.core.ProjectHelper;
+import com.google.jstestdriver.eclipse.ui.views.JsTestDriverView;
+import com.google.jstestdriver.eclipse.ui.views.TestResultsPanel;
 
 /**
  * Handles a Js Test Driver launch.
@@ -93,6 +99,21 @@ public class JsTestDriverLaunchConfigurationDelegate implements
     JsTestDriverClient client = new JsTestDriverClientImpl(cmdTaskFactory,
         filesList, Server.SERVER_URL, httpServer);
 
+    Display.getDefault().asyncExec(new Runnable() {
+
+      public void run() {
+        IWorkbenchPage page = PlatformUI.getWorkbench()
+            .getActiveWorkbenchWindow().getActivePage();
+        try {
+          JsTestDriverView view = (JsTestDriverView) page
+              .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
+          TestResultsPanel panel = view.getTestResultsPanel();
+          panel.clearTestRun();
+        } catch (PartInitException e) {
+          logger.logException(e);
+        }
+      }
+    });
     EclipseRunTestsAction runTestsAction = new EclipseRunTestsAction(allTests,
         null, false);
     SlaveBrowserRootData browserRootData = SlaveBrowserRootData.getInstance();

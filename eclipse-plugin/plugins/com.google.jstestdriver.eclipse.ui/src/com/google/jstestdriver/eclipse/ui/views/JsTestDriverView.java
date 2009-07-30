@@ -55,7 +55,7 @@ public class JsTestDriverView extends ViewPart {
     return serverInfoPanel;
   }
   
-  public void addResult(String result) {
-    testResultsPanel.addText(result);
+  public TestResultsPanel getTestResultsPanel() {
+    return testResultsPanel;
   }
 }
