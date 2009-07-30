@@ -27,6 +27,8 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 
 /**
+ * Top-level plugin component, registered in the plugin.xml. This provides a popout tool window
+ * to control the JSTestDriver server and see results from JSTestDriver test executions.
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class JSTestDriverToolWindow implements ProjectComponent {

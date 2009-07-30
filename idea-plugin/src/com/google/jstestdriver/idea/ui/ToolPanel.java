@@ -15,15 +15,12 @@
  */
 package com.google.jstestdriver.idea.ui;
 
-import com.google.jstestdriver.idea.MessageBundle;
-import com.google.jstestdriver.ui.CapturedBrowsersPanel;
-import com.google.jstestdriver.ui.StatusBar;
-
 import com.intellij.util.ui.UIUtil;
 
-import java.awt.*;
+import java.awt.BorderLayout;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -32,12 +29,8 @@ public class ToolPanel extends JPanel {
   public ToolPanel() {
     setLayout(new BorderLayout());
     setBackground(UIUtil.getTreeTextBackground());
-    add(new JPanel() {{
-      setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-      add(new StatusBar(StatusBar.Status.NOT_RUNNING, MessageBundle.getBundle()));
-      add(new CapturedBrowsersPanel());
-    }}, BorderLayout.NORTH);
-    add(new JTextArea("Test 1: Passed\nTest 2: Failed\n"), BorderLayout.CENTER);
+    add(new ServerControlPanel(), BorderLayout.NORTH);
+    add(new TestExecutionPanel(), BorderLayout.CENTER);
   }
 
   public static void main(String[] args) {

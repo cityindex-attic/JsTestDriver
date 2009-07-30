@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver.idea;
 
+import com.google.jstestdriver.idea.ui.ToolPanel;
+
 import com.intellij.openapi.util.IconLoader;
 
-import java.net.URL;
-
-import javax.swing.*;// Copyright 2009 Google Inc. All Rights Reserved.
+import javax.swing.Icon;
 
 /**
  * Access to all the text and image resources for the plugin.
@@ -34,7 +34,14 @@ public class PluginResources {
   }
 
   public static Icon getSmallIcon() {
-    URL resource = PluginResources.class.getClassLoader().getResource("com/google/jstestdriver/idea/icons/JsTestDriver.png");
-    return IconLoader.getIcon(new ImageIcon(resource, getPluginName()).getImage());
+    return IconLoader.findIcon("JsTestDriver.png", ToolPanel.class);
+  }
+
+  public static Icon getServerStartIcon() {
+    return IconLoader.findIcon("startServer.png", ToolPanel.class);
+  }
+
+  public static Icon getServerStopIcon() {
+    return IconLoader.findIcon("stopServer.png", ToolPanel.class);
   }
 }

@@ -33,8 +33,8 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ProjectJdk;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
 
 import org.jdom.Element;
@@ -103,12 +103,20 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration {
         jsTestDriverConfigurationFactory, getName());
   }
 
+  @Override
   public void readExternal(Element element) throws InvalidDataException {
-    DefaultJDOMExternalizer.readExternal(this, element);
+    super.readExternal(element);
+    readModule(element);
+    settingsFile = JDOMExternalizer.readString(element, "settingsFile");
+    serverPort = JDOMExternalizer.readString(element, "serverPort");
   }
 
+  @Override
   public void writeExternal(Element element) throws WriteExternalException {
-    DefaultJDOMExternalizer.writeExternal(this, element);
+    super.writeExternal(element);
+    writeModule(element);
+    JDOMExternalizer.write(element, "settingsFile", settingsFile);
+    JDOMExternalizer.write(element, "serverPort", serverPort);
   }
 
   public String getSettingsFile() {

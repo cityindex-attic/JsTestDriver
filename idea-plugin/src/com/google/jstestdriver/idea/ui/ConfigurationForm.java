@@ -22,7 +22,10 @@ import com.intellij.openapi.options.SettingsEditor;
 
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  * Configuration GUI
@@ -35,10 +38,6 @@ public class ConfigurationForm extends SettingsEditor<JSTestDriverConfiguration>
   private JTextField settingsFile;
   private JLabel serverPortLabel;
   private JTextField serverPort;
-  private JRadioButton localRadioButton;
-  private JRadioButton remoteRadioButton;
-  private JTextField serverUrl;
-  private JLabel serverLabel;
 
   @Override
   protected void resetEditorFrom(JSTestDriverConfiguration config) {

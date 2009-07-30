@@ -17,24 +17,22 @@
   <component name="ChangeListManager">
     <list readonly="true" name="Default" comment="" />
     <list default="true" name="plugin" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ToolPanel.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/TestRunnerState.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverConfigurationFactory.java" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverConfigurationFactory.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ConfigurationForm.form" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ConfigurationForm.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jstestdriver-plugin.iml" afterPath="$PROJECT_DIR$/jstestdriver-plugin.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ConfigurationForm.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/startServer.png" />
+      <change type="MODIFICATION" beforePath="/usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/ServerShutdownAction.java" afterPath="/usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/ServerShutdownAction.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ConfigurationForm.form" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ConfigurationForm.form" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jstestdriver-plugin.iws" afterPath="$PROJECT_DIR$/jstestdriver-plugin.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ToolPanel.java" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ToolPanel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverToolWindow.java" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverToolWindow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ConfigurationForm.java" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ConfigurationForm.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ServerControlPanel.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverConfiguration.java" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverConfiguration.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/stopServer.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/PluginResources.java" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/PluginResources.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverRunnableState.java" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverRunnableState.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverToolWindow.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jstestdriver-plugin.ipr" afterPath="$PROJECT_DIR$/jstestdriver-plugin.ipr" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/MessageBundle.java" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/MessageBundle.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ServerRunnableState.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/META-INF/plugin.xml" afterPath="$PROJECT_DIR$/META-INF/plugin.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/MessageBundle.properties" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/MessageBundle.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverComponent.java" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverComponent.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/icons" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/icons/JsTestDriver.png" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/JsTestDriver.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/TestRunnerState.java" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/TestRunnerState.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/TestExecutionPanel.java" />
     </list>
     <list name="add tests" comment="">
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/com/google" />
@@ -74,19 +72,6 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
       <breakpoint url="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/RunTestsActionResponseStream.java" line="34" class="com.google.jstestdriver.RunTestsActionResponseStream" package="com.google.jstestdriver">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="false" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/ResponseStreamFactoryImpl.java" line="53" class="com.google.jstestdriver.ResponseStreamFactoryImpl" package="com.google.jstestdriver">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -144,30 +129,73 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="JSTestDriverToolWindow.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverToolWindow.java">
+      <file leaf-file-name="ConfigurationForm.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ConfigurationForm.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="0" selection-start="591" selection-end="591" vertical-scroll-proportion="0.28878823">
-              <folding>
-                <marker date="1248915571000" expanded="false" signature="637:1051" placeholder="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MessageBundle.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/MessageBundle.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="3" selection-start="590" selection-end="590" vertical-scroll-proportion="0.26953566">
+            <state line="40" column="22" selection-start="1295" selection-end="1295" vertical-scroll-proportion="0.5390713">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MessageBundle.properties" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/MessageBundle.properties">
+      <file leaf-file-name="TestRunnerState.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/TestRunnerState.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="72" column="0" selection-start="2761" selection-end="2761" vertical-scroll-proportion="0.61608154">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ActionRunner.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/ActionRunner.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="37" column="0" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.38505095">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ResponseStreamFactoryImpl.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/ResponseStreamFactoryImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="3" selection-start="869" selection-end="869" vertical-scroll-proportion="0.09626274">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JSTestDriverConfiguration.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverConfiguration.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="52" column="13" selection-start="2123" selection-end="2123" vertical-scroll-proportion="0.19252548">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="plugin.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
           <provider selected="true" editor-type-id="text-editor">
             <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JSTestDriverToolWindow.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverToolWindow.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="65" column="81" selection-start="2070" selection-end="2070" vertical-scroll-proportion="0.596829">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ServerControlPanel.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ServerControlPanel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="41" column="70" selection-start="1471" selection-end="1471" vertical-scroll-proportion="0.38391846">
               <folding />
             </state>
           </provider>
@@ -176,67 +204,18 @@
       <file leaf-file-name="PluginResources.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/PluginResources.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="0" selection-start="591" selection-end="591" vertical-scroll-proportion="0.2937788">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ServerRunnableState.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ServerRunnableState.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="42" column="13" selection-start="1575" selection-end="1575" vertical-scroll-proportion="0.32616082">
+            <state line="21" column="24" selection-start="751" selection-end="751" vertical-scroll-proportion="0.40430352">
               <folding>
-                <marker date="1248915571000" expanded="false" signature="637:1507" placeholder="..." />
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestRunnerState.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/TestRunnerState.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="47" column="34" selection-start="1771" selection-end="1771" vertical-scroll-proportion="0.4428086">
-              <folding>
-                <marker date="1248915571000" expanded="false" signature="637:1626" placeholder="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="plugin.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="3" selection-start="676" selection-end="676" vertical-scroll-proportion="0.29582366">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TestRunnerStateTest.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/com/google/jstestdriver/idea/TestRunnerStateTest.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="6" selection-start="333" selection-end="333" vertical-scroll-proportion="0.21177803">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ConfigurationForm.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ConfigurationForm.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="3" selection-start="590" selection-end="590" vertical-scroll-proportion="0.26953566">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ToolPanel.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ToolPanel.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="3" selection-start="590" selection-end="590" vertical-scroll-proportion="0.26953566">
-              <folding />
-            </state>
+      <file leaf-file-name="ConfigurationForm.form" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ConfigurationForm.form">
+          <provider selected="true" editor-type-id="ui-designer">
+            <state />
           </provider>
         </entry>
       </file>
@@ -411,32 +390,6 @@
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
         <PATH_ELEMENT>
-          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/idea-plugin/src" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/idea-plugin/src/com/google/jstestdriver/idea" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/idea-plugin/src/com/google/jstestdriver/idea/icons" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="jstestdriver-plugin" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="jstestdriver-plugin" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/idea-plugin" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
           <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/idea-plugin/META-INF" />
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
@@ -469,6 +422,90 @@
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
         </PATH_ELEMENT>
       </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="jstestdriver-plugin" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="JsTestDriver" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/JsTestDriver" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="jstestdriver-plugin" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="JsTestDriver" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/JsTestDriver" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/JsTestDriver/src-test" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/JsTestDriver/src-test/com/google/jstestdriver" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="jstestdriver-plugin" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="JsTestDriver" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/JsTestDriver" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/JsTestDriver/src" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="jstestdriver-plugin" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="JsTestDriver" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/JsTestDriver" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/JsTestDriver/src" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:/usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/ui" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+      </PATH>
     </subPane>
   </component>
   <component name="ProjectReloadState">
@@ -499,6 +536,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.google.jstestdriver.idea.ui" />
       <recent name="com.google.jstestdriver" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -507,14 +545,15 @@
     </key>
   </component>
   <component name="RunManager" selected="Plugin.JSTestDriver">
-    <tempConfiguration default="false" name="com.google.jstestdriver in JsTestDriver" type="JUnit" factoryName="JUnit" enabled="false" merge="false">
+    <tempConfiguration default="false" name="FileWatcherTest" type="JUnit" factoryName="JUnit" enabled="false" merge="false">
+      <pattern value="com.google.jstestdriver.*" />
       <module name="JsTestDriver" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
       <option name="PACKAGE_NAME" value="com.google.jstestdriver" />
-      <option name="MAIN_CLASS_NAME" />
+      <option name="MAIN_CLASS_NAME" value="com.google.jstestdriver.FileWatcherTest" />
       <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="package" />
+      <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -522,7 +561,7 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <option name="ADDITIONAL_CLASS_PATH" />
       <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
+        <value defaultName="wholeProject" />
       </option>
       <envs />
       <RunnerSettings RunnerId="Run" />
@@ -639,7 +678,7 @@
       </method>
     </configuration>
     <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="JUnit.com.google.jstestdriver in JsTestDriver" />
+      <item index="0" class="java.lang.String" itemvalue="JUnit.FileWatcherTest" />
       <item index="1" class="java.lang.String" itemvalue="Plugin.JSTestDriver" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -696,11 +735,11 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="25" width="2560" height="1550" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297362" order="3" />
       <window_info id="Blaze build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="8" />
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32976446" order="8" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32976446" order="8" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" order="1" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="8" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297362" order="3" />
@@ -737,7 +776,7 @@
     <option name="PERFORM_EDIT_IN_BACKGROUND" value="true" />
     <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add a tool window, which reuses my old swing UI.&#10;Add an actual working test runner.&#10;Add copyrights." />
+    <option name="LAST_COMMIT_MESSAGE" value="Remember run configuration settings when IDE shuts down." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_FILE_COMMIT" value="false" />
@@ -752,6 +791,8 @@
     <MESSAGE value="Refactor the ConfigurationParser so the config file is provided in the constructor. Removes ambiguity about who should call parse().&#10;&#10;Create a new Guice module and Builder which are used from IDE's, so they know as little as possible about internal APIs. Should make it easier to live life." />
     <MESSAGE value="Fix copyrights" />
     <MESSAGE value="Add a tool window, which reuses my old swing UI.&#10;Add an actual working test runner.&#10;Add copyrights." />
+    <MESSAGE value="stale delete..." />
+    <MESSAGE value="Remember run configuration settings when IDE shuts down." />
   </component>
   <component name="VssConfiguration">
     <option name="CLIENT_PATH" value="" />
@@ -792,12 +833,52 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/IDEPluginActionBuilder.java">
+    <entry file="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/JsTestDriverServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="3" selection-start="590" selection-end="590" vertical-scroll-proportion="0.21177803">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="14" column="3" selection-start="590" selection-end="590" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/ui/CapturedBrowsersPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="13" selection-start="1159" selection-end="1159" vertical-scroll-proportion="0.17327294">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/TestExecutionPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="19" selection-start="262" selection-end="262" vertical-scroll-proportion="0.19252548">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverRunnableState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="60" column="26" selection-start="2550" selection-end="2550" vertical-scroll-proportion="0.7146497">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="13" selection-start="1051" selection-end="1051" vertical-scroll-proportion="0.21656051">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverConfigurationFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="13" selection-start="1013" selection-end="1013" vertical-scroll-proportion="0.17327294">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="13" selection-start="2123" selection-end="2123" vertical-scroll-proportion="0.19252548">
+          <folding />
         </state>
       </provider>
     </entry>
@@ -806,53 +887,35 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverComponent.java">
+    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ConfigurationForm.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="13" selection-start="1051" selection-end="1051" vertical-scroll-proportion="0.4716763">
+        <state line="40" column="22" selection-start="1295" selection-end="1295" vertical-scroll-proportion="0.5390713">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverConfiguration.java">
+    <entry file="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/ActionRunner.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="3" selection-start="590" selection-end="590" vertical-scroll-proportion="0.27514452">
+        <state line="37" column="0" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.38505095">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverConfigurationFactory.java">
+    <entry file="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/src/com/google/jstestdriver/ResponseStreamFactoryImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="3" selection-start="590" selection-end="590" vertical-scroll-proportion="0.26953566">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverRunnableState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="3" selection-start="590" selection-end="590" vertical-scroll-proportion="0.26953566">
+        <state line="23" column="3" selection-start="869" selection-end="869" vertical-scroll-proportion="0.09626274">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverToolWindow.java">
+    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/TestRunnerState.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="0" selection-start="591" selection-end="591" vertical-scroll-proportion="0.28878823">
-          <folding>
-            <marker date="1248915571000" expanded="false" signature="637:1051" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/MessageBundle.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="3" selection-start="590" selection-end="590" vertical-scroll-proportion="0.26953566">
+        <state line="72" column="0" selection-start="2761" selection-end="2761" vertical-scroll-proportion="0.61608154">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/MessageBundle.properties">
+    <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
@@ -861,53 +924,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/PluginResources.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="0" selection-start="591" selection-end="591" vertical-scroll-proportion="0.2937788">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ServerRunnableState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="13" selection-start="1575" selection-end="1575" vertical-scroll-proportion="0.32616082">
+        <state line="21" column="24" selection-start="751" selection-end="751" vertical-scroll-proportion="0.40430352">
           <folding>
-            <marker date="1248915571000" expanded="false" signature="637:1507" placeholder="..." />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/TestRunnerState.java">
+    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/JSTestDriverToolWindow.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="34" selection-start="1771" selection-end="1771" vertical-scroll-proportion="0.4428086">
-          <folding>
-            <marker date="1248915571000" expanded="false" signature="637:1626" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="3" selection-start="676" selection-end="676" vertical-scroll-proportion="0.29582366">
+        <state line="65" column="81" selection-start="2070" selection-end="2070" vertical-scroll-proportion="0.596829">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/google/jstestdriver/idea/TestRunnerStateTest.java">
+    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ServerControlPanel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="6" selection-start="333" selection-end="333" vertical-scroll-proportion="0.21177803">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ConfigurationForm.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="3" selection-start="590" selection-end="590" vertical-scroll-proportion="0.26953566">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/google/jstestdriver/idea/ui/ToolPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="3" selection-start="590" selection-end="590" vertical-scroll-proportion="0.26953566">
+        <state line="41" column="70" selection-start="1471" selection-end="1471" vertical-scroll-proportion="0.38391846">
           <folding />
         </state>
       </provider>

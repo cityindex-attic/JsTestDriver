@@ -29,36 +29,28 @@ import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
 import com.intellij.execution.configurations.RunnableState;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.runners.RunnerInfo;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringBufferInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class TestRunnerState implements RunnableState {
-  private static final Logger logger = Logger.getInstance(TestRunnerState.class.getCanonicalName());
-  private InputStream configFileInputStream = new StringBufferInputStream("server: http://localhost:9876\n"
-                                                                          + "\n"
-                                                                          + "load:\n"
-                                                                          + "  - src/*.js\n"
-                                                                          + "  - src-test/*.js");
-  private String serverAddress = "http://localhost:9876";
-  private Reader configReader = new InputStreamReader(configFileInputStream);
+
+  private final JSTestDriverConfiguration jsTestDriverConfiguration;
 
   public TestRunnerState(
       RunnerInfo runnerInfo, RunnerSettings runnerSettings,
       ConfigurationPerRunnerSettings configurationSettings,
       JSTestDriverConfiguration jsTestDriverConfiguration, Project project) {
 
+    this.jsTestDriverConfiguration = jsTestDriverConfiguration;
   }
 
   @Nullable
@@ -66,9 +58,17 @@ public class TestRunnerState implements RunnableState {
     ActionFactory actionFactory =
         Guice.createInjector(new ActionFactoryModule()).getInstance(ActionFactory.class);
     File path = new File("/home/alexeagle/IdeaProjects/untitled4");
+    FileReader configReader = null;
+    try {
+      configReader = new FileReader(jsTestDriverConfiguration.getSettingsFile());
+    } catch (FileNotFoundException e) {
+      throw new ExecutionException("Failed to read settings file " +
+                                   jsTestDriverConfiguration.getSettingsFile(), e);
+    }
     ConfigurationParser configurationParser = new ConfigurationParser(path, configReader);
+    String serverURL = "http://localhost:" + jsTestDriverConfiguration.getServerPort();
     IDEPluginActionBuilder pluginActionBuilder =
-        new IDEPluginActionBuilder(configurationParser, serverAddress, actionFactory);
+        new IDEPluginActionBuilder(configurationParser, serverURL, actionFactory);
     pluginActionBuilder.addAllTests().sendTestResultsTo(new ResponseStream() {
       public void stream(Response response) {
       }
