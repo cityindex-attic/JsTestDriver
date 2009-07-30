@@ -15,16 +15,8 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Set;
-
-import javax.servlet.http.HttpServlet;
+import com.google.inject.Guice;
+import com.google.inject.Module;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -33,8 +25,15 @@ import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-import com.google.inject.Guice;
-import com.google.inject.Module;
+import java.io.File;
+import java.io.Reader;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Set;
+
+import javax.servlet.http.HttpServlet;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -127,18 +126,17 @@ public class JsTestDriverServer extends Observable {
       if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty()
           || flags.getPreloadFiles() || flags.getDryRun()) {
         if (config.exists()) {
-          ConfigurationParser configParser = new ConfigurationParser(config.getParentFile());
+          Reader configReader = new java.io.FileReader(flags.getConfig());
+          ConfigurationParser configParser = new ConfigurationParser(config.getParentFile(),
+              configReader);
           PluginLoader pluginLoader = new PluginLoader();
 
-          try {
-            configParser.parse(new FileInputStream(flags.getConfig()));
-            fileSet = configParser.getFilesList();
-            defaultServerAddress = configParser.getServer();
-            plugins = pluginLoader.load(configParser.getPlugins());
-          } catch (FileNotFoundException e) {
-            System.err.println(e);
-            System.exit(1);
-          }
+          configParser.parse();
+          fileSet = configParser.getFilesList();
+          defaultServerAddress = configParser.getServer();
+          plugins = pluginLoader.load(configParser.getPlugins());
+        } else {
+          throw new RuntimeException("Config file doesn't exist: " + flags.getConfig());
         }
       }
       Guice.createInjector(new JsTestDriverModule(flags, fileSet, defaultServerAddress, plugins))

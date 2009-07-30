@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -22,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observer;
 import java.util.Set;
-
-import com.google.inject.Inject;
 
 /**
  * Produces instances of Actions, so they can have observers, and other stuff.
@@ -36,14 +37,16 @@ public class ActionFactory {
 
   Map<Class<?>, List<Observer>> observers = new HashMap<Class<?>, List<Observer>>();
   private final CommandTaskFactory commandTaskFactory;
+  private final Provider<Server> server;
 
   @Inject
-  public ActionFactory(CommandTaskFactory commandTaskFactory) {
+  public ActionFactory(CommandTaskFactory commandTaskFactory, Provider<Server> server) {
     this.commandTaskFactory = commandTaskFactory;
+    this.server = server;
   }
 
   public JsTestDriverClient getJsTestDriverClient(Set<FileInfo> files, String serverAddress) {
-    return new JsTestDriverClientImpl(commandTaskFactory, files, serverAddress, new HttpServer());
+    return new JsTestDriverClientImpl(commandTaskFactory, files, serverAddress, server.get());
   }
 
   public ServerStartupAction getServerStartupAction(Integer port,

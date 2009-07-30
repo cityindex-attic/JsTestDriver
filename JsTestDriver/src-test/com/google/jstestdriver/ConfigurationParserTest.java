@@ -15,16 +15,17 @@
  */
 package com.google.jstestdriver;
 
+import junit.framework.TestCase;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -64,12 +65,12 @@ public class ConfigurationParserTest extends TestCase {
     createTmpFile(testDir, "test2.js");
     createTmpFile(testDir, "test3.js");
 
-    ConfigurationParser parser = new ConfigurationParser(tmpDir);
     String configFile = "load:\n - code/*.js\n - test/*.js\nexclude:\n"
         + " - code/code2.js\n - test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    ConfigurationParser parser = new ConfigurationParser(tmpDir, new InputStreamReader(bais));
 
-    parser.parse(bais);
+    parser.parse();
     Set<FileInfo> files = parser.getFilesList();
     List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
 
@@ -89,8 +90,7 @@ public class ConfigurationParserTest extends TestCase {
     createTmpFile(testDir, "test2.js");
     createTmpFile(testDir, "test3.js");
     
-    ConfigurationParser parser = new ConfigurationParser(tmpDir);
-    String configFile = 
+    String configFile =
         "load:\n" +
         "- code/code.js\n" +
         "- patch code/patch.js\n" +
@@ -100,8 +100,9 @@ public class ConfigurationParserTest extends TestCase {
 		"- code/code2.js\n" +
 		"- test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    
-    parser.parse(bais);
+    ConfigurationParser parser = new ConfigurationParser(tmpDir, new InputStreamReader(bais));
+
+    parser.parse();
     Set<FileInfo> files = parser.getFilesList();
     List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
     
@@ -122,8 +123,7 @@ public class ConfigurationParserTest extends TestCase {
     createTmpFile(testDir, "test2.js");
     createTmpFile(testDir, "test3.js");
     
-    ConfigurationParser parser = new ConfigurationParser(tmpDir);
-    String configFile = 
+    String configFile =
       "load:\n" +
       "- patch code/patch.js\n" +
       "- code/code.js\n" +
@@ -133,9 +133,9 @@ public class ConfigurationParserTest extends TestCase {
       "- code/code2.js\n" +
       "- test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    
+    ConfigurationParser parser = new ConfigurationParser(tmpDir, new InputStreamReader(bais));
     try {
-      parser.parse(bais);
+      parser.parse();
       fail("should have thrown an exception due to patching a non-existant file");
     } catch (IllegalStateException e) {
       //pass 
@@ -144,12 +144,12 @@ public class ConfigurationParserTest extends TestCase {
 
   public void testParsePlugin() {
     Plugin expected = new Plugin("test", "pathtojar", "com.test.PluginModule");
-    ConfigurationParser parser = new ConfigurationParser(null);
     String configFile = "plugin:\n" + "  - name: test\n" + "    jar: \"pathtojar\"\n"
         + "    module: \"com.test.PluginModule\"\n";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    ConfigurationParser parser = new ConfigurationParser(null, new InputStreamReader(bais));
 
-    parser.parse(bais);
+    parser.parse();
     List<Plugin> plugins = parser.getPlugins();
     assertEquals(expected, plugins.get(0));
   }
@@ -157,13 +157,13 @@ public class ConfigurationParserTest extends TestCase {
   public void testParsePlugins() {
     List<Plugin> expected = new LinkedList<Plugin>(Arrays.asList(new Plugin("test", "pathtojar",
         "com.test.PluginModule"), new Plugin("test2", "pathtojar2", "com.test.PluginModule2")));
-    ConfigurationParser parser = new ConfigurationParser(null);
     String configFile = "plugin:\n" + "  - name: test\n" + "    jar: \"pathtojar\"\n"
         + "    module: \"com.test.PluginModule\"\n" + "  - name: test2\n"
         + "    jar: \"pathtojar2\"\n" + "    module: \"com.test.PluginModule2\"\n";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    ConfigurationParser parser = new ConfigurationParser(null, new InputStreamReader(bais));
 
-    parser.parse(bais);
+    parser.parse();
     List<Plugin> plugins = parser.getPlugins();
     assertEquals(expected, plugins);
   }
@@ -179,8 +179,7 @@ public class ConfigurationParserTest extends TestCase {
     createTmpFile(testDir, "test3.js");
     createTmpFile(serveDir, "serve1.js");
 
-    ConfigurationParser parser = new ConfigurationParser(tmpDir);
-    String configFile = "load:\n" + 
+    String configFile = "load:\n" +
         " - code/*.js\n" +
         " - test/*.js\n" +
         "serve:\n" +
@@ -189,8 +188,9 @@ public class ConfigurationParserTest extends TestCase {
         " - code/code2.js\n" +
         " - test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    ConfigurationParser parser = new ConfigurationParser(tmpDir, new InputStreamReader(bais));
 
-    parser.parse(bais);
+    parser.parse();
     Set<FileInfo> serveFilesSet = parser.getFilesList();
     List<FileInfo> serveFiles = new ArrayList<FileInfo>(serveFilesSet);
 
@@ -212,12 +212,12 @@ public class ConfigurationParserTest extends TestCase {
     createTmpFile(testDir, "test2.js");
     createTmpFile(testDir, "test3.js");
 
-    ConfigurationParser parser = new ConfigurationParser(tmpDir);
     String configFile = "load:\n - code/*.js\n - test/*.js\nexclude:\n"
         + " - code/code2.js\n - test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    ConfigurationParser parser = new ConfigurationParser(tmpDir, new InputStreamReader(bais));
 
-    parser.parse(bais);
+    parser.parse();
     Set<FileInfo> files = parser.getFilesList();
     List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
 

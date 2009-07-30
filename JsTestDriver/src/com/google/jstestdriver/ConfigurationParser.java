@@ -15,10 +15,12 @@
  */
 package com.google.jstestdriver;
 
-import java.io.BufferedReader;
+import org.apache.oro.io.GlobFilenameFilter;
+import org.apache.oro.text.GlobCompiler;
+import org.jvyaml.YAML;
+
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -26,10 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.oro.io.GlobFilenameFilter;
-import org.apache.oro.text.GlobCompiler;
-import org.jvyaml.YAML;
 
 /**
  * TODO: needs to give more feedback when something goes wrong...
@@ -40,20 +38,21 @@ public class ConfigurationParser {
 
   private final Set<FileInfo> filesList = new LinkedHashSet<FileInfo>();
   private final File basePath;
+  private final Reader configReader;
 
   private String server = "";
   private List<Plugin> plugins = new LinkedList<Plugin>();
 
   private PathResolver pathResolver = new PathResolver();
 
-  public ConfigurationParser(File basePath) {
+  public ConfigurationParser(File basePath, Reader configReader) {
     this.basePath = basePath;
+    this.configReader = configReader;
   }
 
   @SuppressWarnings("unchecked")
-  public void parse(InputStream inputStream) {
-    Map<Object, Object> data = (Map<Object, Object>) YAML.load(new BufferedReader(
-        new InputStreamReader(inputStream)));
+  public void parse() {
+    Map<Object, Object> data = (Map<Object, Object>) YAML.load(configReader);
     Set<FileInfo> resolvedFilesLoad = new LinkedHashSet<FileInfo>();
     Set<FileInfo> resolvedFilesExclude = new LinkedHashSet<FileInfo>();
 

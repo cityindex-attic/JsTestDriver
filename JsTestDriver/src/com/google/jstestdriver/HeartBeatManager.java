@@ -16,11 +16,14 @@
 
 package com.google.jstestdriver;
 
+import com.google.inject.ImplementedBy;
+
 /**
  * Manages the starting and canceling of a {@link HeartBeat}.
  * @author corysmith
  *
  */
+@ImplementedBy(SimpleHeartBeatManager.class)
 public interface HeartBeatManager {
 
   // TODO(corysmith): Clean this up. The timer should be started without needing to 

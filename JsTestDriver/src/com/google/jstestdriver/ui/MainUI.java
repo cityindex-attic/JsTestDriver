@@ -15,10 +15,7 @@
  */
 package com.google.jstestdriver.ui;
 
-import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.NORTH;
-import static java.awt.BorderLayout.SOUTH;
-
+import com.google.inject.util.Providers;
 import com.google.jstestdriver.Action;
 import com.google.jstestdriver.ActionFactory;
 import com.google.jstestdriver.ActionParser;
@@ -28,6 +25,8 @@ import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.FlagsImpl;
+import com.google.jstestdriver.HttpServer;
+import com.google.jstestdriver.Server;
 import com.google.jstestdriver.ServerStartupAction;
 
 import org.apache.commons.logging.LogFactory;
@@ -35,10 +34,12 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.mortbay.log.Slf4jLog;
 
-import java.awt.BorderLayout;
+import java.awt.*;
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.NORTH;
+import static java.awt.BorderLayout.SOUTH;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.Reader;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -46,9 +47,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
+import javax.swing.*;
 
 /**
  * Entry point for the Swing GUI of JSTestDriver.
@@ -109,7 +108,7 @@ public class MainUI {
     try {
       // TODO(corysmith): Guicefy.
       ActionFactory actionFactory =
-          new ActionFactory(null);
+          new ActionFactory(null, Providers.<Server>of(new HttpServer()));
       actionFactory.registerListener(ServerStartupAction.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, capturedBrowsersPanel);
@@ -120,16 +119,15 @@ public class MainUI {
       if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty() ||
           flags.getPreloadFiles() || flags.getDryRun()) {
         if (config.exists()) {
-          ConfigurationParser configParser = new ConfigurationParser(config.getParentFile());
+          Reader configReader = new java.io.FileReader(flags.getConfig());
+          ConfigurationParser configParser = new ConfigurationParser(config.getParentFile(),
+              configReader);
 
-          try {
-            configParser.parse(new FileInputStream(flags.getConfig()));
-            fileSet = configParser.getFilesList();
-            defaultServerAddress = configParser.getServer();
-          } catch (FileNotFoundException e) {
-            System.err.println(e);
-            System.exit(1);
-          }
+          configParser.parse();
+          fileSet = configParser.getFilesList();
+          defaultServerAddress = configParser.getServer();
+        } else {
+          throw new RuntimeException("Config file doesn't exist: " + flags.getConfig());
         }
       }
       List<Action> actions = new ActionParser(actionFactory, null).parseFlags(flags, fileSet,

@@ -15,19 +15,22 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.util.Providers;
+
+import junit.framework.TestCase;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 public class ActionSequenceBuilderTest extends TestCase {
 
   private LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
 
   public void testAddTestsWithRemoteServerAddress() throws Exception {
-    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null), null);
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null,
+        Providers.<Server>of(new HttpServer())), null);
     String xmlOutputDir = "/out";
     boolean verbose = true;
     boolean captureConsole = true;
@@ -52,7 +55,8 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testAddTestsWithLocalServer() throws Exception {
-    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null), null);
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null,
+        Providers.<Server>of(new HttpServer())), null);
     String xmlOutputDir = "/out";
     boolean verbose = true;
     boolean captureConsole = true;
@@ -79,7 +83,8 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testAddTestsAndDryrun() throws Exception {
-    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null), null);
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null,
+        Providers.<Server>of(new HttpServer())), null);
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addTests(tests(), "/out", false, false).asDryRun(true).build();
 
@@ -93,7 +98,8 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testAddTestsAndReset() throws Exception {
-    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null), null);
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null,
+        Providers.<Server>of(new HttpServer())), null);
 
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addTests(tests(), "/out", false, false).reset(true).build();
@@ -108,7 +114,8 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testAddTestsWithDryRunAndReset() throws Exception {
-    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null), null);
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null,
+        Providers.<Server>of(new HttpServer())), null);
 
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addTests(tests(), "/out", false, false).asDryRun(true).reset(true).build();
@@ -124,7 +131,8 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testAddCommands() throws Exception {
-    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null), null);
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null,
+        Providers.<Server>of(new HttpServer())), null);
     List<String> commands = Arrays.asList("'foo'+'bar'", "1+1");
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addCommands(commands).build();
@@ -143,7 +151,8 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testNoBrowsers() throws Exception {
-    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null), null);
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null,
+        Providers.<Server>of(new HttpServer())), null);
 
     List<Action> actions = builder.addTests(tests(), "/out", false, false).withLocalServerPort(999)
         .usingFiles(files, false).build();
@@ -157,7 +166,8 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testNoServer() throws Exception {
-    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null), null);
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(new ActionFactory(null,
+        Providers.<Server>of(new HttpServer())), null);
 
     try {
       builder.addTests(tests(), "/out", false, false).onBrowsers(browsers()).usingFiles(files,

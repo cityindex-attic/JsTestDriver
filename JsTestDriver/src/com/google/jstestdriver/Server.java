@@ -15,12 +15,15 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.ImplementedBy;
+
 import java.util.Map;
 
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+@ImplementedBy(HttpServer.class)
 public interface Server {
 
   String fetch(String url);
