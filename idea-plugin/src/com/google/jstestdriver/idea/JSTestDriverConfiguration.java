@@ -18,14 +18,13 @@ package com.google.jstestdriver.idea;
 import com.google.jstestdriver.idea.ui.ConfigurationForm;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.ConfigurationInfoProvider;
 import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
+import com.intellij.execution.configurations.ModuleBasedConfiguration;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.configurations.RunConfigurationBase;
+import com.intellij.execution.configurations.RunConfigurationModule;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
-import com.intellij.execution.runners.JavaProgramRunner;
 import com.intellij.execution.runners.RunnerInfo;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.module.Module;
@@ -34,11 +33,16 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ProjectJdk;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.JDOMExternalizable;
+import com.intellij.openapi.util.DefaultJDOMExternalizer;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
+
+import org.jdom.Element;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -46,7 +50,7 @@ import java.util.List;
  * and save them all.
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class JSTestDriverConfiguration extends RunConfigurationBase {
+public class JSTestDriverConfiguration extends ModuleBasedConfiguration {
 
   private final JSTestDriverConfigurationFactory jsTestDriverConfigurationFactory;
   private final String pluginName;
@@ -57,21 +61,13 @@ public class JSTestDriverConfiguration extends RunConfigurationBase {
   public JSTestDriverConfiguration(Project project,
                                    JSTestDriverConfigurationFactory jsTestDriverConfigurationFactory,
                                    String pluginName) {
-    super(project, jsTestDriverConfigurationFactory, pluginName);
+    super(pluginName, new RunConfigurationModule(project, true), jsTestDriverConfigurationFactory);
     this.jsTestDriverConfigurationFactory = jsTestDriverConfigurationFactory;
     this.pluginName = pluginName;
   }
 
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new ConfigurationForm();
-  }
-
-  public JDOMExternalizable createRunnerSettings(ConfigurationInfoProvider provider) {
-    return null;
-  }
-
-  public SettingsEditor<JDOMExternalizable> getRunnerSettingsEditor(JavaProgramRunner runner) {
-    return null;
   }
 
   public RunProfileState getState(DataContext context, RunnerInfo runnerInfo,
@@ -83,6 +79,7 @@ public class JSTestDriverConfiguration extends RunConfigurationBase {
         getProject());
   }
 
+  @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
     if (settingsFile == null) {
       throw new RuntimeConfigurationException("Settings file is required");
@@ -92,11 +89,26 @@ public class JSTestDriverConfiguration extends RunConfigurationBase {
     }
   }
 
-  public Module[] getModules() {
+  @Override
+  public Collection<Module> getValidModules() {
     List<Module> modules = new ArrayList<Module>();
     Module[] allModules = ModuleManager.getInstance(getProject()).getModules();
     modules.addAll(Arrays.asList(allModules));
-    return modules.toArray(new Module[modules.size()]);
+    return modules;
+  }
+
+  @Override
+  protected ModuleBasedConfiguration createInstance() {
+    return new JSTestDriverConfiguration(getConfigurationModule().getProject(),
+        jsTestDriverConfigurationFactory, getName());
+  }
+
+  public void readExternal(Element element) throws InvalidDataException {
+    DefaultJDOMExternalizer.readExternal(this, element);
+  }
+
+  public void writeExternal(Element element) throws WriteExternalException {
+    DefaultJDOMExternalizer.writeExternal(this, element);
   }
 
   public String getSettingsFile() {
