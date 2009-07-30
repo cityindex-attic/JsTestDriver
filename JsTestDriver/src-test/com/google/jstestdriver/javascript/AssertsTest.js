@@ -73,6 +73,14 @@ assertsTest.prototype.testAssertEquals = function() {
     assertEquals('expected "hello" but was "world"', e.message);
     assertEquals('AssertError', e.name);
   }
+  try {
+    assertEquals(new Array('mooh', 'meuh'), new Array('mooh', 'meuh'));
+    assertEquals(new Array('mooh', 'meuh'), new Array('meuh'));
+    fail('assertEquals did not throw an exception');
+  } catch (e) {
+    assertEquals('expected ["mooh","meuh"] but was ["meuh"]', e.message);
+    assertEquals('AssertError', e.name);
+  }
 };
 
 

@@ -18,9 +18,15 @@ jstestdriver.initializePluginRegistrar = function() {
   var stylesheetLoader = new jstestdriver.plugins.StylesheetLoader(window, document,
           jstestdriver.jQuery.browser.mozilla || jstestdriver.jQuery.browser.safari);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
-  var defaultPlugin = new jstestdriver.plugins.DefaultPlugin(fileLoaderPlugin);
+  var testRunnerPlugin = new jstestdriver.plugins.TestRunnerPlugin(Date, function() {
+    jstestdriver.jQuery('body').children().remove();
+    jstestdriver.jQuery(document).unbind();
+    jstestdriver.jQuery(document).die();
+  });
+  var defaultPlugin = new jstestdriver.plugins.DefaultPlugin(fileLoaderPlugin, testRunnerPlugin);
   jstestdriver.pluginRegistrar = new jstestdriver.PluginRegistrar(defaultPlugin);
 };
+
 
 /**
  * The PluginRegistrar allows developers to load their own plugins to perform certain actions.
@@ -53,6 +59,9 @@ jstestdriver.PluginRegistrar = function(defaultPlugin) {
 
 
 jstestdriver.PluginRegistrar.LOAD_SOURCE = 'loadSource';
+
+
+jstestdriver.PluginRegistrar.RUN_TEST = 'runTestConfiguration';
 
 
 jstestdriver.PluginRegistrar.prototype.register = function(plugin) {
@@ -142,4 +151,39 @@ jstestdriver.PluginRegistrar.prototype.getIndexOfPlugin_ = function(name) {
  */
 jstestdriver.PluginRegistrar.prototype.loadSource = function(file, onSourceLoad) {
   this.dispatch_(jstestdriver.PluginRegistrar.LOAD_SOURCE, arguments);
+};
+
+
+/**
+ * runTestConfiguration
+ * 
+ * By defining the method runTestConfiguration a plugin can implement its own way of running
+ * certain types of tests.
+ * 
+ * runTestConfiguration takes 3 parameters:
+ * - testRunConfiguration: A jstestdriver.TestRunConfiguration object.
+ * - onTestDone: A callback that needs to be call when a test ran so that the results are properly
+ *   sent back to the client. It takes 1 parameter a jstestdriver.TestResult.
+ * - onTestRunConfigurationComplete: A callback that needs to be call when everything ran. It takes
+ *   no parameter.
+ *   
+ * runTestConfiguration must return a boolean:
+ * - true if the plugin can run the tests
+ * - false if the plugin can not run the tests
+ * 
+ * A simple runTestConfiguration plugin would look like:
+ * 
+ * var myPlugin = {
+ *   name: 'myPlugin',
+ *   runTestConfiguration: function(testRunConfiguration, onTestDone,
+ *       onTestRunConfigurationComplete) {
+ *     // run the tests
+ *     return true;
+ *   }
+ * }
+ * 
+ */
+jstestdriver.PluginRegistrar.prototype.runTestConfiguration = function(testRunConfiguration,
+    onTestDone, onTestRunConfigurationComplete) {
+  this.dispatch_(jstestdriver.PluginRegistrar.RUN_TEST, arguments);
 };

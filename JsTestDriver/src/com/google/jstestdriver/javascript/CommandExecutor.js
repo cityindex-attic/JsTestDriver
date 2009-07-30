@@ -20,12 +20,16 @@ jstestdriver.listen = function() {
   var id = jstestdriver.extractId(window.location.toString());
   var url = jstestdriver.SERVER_URL + id;
 
-  jstestdriver.initializeTestCaseManager();
   jstestdriver.initializePluginRegistrar();
+  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testRunner = new jstestdriver.TestRunner(jstestdriver.pluginRegistrar);
+  jstestdriver.testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
+
   new jstestdriver.CommandExecutor(parseInt(id),
       url,
       jstestdriver.convertToJson(jstestdriver.jQuery.post),
-      jstestdriver.testCaseManager,
+      testCaseManager,
+      testRunner,
       jstestdriver.pluginRegistrar).listen();
 };
 
@@ -33,11 +37,13 @@ jstestdriver.listen = function() {
 jstestdriver.TIMEOUT = 500;
 
 
-jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager, pluginRegistrar) {
+jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager, testRunner,
+    pluginRegistrar) {
   this.__id = id;
   this.__url = url;
   this.__sendRequest = sendRequest;
   this.__testCaseManager = testCaseManager;
+  this.__testRunner = testRunner;
   this.__pluginRegistrar = pluginRegistrar;
   this.__boundExecuteCommand = jstestdriver.bind(this, this.executeCommand);
   this.__boundExecute = jstestdriver.bind(this, this.execute);
@@ -224,28 +230,28 @@ jstestdriver.CommandExecutor.prototype.runAllTests = function(args) {
   var captureConsole = args[0];
   var runnerMode = args[1] == "true" ? true : false;
 
-  this.runTestCases_(this.__testCaseManager.getTestCases(), captureConsole == "true" ? true :
-    false, runnerMode);
+  this.runTestCases_(this.__testCaseManager.getDefaultTestRunsConfiguration(),
+      captureConsole == "true" ? true : false, runnerMode);
 };
 
 
 jstestdriver.CommandExecutor.prototype.runTests = function(args) {
-  var testCases = args[0];
+  var expressions = jsonParse('{"expressions":' + args[0] + '}').expressions;
   var captureConsole = args[1];
 
-  this.runTestCases_(jsonParse('{"testCases":' + testCases + '}').testCases,
+  this.runTestCases_(this.__testCaseManager.getTestRunsConfigurationFor(expressions),
       captureConsole == "true" ? true : false, false);
 };
 
 
-jstestdriver.CommandExecutor.prototype.runTestCases_ = function(testCases, captureConsole,
-    runnerMode) {
+jstestdriver.CommandExecutor.prototype.runTestCases_ = function(testRunsConfiguration,
+    captureConsole, runnerMode) {
   if (!runnerMode) {
     this.startTestInterval_(jstestdriver.TIMEOUT);
-    this.__testCaseManager.runTests(testCases, this.boundOnTestDone, this.boundOnComplete,
+    this.__testRunner.runTests(testRunsConfiguration, this.boundOnTestDone, this.boundOnComplete,
         captureConsole);
   } else {
-    this.__testCaseManager.runTests(testCases, this.boundOnTestDoneRunnerMode,
+    this.__testRunner.runTests(testRunsConfiguration, this.boundOnTestDoneRunnerMode,
         this.boundOnCompleteRunnerMode, captureConsole);
   }
 };

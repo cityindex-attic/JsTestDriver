@@ -13,86 +13,50 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.TestRunner = function(clearBody, date) {
-  this.clearBody_ = clearBody;
-  this.dateObj_ = date;
+jstestdriver.TestRunner = function(pluginRegistrar) {
+  this.pluginRegistrar_ = pluginRegistrar;
+  this.boundOnTestRunConfigurationComplete = jstestdriver.bind(this,
+      this.onTestRunConfigurationComplete_);
 };
 
 
-jstestdriver.TestRunner.prototype.runTest = function(testCaseName, testCase, testName, captureConsole) {
-  var testCaseInstance;
-
-  try {
-    testCaseInstance = new testCase();
-  } catch (e) {
-    return { testCaseName: testCaseName,
-        testName: testName,
-        result: 'error',
-        message: testCaseName + ' is not a test case',
-        log: '',
-        time: 0
-     };
+jstestdriver.TestRunner.prototype.runTests = function(testRunsConfiguration, onTestDone,
+    onComplete, captureConsole) {
+  this.testRunsConfiguration_ = testRunsConfiguration;
+  this.onTestDone_ = onTestDone;
+  this.onComplete_ = onComplete;
+  this.captureConsole_ = captureConsole;
+  if (this.testRunsConfiguration_.length > 0) {
+    this.runTestConfiguration_(this.testRunsConfiguration_.shift());
   }
-  var start = new this.dateObj_().getTime();
+};
 
-  jstestdriver.expectedAssertCount = -1;
-  jstestdriver.assertCount = 0;
-  var res = 'passed';
-  var msg = '';
 
-  if (captureConsole) {
+jstestdriver.TestRunner.prototype.runTestConfiguration_ = function(testRunConfiguration) {
+  if (this.captureConsole_) {
     this.overrideConsole_();
   }
-  try {
-    testCaseInstance.setUp();
-    if (!(testName in testCaseInstance)) {
-      var err = new Error(testName + ' not found in ' + testCaseName);
-
-      err.name = 'AssertError';
-      throw err;
-    }
-    testCaseInstance[testName]();
-    if (jstestdriver.expectedAssertCount != -1 &&
-        jstestdriver.expectedAssertCount != jstestdriver.assertCount) {
-      var err = new Error("Expected '" +
-          jstestdriver.expectedAssertCount +
-          "' asserts but '" +
-          jstestdriver.assertCount +
-          "' encountered.");
-
-      err.name = 'AssertError';
-      throw err;
-    }
-  } catch (e) {
-    if (e.name == 'AssertError') {
-      res = 'failed';
-    } else {
-      res = 'error';
-    }
-    msg = JSON.stringify(e);
-  } finally {
-    try {
-      testCaseInstance.tearDown();
-    } catch (e) {
-      res = 'error';
-      msg = JSON.stringify(e);
-    }
-    if (captureConsole) {
-      this.resetConsole_();
-    }
-  }
-  var end = new this.dateObj_().getTime();
-
-  this.clearBody_();
-  return {
-    testCaseName: testCaseName,
-    testName: testName,
-    result: res,
-    message: msg,
-    log: jstestdriver.console.getLog(),
-    time: end - start
-  };
+  this.pluginRegistrar_.runTestConfiguration(testRunConfiguration, this.onTestDone_,
+      this.boundOnTestRunConfigurationComplete);
+  if (this.captureConsole_) {
+    this.resetConsole_();
+  }  
 };
+
+
+jstestdriver.TestRunner.prototype.onTestRunConfigurationComplete_ = function() {
+  if (this.testRunsConfiguration_.length > 0) {
+    this.runTestConfiguration_(this.testRunsConfiguration_.shift());
+  } else {
+    var onComplete = this.onComplete_;
+    this.testRunsConfiguration_ = null;
+    this.onTestDone_ = null;
+    this.onComplete_ = null;
+    this.captureConsole_ = false;
+
+    onComplete();
+  }
+}
 
 
 jstestdriver.TestRunner.prototype.overrideConsole_ = function() {

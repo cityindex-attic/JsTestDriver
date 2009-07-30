@@ -100,7 +100,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     sendCommand(id, null, gson.toJson(cmd));
   }
 
-  public void runTests(String id, ResponseStreamFactory factory, List<TestCase> tests,
+  public void runTests(String id, ResponseStreamFactory factory, List<String> tests,
       boolean captureConsole) {
     List<String> parameters = new LinkedList<String>();
 

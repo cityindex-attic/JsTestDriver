@@ -15,10 +15,7 @@
  */
 package com.google.jstestdriver;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -53,44 +50,8 @@ public class RunTestsAction implements ThreadedAction {
     if (tests.size() == 1 && tests.get(0).equals("all")) {
       client.runAllTests(id, new ResponseStreamFactoryImpl(printer), captureConsole);
     } else if (tests.size() > 0) {
-      client.runTests(id, new  ResponseStreamFactoryImpl(printer), createTestCaseList(tests),
-          captureConsole);
+      client.runTests(id, new  ResponseStreamFactoryImpl(printer), tests, captureConsole);
     }
-  }
-
-  private Map<String, List<String>> createTestCaseMap(List<String> tests) {
-    Map<String, List<String>> testCaseMap = new LinkedHashMap<String, List<String>>();
-
-    for (String test : tests) {
-      String[] pair = test.split("\\.");
-      List<String> list = testCaseMap.get(pair[0]);
-
-      if (list == null) {
-        list = new ArrayList<String>();
-
-        testCaseMap.put(pair[0], list);
-      }
-      if (pair.length == 2) {
-        list.add(pair[1]);
-      } else if (pair.length == 3 && pair[1].equals("prototype")) {
-        list.add(pair[2]);
-      } else if (pair.length > 3) {
-        throw new IllegalArgumentException(test + " is not a valid test");
-      }
-    }
-    return testCaseMap;
-  }
-
-  // TODO(shyamseshadri): Protected for subclassing. Make it private again after
-  // ResponseStreamFactoryImpl is injected into this so that Eclipse can pass in its own impl.
-  protected List<TestCase> createTestCaseList(List<String> tests) {
-    Map<String, List<String>> testCasesMap = createTestCaseMap(tests);
-    List<TestCase> testCases = new ArrayList<TestCase>();
-
-    for (Map.Entry<String, List<String>> entry : testCasesMap.entrySet()) {
-      testCases.add(new TestCase(entry.getKey(), entry.getValue()));
-    }
-    return testCases;
   }
 
   public List<String> getTests() {

@@ -83,7 +83,24 @@ assertEquals = function(msg, expected, actual) {
     msg += ' ';
   }
   jstestdriver.assertCount++;
-  var equals = actual == expected;
+  var equals = true;
+
+  if (jstestdriver.jQuery.isArray(expected) && jstestdriver.jQuery.isArray(actual)) {
+    if (expected.length != actual.length) {
+      equals = false;
+    } else {
+      var size = expected.length;
+
+      for (var i = 0; i < size; i++) {
+        if (expected[i] != actual[i]) {
+          equals = false;
+          break;
+        }
+      }
+    }
+  } else {
+    equals = actual == expected;
+  }
 
   if (!equals) {
     fail(msg + 'expected ' + this.prettyPrintEntity_(expected) + ' but was ' +

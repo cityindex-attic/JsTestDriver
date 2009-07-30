@@ -1,0 +1,98 @@
+/*
+ * Copyright 2009 Google Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+jstestdriver.TestCaseInfo = function(testCaseName, template) {
+  this.testCaseName_ = testCaseName;
+  this.template_ = template;
+};
+
+
+jstestdriver.TestCaseInfo.DEFAULT_TYPE = 'default';
+
+
+jstestdriver.TestCaseInfo.prototype.getType = function() {
+  return jstestdriver.TestCaseInfo.DEFAULT_TYPE;
+};
+
+
+jstestdriver.TestCaseInfo.prototype.getTestCaseName = function() {
+  return this.testCaseName_;
+};
+
+
+jstestdriver.TestCaseInfo.prototype.getTemplate = function() {
+  return this.template_;
+};
+
+
+jstestdriver.TestCaseInfo.prototype.getTestNames = function() {
+  var testNames = [];
+
+  for (var property in this.template_.prototype) {
+    if (property.indexOf('test') == 0) {
+      testNames.push(property);
+    }
+  }
+  return testNames;
+};
+
+
+jstestdriver.TestCaseInfo.prototype.getDefaultTestRunConfiguration = function() {
+  return this.createTestRunConfiguration_(this.getTestNames());
+};
+
+
+jstestdriver.TestCaseInfo.prototype.createTestRunConfiguration_ = function(tests) {
+  return new jstestdriver.TestRunConfiguration(this, tests);
+};
+
+
+jstestdriver.TestCaseInfo.prototype.getTestRunConfigurationFor = function(expressions) {
+  var testRunsConfigurationMap = {};
+  var expressionsSize = expressions.length;
+
+  for (var i = 0; i < expressionsSize; i++) {
+    var expr = expressions[i];
+    var tokens = expr.split('.');
+    var tests = testRunsConfigurationMap[tokens[0]];
+
+    if (!tests) {
+      tests = [];
+      testRunsConfigurationMap[tokens[0]] = tests;
+    }
+    if (tokens.length == 2) {
+      tests.push(tokens[1]);
+    } else if (tokens.length == 3 && tokens[1] == 'prototype') {
+      tests.push(tokens[2]);
+    } else {
+      // not recognized, what to do?
+    }
+  }
+  var tests = testRunsConfigurationMap[this.testCaseName_];
+
+  if (!tests) {
+    return null;
+  }
+  if (tests.length == 0) {
+    tests = this.getTestNames();
+  }
+  return this.createTestRunConfiguration_(tests);
+};
+
+
+jstestdriver.TestCaseInfo.prototype.equals = function(obj) {
+  return obj && typeof obj.getTestCaseName != 'undefined'
+      && obj.getTestCaseName() == this.testCaseName_;
+};

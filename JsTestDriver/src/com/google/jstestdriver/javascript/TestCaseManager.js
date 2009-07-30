@@ -13,104 +13,85 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.initializeTestCaseManager = function() {
-  jstestdriver.testCaseManager = new jstestdriver.TestCaseManager(
-      new jstestdriver.TestRunner(function() {
-        jstestdriver.jQuery('body').children().remove();
-        jstestdriver.jQuery(document).unbind();
-        jstestdriver.jQuery(document).die();
-        }, Date));
+jstestdriver.TestCaseManager = function() {
+  this.testCasesInfo_ = [];
 };
 
 
-jstestdriver.TestCaseManager = function(testRunner) {
-  this.testRunner_ = testRunner;
-  this.testCases_ = {};
-  TestCase = jstestdriver.bind(this, this.TestCase);
+jstestdriver.TestCaseManager.prototype.add = function(testCaseInfo) {
+  var index = this.indexOf_(testCaseInfo);
+
+  if (index != -1) {
+    this.testCasesInfo_.splice(index, 1, testCaseInfo);
+  } else {
+    this.testCasesInfo_.push(testCaseInfo);
+  }
 };
 
 
-jstestdriver.TestCaseManager.prototype.TestCase = function(testCaseName, proto) {
-  var testCaseClass = function() {};
+jstestdriver.TestCaseManager.prototype.indexOf_ = function(testCaseInfo) {
+  var size = this.testCasesInfo_.length;
 
-  if (proto) {
-    testCaseClass.prototype = proto;
-  }
-  if (typeof testCaseClass.prototype.setUp == 'undefined') {
-    testCaseClass.prototype.setUp = function() {};
-  }
-  if (typeof testCaseClass.prototype.tearDown == 'undefined') {
-    testCaseClass.prototype.tearDown = function() {};
-  }
-  this.testCases_[testCaseName] = testCaseClass;
-  return testCaseClass;
-};
+  for (var i = 0; i < size; i++) {
+    var currentTestCaseInfo = this.testCasesInfo_[i];
 
-
-jstestdriver.TestCaseManager.prototype.getTestCases = function() {
-  var testCases = [];
-
-  for (var testCaseName in this.testCases_) {
-    testCases.push({ 'name': testCaseName,
-      'tests': this.getTestNamesForTestCase(this.testCases_[testCaseName]) });
-  }
-  return testCases;
-};
-
-
-jstestdriver.TestCaseManager.prototype.getTestNamesForTestCase = function(testCase) {
-  var testNames = [];
-
-  for (var property in testCase.prototype) {
-    if (property.indexOf('test') == 0) {
-      testNames.push(property);
+    if (currentTestCaseInfo.equals(testCaseInfo)) {
+      return i;
     }
   }
-  return testNames;
+  return -1;
 };
 
 
-jstestdriver.TestCaseManager.prototype.runTests = function(testCases, onTestDone, onComplete,
-    captureConsole) {
-  var testCasesLength = testCases.length;
+// should not be here, probably in TestCaseInfo
+jstestdriver.TestCaseManager.prototype.getTestRunsConfigurationFor = function(expressions) {
+  var testRunsConfiguration = [];
+  var size = this.testCasesInfo_.length;
 
-  for (var i = 0; i < testCasesLength; i++) {
-    var testCase = testCases[i];
-    var testCaseName = testCase.name;
-    var tests = testCase.tests;
-    var testsLength = tests.length;
+  for (var i = 0; i < size; i++) {
+    var testCaseInfo = this.testCasesInfo_[i];
+    var testRunConfiguration = testCaseInfo.getTestRunConfigurationFor(expressions);
 
-    if (testsLength == 0) {
-      var testCaseClass = this.testCases_[testCaseName];
-
-      if (testCaseClass) {
-        tests = this.getTestNamesForTestCase(testCaseClass);
-        testsLength = tests.length;
-      }
-    }
-    for (var j = 0; j < testsLength; j++) {
-      var test = tests[j];
-
-      onTestDone(this.testRunner_.runTest(testCaseName, this.testCases_[testCaseName], test,
-          captureConsole));
+    if (testRunConfiguration != null) {
+      testRunsConfiguration.push(testRunConfiguration);
     }
   }
-  onComplete();
+  return testRunsConfiguration;
 };
 
 
-jstestdriver.TestCaseManager.prototype.dryRun = function() {
+jstestdriver.TestCaseManager.prototype.getDefaultTestRunsConfiguration = function() {
+  var testRunsConfiguration = [];
+  var size = this.testCasesInfo_.length;
+
+  for (var i = 0; i < size; i++) {
+    var testCaseInfo = this.testCasesInfo_[i];
+
+    testRunsConfiguration.push(testCaseInfo.getDefaultTestRunConfiguration());
+  }
+  return testRunsConfiguration;
+};
+
+
+jstestdriver.TestCaseManager.prototype.getTestCasesInfo = function() {
+  return this.testCasesInfo_;
+};
+
+
+jstestdriver.TestCaseManager.prototype.getCurrentlyLoadedTest = function() {
   var numberOfTests = 0;
   var testNames = [];
+  var size = this.testCasesInfo_.length;
 
-  for (var testCaseName in this.testCases_) {
-    var testCase = this.testCases_[testCaseName];
+  for (var i = 0; i < size; i++) {
+    var testCaseInfo = this.testCasesInfo_[i];
+    var testCaseName = testCaseInfo.getTestCaseName();
+    var tests = testCaseInfo.getTestNames();
+    var testsSize = tests.length;
 
-    for (var element in testCase.prototype) {
-      if (element.indexOf('test') == 0) {
-        numberOfTests++;
-        testNames.push(testCaseName + '.' + element);
-      }
+    for (var j = 0; j < testsSize; j++) {
+      numberOfTests++;
+      testNames.push(testCaseName + '.' + tests[j]);
     }
   }
   return {

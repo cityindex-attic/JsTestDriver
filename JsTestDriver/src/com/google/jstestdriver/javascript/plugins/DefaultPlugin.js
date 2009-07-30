@@ -13,8 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.plugins.DefaultPlugin = function(fileLoaderPlugin) {
+jstestdriver.plugins.DefaultPlugin = function(fileLoaderPlugin, testRunnerPlugin) {
   this.fileLoaderPlugin_ = fileLoaderPlugin;
+  this.testRunnerPlugin_ = testRunnerPlugin;
 };
 
 
@@ -23,4 +24,11 @@ jstestdriver.plugins.DefaultPlugin.name = 'defaultPlugin';
 
 jstestdriver.plugins.DefaultPlugin.prototype.loadSource = function(file, onSourceLoaded) {
   this.fileLoaderPlugin_.loadSource(file, onSourceLoaded);
+};
+
+
+jstestdriver.plugins.DefaultPlugin.prototype.runTestConfiguration = function(testRunConfiguration,
+    onTestDone, onTestRunConfigurationComplete) {
+  this.testRunnerPlugin_.runTestConfiguration(testRunConfiguration, onTestDone,
+      onTestRunConfigurationComplete);
 };

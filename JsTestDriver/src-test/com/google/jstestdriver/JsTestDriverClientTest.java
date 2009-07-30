@@ -187,8 +187,8 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/heartbeat?id=1", "OK");
     server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
     server.expect("http://localhost/cmd?POST?{data={\"command\":\"runTests\","
-        + "\"parameters\":[\"[{\\\"name\\\":\\\"testCase\\\","
-        + "\\\"tests\\\":[\\\"testFoo\\\",\\\"testBar\\\"]}]\",\"false\"]}, id=1}", "");
+        + "\"parameters\":[\"[\\\"testCase.testFoo\\\",\\\"testCase.testBar\\\"]\",\"false\"]}, id=1}",
+        "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
@@ -203,13 +203,11 @@ public class JsTestDriverClientTest extends TestCase {
     FakeResponseStream stream = new FakeResponseStream();
 
     factory.setResponseStream(stream);
-    ArrayList<com.google.jstestdriver.TestCase> testCases = new ArrayList<com.google.jstestdriver.TestCase>();
     ArrayList<String> tests = new ArrayList<String>();
 
-    tests.add("testFoo");
-    tests.add("testBar");
-    testCases.add(new com.google.jstestdriver.TestCase("testCase", tests));
-    client.runTests("1", factory, testCases, false);
+    tests.add("testCase.testFoo");
+    tests.add("testCase.testBar");
+    client.runTests("1", factory, tests, false);
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }
