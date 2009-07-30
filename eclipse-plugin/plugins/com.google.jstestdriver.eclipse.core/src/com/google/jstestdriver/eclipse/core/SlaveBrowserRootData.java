@@ -1,16 +1,14 @@
 /*
  * Copyright 2008 Google Inc.
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
 package com.google.jstestdriver.eclipse.core;
@@ -23,8 +21,8 @@ import java.util.Observer;
 import com.google.jstestdriver.SlaveBrowser;
 
 /**
- * Root object to hold information about all the slave browsers. Is registered as a listener
- * so that it knows whenever a slave browser is captured.
+ * Root object to hold information about all the slave browsers. Is registered as a listener so that
+ * it knows whenever a slave browser is captured.
  * 
  * @author shyamseshadri@google.com (Shyam Seshadri)
  */
@@ -41,10 +39,10 @@ public class SlaveBrowserRootData extends Observable implements Observer {
     ieSlaves = new SlaveBrowserSet("IE", this);
     safariSlaves = new SlaveBrowserSet("Safari", this);
   }
-  
+
   // TODO(shyamseshadri): ICKY. GET RID OF THIS ASAP. HACK FOR NOW TO GET THINGS WORKING.
   private static SlaveBrowserRootData instance = null;
-  
+
   public static SlaveBrowserRootData getInstance() {
     if (instance == null) {
       instance = new SlaveBrowserRootData();
@@ -82,7 +80,7 @@ public class SlaveBrowserRootData extends Observable implements Observer {
     setChanged();
     notifyObservers(this);
   }
-  
+
   public void clear() {
     firefoxSlaves.clearSlaves();
     ieSlaves.clearSlaves();
@@ -91,7 +89,7 @@ public class SlaveBrowserRootData extends Observable implements Observer {
     setChanged();
     notifyObservers(this);
   }
-  
+
   public List<String> getSlaveBrowserIds() {
     List<String> ids = new ArrayList<String>();
     ids.addAll(firefoxSlaves.getBrowserIds());
@@ -100,7 +98,13 @@ public class SlaveBrowserRootData extends Observable implements Observer {
     ids.addAll(safariSlaves.getBrowserIds());
     return ids;
   }
-  
+
+  public boolean hasSlaves() {
+    return firefoxSlaves.hasSlaves() || chromeSlaves.hasSlaves() || ieSlaves.hasSlaves()
+        || safariSlaves.hasSlaves();
+  }
+
+  @Override
   public String toString() {
     return "Browsers";
   }

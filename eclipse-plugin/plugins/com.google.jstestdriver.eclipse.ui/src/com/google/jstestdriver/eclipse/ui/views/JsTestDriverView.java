@@ -16,6 +16,7 @@
 package com.google.jstestdriver.eclipse.ui.views;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
@@ -32,18 +33,19 @@ public class JsTestDriverView extends ViewPart {
 //      .getHelpSystem();
 
   private ServerInfoPanel serverInfoPanel;
+  private TestResultsPanel testResultsPanel;
 
+  @Override
   public void createPartControl(Composite parent) {
+    parent.setLayout(new GridLayout(1, false));
     serverInfoPanel = new ServerInfoPanel(parent, SWT.NONE);
+    testResultsPanel = new TestResultsPanel(parent, SWT.NONE);
 
 //    helpSystem.setHelp(viewer.getControl(),
 //        "com.google.jstestdriver.eclipse.ui.viewer");
   }
 
-  public void setServerStatus(String status) {
-    serverInfoPanel.setServerStatus(status);
-  }
-
+  @Override
   public void setFocus() {
     serverInfoPanel.getParent().setFocus();
     //viewer.getControl().setFocus();
@@ -51,5 +53,9 @@ public class JsTestDriverView extends ViewPart {
 
   public ServerInfoPanel getServerInfoPanel() {
     return serverInfoPanel;
+  }
+  
+  public void addResult(String result) {
+    testResultsPanel.addText(result);
   }
 }

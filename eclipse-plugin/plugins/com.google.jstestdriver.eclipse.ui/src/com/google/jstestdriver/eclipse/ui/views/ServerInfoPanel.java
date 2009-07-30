@@ -18,73 +18,91 @@ package com.google.jstestdriver.eclipse.ui.views;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.google.jstestdriver.eclipse.core.SlaveBrowserRootData;
+import com.google.jstestdriver.eclipse.ui.icon.Icons;
 
 /**
- * Panel which displays info about the server, incuding status, capture url and browsers captured.
+ * Panel which displays info about the server, incuding status, capture url and
+ * browsers captured.
  * 
  * @author shyamseshadri@google.com (Shyam Seshadri)
  */
 public class ServerInfoPanel extends Composite implements Observer {
 
+  public static final String SERVER_DOWN = "NOT RUNNING";
   private Text serverUrlText;
-  private TreeViewer browserTree;
+  private Canvas safariIcon;
+  private Canvas chromeIcon;
+  private Canvas ieIcon;
+  private Canvas ffIcon;
+  private Icons icons;
+  private static final Color NOT_RUNNING = new Color(Display.getCurrent(), 255,
+      102, 102);
+  private static final Color NO_BROWSERS = new Color(Display.getCurrent(), 255,
+      255, 102);
+  private static final Color READY = new Color(Display.getCurrent(), 102, 204,
+      102);
 
   public ServerInfoPanel(Composite parent, int style) {
     super(parent, style);
-    // TODO(shyamseshadri): YUCK, work in the constructor. Figure out best way around this.
-//    Group serverPropertiesControl = new Group(parent, SWT.NONE);
-//    serverPropertiesControl.setLayout(new GridLayout(2, false));
-//    serverPropertiesControl.setText("Server:");
-//    serverPropertiesControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-    // TODO(shyamseshadri): UI Looks weird, something invisible seems to be getting on it.
-    parent.setLayout(new GridLayout(3, false));
-    Label serverLabel = new Label(parent, SWT.NONE);
-    serverLabel.setText("Server :");
-    serverUrlText = new Text(parent, SWT.NONE);
+    icons = new Icons();
+    serverUrlText = new Text(this, SWT.NONE);
+    serverUrlText.setText(SERVER_DOWN);
+    serverUrlText.setBackground(NOT_RUNNING);
+    serverUrlText.setBounds(30, 12, 227, 17);
     serverUrlText.setEditable(false);
-    serverUrlText.setText("Down");
-    serverUrlText.pack();
-    
-    browserTree = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-    BrowserInfoContentProvider provider = new BrowserInfoContentProvider();
-    browserTree.setContentProvider(provider);
-    browserTree.setLabelProvider(new BrowserInfoLabelProvider());
-    browserTree.setSorter(new NameSorter());
-    browserTree.setInput(SlaveBrowserRootData.getInstance());
-    GridData treeLayoutData = new GridData();
-    treeLayoutData.grabExcessHorizontalSpace = true;
-    treeLayoutData.widthHint = 300;
-    treeLayoutData.heightHint = 300;
-    treeLayoutData.horizontalSpan = 3;
-    browserTree.getTree().setLayoutData(treeLayoutData);
+    serverUrlText.setOrientation(SWT.HORIZONTAL);
+    ffIcon = new Canvas(this, SWT.NONE);
+    ffIcon.setBounds(9, 38, 64, 64);
+    ffIcon.setBackgroundImage(icons.getFirefoxDisabledIcon());
+    chromeIcon = new Canvas(this, SWT.NONE);
+    chromeIcon.setBounds(80, 38, 64, 64);
+    chromeIcon.setBackgroundImage(icons.getChromeDisabledIcon());
+    safariIcon = new Canvas(this, SWT.NONE);
+    safariIcon.setBounds(152, 38, 64, 64);
+    safariIcon.setBackgroundImage(icons.getSafariDisabledIcon());
+    ieIcon = new Canvas(this, SWT.NONE);
+    ieIcon.setBounds(224, 38, 64, 64);
+    ieIcon.setBackgroundImage(icons.getIEDisabledIcon());
   }
 
-  public void update(Observable o, Object arg) {
+  public void update(Observable o, final Object arg) {
+    final SlaveBrowserRootData data = (SlaveBrowserRootData) arg;
     new Thread(new Runnable() {
       public void run() {
         Display.getDefault().asyncExec(new Runnable() {
           public void run() {
-            browserTree.refresh();
+            ffIcon.setBackgroundImage(icons.getImage(data.getFirefoxSlaves()
+                .getImagePath()));
+            chromeIcon.setBackgroundImage(icons.getImage(data.getChromeSlaves()
+                .getImagePath()));
+            ieIcon.setBackgroundImage(icons.getImage(data.getIeSlaves()
+                .getImagePath()));
+            safariIcon.setBackgroundImage(icons.getImage(data.getSafariSlaves()
+                .getImagePath()));
+            if (data.hasSlaves()) {
+              serverUrlText.setBackground(READY);
+            }
           }
         });
       }
     }).start();
   }
 
-  public void setServerStatus(String status) {
-    serverUrlText.setText(status);
-    serverUrlText.pack();
+  public void setServerStarted(String serverUrl) {
+    serverUrlText.setText(serverUrl);
+    serverUrlText.setBackground(NO_BROWSERS);
   }
 
+  public void setServerStopped() {
+    serverUrlText.setText(SERVER_DOWN);
+    serverUrlText.setBackground(NOT_RUNNING);
+  }
 }

@@ -56,6 +56,10 @@ public class SlaveBrowserSet {
   public void clearSlaves() {
     slaves.clear();
   }
+  
+  public boolean hasSlaves() {
+    return slaves.size() > 0;
+  }
 
   public String toString() {
     return browserName + " - (" + slaves.size() + ")";

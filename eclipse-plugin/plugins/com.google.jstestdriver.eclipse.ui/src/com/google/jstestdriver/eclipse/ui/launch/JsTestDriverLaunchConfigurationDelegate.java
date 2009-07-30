@@ -16,9 +16,8 @@
 package com.google.jstestdriver.eclipse.ui.launch;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -43,14 +42,14 @@ import com.google.jstestdriver.HttpServer;
 import com.google.jstestdriver.JsTestDriverClient;
 import com.google.jstestdriver.JsTestDriverClientImpl;
 import com.google.jstestdriver.JsTestDriverModule;
-import com.google.jstestdriver.ResponsePrinterFactory;
-import com.google.jstestdriver.RunTestsAction;
 import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.core.SlaveBrowserRootData;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
 import com.google.jstestdriver.eclipse.internal.core.ProjectHelper;
 
 /**
+ * Handles a Js Test Driver launch.
+ * 
  * @author shyamseshadri@google.com (Shyam Seshadri)
  */
 public class JsTestDriverLaunchConfigurationDelegate implements
@@ -74,12 +73,13 @@ public class JsTestDriverLaunchConfigurationDelegate implements
     IResource confFileResource = project.findMember(confFileName);
     File configFile = confFileResource.getLocation().toFile();
     File parentDir = configFile.getParentFile();
-    ConfigurationParser configurationParser = new ConfigurationParser(parentDir);
+    ConfigurationParser configurationParser = null;
     try {
-      configurationParser.parse(new FileInputStream(configFile));
+      configurationParser = new ConfigurationParser(parentDir, new FileReader(configFile));
     } catch (FileNotFoundException e) {
       logger.logException(e);
     }
+    configurationParser.parse();
     Set<FileInfo> filesList = configurationParser.getFilesList();
     Injector injector = Guice.createInjector(new JsTestDriverModule(null,
         filesList, Server.SERVER_URL,
@@ -92,13 +92,9 @@ public class JsTestDriverLaunchConfigurationDelegate implements
         .getInstance(CommandTaskFactory.class);
     JsTestDriverClient client = new JsTestDriverClientImpl(cmdTaskFactory,
         filesList, Server.SERVER_URL, httpServer);
-    PrintStream outStream = System.out;
-    String xmlDir = "";
-    ResponsePrinterFactory responsePrinterFactory = new ResponsePrinterFactory(
-        xmlDir, outStream, client, false);
-    ;
-    RunTestsAction runTestsAction = new RunTestsAction(allTests,
-        responsePrinterFactory, false);
+
+    EclipseRunTestsAction runTestsAction = new EclipseRunTestsAction(allTests,
+        null, false);
     SlaveBrowserRootData browserRootData = SlaveBrowserRootData.getInstance();
     for (String id : browserRootData.getSlaveBrowserIds()) {
       runTestsAction.run(id, client);
@@ -106,17 +102,16 @@ public class JsTestDriverLaunchConfigurationDelegate implements
   }
 
   public boolean buildForLaunch(ILaunchConfiguration configuration,
-      String mode, IProgressMonitor monitor) throws CoreException {
+      String mode, IProgressMonitor monitor) {
     return mode.equals(ILaunchManager.RUN_MODE) && !monitor.isCanceled();
   }
 
   public boolean finalLaunchCheck(ILaunchConfiguration configuration,
-      String mode, IProgressMonitor monitor) throws CoreException {
+      String mode, IProgressMonitor monitor) {
     return mode.equals(ILaunchManager.RUN_MODE) && !monitor.isCanceled();
   }
 
-  public ILaunch getLaunch(ILaunchConfiguration configuration, String mode)
-      throws CoreException {
+  public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) {
     if (mode.equals(ILaunchManager.RUN_MODE)) {
       return new Launch(configuration, mode, new JavascriptSourceLocator());
     } else {
@@ -126,7 +121,7 @@ public class JsTestDriverLaunchConfigurationDelegate implements
   }
 
   public boolean preLaunchCheck(ILaunchConfiguration configuration,
-      String mode, IProgressMonitor monitor) throws CoreException {
+      String mode, IProgressMonitor monitor) {
     return mode.equals(ILaunchManager.RUN_MODE) && !monitor.isCanceled();
   }
 

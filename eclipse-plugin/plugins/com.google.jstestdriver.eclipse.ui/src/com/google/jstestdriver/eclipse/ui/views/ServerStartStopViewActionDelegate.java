@@ -34,7 +34,7 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
   private boolean isRunning = false;
   private Server server;
   private final Icons icons;
-  private JsTestDriverView view;
+  private ServerInfoPanel view;
   
   public ServerStartStopViewActionDelegate() {
     server = new Server();
@@ -48,10 +48,10 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
 
   public void init(IViewPart view) {
     if (view instanceof JsTestDriverView) {
-      this.view = (JsTestDriverView) view;
+      this.view = ((JsTestDriverView) view).getServerInfoPanel();
       SlaveBrowserRootData data = SlaveBrowserRootData.getInstance();
       server.getCapturedBrowsers().addObserver(data);
-      data.addObserver(this.view.getServerInfoPanel());
+      data.addObserver(this.view);
     }
   }
 
@@ -71,7 +71,7 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
     action.setToolTipText("Stop Server");
     action.setImageDescriptor(icons.stopServerIcon());
     if (view != null) {
-      view.setServerStatus(Server.SERVER_CAPTURE_URL);
+      view.setServerStarted(Server.SERVER_CAPTURE_URL);
     }
   }
 
@@ -80,7 +80,7 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
     action.setToolTipText("Start Server");
     action.setImageDescriptor(icons.startServerIcon());
     if (view != null) {
-      view.setServerStatus("Down");
+      view.setServerStopped();
     }
     SlaveBrowserRootData.getInstance().clear();
   }
