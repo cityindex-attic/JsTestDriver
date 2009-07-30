@@ -1,3 +1,18 @@
+/*
+ * Copyright 2009 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.google.jstestdriver.idea;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -14,7 +29,6 @@ import javax.swing.*;
  */
 public class JSTestDriverComponent implements ConfigurationType {
 
-  private String settingsFile;
   private ConfigurationFactory jsTestDriverConfigFactory = new JSTestDriverConfigurationFactory(this);
 
   public void initComponent() {
@@ -26,14 +40,6 @@ public class JSTestDriverComponent implements ConfigurationType {
   @NotNull
   public String getComponentName() {
     return PluginResources.getPluginName() + ":ConfigurationType";
-  }
-
-  public String getSettingsFile() {
-    return settingsFile;
-  }
-
-  public void setSettingsFile(final String settingsFile) {
-    this.settingsFile = settingsFile;
   }
 
   public String getDisplayName() {
@@ -49,6 +55,6 @@ public class JSTestDriverComponent implements ConfigurationType {
   }
 
   public ConfigurationFactory[] getConfigurationFactories() {
-    return new ConfigurationFactory[]{jsTestDriverConfigFactory};
+    return new ConfigurationFactory[]{ jsTestDriverConfigFactory };
   }
 }
