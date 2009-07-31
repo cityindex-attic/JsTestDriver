@@ -18,9 +18,6 @@ package com.google.jstestdriver.eclipse.ui.launch;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -38,16 +35,11 @@ import org.eclipse.ui.PlatformUI;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.jstestdriver.CommandTaskFactory;
+import com.google.jstestdriver.ActionFactory;
+import com.google.jstestdriver.ActionFactoryModule;
 import com.google.jstestdriver.ConfigurationParser;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.HttpServer;
-import com.google.jstestdriver.JsTestDriverClient;
-import com.google.jstestdriver.JsTestDriverClientImpl;
-import com.google.jstestdriver.JsTestDriverModule;
+import com.google.jstestdriver.IDEPluginActionBuilder;
 import com.google.jstestdriver.eclipse.core.Server;
-import com.google.jstestdriver.eclipse.core.SlaveBrowserRootData;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
 import com.google.jstestdriver.eclipse.internal.core.ProjectHelper;
 import com.google.jstestdriver.eclipse.ui.views.JsTestDriverView;
@@ -85,19 +77,7 @@ public class JsTestDriverLaunchConfigurationDelegate implements
     } catch (FileNotFoundException e) {
       logger.logException(e);
     }
-    configurationParser.parse();
-    Set<FileInfo> filesList = configurationParser.getFilesList();
-    Injector injector = Guice.createInjector(new JsTestDriverModule(null,
-        filesList, Server.SERVER_URL,
-        new ArrayList<Class<? extends Module>>()));
-
-    List<String> allTests = new ArrayList<String>();
-    allTests.add("all");
-    HttpServer httpServer = new HttpServer();
-    CommandTaskFactory cmdTaskFactory = injector
-        .getInstance(CommandTaskFactory.class);
-    JsTestDriverClient client = new JsTestDriverClientImpl(cmdTaskFactory,
-        filesList, Server.SERVER_URL, httpServer);
+    Injector injector = Guice.createInjector(new ActionFactoryModule());
 
     Display.getDefault().asyncExec(new Runnable() {
 
@@ -114,12 +94,12 @@ public class JsTestDriverLaunchConfigurationDelegate implements
         }
       }
     });
-    EclipseRunTestsAction runTestsAction = new EclipseRunTestsAction(allTests,
-        null, false);
-    SlaveBrowserRootData browserRootData = SlaveBrowserRootData.getInstance();
-    for (String id : browserRootData.getSlaveBrowserIds()) {
-      runTestsAction.run(id, client);
-    }
+
+    IDEPluginActionBuilder actionBuilder = new IDEPluginActionBuilder(
+        configurationParser, Server.SERVER_URL, injector
+            .getInstance(ActionFactory.class),
+        new EclipseResponseStreamFactory());
+    actionBuilder.addAllTests().build().runActions();
   }
 
   public boolean buildForLaunch(ILaunchConfiguration configuration,

@@ -27,19 +27,17 @@ public class EclipseJstdBrowserRunResult extends ResultModel {
   public EclipseJstdBrowserRunResult(EclipseJstdTestRunResult parent,
       String browser) {
     super(parent, browser);
-    passImagePath = TEST_SUITE_PASS_ICON;
-    failImagePath = TEST_SUITE_FAIL_ICON;
   }
 
   @Override
-  public void addTestResult(TestResult result) {
+  public ResultModel addTestResult(TestResult result) {
     EclipseJstdTestCaseResult testCaseResult = (EclipseJstdTestCaseResult) results
         .get(result.getTestCaseName());
     if (testCaseResult == null) {
       testCaseResult = new EclipseJstdTestCaseResult(this, result
           .getTestCaseName());
     }
-    testCaseResult.addTestResult(result);
     results.put(result.getTestCaseName(), testCaseResult);
+    return testCaseResult.addTestResult(result);
   }
 }

@@ -15,38 +15,65 @@
  */
 package com.google.jstestdriver.eclipse.ui.launch.model;
 
+import org.eclipse.swt.graphics.Image;
+
 import com.google.jstestdriver.TestResult;
 
 /**
  * @author shyamseshadri@google.com (Shyam Seshadri)
- *
+ * 
  */
 public class EclipseJstdTestResult extends ResultModel {
 
   private TestResult result;
-  
+
   public EclipseJstdTestResult(EclipseJstdTestCaseResult parent, String testName) {
     super(parent, testName);
-    passImagePath = TEST_PASS_ICON;
-    failImagePath = TEST_FAIL_ICON;
   }
 
   @Override
-  public void addTestResult(TestResult result) {
+  public ResultModel addTestResult(TestResult result) {
     this.result = result;
+    return this;
   }
-  
+
   public TestResult getResult() {
     return result;
   }
-  
+
   @Override
   public void clear() {
     result = null;
   }
-  
+
   @Override
   public boolean didPass() {
-    return result.getResult().equals("passed");
+    return result.getResult() == TestResult.Result.passed;
+  }
+
+  @Override
+  public int getNumberOfTests() {
+    return result != null ? 1 : 0;
+  }
+
+  @Override
+  public int getNumberOfErrors() {
+    return result.getResult() == TestResult.Result.error ? 1 : 0;
+  }
+
+  @Override
+  public int getNumberOfFailures() {
+    return result.getResult() == TestResult.Result.failed ? 1 : 0;
+  }
+
+  @Override
+  public Image getDisplayImage() {
+    if (didPass()) {
+      return icon.getImage(TEST_PASS_ICON);
+    } else if (getNumberOfErrors() > 0) {
+      return icon.getImage(TEST_ERROR_ICON);
+    } else {
+      return icon.getImage(TEST_FAIL_ICON);
+    }
   }
 }

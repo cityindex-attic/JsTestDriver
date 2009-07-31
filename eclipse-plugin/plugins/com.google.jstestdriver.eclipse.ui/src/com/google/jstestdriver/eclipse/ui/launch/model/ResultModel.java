@@ -30,12 +30,12 @@ import com.google.jstestdriver.eclipse.ui.icon.Icons;
 public abstract class ResultModel {
 
   public static final String TEST_SUITE_PASS_ICON = "icons/tsuiteok.gif";
-  public static final String TEST_SUITE_FAIL_ICON = "icons/tsuiteerror.gif";
+  public static final String TEST_SUITE_FAIL_ICON = "icons/tsuitefail.gif";
+  public static final String TEST_SUITE_ERROR_ICON = "icons/tsuiteerror.gif";
   public static final String TEST_PASS_ICON = "icons/testok.gif";
   public static final String TEST_FAIL_ICON = "icons/testfail.gif";
+  public static final String TEST_ERROR_ICON = "icons/testerr.gif";
   private final String label;
-  protected String passImagePath;
-  protected String failImagePath;
   private final ResultModel parent;
   protected Map<String, ResultModel> results;
   protected Icons icon = new Icons();
@@ -46,7 +46,7 @@ public abstract class ResultModel {
     results = new HashMap<String, ResultModel>();
   }
 
-  public abstract void addTestResult(TestResult result);
+  public abstract ResultModel addTestResult(TestResult result);
 
   public ResultModel getResultModel(String key) {
     return results.get(key);
@@ -59,6 +59,30 @@ public abstract class ResultModel {
       }
     }
     return true;
+  }
+  
+  public int getNumberOfTests() {
+    int total = 0;
+    for (ResultModel model : results.values()) {
+      total += model.getNumberOfTests();
+    }
+    return total;
+  }
+  
+  public int getNumberOfFailures() {
+    int total = 0;
+    for (ResultModel model : results.values()) {
+      total += model.getNumberOfFailures();
+    }
+    return total;
+  }
+  
+  public int getNumberOfErrors() {
+    int total = 0;
+    for (ResultModel model : results.values()) {
+      total += model.getNumberOfErrors();
+    }
+    return total;
   }
   
   public String getDisplayLabel() {
@@ -86,9 +110,11 @@ public abstract class ResultModel {
   
   public Image getDisplayImage() {
     if (didPass()) {
-      return icon.getImage(passImagePath);
+      return icon.getImage(TEST_SUITE_PASS_ICON);
+    } else if (getNumberOfErrors() > 0){
+      return icon.getImage(TEST_SUITE_ERROR_ICON);
     } else {
-      return icon.getImage(failImagePath);
+      return icon.getImage(TEST_SUITE_FAIL_ICON);
     }
   }
 }
