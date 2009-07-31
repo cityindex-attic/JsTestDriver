@@ -1,16 +1,28 @@
-// Copyright 2009 Google Inc. All Rights Reserved.
-
+/*
+ * Copyright 2009 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.google.jstestdriver.eclipse.ui.views;
 
+import org.eclipse.jdt.internal.junit.ui.JUnitProgressBar;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -18,8 +30,6 @@ import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
 import com.google.jstestdriver.eclipse.ui.launch.model.EclipseJstdTestResult;
 import com.google.jstestdriver.eclipse.ui.launch.model.EclipseJstdTestRunResult;
-import com.google.jstestdriver.eclipse.ui.launch.model.ResultModel;
-import org.eclipse.jface.dialogs.ProgressIndicator;
 
 /**
  * Show the test results.
@@ -31,7 +41,7 @@ public class TestResultsPanel extends Composite {
   private Icons icons;
   private EclipseJstdTestRunResult testRunResult;
   private TreeViewer testResultsTree;
-  private ProgressIndicator testProgressIndicator;
+  private JUnitProgressBar testProgressIndicator;
   private Label failuresLabel;
   private Label errorsLabel;
   private Label totalRunLabel;
@@ -39,6 +49,7 @@ public class TestResultsPanel extends Composite {
   private Button rerunButton;
   private Button showOnlyFailed;
   private Text testDetailsText;
+  private int totalNumTests;
 
   public TestResultsPanel(Composite parent, int style) {
     super(parent, style);
@@ -51,9 +62,8 @@ public class TestResultsPanel extends Composite {
     testResultsTree.setSorter(new NameSorter());
     testResultsTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
     testResultsTree.setInput(testRunResult);
-    testProgressIndicator = new ProgressIndicator(this);
+    testProgressIndicator = new JUnitProgressBar(this);
     testProgressIndicator.setBounds(0, 59, 275, 30);
-    testProgressIndicator.beginTask(100);
     testDetailsText = new Text(this, SWT.MULTI | SWT.WRAP);
     testDetailsText.setBounds(0, 343, 281, 58);
     showOnlyFailed = new Button(this, SWT.NONE);
@@ -67,13 +77,13 @@ public class TestResultsPanel extends Composite {
     rerunFailedFirstButton.setBounds(166, 0, 60, 30);
     totalRunLabel = new Label(this, SWT.NONE);
     totalRunLabel.setText("Run : 0 / 0");
-    totalRunLabel.setBounds(6, 36, 70, 17);
+    totalRunLabel.setBounds(6, 36, 90, 17);
     errorsLabel = new Label(this, SWT.NONE);
     errorsLabel.setText("Errors : 0");
-    errorsLabel.setBounds(106, 36, 60, 17);
+    errorsLabel.setBounds(116, 36, 60, 17);
     failuresLabel = new Label(this, SWT.NONE);
     failuresLabel.setText("Failed : 0");
-    failuresLabel.setBounds(180, 36, 75, 17);
+    failuresLabel.setBounds(190, 36, 75, 17);
     testResultsTree.addDoubleClickListener(new IDoubleClickListener() {
 
       public void doubleClick(DoubleClickEvent event) {
@@ -92,18 +102,25 @@ public class TestResultsPanel extends Composite {
     });
   }
 
-  public void clearTestRun() {
+  public void setupForNextTestRun() {
     testRunResult.clear();
-    testProgressIndicator.beginTask(100);
     testResultsTree.refresh();
+    testProgressIndicator.reset();
+    totalNumTests = 0;
+  }
+  
+  public synchronized void addNumberOfTests(int numTests) {
+    totalNumTests += numTests;
+    testProgressIndicator.setMaximum(totalNumTests);
+    totalRunLabel.setText("Run : 0 / " + totalNumTests);
   }
 
   public synchronized void addResult(TestResult testResult) {
-    testProgressIndicator.worked(10);
+    testProgressIndicator.step(testResult.getResult() == TestResult.Result.passed ? 0 : 1);
     testRunResult.addTestResult(testResult);
     errorsLabel.setText("Errors : " + testRunResult.getNumberOfErrors());
     failuresLabel.setText("Failed : " + testRunResult.getNumberOfFailures());
-    totalRunLabel.setText("Run : " + testRunResult.getNumberOfTests() + " / " + testRunResult.getNumberOfTests());
+    totalRunLabel.setText("Run : " + testRunResult.getNumberOfTests() + " / " + totalNumTests);
   }
 
   public void refresh() {

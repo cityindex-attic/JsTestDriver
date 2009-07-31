@@ -18,3 +18,5 @@ Export-Package: com.google.jstestdriver.eclipse.ui,
  com.google.jstestdriver.eclipse.ui.launch,
  com.google.jstestdriver.eclipse.ui.launch.model,
  com.google.jstestdriver.eclipse.ui.views
+Bundle-ClassPath: lib/junitprogressbar.jar,
+ .

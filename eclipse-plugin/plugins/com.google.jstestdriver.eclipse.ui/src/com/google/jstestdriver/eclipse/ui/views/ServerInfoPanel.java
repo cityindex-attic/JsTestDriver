@@ -43,12 +43,9 @@ public class ServerInfoPanel extends Composite implements Observer {
   private Canvas ieIcon;
   private Canvas ffIcon;
   private Icons icons;
-  private static final Color NOT_RUNNING = new Color(Display.getCurrent(), 255,
-      102, 102);
-  private static final Color NO_BROWSERS = new Color(Display.getCurrent(), 255,
-      255, 102);
-  private static final Color READY = new Color(Display.getCurrent(), 102, 204,
-      102);
+  private static final Color NOT_RUNNING = new Color(Display.getCurrent(), 255, 102, 102);
+  private static final Color NO_BROWSERS = new Color(Display.getCurrent(), 255, 255, 102);
+  private static final Color READY = new Color(Display.getCurrent(), 102, 204, 102);
 
   public ServerInfoPanel(Composite parent, int style) {
     super(parent, style);

@@ -88,7 +88,7 @@ public class JsTestDriverLaunchConfigurationDelegate implements
           JsTestDriverView view = (JsTestDriverView) page
               .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
           TestResultsPanel panel = view.getTestResultsPanel();
-          panel.clearTestRun();
+          panel.setupForNextTestRun();
         } catch (PartInitException e) {
           logger.logException(e);
         }
