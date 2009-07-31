@@ -17,8 +17,6 @@ package com.google.jstestdriver;
 
 import com.google.gson.Gson;
 
-import java.util.List;
-
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
@@ -27,25 +25,6 @@ public class DryRunAction extends ThreadedAction {
   public static class DryRunActionResponseStream implements ResponseStream {
 
     private final Gson gson = new Gson();
-
-    private static class DryRunInfo {
-      private int numTests;
-      private List<String> testNames;
-
-      /**
-       * @return the numTests
-       */
-      public int getNumTests() {
-        return numTests;
-      }
-
-      /**
-       * @return the testNames
-       */
-      public List<String> getTestNames() {
-        return testNames;
-      }      
-    }
 
     public void finish() {
     }

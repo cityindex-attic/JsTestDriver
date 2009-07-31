@@ -67,6 +67,7 @@ public class IDEPluginActionBuilder {
   private List<ThreadedAction> createThreadedActions(JsTestDriverClient client) {
     List<ThreadedAction> threadedActions = new ArrayList<ThreadedAction>();
 
+    threadedActions.add(new DryRunAction(responseStreamFactory));
     if (!tests.isEmpty()) {
       threadedActions.add(new RunTestsAction(responseStreamFactory, new ResponsePrinterFactory("",
           System.out, client, false), tests, true));
