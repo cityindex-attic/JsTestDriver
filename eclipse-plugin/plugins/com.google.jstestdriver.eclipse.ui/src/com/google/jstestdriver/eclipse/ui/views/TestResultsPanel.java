@@ -15,12 +15,18 @@
  */
 package com.google.jstestdriver.eclipse.ui.views;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.jdt.internal.junit.ui.JUnitProgressBar;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -30,6 +36,7 @@ import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
 import com.google.jstestdriver.eclipse.ui.launch.model.EclipseJstdTestResult;
 import com.google.jstestdriver.eclipse.ui.launch.model.EclipseJstdTestRunResult;
+import com.google.jstestdriver.eclipse.ui.launch.model.ResultModel;
 
 /**
  * Show the test results.
@@ -47,28 +54,41 @@ public class TestResultsPanel extends Composite {
   private Label totalRunLabel;
   private Button rerunFailedFirstButton;
   private Button rerunButton;
-  private Button showOnlyFailed;
+  private Button showOnlyFailedButton;
   private Text testDetailsText;
   private int totalNumTests;
+  private ViewerFilter showOnlyFailuresFilter;
 
   public TestResultsPanel(Composite parent, int style) {
     super(parent, style);
     icons = new Icons();
+    showOnlyFailuresFilter = new FailureOnlyViewerFilter();
     testRunResult = new EclipseJstdTestRunResult();
     testResultsTree = new TreeViewer(this, SWT.NONE);
     testResultsTree.getTree().setBounds(0, 95, 281, 242);
     testResultsTree.setLabelProvider(new TestResultsTreeLabelProvider());
     testResultsTree.setContentProvider(new TestResultsTreeContentProvider());
-    testResultsTree.setSorter(new NameSorter());
-    testResultsTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
     testResultsTree.setInput(testRunResult);
     testProgressIndicator = new JUnitProgressBar(this);
     testProgressIndicator.setBounds(0, 59, 275, 30);
     testDetailsText = new Text(this, SWT.MULTI | SWT.WRAP);
     testDetailsText.setBounds(0, 343, 281, 58);
-    showOnlyFailed = new Button(this, SWT.NONE);
-    showOnlyFailed.setImage(icons.getImage("icons/failures.gif"));
-    showOnlyFailed.setBounds(46, 0, 60, 30);
+    showOnlyFailedButton = new Button(this,SWT.TOGGLE);
+    showOnlyFailedButton.addSelectionListener(new SelectionListener() {
+      public void widgetDefaultSelected(SelectionEvent e) {
+      }
+
+      public void widgetSelected(SelectionEvent e) {
+        if (showOnlyFailedButton.getSelection()) {
+          testResultsTree.setFilters(new ViewerFilter[] {showOnlyFailuresFilter});
+        } else {
+          testResultsTree.setFilters(new ViewerFilter[0]);
+        }
+      }
+      
+    });
+    showOnlyFailedButton.setImage(icons.getImage("icons/failures.gif"));
+    showOnlyFailedButton.setBounds(46, 0, 60, 30);
     rerunButton = new Button(this, SWT.NONE);
     rerunButton.setImage(icons.getImage("icons/relaunch.gif"));
     rerunButton.setBounds(106, 0, 60, 30);
@@ -107,6 +127,9 @@ public class TestResultsPanel extends Composite {
     testResultsTree.refresh();
     testProgressIndicator.reset();
     totalNumTests = 0;
+    totalRunLabel.setText("Run : 0 / 0");
+    errorsLabel.setText("Errors : 0");
+    failuresLabel.setText("Failed : 0");
   }
   
   public synchronized void addNumberOfTests(int numTests) {
@@ -115,15 +138,22 @@ public class TestResultsPanel extends Composite {
     totalRunLabel.setText("Run : 0 / " + totalNumTests);
   }
 
-  public synchronized void addResult(TestResult testResult) {
-    testProgressIndicator.step(testResult.getResult() == TestResult.Result.passed ? 0 : 1);
-    testRunResult.addTestResult(testResult);
+  public synchronized void addTestResults(Collection<TestResult> testResults) {
+    Collection<ResultModel> failedTests = new ArrayList<ResultModel>();
+    for (TestResult result : testResults) {
+      testProgressIndicator.step(result.getResult() == TestResult.Result.passed ? 0 : 1);
+      ResultModel addedResult = testRunResult.addTestResult(result);
+      if (!addedResult.didPass()) {
+        failedTests.add(addedResult);
+      }
+    }
+    testResultsTree.refresh();
+    
+    for (ResultModel resultModel : failedTests) {
+      testResultsTree.expandToLevel(resultModel, TreeViewer.ALL_LEVELS);
+    }
     errorsLabel.setText("Errors : " + testRunResult.getNumberOfErrors());
     failuresLabel.setText("Failed : " + testRunResult.getNumberOfFailures());
     totalRunLabel.setText("Run : " + testRunResult.getNumberOfTests() + " / " + totalNumTests);
-  }
-
-  public void refresh() {
-    testResultsTree.refresh();
   }
 }
