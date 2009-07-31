@@ -85,4 +85,29 @@ public class BrowserInfo {
   public String toString() {
     return String.format("%s %s %s", name, version, os);
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    BrowserInfo that = (BrowserInfo) o;
+
+    if (id != null ? !id.equals(that.id) : that.id != null) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result;
+    result = (id != null ? id.hashCode() : 0);
+    return result;
+  }
 }

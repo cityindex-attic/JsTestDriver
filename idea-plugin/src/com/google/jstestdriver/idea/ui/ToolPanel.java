@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver.idea.ui;
 
+import com.google.jstestdriver.ResponseStream;
+
 import com.intellij.util.ui.UIUtil;
 
 import java.awt.BorderLayout;
@@ -26,11 +28,14 @@ import javax.swing.JPanel;
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class ToolPanel extends JPanel {
+
+  private TestExecutionPanel testExecutionPanel = new TestExecutionPanel();
+
   public ToolPanel() {
     setLayout(new BorderLayout());
     setBackground(UIUtil.getTreeTextBackground());
     add(new ServerControlPanel(), BorderLayout.NORTH);
-    add(new TestExecutionPanel(), BorderLayout.CENTER);
+    add(testExecutionPanel, BorderLayout.CENTER);
   }
 
   public static void main(String[] args) {
@@ -39,5 +44,13 @@ public class ToolPanel extends JPanel {
     frame.add(new ToolPanel());
     frame.pack();
     frame.setVisible(true);
+  }
+
+  public ResponseStream getResponseStream() {
+    return testExecutionPanel;
+  }
+
+  public void clearTestResults() {
+    testExecutionPanel.clearTestResults();
   }
 }

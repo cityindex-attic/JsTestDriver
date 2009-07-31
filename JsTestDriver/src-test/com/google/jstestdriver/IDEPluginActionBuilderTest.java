@@ -57,13 +57,6 @@ public class IDEPluginActionBuilderTest extends TestCase {
         }));
     IDEPluginActionBuilder builder = new IDEPluginActionBuilder(configParser, "http://address",
         injector.getInstance(ActionFactory.class), null);
-    ResponseStream responseStream = new ResponseStream() {
-      public void stream(Response response) {
-      }
-
-      public void finish() {
-      }
-    };
     builder.addAllTests();
     ActionRunner runner = builder.build();
 

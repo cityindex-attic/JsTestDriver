@@ -20,8 +20,9 @@ import com.google.jstestdriver.ActionFactory;
 import com.google.jstestdriver.ActionFactoryModule;
 import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.IDEPluginActionBuilder;
-import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.ResponseStreamFactory;
+import com.google.jstestdriver.idea.ui.ToolPanel;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -31,6 +32,8 @@ import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.runners.RunnerInfo;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -44,6 +47,7 @@ import java.io.FileReader;
 public class TestRunnerState implements RunnableState {
 
   private final JSTestDriverConfiguration jsTestDriverConfiguration;
+  private final Project project;
 
   public TestRunnerState(
       RunnerInfo runnerInfo, RunnerSettings runnerSettings,
@@ -51,14 +55,21 @@ public class TestRunnerState implements RunnableState {
       JSTestDriverConfiguration jsTestDriverConfiguration, Project project) {
 
     this.jsTestDriverConfiguration = jsTestDriverConfiguration;
+    this.project = project;
   }
 
   @Nullable
   public ExecutionResult execute() throws ExecutionException {
+    ToolWindow window =
+        ToolWindowManager.getInstance(project).getToolWindow(JSTestDriverToolWindow.TOOL_WINDOW_ID);
+    window.show(new Runnable() {
+      public void run() {
+      }
+    });
     ActionFactory actionFactory =
         Guice.createInjector(new ActionFactoryModule()).getInstance(ActionFactory.class);
     File path = new File("/home/alexeagle/IdeaProjects/untitled4");
-    FileReader configReader = null;
+    FileReader configReader;
     try {
       configReader = new FileReader(jsTestDriverConfiguration.getSettingsFile());
     } catch (FileNotFoundException e) {
@@ -67,15 +78,31 @@ public class TestRunnerState implements RunnableState {
     }
     ConfigurationParser configurationParser = new ConfigurationParser(path, configReader);
     String serverURL = "http://localhost:" + jsTestDriverConfiguration.getServerPort();
-    IDEPluginActionBuilder pluginActionBuilder =
-        new IDEPluginActionBuilder(configurationParser, serverURL, actionFactory);
-    pluginActionBuilder.addAllTests().sendTestResultsTo(new ResponseStream() {
-      public void stream(Response response) {
+    ToolPanel toolPanel = (ToolPanel) window.getContentManager().getContent(0).getComponent();
+    toolPanel.clearTestResults();
+    final ResponseStream responseStream = toolPanel.getResponseStream();
+
+    ResponseStreamFactory responseStreamFactory = new ResponseStreamFactory() {
+      public ResponseStream getRunTestsActionResponseStream() {
+        return responseStream;
       }
 
-      public void finish() {
+      public ResponseStream getDryRunActionResponseStream() {
+        return null;
       }
-    }).build().runActions();
+
+      public ResponseStream getEvalActionResponseStream() {
+        return null;
+      }
+
+      public ResponseStream getResetActionResponseStream() {
+        return null;
+      }
+    };
+    IDEPluginActionBuilder pluginActionBuilder =
+        new IDEPluginActionBuilder(configurationParser, serverURL, actionFactory, responseStreamFactory);
+
+    pluginActionBuilder.addAllTests().build().runActions();
     return null;
   }
 

@@ -12,11 +12,9 @@ import com.google.jstestdriver.idea.PluginResources;
 import com.google.jstestdriver.ui.CapturedBrowsersPanel;
 import com.google.jstestdriver.ui.StatusBar;
 
-import com.intellij.util.ui.UIUtil;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observer;
@@ -34,14 +32,11 @@ public class ServerControlPanel extends JPanel {
   private StatusBar statusBar;
   private CapturedBrowsersPanel capturedBrowsersPanel;
   private ServerStartupAction serverStartupAction;
-  private FilesCache cache = new FilesCache(Collections.<String, FileInfo>emptyMap());
+  private FilesCache cache = new FilesCache(new HashMap<String, FileInfo>());
 
   public ServerControlPanel() {
     statusBar = new StatusBar(StatusBar.Status.NOT_RUNNING, MessageBundle.getBundle());
     capturedBrowsersPanel = new CapturedBrowsersPanel();
-
-    setBackground(UIUtil.getTreeTextBackground());
-    capturedBrowsersPanel.setBackground(UIUtil.getTreeTextBackground());
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     add(new JPanel() {{
       setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -77,5 +72,4 @@ public class ServerControlPanel extends JPanel {
       }
     }
   }
-
 }

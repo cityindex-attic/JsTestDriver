@@ -44,4 +44,19 @@ public class PluginResources {
   public static Icon getServerStopIcon() {
     return IconLoader.findIcon("stopServer.png", ToolPanel.class);
   }
+
+  public static Icon getFailedTestIcon() {
+    return IconLoader.findIcon("/runConfigurations/testFailed.png");
+  }
+
+  public static Icon getErroredTestIcon() {
+    return IconLoader.findIcon("/runConfigurations/testError.png");
+  }
+
+  public static Icon getPassedTestIcon() {
+    return IconLoader.findIcon("/runConfigurations/testPassed.png");
+  }
+
+
+
 }
