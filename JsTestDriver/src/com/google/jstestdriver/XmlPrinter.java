@@ -96,7 +96,7 @@ public class XmlPrinter implements TestResultPrinter {
 
   // TODO(jeremiele): I know what you think, I think it too...
   private void logData(TestResult testResult) {
-    String result = testResult.getResult();
+    TestResult.Result result = testResult.getResult();
     String browserName = testResult.getBrowserInfo().getName();
     String browserVersion = testResult.getBrowserInfo().getVersion();
     String os = testResult.getBrowserInfo().getOs();
@@ -108,13 +108,13 @@ public class XmlPrinter implements TestResultPrinter {
     if (log.length() > 0) {
       runData.addProblem(testResult);
     }
-    if (result.equals("passed")) {
+    if (result == TestResult.Result.passed) {
       runData.addPass();
       totalPasses.incrementAndGet();
-    } else if (result.startsWith("failed")) {
+    } else if (result == TestResult.Result.failed) {
       runData.addFail();
       totalFails.incrementAndGet();
-    } else if (result.startsWith("error")) {
+    } else if (result == TestResult.Result.error) {
       runData.addError();
       totalErrors.incrementAndGet();
     }
@@ -126,7 +126,7 @@ public class XmlPrinter implements TestResultPrinter {
 
     serializer.startTestCase(testResult.getTestCaseName(), testResult.getTestName() + ":" +
         browserInfo.getName() + browserInfo.getVersion(), testResult.getTime() / 1000);
-    if (!testResult.getResult().equals("passed")) {
+    if (testResult.getResult() != TestResult.Result.passed) {
       String message = "";
 
       try {
@@ -136,10 +136,10 @@ public class XmlPrinter implements TestResultPrinter {
       } catch (Exception e) {
         message = testResult.getMessage();
       }
-      if (testResult.getResult().equals("failed")) {
-        serializer.addFailure(testResult.getResult(), message);
-      } else if (testResult.getResult().equals("error")) {
-        serializer.addError(testResult.getResult(), message);
+      if (testResult.getResult() == TestResult.Result.failed) {
+        serializer.addFailure(testResult.getResult().toString(), message);
+      } else if (testResult.getResult() == TestResult.Result.error) {
+        serializer.addError(testResult.getResult().toString(), message);
       }
     }
     serializer.endTestCase();

@@ -27,7 +27,7 @@ public class TestResultGeneratorTest extends TestCase {
 
   public void testGetTestResults() throws Exception {
     TestResult expected =
-        new TestResult(new BrowserInfo(), "Result", "Message", "log", "testCase", "TestName", 0f);
+        new TestResult(new BrowserInfo(), "passed", "Message", "log", "testCase", "TestName", 0f);
     Gson gson = new Gson();
     Collection<TestResult> results = new ArrayList<TestResult>();
     results.add(expected);
@@ -39,6 +39,7 @@ public class TestResultGeneratorTest extends TestCase {
     Collection<TestResult> testResults = generator.getTestResults(response);
     assertEquals(1, testResults.size());
     TestResult actual = testResults.iterator().next();
+
     assertEquals(expected.getResult(), actual.getResult());
     assertEquals(expected.getMessage(), actual.getMessage());
     assertEquals(expected.getLog(), actual.getLog());

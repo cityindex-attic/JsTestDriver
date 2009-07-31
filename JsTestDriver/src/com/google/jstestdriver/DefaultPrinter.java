@@ -72,7 +72,7 @@ public class DefaultPrinter implements TestResultPrinter {
         List<TestResult> problems = data.getProblems();
 
         for (TestResult testResult : problems) {
-          if (!testResult.getResult().equals("passed")) {
+          if (testResult.getResult() != TestResult.Result.passed) {
             FailureParser parser = new FailureParser();
 
             parser.parse(testResult.getMessage());
@@ -124,11 +124,11 @@ public class DefaultPrinter implements TestResultPrinter {
       runData = new RunData();
       browsersRunData.put(browser, runData);
     }
-    String result = testResult.getResult();
+    TestResult.Result result = testResult.getResult();
     String log = testResult.getLog();
 
     runData.addTime(testResult.getTime());
-    if (result.equals("passed")) {
+    if (result == TestResult.Result.passed) {
       if (!verbose) {
         out.print('.');
         if (log.length() > 0) {
@@ -146,7 +146,7 @@ public class DefaultPrinter implements TestResultPrinter {
       }
       runData.addPass();
       totalPasses.incrementAndGet();
-    } else if (result.startsWith("failed")) {
+    } else if (result == TestResult.Result.failed) {
       if (!verbose) {
         out.print('F');
       } else {
@@ -162,7 +162,7 @@ public class DefaultPrinter implements TestResultPrinter {
       runData.addFail();
       runData.addProblem(testResult);
       totalFails.incrementAndGet();
-    } else if (result.startsWith("error")) {
+    } else if (result == TestResult.Result.error) {
       if (!verbose) {
         out.print('E');
       } else {

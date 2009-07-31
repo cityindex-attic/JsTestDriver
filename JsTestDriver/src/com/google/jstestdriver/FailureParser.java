@@ -28,7 +28,7 @@ public class FailureParser {
   private final Gson gson = new Gson();
 
   private final List<String> stack = new LinkedList<String>();
-  private String message;
+  private String message = "";
 
   public void parse(String failure) {
     try {

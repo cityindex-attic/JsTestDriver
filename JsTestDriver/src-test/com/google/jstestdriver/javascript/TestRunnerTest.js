@@ -52,5 +52,4 @@ TestRunnerTest.prototype.testRunTests = function() {
       function() {}, onComplete, false);
   assertEquals(4, testRunsConfigurationThatRan.length);
   assertTrue(onCompleteCalled);
-  assertTrue(true);
 };

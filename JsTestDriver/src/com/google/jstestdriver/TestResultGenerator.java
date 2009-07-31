@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Generates the test results given a gson and a response.
@@ -26,7 +27,9 @@ import java.util.Collection;
  * @author shyamseshadri@google.com (Shyam Seshadri)
  */
 public class TestResultGenerator {
-  
+
+  private static String NEW_LINE = System.getProperty("line.separator");
+
   private final Gson gson = new Gson();
   
   /**
@@ -42,7 +45,20 @@ public class TestResultGenerator {
 
     for (TestResult result : results) {
       BrowserInfo browserInfo = response.getBrowser();
+
       result.setBrowserInfo(browserInfo);
+      FailureParser failureParser = new FailureParser();
+
+      failureParser.parse(result.getMessage());
+      result.setParsedMessage(failureParser.getMessage());
+      List<String> stackTrace = failureParser.getStack();
+      StringBuilder sb = new StringBuilder();
+
+      for (String l : stackTrace) {
+        sb.append(l);
+        sb.append(NEW_LINE);
+      }
+      result.setStack(sb.toString());
     }
     return results;
   }

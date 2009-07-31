@@ -20,8 +20,14 @@ package com.google.jstestdriver;
  */
 public class TestResult {
 
+  public enum Result {
+    passed, failed, error
+  }
+
   private String result;
   private String message;
+  private String parsedMessage;
+  private String stack;
   private String log;
   private String testCaseName;
   private String testName;
@@ -40,10 +46,10 @@ public class TestResult {
   }
 
   public TestResult() {
-  }
+  }  
 
-  public String getResult() {
-    return result;
+  public Result getResult() {
+    return Result.valueOf(result);
   }
 
   public String getMessage() {
@@ -64,6 +70,22 @@ public class TestResult {
 
   public void setBrowserInfo(BrowserInfo browserInfo) {
     this.browserInfo = browserInfo;
+  }
+
+  public void setParsedMessage(String parsedMessage) {
+    this.parsedMessage = parsedMessage;
+  }
+
+  public void setStack(String stack) {
+    this.stack = stack;
+  }
+
+  public String getParsedMessage() {
+    return parsedMessage;
+  }
+
+  public String getStack() {
+    return stack;
   }
 
   public BrowserInfo getBrowserInfo() {

@@ -28,7 +28,6 @@ import java.util.concurrent.Executors;
  */
 public class IDEPluginActionBuilder {
 
-  
   private final ConfigurationParser configParser;
   private final String serverAddress;
   private final ActionFactory actionFactory;
