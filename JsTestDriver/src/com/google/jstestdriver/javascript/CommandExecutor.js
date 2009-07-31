@@ -406,7 +406,7 @@ jstestdriver.CommandExecutor.prototype.dryRun = function() {
   this.sendData({
     done: '',
     response: {
-      response: JSON.stringify(this.__testCaseManager.dryRun()),
+      response: JSON.stringify(this.__testCaseManager.getCurrentlyLoadedTest()),
       browser: {
         "id": this.__id,
         "name": jstestdriver.getBrowserFriendlyName(),

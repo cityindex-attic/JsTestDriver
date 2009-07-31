@@ -43,23 +43,6 @@ jstestdriver.TestCaseManager.prototype.indexOf_ = function(testCaseInfo) {
 };
 
 
-// should not be here, probably in TestCaseInfo
-jstestdriver.TestCaseManager.prototype.getTestRunsConfigurationFor = function(expressions) {
-  var testRunsConfiguration = [];
-  var size = this.testCasesInfo_.length;
-
-  for (var i = 0; i < size; i++) {
-    var testCaseInfo = this.testCasesInfo_[i];
-    var testRunConfiguration = testCaseInfo.getTestRunConfigurationFor(expressions);
-
-    if (testRunConfiguration != null) {
-      testRunsConfiguration.push(testRunConfiguration);
-    }
-  }
-  return testRunsConfiguration;
-};
-
-
 jstestdriver.TestCaseManager.prototype.getDefaultTestRunsConfiguration = function() {
   var testRunsConfiguration = [];
   var size = this.testCasesInfo_.length;
