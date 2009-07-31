@@ -10,23 +10,24 @@ import com.google.jstestdriver.TestResultGenerator;
 import com.google.jstestdriver.idea.PluginResources;
 import com.google.jstestdriver.idea.ui.TestResultTreeModel.PassFailNode;
 
-import static com.intellij.openapi.util.IconLoader.findIcon;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.util.Collection;
 
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
 
 /**
  * The section of the Tool Window which shows the test results and controls test execution.
@@ -37,6 +38,8 @@ public class TestExecutionPanel extends JPanel implements ResponseStream {
 
   private TestResultTreeModel treeModel = new TestResultTreeModel(
       new DefaultMutableTreeNode("Test Results Tree"));
+  private JTextArea outputArea = new JTextArea();
+  private GreenRedProgressBar progressBar = new GreenRedProgressBar();
 
   public TestExecutionPanel() {
     setLayout(new BorderLayout());
@@ -44,26 +47,35 @@ public class TestExecutionPanel extends JPanel implements ResponseStream {
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       add(new JPanel() {{
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(new JButton(findIcon("/actions/refreshUsages.png")));
-        add(new JButton(findIcon("/runConfigurations/rerunFailedTests.png")));
-        add(new JButton(findIcon("/runConfigurations/hidePassed.png")));
-        add(new JButton(findIcon("/actions/reset.png")));
+        add(new JButton(PluginResources.getRerunIcon()));
+        add(new JButton(PluginResources.getFilterPassedIcon()));
+        add(new JButton(PluginResources.getRerunFailedIcon()));
+        add(new JButton(PluginResources.getResetBrowsersIcon()));
       }});
-      add(new JProgressBar());
+      add(progressBar);
     }}, BorderLayout.NORTH);
-    add(new JTree(treeModel) {{
-      setRootVisible(false);
-      treeModel.addTreeModelListener(new TestResultTreeModelListener(this));
-      setCellRenderer(new TestResultTreeCellRenderer());
+    add(new JPanel() {{
+      setLayout(new GridLayout(2,1));
+      add(new JTree(treeModel) {{
+        setRootVisible(false);
+        treeModel.addTreeModelListener(new TestResultTreeModelListener(this));
+        addTreeSelectionListener(new TreeSelectionListener() {
+          public void valueChanged(TreeSelectionEvent e) {
+            PassFailNode node = (PassFailNode) e.getPath().getLastPathComponent();
+            outputArea.setText(node.getOutput());
+          }
+        });
+        setCellRenderer(new TestResultTreeCellRenderer());
+      }});
+      add(outputArea);
     }}, BorderLayout.CENTER);
-    add(new JTextArea("Log output from Firefox 3.0 Linux:\nPASSED: some log output"),
-        BorderLayout.SOUTH);
   }
 
   public void stream(Response response) {
     Collection<TestResult> testResultCollection =
         new TestResultGenerator().getTestResults(response);
     for (TestResult result : testResultCollection) {
+      progressBar.respondToTestResult(result.getResult());
       treeModel.addResult(result);
     }
   }
@@ -73,6 +85,11 @@ public class TestExecutionPanel extends JPanel implements ResponseStream {
 
   public void clearTestResults() {
     treeModel.clear();
+    progressBar.reset();
+  }
+
+  public void setTestsCount(int testsCount) {
+    progressBar.setTestsCount(testsCount);
   }
 
   private class TestResultTreeModelListener implements TreeModelListener {
@@ -87,7 +104,17 @@ public class TestExecutionPanel extends JPanel implements ResponseStream {
     }
 
     public void treeNodesInserted(TreeModelEvent e) {
-      tree.expandPath(e.getTreePath());
+      TreePath path = e.getTreePath();
+      // path element 0 is the root, a length of 1 is a browser node
+      if (path.getPath().length < 2) {
+        tree.expandPath(path);
+      }
+      if (path.getLastPathComponent() instanceof PassFailNode) {
+        PassFailNode node = (PassFailNode) path.getLastPathComponent();
+        if (node.getResult() != Result.passed) {
+          tree.expandPath(path);
+        }
+      }
     }
 
     public void treeNodesRemoved(TreeModelEvent e) {

@@ -17,7 +17,7 @@ package com.google.jstestdriver.idea;
 
 import com.google.jstestdriver.idea.ui.ToolPanel;
 
-import com.intellij.openapi.util.IconLoader;
+import static com.intellij.openapi.util.IconLoader.findIcon;
 
 import javax.swing.Icon;
 
@@ -34,29 +34,42 @@ public class PluginResources {
   }
 
   public static Icon getSmallIcon() {
-    return IconLoader.findIcon("JsTestDriver.png", ToolPanel.class);
+    return findIcon("JsTestDriver.png", ToolPanel.class);
   }
 
   public static Icon getServerStartIcon() {
-    return IconLoader.findIcon("startServer.png", ToolPanel.class);
+    return findIcon("startServer.png", ToolPanel.class);
   }
 
   public static Icon getServerStopIcon() {
-    return IconLoader.findIcon("stopServer.png", ToolPanel.class);
+    return findIcon("stopServer.png", ToolPanel.class);
   }
 
   public static Icon getFailedTestIcon() {
-    return IconLoader.findIcon("/runConfigurations/testFailed.png");
+    return findIcon("/runConfigurations/testFailed.png");
   }
 
   public static Icon getErroredTestIcon() {
-    return IconLoader.findIcon("/runConfigurations/testError.png");
+    return findIcon("/runConfigurations/testError.png");
   }
 
   public static Icon getPassedTestIcon() {
-    return IconLoader.findIcon("/runConfigurations/testPassed.png");
+    return findIcon("/runConfigurations/testPassed.png");
   }
 
+  public static Icon getRerunIcon() {
+    return findIcon("/actions/refreshUsages.png");
+  }
 
+  public static Icon getFilterPassedIcon() {
+    return findIcon("/runConfigurations/hidePassed.png");
+  }
 
+  public static Icon getRerunFailedIcon() {
+    return findIcon("/runConfigurations/rerunFailedTests.png");
+  }
+
+  public static Icon getResetBrowsersIcon() {
+    return findIcon("/actions/reset.png");
+  }
 }

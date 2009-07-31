@@ -15,11 +15,15 @@
  */
 package com.google.jstestdriver.idea.ui;
 
+import com.google.jstestdriver.DryRunInfo;
+import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.ResponseStreamFactory;
 
 import com.intellij.util.ui.UIUtil;
 
 import java.awt.BorderLayout;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -30,6 +34,7 @@ import javax.swing.JPanel;
 public class ToolPanel extends JPanel {
 
   private TestExecutionPanel testExecutionPanel = new TestExecutionPanel();
+  private final AtomicInteger totalTests = new AtomicInteger(0);
 
   public ToolPanel() {
     setLayout(new BorderLayout());
@@ -46,11 +51,48 @@ public class ToolPanel extends JPanel {
     frame.setVisible(true);
   }
 
-  public ResponseStream getResponseStream() {
+  public ResponseStream getTestResultStream() {
     return testExecutionPanel;
   }
 
   public void clearTestResults() {
     testExecutionPanel.clearTestResults();
+    totalTests.set(0);
+  }
+
+  public void setTestsCount(int i) {
+    testExecutionPanel.setTestsCount(i);
+  }
+
+  public ResponseStreamFactory createResponseStreamFactory() {
+    return new ResponseStreamFactory() {
+      public ResponseStream getRunTestsActionResponseStream() {
+        return getTestResultStream();
+      }
+
+      public ResponseStream getDryRunActionResponseStream() {
+        return new ResponseStream() {
+          public void stream(Response response) {
+            DryRunInfo info = DryRunInfo.fromJson(response);
+            totalTests.addAndGet(info.getNumTests());
+          }
+
+          public void finish() {
+          }
+        };
+      }
+
+      public ResponseStream getEvalActionResponseStream() {
+        return null;
+      }
+
+      public ResponseStream getResetActionResponseStream() {
+        return null;
+      }
+    };
+  }
+
+  public void dryRunComplete() {
+    setTestsCount(totalTests.get());
   }
 }

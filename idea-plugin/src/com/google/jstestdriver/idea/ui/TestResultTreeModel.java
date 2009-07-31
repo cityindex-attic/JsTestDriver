@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
@@ -35,34 +34,33 @@ public class TestResultTreeModel extends DefaultTreeModel {
 
   /**
    * This method may be called concurrently from multiple test running threads.
+   * Any changes to Swing models are therefore done on the AWT Event thread.
    * @param result the test result from a test
    */
   public void addResult(final TestResult result) {
     final BrowserInfo browser = result.getBrowserInfo();
+    String outputLog = String.format("%s\n%s\n%s", result.getParsedMessage(), result.getStack(), result.getLog());
+    final PassFailNode testNode = new PassFailNode(result.getTestName(), result.getResult(), outputLog);
+
     if (browserNodes.putIfAbsent(browser, new PassFailNode(browser)) == null) {
-      SwingUtilities.invokeLater(new SwingWorker() {
-        @Override
-        protected Object doInBackground() throws Exception {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
           insertNodeInto(browserNodes.get(browser), (MutableTreeNode) root, root.getChildCount());
-          return null;
         }
       });
     }
     final String testCaseKey = browser + result.getTestCaseName();
     if (testCaseNodes.putIfAbsent(testCaseKey, new PassFailNode(result.getTestCaseName())) == null) {
-      SwingUtilities.invokeLater(new SwingWorker() {
-        @Override
-        protected Object doInBackground() throws Exception {
+      SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
           insertNodeInto(testCaseNodes.get(testCaseKey), browserNodes.get(browser),
               browserNodes.get(browser).getChildCount());
-          return null;
         }
       });
     }
 
-    SwingUtilities.invokeLater(new SwingWorker() {
-      @Override
-      protected Object doInBackground() throws Exception {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
         if (browserNodes.get(browser).childTestResult(result.getResult())) {
           nodeChanged(browserNodes.get(browser));
         }
@@ -70,9 +68,7 @@ public class TestResultTreeModel extends DefaultTreeModel {
         if (testCaseNode.childTestResult(result.getResult())) {
           nodeChanged(testCaseNode);
         }
-        insertNodeInto(new PassFailNode(result.getTestName(), result.getResult()), testCaseNode,
-            testCaseNode.getChildCount());
-        return null;
+        insertNodeInto(testNode, testCaseNode, testCaseNode.getChildCount());
       }
     });
 
@@ -86,16 +82,17 @@ public class TestResultTreeModel extends DefaultTreeModel {
   }
 
   public static class PassFailNode extends DefaultMutableTreeNode {
-
     private Result result;
+    private final String outputLog;
 
-    public PassFailNode(Object userObject, Result result) {
+    public PassFailNode(Object userObject, Result result, String outputLog) {
       super(userObject);
       this.result = result;
+      this.outputLog = outputLog;
     }
 
     public PassFailNode(Object userObject) {
-      this(userObject, Result.passed);
+      this(userObject, Result.passed, "");
     }
 
     public Result getResult() {
@@ -117,6 +114,10 @@ public class TestResultTreeModel extends DefaultTreeModel {
         return true;
       }
       return false;
+    }
+
+    public String getOutput() {
+      return outputLog;
     }
   }
 }

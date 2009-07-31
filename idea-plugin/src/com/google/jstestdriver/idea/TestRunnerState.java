@@ -18,10 +18,9 @@ package com.google.jstestdriver.idea;
 import com.google.inject.Guice;
 import com.google.jstestdriver.ActionFactory;
 import com.google.jstestdriver.ActionFactoryModule;
+import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.IDEPluginActionBuilder;
-import com.google.jstestdriver.ResponseStream;
-import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.idea.ui.ToolPanel;
 
 import com.intellij.execution.ExecutionException;
@@ -40,6 +39,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+
+import javax.swing.SwingWorker;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -60,49 +61,43 @@ public class TestRunnerState implements RunnableState {
 
   @Nullable
   public ExecutionResult execute() throws ExecutionException {
-    ToolWindow window =
-        ToolWindowManager.getInstance(project).getToolWindow(JSTestDriverToolWindow.TOOL_WINDOW_ID);
-    window.show(new Runnable() {
-      public void run() {
-      }
-    });
     ActionFactory actionFactory =
         Guice.createInjector(new ActionFactoryModule()).getInstance(ActionFactory.class);
-    File path = new File("/home/alexeagle/IdeaProjects/untitled4");
-    FileReader configReader;
+    File path = new File("/usr/local/google/alexeagle/js-test-driver/JsTestDriver");
+    ToolWindow window =
+        ToolWindowManager.getInstance(project).getToolWindow(JSTestDriverToolWindow.TOOL_WINDOW_ID);
+    String serverURL = "http://localhost:" + jsTestDriverConfiguration.getServerPort();
+    final ToolPanel toolPanel = (ToolPanel) window.getContentManager().getContent(0).getComponent();
+    toolPanel.clearTestResults();
     try {
-      configReader = new FileReader(jsTestDriverConfiguration.getSettingsFile());
+      IDEPluginActionBuilder pluginActionBuilder =
+          new IDEPluginActionBuilder(new ConfigurationParser(path, new FileReader(jsTestDriverConfiguration.getSettingsFile())), serverURL, actionFactory,
+              toolPanel.createResponseStreamFactory());
+      final ActionRunner dryRunRunner = pluginActionBuilder.dryRun().build();
+
+      pluginActionBuilder =
+          new IDEPluginActionBuilder(new ConfigurationParser(path, new FileReader(jsTestDriverConfiguration.getSettingsFile())), serverURL, actionFactory,
+              toolPanel.createResponseStreamFactory());
+      final ActionRunner testRunner = pluginActionBuilder.addAllTests().build();
+
+      window.show(new Runnable() {
+        public void run() {
+          SwingWorker worker = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+              dryRunRunner.runActions();
+              toolPanel.dryRunComplete();
+              testRunner.runActions();
+              return null;
+            }
+          };
+          worker.execute();
+        }
+      });
     } catch (FileNotFoundException e) {
       throw new ExecutionException("Failed to read settings file " +
                                    jsTestDriverConfiguration.getSettingsFile(), e);
     }
-    ConfigurationParser configurationParser = new ConfigurationParser(path, configReader);
-    String serverURL = "http://localhost:" + jsTestDriverConfiguration.getServerPort();
-    ToolPanel toolPanel = (ToolPanel) window.getContentManager().getContent(0).getComponent();
-    toolPanel.clearTestResults();
-    final ResponseStream responseStream = toolPanel.getResponseStream();
-
-    ResponseStreamFactory responseStreamFactory = new ResponseStreamFactory() {
-      public ResponseStream getRunTestsActionResponseStream() {
-        return responseStream;
-      }
-
-      public ResponseStream getDryRunActionResponseStream() {
-        return null;
-      }
-
-      public ResponseStream getEvalActionResponseStream() {
-        return null;
-      }
-
-      public ResponseStream getResetActionResponseStream() {
-        return null;
-      }
-    };
-    IDEPluginActionBuilder pluginActionBuilder =
-        new IDEPluginActionBuilder(configurationParser, serverURL, actionFactory, responseStreamFactory);
-
-    pluginActionBuilder.addAllTests().build().runActions();
     return null;
   }
 

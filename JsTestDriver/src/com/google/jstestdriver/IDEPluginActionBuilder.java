@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -34,7 +33,7 @@ public class IDEPluginActionBuilder {
   private final ResponseStreamFactory responseStreamFactory;
 
   private List<String> tests = new LinkedList<String>();
-  
+  private boolean dryRun = false;
 
   public IDEPluginActionBuilder(ConfigurationParser configParser, String serverAddress,
       ActionFactory actionFactory, ResponseStreamFactory responseStreamFactory) {
@@ -46,6 +45,11 @@ public class IDEPluginActionBuilder {
 
   public IDEPluginActionBuilder addAllTests() {
     tests.add("all");
+    return this;
+  }
+
+  public IDEPluginActionBuilder dryRun() {
+    dryRun = true;
     return this;
   }
 
@@ -65,9 +69,11 @@ public class IDEPluginActionBuilder {
   }
 
   private List<ThreadedAction> createThreadedActions(JsTestDriverClient client) {
-    List<ThreadedAction> threadedActions = new ArrayList<ThreadedAction>();
+    List<ThreadedAction> threadedActions = new LinkedList<ThreadedAction>();
 
-    threadedActions.add(new DryRunAction(responseStreamFactory));
+    if (dryRun) {
+      threadedActions.add(new DryRunAction(responseStreamFactory));
+    }
     if (!tests.isEmpty()) {
       threadedActions.add(new RunTestsAction(responseStreamFactory, new ResponsePrinterFactory("",
           System.out, client, false), tests, true));
