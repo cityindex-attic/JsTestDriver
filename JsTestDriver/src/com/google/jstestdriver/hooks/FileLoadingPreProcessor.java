@@ -26,7 +26,6 @@ import com.google.jstestdriver.FileInfo;
  * @author corysmith
  *
  */
-public interface FileLoadPreProcessor {
+public interface FileLoadingPreProcessor {
   List<FileInfo> process(List<FileInfo> files);
 }
-

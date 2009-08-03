@@ -18,9 +18,11 @@ package com.google.jstestdriver;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import com.google.jstestdriver.ActionFactory.ActionFactoryFileFilter;
-import com.google.jstestdriver.hooks.FileLoadHook;
+import com.google.jstestdriver.hooks.FileLoadPostProcessor;
+import com.google.jstestdriver.hooks.FileLoadingPreProcessor;
 
 /**
+ * Module for the action handler.
  * Module for API usage, which doesn't require any constructor params.
  * @author alexeagle@google.com (Alex Eagle)
  */
@@ -28,7 +30,8 @@ public class ActionFactoryModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    Multibinder.newSetBinder(binder(), FileLoadHook.class);
+    Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class);
+    Multibinder.newSetBinder(binder(), FileLoadingPreProcessor.class);
     bind(FileReader.class).to(SimpleFileReader.class);
     bind(JsTestDriverFileFilter.class).to(ActionFactoryFileFilter.class);
   }

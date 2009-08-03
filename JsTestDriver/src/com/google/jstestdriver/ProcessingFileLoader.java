@@ -16,13 +16,13 @@
 
 package com.google.jstestdriver;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
+import com.google.jstestdriver.hooks.FileLoadingPreProcessor;
 
 /**
  * A simple loader for files.
@@ -31,20 +31,23 @@ import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 public class ProcessingFileLoader implements FileLoader {
   private final JsTestDriverFileFilter filter;
   private final FileReader reader;
-  private final Collection<FileLoadPostProcessor> postprocessors;
+  private final Set<FileLoadPostProcessor> postprocessors;
+  private final Set<FileLoadingPreProcessor> preProcessors;
 
   @Inject
   public ProcessingFileLoader(JsTestDriverFileFilter filter,
                               FileReader reader,
-                              Collection<FileLoadPostProcessor> postprocessors) {
+                              Set<FileLoadPostProcessor> postprocessors,
+                              Set<FileLoadingPreProcessor> preProcessors) {
     this.filter = filter;
     this.reader = reader;
     this.postprocessors = postprocessors;
+    this.preProcessors = preProcessors;
   }
 
   public List<FileInfo> loadFiles(Set<FileInfo> filesToLoad, boolean shouldReset) {
     List<FileInfo> loadedFiles = new LinkedList<FileInfo>();
-    for (FileInfo file : filesToLoad) {
+    for (FileInfo file : preProcessFiles(filesToLoad)) {
       StringBuilder fileContent = new StringBuilder();
       long timestamp = -1;
       if (!file.isRemote()) {
@@ -60,11 +63,24 @@ public class ProcessingFileLoader implements FileLoader {
       }
       FileInfo processed = new FileInfo(file.getFileName(), timestamp, false, file
           .isServeOnly(), fileContent.toString());
-      for (FileLoadPostProcessor hook : postprocessors) {
-        processed = hook.process(processed);
-      }
+      processed = postProcessFile(processed);
       loadedFiles.add(processed);
     }
     return loadedFiles;
+  }
+
+  private FileInfo postProcessFile(FileInfo processed) {
+    for (FileLoadPostProcessor hook : postprocessors) {
+      processed = hook.process(processed);
+    }
+    return processed;
+  }
+  
+  private List<FileInfo> preProcessFiles(Set<FileInfo> filesToLoad) {
+    List<FileInfo> files = new LinkedList<FileInfo>(filesToLoad);
+    for (FileLoadingPreProcessor processor : preProcessors) {
+      files = processor.process(files);
+    }
+    return files;
   }
 }
