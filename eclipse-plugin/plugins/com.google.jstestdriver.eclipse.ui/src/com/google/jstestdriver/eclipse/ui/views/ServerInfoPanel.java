@@ -20,6 +20,8 @@ import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -49,24 +51,34 @@ public class ServerInfoPanel extends Composite implements Observer {
 
   public ServerInfoPanel(Composite parent, int style) {
     super(parent, style);
+    setLayout(new GridLayout(4, false));
     icons = new Icons();
-    serverUrlText = new Text(this, SWT.NONE);
+    
+    GridData textGridData = new GridData();
+    textGridData.horizontalSpan = 4;
+    textGridData.grabExcessHorizontalSpace = true;
+    textGridData.horizontalAlignment = SWT.FILL;
+    serverUrlText = new Text(this, SWT.CENTER);
     serverUrlText.setText(SERVER_DOWN);
     serverUrlText.setBackground(NOT_RUNNING);
-    serverUrlText.setBounds(30, 12, 227, 17);
+    serverUrlText.setLayoutData(textGridData);
     serverUrlText.setEditable(false);
     serverUrlText.setOrientation(SWT.HORIZONTAL);
+    GridData imgGridData = new GridData();
+    imgGridData.horizontalSpan = 1;
+    imgGridData.minimumHeight = 64;
+    imgGridData.minimumWidth = 64;
     ffIcon = new Canvas(this, SWT.NONE);
-    ffIcon.setBounds(9, 38, 64, 64);
+    ffIcon.setLayoutData(imgGridData);
     ffIcon.setBackgroundImage(icons.getFirefoxDisabledIcon());
     chromeIcon = new Canvas(this, SWT.NONE);
-    chromeIcon.setBounds(80, 38, 64, 64);
+    chromeIcon.setLayoutData(imgGridData);
     chromeIcon.setBackgroundImage(icons.getChromeDisabledIcon());
     safariIcon = new Canvas(this, SWT.NONE);
-    safariIcon.setBounds(152, 38, 64, 64);
+    safariIcon.setLayoutData(imgGridData);
     safariIcon.setBackgroundImage(icons.getSafariDisabledIcon());
     ieIcon = new Canvas(this, SWT.NONE);
-    ieIcon.setBounds(224, 38, 64, 64);
+    ieIcon.setLayoutData(imgGridData);
     ieIcon.setBackgroundImage(icons.getIEDisabledIcon());
   }
 

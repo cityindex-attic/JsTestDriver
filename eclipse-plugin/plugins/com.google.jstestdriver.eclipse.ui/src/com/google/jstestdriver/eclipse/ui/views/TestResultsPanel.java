@@ -27,6 +27,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -55,6 +57,7 @@ public class TestResultsPanel extends Composite {
   private Button rerunFailedFirstButton;
   private Button rerunButton;
   private Button showOnlyFailedButton;
+  private Button refreshBrowsersButton;
   private Text testDetailsText;
   private int totalNumTests;
   private ViewerFilter showOnlyFailuresFilter;
@@ -62,22 +65,17 @@ public class TestResultsPanel extends Composite {
   public TestResultsPanel(Composite parent, int style) {
     super(parent, style);
     icons = new Icons();
-    showOnlyFailuresFilter = new FailureOnlyViewerFilter();
+    setLayout(new GridLayout(4, true));
     testRunResult = new EclipseJstdTestRunResult();
-    testResultsTree = new TreeViewer(this, SWT.NONE);
-    testResultsTree.getTree().setBounds(0, 95, 281, 242);
-    testResultsTree.setLabelProvider(new TestResultsTreeLabelProvider());
-    testResultsTree.setContentProvider(new TestResultsTreeContentProvider());
-    testResultsTree.setInput(testRunResult);
-    testProgressIndicator = new JUnitProgressBar(this);
-    testProgressIndicator.setBounds(0, 59, 275, 30);
-    testDetailsText = new Text(this, SWT.MULTI | SWT.WRAP);
-    testDetailsText.setBounds(0, 343, 281, 58);
-    showOnlyFailedButton = new Button(this,SWT.TOGGLE);
+    showOnlyFailuresFilter = new FailureOnlyViewerFilter();
+
+    GridData showOnlyFailedButtonGridData = new GridData();
+    showOnlyFailedButtonGridData.horizontalAlignment = SWT.CENTER;
+    showOnlyFailedButton = new Button(this, SWT.TOGGLE);
     showOnlyFailedButton.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent e) {
       }
-
+      
       public void widgetSelected(SelectionEvent e) {
         if (showOnlyFailedButton.getSelection()) {
           testResultsTree.setFilters(new ViewerFilter[] {showOnlyFailuresFilter});
@@ -88,29 +86,67 @@ public class TestResultsPanel extends Composite {
       
     });
     showOnlyFailedButton.setImage(icons.getImage("icons/failures.gif"));
-    showOnlyFailedButton.setBounds(46, 0, 60, 30);
-    rerunButton = new Button(this, SWT.NONE);
+    showOnlyFailedButton.setLayoutData(showOnlyFailedButtonGridData);
+    GridData rerunButtonGridData = new GridData();
+    rerunButtonGridData.horizontalAlignment = SWT.CENTER;
+    rerunButton = new Button(this, SWT.FLAT);
     rerunButton.setImage(icons.getImage("icons/relaunch.gif"));
-    rerunButton.setBounds(106, 0, 60, 30);
-    rerunFailedFirstButton = new Button(this, SWT.CENTER);
+    rerunButton.setLayoutData(rerunButtonGridData);
+    GridData rerunFailedFirstButtonGridData = new GridData();
+    rerunFailedFirstButtonGridData.horizontalAlignment = SWT.CENTER;
+    rerunFailedFirstButton = new Button(this, SWT.FLAT);
     rerunFailedFirstButton.setText("RFF");
-    rerunFailedFirstButton.setBounds(166, 0, 60, 30);
-    totalRunLabel = new Label(this, SWT.NONE);
+    rerunFailedFirstButton.setLayoutData(rerunFailedFirstButtonGridData);
+    GridData refreshBrowsersButtonGridData = new GridData();
+    refreshBrowsersButtonGridData.horizontalAlignment = SWT.CENTER;
+    refreshBrowsersButton = new Button(this, SWT.FLAT);
+    refreshBrowsersButton.setText("RBr");
+    refreshBrowsersButton.setLayoutData(refreshBrowsersButtonGridData);
+    
+    GridData totalRunLabelData = new GridData();
+    totalRunLabelData.horizontalSpan = 2;
+    totalRunLabelData.grabExcessHorizontalSpace = true;
+    totalRunLabelData.horizontalAlignment = SWT.FILL;
+    totalRunLabel = new Label(this, SWT.CENTER);
     totalRunLabel.setText("Run : 0 / 0");
-    totalRunLabel.setBounds(6, 36, 90, 17);
-    errorsLabel = new Label(this, SWT.NONE);
+    totalRunLabel.setLayoutData(totalRunLabelData);
+    GridData otherLabelData = new GridData();
+    otherLabelData.horizontalAlignment = SWT.FILL;
+    errorsLabel = new Label(this, SWT.CENTER);
     errorsLabel.setText("Errors : 0");
-    errorsLabel.setBounds(116, 36, 60, 17);
-    failuresLabel = new Label(this, SWT.NONE);
+    errorsLabel.setLayoutData(otherLabelData);
+    failuresLabel = new Label(this, SWT.CENTER);
     failuresLabel.setText("Failed : 0");
-    failuresLabel.setBounds(190, 36, 75, 17);
+    failuresLabel.setLayoutData(otherLabelData);
+    
+    GridData progressIndicatorData = new GridData();
+    progressIndicatorData.horizontalSpan = 4;
+    progressIndicatorData.horizontalAlignment = SWT.FILL;
+    progressIndicatorData.verticalAlignment = SWT.FILL;
+    progressIndicatorData.minimumHeight = 20;
+    progressIndicatorData.minimumWidth = 180;
+    testProgressIndicator = new JUnitProgressBar(this);
+    testProgressIndicator.setLayoutData(progressIndicatorData);
+    
+    GridData treeData = new GridData();
+    treeData.horizontalSpan = 4;
+    treeData.horizontalAlignment = SWT.FILL;
+    treeData.grabExcessHorizontalSpace = true;
+    treeData.heightHint = 240;
+    treeData.verticalAlignment = SWT.FILL;
+    testResultsTree = new TreeViewer(this, SWT.NONE);
+    testResultsTree.getTree().setLayoutData(treeData);
+    testResultsTree.setLabelProvider(new TestResultsTreeLabelProvider());
+    testResultsTree.setContentProvider(new TestResultsTreeContentProvider());
+    testResultsTree.setInput(testRunResult);
+    
     testResultsTree.addDoubleClickListener(new IDoubleClickListener() {
-
+      
       public void doubleClick(DoubleClickEvent event) {
         TreeSelection selection = (TreeSelection) event.getSelection();
         if (selection.getFirstElement() instanceof EclipseJstdTestResult) {
           EclipseJstdTestResult result = (EclipseJstdTestResult) selection
-              .getFirstElement();
+          .getFirstElement();
           String detailsString = "";
           if (!result.getResult().getMessage().trim().equals("")) {
             detailsString = "Message : " + result.getResult().getMessage() + "\n";
@@ -120,6 +156,16 @@ public class TestResultsPanel extends Composite {
         }
       }
     });
+
+    GridData testDetailsData = new GridData();
+    testDetailsData.horizontalSpan = 4;
+    testDetailsData.grabExcessHorizontalSpace = true;
+    testDetailsData.heightHint = 100;
+    testDetailsData.verticalAlignment = SWT.FILL;
+    testDetailsData.horizontalAlignment = SWT.FILL;
+    testDetailsText = new Text(this, SWT.MULTI | SWT.WRAP);
+    testDetailsText.setLayoutData(testDetailsData);
+    
   }
 
   public void setupForNextTestRun() {
