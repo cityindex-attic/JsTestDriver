@@ -72,4 +72,8 @@ public class PluginResources {
   public static Icon getResetBrowsersIcon() {
     return findIcon("/actions/reset.png");
   }
+
+  public static String getCaptureUrlMessage() {
+    return MessageBundle.message("captureLabel");
+  }
 }

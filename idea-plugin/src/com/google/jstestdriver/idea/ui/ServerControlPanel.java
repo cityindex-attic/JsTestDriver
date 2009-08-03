@@ -14,14 +14,15 @@ import com.google.jstestdriver.ui.StatusBar;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Observer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  * A section of the Tool Window which controls the server and shows the captured browser status.
@@ -32,6 +33,8 @@ public class ServerControlPanel extends JPanel {
   private StatusBar statusBar;
   private CapturedBrowsersPanel capturedBrowsersPanel;
   private ServerStartupAction serverStartupAction;
+  // TODO - make configurable
+  private static int serverPort = 9876;
   private FilesCache cache = new FilesCache(new HashMap<String, FileInfo>());
 
   public ServerControlPanel() {
@@ -42,14 +45,22 @@ public class ServerControlPanel extends JPanel {
       setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
       add(statusBar);
       add(new JButton(PluginResources.getServerStartIcon()) {{
+        setToolTipText("Start a local server");
         addActionListener(new ServerStartActionListener());
       }});
       add(new JButton(PluginResources.getServerStopIcon()) {{
+        setToolTipText("Stop the local server");
         addActionListener(new ServerStopActionListener());
       }});
     }});
+    add(new JPanel() {{
+      setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+      add(new JLabel(PluginResources.getCaptureUrlMessage()));
+      add(new JTextField("http://localhost:" + serverPort + "/capture") {{
+        setEditable(false);
+      }});
+    }});
     add(capturedBrowsersPanel);
-
   }
 
   private class ServerStartActionListener implements ActionListener {
@@ -57,10 +68,8 @@ public class ServerControlPanel extends JPanel {
       CapturedBrowsers browsers = new CapturedBrowsers();
       browsers.addObserver(capturedBrowsersPanel);
       browsers.addObserver(statusBar);
-      serverStartupAction = new ServerStartupAction(9876, browsers, cache);
-      List<Observer> observers = new LinkedList<Observer>();
-      observers.add(statusBar);
-      serverStartupAction.addObservers(observers);
+      serverStartupAction = new ServerStartupAction(serverPort, browsers, cache);
+      serverStartupAction.addObservers(Arrays.<Observer>asList(statusBar));
       serverStartupAction.run();
     }
   }

@@ -40,7 +40,6 @@ public class TestResultTreeModel extends DefaultTreeModel {
   public void addResult(final TestResult result) {
     final BrowserInfo browser = result.getBrowserInfo();
     String outputLog = String.format("%s\n%s\n%s", result.getParsedMessage(), result.getStack(), result.getLog());
-    final PassFailNode testNode = new PassFailNode(result.getTestName(), result.getResult(), outputLog);
 
     if (browserNodes.putIfAbsent(browser, new PassFailNode(browser)) == null) {
       SwingUtilities.invokeLater(new Runnable() {
@@ -49,6 +48,7 @@ public class TestResultTreeModel extends DefaultTreeModel {
         }
       });
     }
+
     final String testCaseKey = browser + result.getTestCaseName();
     if (testCaseNodes.putIfAbsent(testCaseKey, new PassFailNode(result.getTestCaseName())) == null) {
       SwingUtilities.invokeLater(new Runnable() {
@@ -58,7 +58,8 @@ public class TestResultTreeModel extends DefaultTreeModel {
         }
       });
     }
-
+    
+    final PassFailNode testNode = new PassFailNode(result.getTestName(), result.getResult(), outputLog);
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if (browserNodes.get(browser).childTestResult(result.getResult())) {

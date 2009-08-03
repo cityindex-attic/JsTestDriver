@@ -21,6 +21,7 @@ import com.google.jstestdriver.ActionFactoryModule;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.IDEPluginActionBuilder;
+import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.idea.ui.ToolPanel;
 
 import com.intellij.execution.ExecutionException;
@@ -69,36 +70,44 @@ public class TestRunnerState implements RunnableState {
     String serverURL = "http://localhost:" + jsTestDriverConfiguration.getServerPort();
     final ToolPanel toolPanel = (ToolPanel) window.getContentManager().getContent(0).getComponent();
     toolPanel.clearTestResults();
+    ResponseStreamFactory responseStreamFactory = toolPanel.createResponseStreamFactory();
+    final ActionRunner dryRunRunner =
+        makeActionBuilder(actionFactory, path, serverURL, responseStreamFactory)
+            .dryRun().build();
+    final ActionRunner testRunner =
+        makeActionBuilder(actionFactory, path, serverURL, responseStreamFactory)
+            .addAllTests().build();
+    final SwingWorker worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+        dryRunRunner.runActions();
+        toolPanel.dryRunComplete();
+        testRunner.runActions();
+        return null;
+      }
+    };
+    window.show(new Runnable() {
+      public void run() {
+        worker.execute();
+      }
+    });
+
+    return null;
+  }
+
+  private IDEPluginActionBuilder makeActionBuilder(ActionFactory actionFactory, File path,
+                                                   String serverURL,
+                                                   ResponseStreamFactory responseStreamFactory)
+      throws ExecutionException {
     try {
-      IDEPluginActionBuilder pluginActionBuilder =
-          new IDEPluginActionBuilder(new ConfigurationParser(path, new FileReader(jsTestDriverConfiguration.getSettingsFile())), serverURL, actionFactory,
-              toolPanel.createResponseStreamFactory());
-      final ActionRunner dryRunRunner = pluginActionBuilder.dryRun().build();
-
-      pluginActionBuilder =
-          new IDEPluginActionBuilder(new ConfigurationParser(path, new FileReader(jsTestDriverConfiguration.getSettingsFile())), serverURL, actionFactory,
-              toolPanel.createResponseStreamFactory());
-      final ActionRunner testRunner = pluginActionBuilder.addAllTests().build();
-
-      window.show(new Runnable() {
-        public void run() {
-          SwingWorker worker = new SwingWorker() {
-            @Override
-            protected Object doInBackground() throws Exception {
-              dryRunRunner.runActions();
-              toolPanel.dryRunComplete();
-              testRunner.runActions();
-              return null;
-            }
-          };
-          worker.execute();
-        }
-      });
+      FileReader fileReader = new FileReader(jsTestDriverConfiguration.getSettingsFile());
+      ConfigurationParser configurationParser = new ConfigurationParser(path, fileReader);
+      return new IDEPluginActionBuilder(configurationParser, serverURL, actionFactory,
+          responseStreamFactory);
     } catch (FileNotFoundException e) {
       throw new ExecutionException("Failed to read settings file " +
                                    jsTestDriverConfiguration.getSettingsFile(), e);
     }
-    return null;
   }
 
   public RunnerSettings getRunnerSettings() {

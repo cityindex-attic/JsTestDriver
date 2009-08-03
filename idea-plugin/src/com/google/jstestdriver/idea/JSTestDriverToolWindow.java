@@ -26,6 +26,8 @@ import com.intellij.peer.PeerFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Top-level plugin component, registered in the plugin.xml. This provides a popout tool window
  * to control the JSTestDriver server and see results from JSTestDriver test executions.
@@ -46,6 +48,7 @@ public class JSTestDriverToolWindow implements ProjectComponent {
 
   public void projectClosed() {
     unregisterToolWindow();
+    //TODO: Shut down the server
   }
 
   public void initComponent() {
@@ -56,6 +59,7 @@ public class JSTestDriverToolWindow implements ProjectComponent {
     // empty
   }
 
+  @NotNull
   public String getComponentName() {
     return "SimpleToolWindow.SimpleToolWindowPlugin";
   }
