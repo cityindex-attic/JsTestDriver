@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.jstestdriver.hooks.FileLoadPostProcessor;
+
 import junit.framework.TestCase;
 
 public class SimpleFileLoaderTest extends TestCase {
@@ -43,7 +45,7 @@ public class SimpleFileLoaderTest extends TestCase {
     final FileInfo info = new FileInfo("foo.js", 1234, false, true, null);
     final String infoData = "foobar";
     final boolean shouldReset = false;
-    List<FileInfo> actual = new SimpleFileLoader(new JsTestDriverFileFilter(){
+    List<FileInfo> actual = new ProcessingFileLoader(new JsTestDriverFileFilter(){
 
       public String filterFile(String content, boolean reload) {
         assertEquals(infoData, content);
@@ -62,23 +64,31 @@ public class SimpleFileLoaderTest extends TestCase {
         return infoData;
       }
       
-    }).loadFiles(Collections.singleton(info), shouldReset);
+    }, Collections.<FileLoadPostProcessor>emptySet()).loadFiles(Collections.singleton(info), shouldReset);
     
     assertEquals(infoData + "filtered", actual.get(0).getData());
     assertEquals(info.getFileName(), actual.get(0).getFileName());
     assertEquals(info.getTimestamp(), actual.get(0).getTimestamp());
     assertEquals(info.isServeOnly(), actual.get(0).isServeOnly());
   }
-  public void testLoadFileWithPatches() throws Exception {
+
+  public void testLoadFilesWithPostProcessor() throws Exception {
     final FileInfo info = new FileInfo("foo.js", 1234, false, true, null);
-    FileInfo patch = new FileInfo("patchfoo.js", 1234, false, true, null);
-    info.addPatch(patch);
     final String infoData = "foobar";
-    final String patchData = "patchbar";
     final boolean shouldReset = false;
-    MockFileReader mockFileReader = new MockFileReader();
-    mockFileReader.expected(info.getFileName(), infoData).expected(patch.getFileName(), patchData);
-    List<FileInfo> actual = new SimpleFileLoader(new JsTestDriverFileFilter(){
+    final FileInfo expected = new FileInfo("other.js", 4321, false, true, null);
+    
+    FileLoadPostProcessor processor = new FileLoadPostProcessor() {
+      public FileInfo process(FileInfo file) {
+        assertEquals(infoData + "filtered", file.getData());
+        assertEquals(info.getFileName(), file.getFileName());
+        assertEquals(info.getTimestamp(), file.getTimestamp());
+        assertEquals(info.isServeOnly(), file.isServeOnly());
+        return expected;
+      }
+    };
+    
+    List<FileInfo> actual = new ProcessingFileLoader(new JsTestDriverFileFilter(){
       
       public String filterFile(String content, boolean reload) {
         assertEquals(infoData, content);
@@ -90,7 +100,42 @@ public class SimpleFileLoaderTest extends TestCase {
         throw new UnsupportedOperationException("not expected");
       }
       
-    }, mockFileReader).loadFiles(Collections.singleton(info), shouldReset);
+    }, new FileReader() {
+      
+      public String readFile(String file) {
+        assertEquals(info.getFileName(), file);
+        return infoData;
+      }
+      
+    },
+    Collections.singleton(processor)).loadFiles(Collections.singleton(info),
+                                                             shouldReset);
+    
+    assertEquals(expected, actual.get(0));
+  }
+
+  public void testLoadFileWithPatches() throws Exception {
+    final FileInfo info = new FileInfo("foo.js", 1234, false, true, null);
+    FileInfo patch = new FileInfo("patchfoo.js", 1234, false, true, null);
+    info.addPatch(patch);
+    final String infoData = "foobar";
+    final String patchData = "patchbar";
+    final boolean shouldReset = false;
+    MockFileReader mockFileReader = new MockFileReader();
+    mockFileReader.expected(info.getFileName(), infoData).expected(patch.getFileName(), patchData);
+    List<FileInfo> actual = new ProcessingFileLoader(new JsTestDriverFileFilter(){
+      
+      public String filterFile(String content, boolean reload) {
+        assertEquals(infoData, content);
+        assertEquals(!shouldReset, reload);
+        return content + "filtered";
+      }
+      
+      public Collection<String> resolveFilesDeps(String file) {
+        throw new UnsupportedOperationException("not expected");
+      }
+      
+    }, mockFileReader, Collections.<FileLoadPostProcessor>emptySet()).loadFiles(Collections.singleton(info), shouldReset);
     
     assertEquals(infoData + "filtered" + patchData, actual.get(0).getData());
     assertEquals(info.getFileName(), actual.get(0).getFileName());
@@ -101,7 +146,8 @@ public class SimpleFileLoaderTest extends TestCase {
   public void testRemoteLoadFiles() throws Exception {
     final FileInfo info = new FileInfo("http://local/foo.js", -1, false, false, null);
     final boolean shouldReset = false;
-    List<FileInfo> actual = new SimpleFileLoader(null, null).loadFiles(Collections.singleton(info),
+    List<FileInfo> actual = new ProcessingFileLoader(null, null, Collections.<FileLoadPostProcessor>emptySet()).loadFiles(
+        Collections.singleton(info),
         shouldReset);
     
     assertEquals("", actual.get(0).getData());

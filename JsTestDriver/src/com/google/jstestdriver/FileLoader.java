@@ -26,7 +26,7 @@ import com.google.inject.ImplementedBy;
  * @author corysmith
  *
  */
-@ImplementedBy(SimpleFileLoader.class)
+@ImplementedBy(ProcessingFileLoader.class)
 public interface FileLoader {
   public List<FileInfo> loadFiles(Set<FileInfo> filesToLoad, boolean shouldReset);
 }
