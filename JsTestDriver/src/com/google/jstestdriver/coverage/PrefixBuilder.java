@@ -16,13 +16,12 @@
 
 package com.google.jstestdriver.coverage;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-
 class PrefixBuilder {
   private static final String PADDING = "                                                         ";
+  public static String COVERAGE_PREFIX = "LCOV";
   private final String lineSource;
   private final String fileHash;
   private final int lineNumber;
@@ -41,39 +40,36 @@ class PrefixBuilder {
     this.prepends.add(prepend);
     return this;
   }
-  
+
   public PrefixBuilder append(String append) {
     this.appends.add(append);
     return this;
   }
-  
+
   public String build() {
     StringBuilder source = new StringBuilder("\n");
     for (String prepend : prepends) {
       source.append(prepend);
     }
-    source.append(NakedStatement.COVERAGE_PREFIX)
-          .append("_")
-          .append(fileHash)
-          .append("[").append(lineNumber).append(padding()).append("]++; ")
-          .append(lineSource);
+    source.append(COVERAGE_PREFIX).append("_").append(fileHash).append("[").append(
+        lineNumber).append(padding()).append("]++; ").append(lineSource);
     for (String append : appends) {
       source.append(append);
     }
     return source.toString();
   }
-  
 
   private String padding() {
-    int length = new Double(Math.log10(totalLines)).intValue() - new Double(Math.log10(lineNumber)).intValue();
+    int length = new Double(Math.log10(totalLines)).intValue()
+        - new Double(Math.log10(lineNumber)).intValue();
     return PADDING.substring(0, length);
   }
 
   private int prefixLength() {
     return new Double(Math.log10(totalLines)).intValue() + "_[]++;  ".length() + fileHash.length()
-        + NakedStatement.COVERAGE_PREFIX.length();
+        + COVERAGE_PREFIX.length();
   }
-  
+
   public String buildIndent() {
     return PADDING.substring(0, prefixLength());
   }

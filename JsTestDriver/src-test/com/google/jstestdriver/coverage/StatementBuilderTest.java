@@ -82,7 +82,7 @@ public class StatementBuilderTest extends TestCase {
   public void testFlattenWithNakedFor() throws Exception {
     assertStatements(new StatementExpectations()
       .expect("for(var i=0; i<0; i++)", InitStatement.class)
-      .expect("  hello(", NakedStatement.class)
+      .expect("  hello(", OmittedBlockStatement.class)
       .expect("        i)", NonStatement.class)
       .expect("hello(0);", ExecutableStatement.class)
     );
@@ -93,7 +93,7 @@ public class StatementBuilderTest extends TestCase {
     .expect("for(var i=0;", InitStatement.class)
     .expect("        i<0;", NonStatement.class)
     .expect("        i++)", NonStatement.class)
-    .expect("  hello(i)", NakedStatement.class)
+    .expect("  hello(i)", OmittedBlockStatement.class)
     .expect("hello(0);", ExecutableStatement.class)
     );
   }
@@ -101,8 +101,8 @@ public class StatementBuilderTest extends TestCase {
   public void testFlattenWithNakedNestedFor() throws Exception {
     assertStatements(new StatementExpectations()
       .expect("for(var i=0; i<0; i++)", InitStatement.class)
-      .expect("  for(var i=0; i<0; i++)", NakedStatement.class)
-      .expect("    hello(i);", NakedStatement.class)
+      .expect("  for(var i=0; i<0; i++)", OmittedBlockStatement.class)
+      .expect("    hello(i);", OmittedBlockStatement.class)
       .expect("hello(0);", ExecutableStatement.class)
     );
   }
@@ -122,7 +122,7 @@ public class StatementBuilderTest extends TestCase {
   public void testFlattenWithNakedIf() throws Exception {
     assertStatements(new StatementExpectations()
       .expect("if(i<0)", InitStatement.class)
-      .expect("  hello(", NakedStatement.class)
+      .expect("  hello(", OmittedBlockStatement.class)
       .expect("        i)", NonStatement.class)
       .expect("hello(0);", ExecutableStatement.class)
     );
@@ -131,17 +131,17 @@ public class StatementBuilderTest extends TestCase {
   public void testFlattenWithNakedIfElse() throws Exception {
     assertStatements(new StatementExpectations()
     .expect("if(i<0)", InitStatement.class)
-    .expect("  hello(", NakedStatement.class)
+    .expect("  hello(", OmittedBlockStatement.class)
     .expect("        i)", NonStatement.class)
-    .expect("else", NakedContinuationStatement.class)
-    .expect("  hello(0);", NakedStatement.class)
+    .expect("else", OmittedBlockContinuationStatement.class)
+    .expect("  hello(0);", OmittedBlockStatement.class)
     );
   }
 
   public void testFlattenWithNakedWhile() throws Exception {
     assertStatements(new StatementExpectations()
       .expect("while(i<0)", InitStatement.class)
-      .expect("  hello(", NakedStatement.class)
+      .expect("  hello(", OmittedBlockStatement.class)
       .expect("        i)", NonStatement.class)
       .expect("hello(0);", ExecutableStatement.class)
     );
@@ -150,7 +150,7 @@ public class StatementBuilderTest extends TestCase {
   public void testFlattenWithNakedWith() throws Exception {
     assertStatements(new StatementExpectations()
       .expect("with(i)", InitStatement.class)
-      .expect("  hello(", NakedStatement.class)
+      .expect("  hello(", OmittedBlockStatement.class)
       .expect("        i)", NonStatement.class)
       .expect("hello(0);", ExecutableStatement.class)
     );
@@ -159,7 +159,7 @@ public class StatementBuilderTest extends TestCase {
   public void testFlattenWithBlock() throws Exception {
     assertStatements(new StatementExpectations()
       .expect("for(var i=0; i<0; i++)", InitStatement.class)
-      .expect("  {hello(i);}", NakedStatement.class)
+      .expect("  {hello(i);}", OmittedBlockStatement.class)
       .expect("hello(other);", ExecutableStatement.class)
     );
   }
@@ -393,7 +393,7 @@ public class StatementBuilderTest extends TestCase {
     }
 
     public void assertStatement(Statement actual) {
-      assertEquals(lineNumber, actual.getLineNumber());
+      assertEquals(String.format("expected: \n%s actual: \n%s", this, actual), lineNumber, actual.getLineNumber());
       assertEquals(line, actual.getSourceText());
       assertEquals(actual.toString(), expectedType, actual.getClass());
     }

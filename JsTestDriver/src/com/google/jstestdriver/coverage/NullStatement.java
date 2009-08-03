@@ -19,20 +19,32 @@ package com.google.jstestdriver.coverage;
 import java.util.List;
 
 /**
- * @author corysmith
+ * Represents a statement that does nothing.
+ * @author corysmith@google.com (Cory Smith)
  *
  */
-public interface Statement {
+public class NullStatement implements Statement {
 
-  public abstract String getSourceText();
+  public Statement add(Statement statement, boolean notInOmittedBlock) {
+    return null;
+  }
 
-  public abstract int getLineNumber();
+  public int getLineNumber() {
+    return 0;
+  }
 
-  public abstract String toSource(int totalLines, int executableLines);
+  public String getSourceText() {
+    return null;
+  }
 
-  public abstract boolean isExecutable();
+  public boolean isExecutable() {
+    return false;
+  }
 
-  public abstract Statement add(Statement statement, boolean notInOmittedBlock);
-  
-  public abstract void toList(List<Statement> statementList);
+  public String toSource(int totalLines, int executableLines) {
+    return "";
+  }
+
+  public void toList(List<Statement> statementList) {
+  }
 }

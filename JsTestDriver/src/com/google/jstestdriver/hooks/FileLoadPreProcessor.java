@@ -14,25 +14,19 @@
  * the License.
  */
 
-package com.google.jstestdriver.coverage;
+package com.google.jstestdriver.hooks;
+
 
 import java.util.List;
 
+import com.google.jstestdriver.FileInfo;
+
 /**
+ * Processes a list files before they are loaded.
  * @author corysmith
  *
  */
-public interface Statement {
-
-  public abstract String getSourceText();
-
-  public abstract int getLineNumber();
-
-  public abstract String toSource(int totalLines, int executableLines);
-
-  public abstract boolean isExecutable();
-
-  public abstract Statement add(Statement statement, boolean notInOmittedBlock);
-  
-  public abstract void toList(List<Statement> statementList);
+public interface FileLoadPreProcessor {
+  List<FileInfo> process(List<FileInfo> files);
 }
+

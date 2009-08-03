@@ -16,36 +16,62 @@
 
 package com.google.jstestdriver.coverage;
 
+import java.util.List;
+
+
 /**
+ * Represents a piece of the source code that will not be counted towards coverage.
  * @author corysmith
  *
  */
-public class NonStatement extends Statement{
+public class NonStatement implements Statement{
   private final String fileHash;
-  private Statement nested = null;
+  private final int lineNumber;
+  private final String lineSource;
+  private Statement next = new NullStatement();
 
   public NonStatement(int lineNumber, String lineSource, String fileHash) {
-    super(lineNumber, lineSource);
+    this.lineNumber = lineNumber;
+    this.lineSource = lineSource;
     this.fileHash = fileHash;
   }
 
-  @Override
   public String toSource(int totalLines, int executableLines) {
     String indent = new PrefixBuilder(lineSource, fileHash, lineNumber, totalLines).buildIndent();
-    if (nested != null) {
-      return String.format("\n%s%s%s",
-                           indent,
-                           lineSource,
-                           nested.toSource(totalLines, executableLines));
-    }
-    return String.format("\n%s%s", indent, lineSource);
+    return String.format("\n%s%s%s",
+                         indent,
+                         lineSource,
+                         next.toSource(totalLines, executableLines));
   }
 
-  public boolean nest(Statement statement) {
-    if (statement instanceof NakedStatement || statement instanceof NonStatement) {
-      nested = statement;
-      return true;
-    }
+  public String getSourceText() {
+    return lineSource;
+  }
+
+  public int getLineNumber() {
+    return lineNumber;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("%s %s: %s\n", getClass().getSimpleName(), lineNumber, lineSource);
+  }
+
+  public boolean isExecutable() {
     return false;
+  }
+
+  public Statement add(Statement statement, boolean notInOmittedBlock) {
+    // can chain with top level statements.
+    if (statement instanceof NonStatement || statement instanceof ExecutableStatement) {
+      next = statement;
+      return statement;
+    }
+    return null;
+  }
+  
+  public void toList(List<Statement> statementList) {
+    statementList.add(this);
+    next.toList(statementList);
   }
 }

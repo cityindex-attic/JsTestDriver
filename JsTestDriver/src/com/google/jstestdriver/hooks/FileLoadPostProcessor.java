@@ -13,26 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+package com.google.jstestdriver.hooks;
 
-package com.google.jstestdriver.coverage;
-
-import java.util.List;
+import com.google.jstestdriver.FileInfo;
 
 /**
+ * Represents an integration for plugins to process files read by JsTestDriver.
  * @author corysmith
- *
  */
-public interface Statement {
-
-  public abstract String getSourceText();
-
-  public abstract int getLineNumber();
-
-  public abstract String toSource(int totalLines, int executableLines);
-
-  public abstract boolean isExecutable();
-
-  public abstract Statement add(Statement statement, boolean notInOmittedBlock);
-  
-  public abstract void toList(List<Statement> statementList);
+public interface FileLoadPostProcessor {
+  /**
+   * Called after a file is read from disk, but before it is sent to the server.
+   */
+  FileInfo process(FileInfo file);
 }

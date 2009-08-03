@@ -18,7 +18,6 @@ package com.google.jstestdriver.coverage;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * A collection of Statements for lines of Js source code.
@@ -27,54 +26,48 @@ import java.util.List;
  */
 public class Statements implements Iterable<Statement>{
 
-  private List<Statement> statements = new LinkedList<Statement>();
+  private Statement last = null;
+  private int totalStatements = 0;
+  private int executableStatements = 0;
+  private Statement first;
 
   public void add(Statement statement) {
-    statements.add(statement);
+    if (first == null) {
+      first = statement;
+      last = statement;
+    } else {
+      last = last.add(statement, true);
+    }
+    totalStatements++;
+    executableStatements += statement.isExecutable() ? 1 : 0;
   }
 
   public Iterator<Statement> iterator() {
+    LinkedList<Statement> statements = new LinkedList<Statement>();
+    first.toList(statements);
     return statements.iterator();
   }
 
   @Override
   public String toString() {
+    LinkedList<Statement> statements = new LinkedList<Statement>();
+    first.toList(statements);
     return String.format("%s{ %s }", getClass().getSimpleName(), statements);
   }
 
   public int getTotalSourceLines() {
-    return statements.size();
+    return totalStatements;
   }
 
   public int getExecutableLines() {
-    int executableLines = 0;
-    for (Statement statement : statements) {
-      executableLines += statement.isExecutable() ? 1 : 0;
-    }
-    return executableLines;
+    return executableStatements;
   }
 
   public String toSource(Code code) {
     StringBuilder source = new StringBuilder();
 
-    for (Statement statement : nestStatements()) {
-      source.append(statement.toSource(getTotalSourceLines(), getExecutableLines()));
-    }
+    source.append(first.toSource(getTotalSourceLines(), getExecutableLines()));
     source.append("\n");
     return source.toString();
   }
-
-  private List<Statement> nestStatements() {
-    List<Statement> nestedStatements = new LinkedList<Statement>();
-    Statement parent = statements.get(0);
-    nestedStatements.add(parent);
-    for (Statement statement : statements.subList(1, statements.size())) {
-      if (!parent.nest(statement)) {
-        nestedStatements.add(statement);
-      }
-      parent = statement;
-    }
-    return nestedStatements;
-  }
 }
-

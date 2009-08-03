@@ -207,6 +207,28 @@ public class CodeCoverageDecoratorTest extends TestCase {
     );
   }
   
+  public void testDecorateNakedNestedIfElseStatementsWithMultiline() throws Exception {
+    assertCodeCoverageDecorator(
+        "LCOV_HASH=LCOV.init('FILE',8,6); var a = 0;\n" +
+        "LCOV_HASH[2]++; if (a)\n" +
+        "{LCOV_HASH[3]++;   if (a)\n" +
+        "{LCOV_HASH[4]++;     foo(\n" +
+        "                        34);}\n" +
+        "                else\n" +
+        "{LCOV_HASH[7]++;   a = 2;}}\n" +
+        "LCOV_HASH[8]++; a = 3;\n",
+        
+        "var a = 0;\n" +
+        "if (a)\n" +
+        "  if (a)\n" +
+        "    foo(\n" +
+        "        34);\n" +
+        "else\n" +
+        "  a = 2;\n" +
+        "a = 3;\n"
+    );
+  }
+  
   public void testDecorateCommentStartingStatement() throws Exception {
     assertCodeCoverageDecorator(
         "LCOV_HASH=LCOV.initNoop('FILE',6,4); // foo bar\n" +

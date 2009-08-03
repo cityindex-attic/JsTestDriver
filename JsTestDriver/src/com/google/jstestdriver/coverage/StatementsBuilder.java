@@ -33,8 +33,8 @@ import com.google.jstestdriver.coverage.es3.ES3Lexer;
 import com.google.jstestdriver.coverage.es3.ES3Parser;
 
 /**
- * Builder for the statement lists. Parses the source code to produce a series of statements that
- * represents instrumented code.
+ * Builder for the statement lists. Parses the source code to produce a series
+ * of statements that represents instrumented code.
  * 
  * @author corysmith@google.com (Cory Smith)
  * 
@@ -91,8 +91,8 @@ public class StatementsBuilder {
   }
 
   /**
-   * Correlates the AST of the code with the sourcelines to build a list of Statements to represent
-   * instrumentable lines of code.
+   * Correlates the AST of the code with the sourcelines to build a list of
+   * Statements to represent instrumentable lines of code.
    */
   @SuppressWarnings("unchecked")
   public Statements build() {
@@ -119,10 +119,10 @@ public class StatementsBuilder {
         if (isStatement(cTree)) {
           if (isNaked(cTree)) {
             nodes.add(new NakedNode(cTree));
-          }  else {
+          } else {
             nodes.add(new StatementNode(cTree));
           }
-        } else if (isNakedContinuation(cTree)){
+        } else if (isNakedContinuation(cTree)) {
           nodes.add(new ContinuationNode(cTree));
         }
       }
@@ -144,7 +144,6 @@ public class StatementsBuilder {
     return NAKED_TYPES.contains(cTree.getParent().getType());
   }
 
-  
   private boolean isFirstInLine(CommonTree cTree) {
     for (int index = cTree.getTokenStartIndex() - 1; index > 0; index--) {
       Token token = tokenStream.get(index);
@@ -154,7 +153,7 @@ public class StatementsBuilder {
       if (token.getType() == ES3Lexer.MultiLineComment) {
         int lineBreaks = -1;
         Matcher matcher = NEWLINE_REGEX.matcher(token.getText());
-        while(matcher.find()) {
+        while (matcher.find()) {
           lineBreaks++;
         }
         return token.getLine() + lineBreaks < cTree.getLine();
@@ -275,7 +274,7 @@ public class StatementsBuilder {
     public String toString() {
       return tree.getLine() + ":" + tree.toStringTree();
     }
-    
+
     @Override
     public boolean isBefore(CodeLine line) {
       return tree.getLine() < line.getLineNumber();
@@ -298,12 +297,13 @@ public class StatementsBuilder {
     }
 
     public Statement createStatementFor(CodeLine line, Code code) {
-      return new NakedStatement(line.getLineNumber(), line.getSource(), code.getFileHash());
+      return new OmittedBlockStatement(line.getLineNumber(), line.getSource(), code.getFileHash());
     }
   }
-  
+
   /**
-   * Represents a statement node that is continuation of an omitted block statement.
+   * Represents a statement node that is continuation of an omitted block
+   * statement.
    * 
    * @author corysmith
    */
@@ -311,9 +311,10 @@ public class StatementsBuilder {
     public ContinuationNode(CommonTree tree) {
       super(tree);
     }
-    
+
     public Statement createStatementFor(CodeLine line, Code code) {
-      return new NakedContinuationStatement(line.getLineNumber(), line.getSource(), code.getFileHash());
+      return new OmittedBlockContinuationStatement(line.getLineNumber(), line.getSource(), code
+          .getFileHash());
     }
   }
 
@@ -338,8 +339,7 @@ public class StatementsBuilder {
 
     public Statement createStatementFor(CodeLine line, Code code) {
       if (line.getLineNumber() == 1) {
-        return new InitNonStatement(line.getLineNumber(), line.getSource(), code.getFileHash(),
-            code.getFilePath());
+        return new InitNonStatement(line.getSource(), code.getFileHash(), code.getFilePath());
       }
       return new NonStatement(line.getLineNumber(), line.getSource(), code.getFileHash());
     }

@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * Represents code to be instrumented.
- * @author corysmith
+ * @author corysmith@google.com (Cory Smith)
  */
 public class Code {
 

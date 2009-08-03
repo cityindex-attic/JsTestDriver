@@ -19,44 +19,31 @@ package com.google.jstestdriver.coverage;
 import java.util.List;
 
 /**
- * Represents the initializing statement of an instrumented code block.
- * @author corysmith@google.com (Cory Smith)
+ * A non instrumenting continuation of a block omitted statement.
+ * @author corysmith
  *
  */
-public class InitStatement implements Statement{
+public class OmittedBlockContinuationStatement implements Statement {
+  private final String fileHash;
 
-  private final String filePath;
-  protected final String fileHash;
-  protected Statement next = new NullStatement();;
+  private Statement next = new NullStatement();
+
   protected final int lineNumber;
+
   protected final String lineSource;
 
-  public InitStatement(int lineNumber, String lineSource, String fileHash, String filePath) {
+  public OmittedBlockContinuationStatement(int lineNumber, String lineSource, String fileHash) {
     this.lineNumber = lineNumber;
     this.lineSource = lineSource;
     this.fileHash = fileHash;
-    this.filePath = filePath;
   }
 
   public String toSource(int totalLines, int executableLines) {
-    return String.format("%s_%s=%s.init('%s',%s,%s); %s%s",
-        PrefixBuilder.COVERAGE_PREFIX,
-        fileHash,
-        PrefixBuilder.COVERAGE_PREFIX,
-        filePath,
-        totalLines,
-        executableLines,
-        lineSource,
-        next.toSource(totalLines, executableLines));
-  }
-  
-  public boolean isExecutable() {
-    return true;
-  }
-
-  public Statement add(Statement statement, boolean notInOmittedBlock) {
-    next = statement;
-    return statement;
+    String indent = new PrefixBuilder(lineSource, fileHash, lineNumber, totalLines).buildIndent();
+    return String.format("\n%s%s%s",
+                         indent,
+                         lineSource,
+                         next.toSource(totalLines, executableLines));
   }
 
   public String getSourceText() {
@@ -70,6 +57,15 @@ public class InitStatement implements Statement{
   @Override
   public String toString() {
     return String.format("%s %s: %s\n", getClass().getSimpleName(), lineNumber, lineSource);
+  }
+
+  public boolean isExecutable() {
+    return false;
+  }
+
+  public Statement add(Statement statement, boolean notInOmittedBlock) {
+    next = statement;
+    return next;
   }
 
   public void toList(List<Statement> statementList) {

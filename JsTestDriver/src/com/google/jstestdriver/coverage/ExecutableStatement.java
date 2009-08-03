@@ -16,27 +16,57 @@
 
 package com.google.jstestdriver.coverage;
 
+import java.util.List;
+
 /**
  * @author corysmith
- *
+ * 
  */
-public class ExecutableStatement extends Statement{
+public class ExecutableStatement implements Statement {
 
   protected final String fileHash;
+  protected Statement next = new NullStatement();
+  protected final int lineNumber;
+  protected final String lineSource;
 
   public ExecutableStatement(int lineNumber, String lineSource, String fileHash) {
-    super(lineNumber, lineSource);
+    this.lineNumber = lineNumber;
+    this.lineSource = lineSource;
     this.fileHash = fileHash;
   }
 
-  @Override
+  public String toSource(int totalLines, int executableLines) {
+    PrefixBuilder builder = new PrefixBuilder(lineSource, fileHash, lineNumber, totalLines);
+    if (next != null) {
+        builder.append(next.toSource(totalLines, executableLines)).build();
+    }
+    return builder.build();
+  }
+  
   public boolean isExecutable() {
     return true;
   }
 
+  public Statement add(Statement statement, boolean notInOmittedBlock) {
+    next = statement;
+    return statement;
+  }
+
+  public String getSourceText() {
+    return lineSource;
+  }
+
+  public int getLineNumber() {
+    return lineNumber;
+  }
+
   @Override
-  public String toSource(int totalLines, int executableLines) {
-    return new PrefixBuilder(lineSource, fileHash, lineNumber, totalLines).build();
+  public String toString() {
+    return String.format("%s %s: %s\n", getClass().getSimpleName(), lineNumber, lineSource);
+  }
+
+  public void toList(List<Statement> statementList) {
+    statementList.add(this);
+    next.toList(statementList);
   }
 }
-

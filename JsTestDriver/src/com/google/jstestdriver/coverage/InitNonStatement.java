@@ -16,30 +16,55 @@
 
 package com.google.jstestdriver.coverage;
 
+import java.util.List;
+
 /**
+ * Represents the initializing statement of an instrumented code block that is not be covered.
  * @author corysmith
- *
  */
-public class InitNonStatement extends NonStatement {
+public class InitNonStatement implements Statement {
   private final String fileHash;
   private final String filePath;
+  private Statement next = new NullStatement();
+  private final String lineSource;
 
-  public InitNonStatement(int lineNumber, String lineSource, String fileHash, String filePath) {
-    super(lineNumber, lineSource, fileHash);
+  public InitNonStatement(String lineSource, String fileHash, String filePath) {
+    this.lineSource = lineSource;
     this.fileHash = fileHash;
     this.filePath = filePath;
   }
-  
-  @Override
+
   public String toSource(int totalLines, int executableLines) {
-    return String.format("%s_%s=%s.initNoop('%s',%s,%s); %s",
-        COVERAGE_PREFIX,
+    return String.format("%s_%s=%s.initNoop('%s',%s,%s); %s%s",
+        PrefixBuilder.COVERAGE_PREFIX,
         fileHash,
-        COVERAGE_PREFIX,
+        PrefixBuilder.COVERAGE_PREFIX,
         filePath,
         totalLines,
         executableLines,
-        lineSource);
+        lineSource,
+        next.toSource(totalLines, executableLines));
+  }
+
+  public Statement add(Statement statement, boolean notInOmittedBlock) {
+    next = statement;
+    return statement;
+  }
+
+  public int getLineNumber() {
+    return 1;
+  }
+
+  public String getSourceText() {
+    return lineSource;
+  }
+
+  public boolean isExecutable() {
+    return false;
+  }
+
+  public void toList(List<Statement> statementList) {
+    statementList.add(this);
+    next.toList(statementList);
   }
 }
-
