@@ -18,22 +18,12 @@ package com.google.jstestdriver;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Set;
-
-import com.google.inject.Inject;
-import com.google.jstestdriver.hooks.FileReaderHook;
 
 /**
- * A simple filereader that processes a set of hooks before returning the file contents.
+ * A simple filereader.
  * @author corysmith
  */
-public class HookedFileReader implements FileReader {
-  private final Set<FileReaderHook> hooks;
-
-  @Inject
-  public HookedFileReader(Set<FileReaderHook> hooks) {
-    this.hooks = hooks;
-  }
+public class SimpleFileReader implements FileReader {
 
   public String readFile(String file)  {
     BufferedInputStream bis = null;
@@ -45,9 +35,7 @@ public class HookedFileReader implements FileReader {
         sb.append((char) c);
       }
       String contents = sb.toString();
-      for (FileReaderHook hook : hooks) {
-        contents = hook.process(contents);
-      }
+
       return contents;
     } catch (IOException e) {
       throw new RuntimeException("Impossible to read file: " + file, e);

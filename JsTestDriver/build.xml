@@ -2,6 +2,7 @@
 
   <property name="src.dir" value="src" />
   <property name="src-test.dir" value="src-test" />
+  <property name="src-gen.dir" value="src-generated" />
   <property name="lib.dir" value="lib" />
   <property name="main-class" value="com.google.jstestdriver.JsTestDriverServer" />
   <property name="javascript-resources" value="com/google/jstestdriver/javascript" />
@@ -34,6 +35,7 @@
   </target>
 
   <path id="classpath">
+    <pathelement location="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" />
     <pathelement location="${lib.dir}/args4j-2.0.1/args4j-2.0.1.jar" />
     <pathelement location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
     <pathelement location="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
@@ -57,6 +59,7 @@
   <path id="all-source">
     <pathelement location="${src.dir}"/>
     <pathelement location="${src-test.dir}"/>
+    <pathelement location="${src-gen.dir}"/>
   </path>
 
   <path id="classpath-test">
@@ -76,8 +79,7 @@
 
   <taskdef resource="emma_ant.properties" classpathref="ant-tasks" />
   <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="ant-tasks"/>
-
-
+  
   <target name="init">
     <mkdir dir="${obj.dir}" />
     <mkdir dir="${obj-test.dir}" />
@@ -94,7 +96,11 @@
     <attribute name="destdir"/>
     <attribute name="debug" default="false" />
     <sequential>
-      <javac srcdir="${src.dir}" destdir="@{destdir}" classpathref="classpath" debug="@{debug}" />
+      <javac srcdir="${src.dir}" destdir="@{destdir}" classpathref="classpath" debug="@{debug}">
+        <src path="${src-gen.dir}"></src>
+        <src path="${src.dir}"></src>
+      </javac>
+      
       <copy todir="@{destdir}">
         <fileset dir="${src.dir}">
           <exclude name="**/*.java" />
@@ -133,17 +139,27 @@
     </sequential>
   </macrodef>
 
-  <target name="compile" depends="init">
+  <target name="antlr" >
+    <mkdir dir="${src-gen.dir}"/>
+    <java jar="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" fork="true" dir="src">
+      <arg value="-make"/>
+      <arg value="-o"/>
+      <arg value="../src-generated"/>
+      <arg value="com/google/jstestdriver/coverage/es3/ES3.g"/>
+      <arg value="com/google/jstestdriver/coverage/es3/ES3Walker.g"/>
+    </java>
+  </target>
+
+  <target name="compile" depends="init, antlr">
     <macro-compile destdir="${obj.dir}" debug="false"/>
   </target>
 
-  <target name="compile-debug" depends="init">
+  <target name="compile-debug" depends="init, antlr">
     <macro-compile destdir="${obj-debug.dir}" debug="true"/>
   </target>
 
   <target name="compile-test" depends="compile-debug">
-    <javac srcdir="${src-test.dir}" destdir="${obj-test.dir}" classpathref="classpath"
-        debug="true">
+    <javac srcdir="${src-test.dir}" destdir="${obj-test.dir}" classpathref="classpath" debug="true">
       <classpath refid="classpath-test" />
       <classpath>
         <pathelement path="${obj-debug.dir}" />
@@ -170,6 +186,7 @@
           <pathelement location="${obj-debug.dir}"/>
           <pathelement location="${obj-test.dir}"/>
         </instrpath>
+        <filter excludes="com.google.jstestdriver.coverage.es3.*" />
       </instr>
     </emma>
   </target>
@@ -314,23 +331,6 @@
     <java jar="${bin.dir}/${ant.project.name}.jar" fork="true" dir=".">
       <arg value="--port"/>
       <arg value="4224"/>
-    </java>
-  </target>
-
-  <target name="js-test">
-    <java jar="${bin.dir}/${ant.project.name}.jar" fork="true" dir=".">
-      <arg value="--server"/>
-      <arg value="http://localhost:4224"/>
-      <arg value="--runAllTests"/>
-    </java>
-  </target>
-
-  <target name="run" depends="jar">
-    <java jar="${bin.dir}/${ant.project.name}.jar" fork="true">
-      <arg value="--browserPath" />
-      <arg value="${BROWSERPATH}" />
-      <arg value="--testPath" />
-      <arg value="${TESTPATH}" />
     </java>
   </target>
 

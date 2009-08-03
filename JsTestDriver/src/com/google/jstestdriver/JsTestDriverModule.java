@@ -15,15 +15,12 @@
  */
 package com.google.jstestdriver;
 
+import java.util.List;
+import java.util.Set;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import com.google.inject.multibindings.Multibinder;
-import com.google.jstestdriver.ActionFactory.ActionFactoryFileFilter;
-import com.google.jstestdriver.hooks.FileReaderHook;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Guice module for configuring JsTestDriver.
@@ -58,10 +55,7 @@ public class JsTestDriverModule extends AbstractModule {
         throw new RuntimeException(e);
       }
     }
-    // provide a default list of plugin hooks.
-    Multibinder.newSetBinder(binder(), FileReaderHook.class);
-    bind(FileReader.class).to(HookedFileReader.class);
-    bind(JsTestDriverFileFilter.class).to(ActionFactoryFileFilter.class);
+    install(new ActionFactoryModule());
   }
 
   @Provides

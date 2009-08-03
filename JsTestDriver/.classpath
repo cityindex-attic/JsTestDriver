@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="lib/args4j-2.0.1/examples"/>
-	<classpathentry kind="src" path="lib/yuicompressor-2.4.2/src"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src-test"/>
+	<classpathentry kind="src" path="src-generated"/>
 	<classpathentry kind="lib" path="lib/ant-googlecode-0.0.2/ant-googlecode-0.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/args4j-2.0.1/args4j-2.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1/commons-logging-1.1.1-javadoc.jar"/>
@@ -41,6 +40,7 @@
 	<classpathentry kind="lib" path="lib/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar"/>
 	<classpathentry kind="lib" path="lib/yuicompressor-2.4.2/lib/jargs-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/yuicompressor-2.4.2/lib/rhino-1.6R7.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-3.1.3/antlr-3.1.3.jar" sourcepath="/Users/corysmith/Downloads/antlr-3.1.3/runtime/Java/src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

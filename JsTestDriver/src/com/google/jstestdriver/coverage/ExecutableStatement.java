@@ -13,15 +13,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.hooks;
+
+package com.google.jstestdriver.coverage;
 
 /**
- * Represents an integration for plugins to process files read by JsTestDriver.
  * @author corysmith
+ *
  */
-public interface FileReaderHook {
-  /**
-   * Called after a file is read from disk, but before it is sent to the server.
-   */
-  String process(String contents);
+public class ExecutableStatement extends Statement{
+
+  protected final String fileHash;
+
+  public ExecutableStatement(int lineNumber, String lineSource, String fileHash) {
+    super(lineNumber, lineSource);
+    this.fileHash = fileHash;
+  }
+
+  @Override
+  public boolean isExecutable() {
+    return true;
+  }
+
+  @Override
+  public String toSource(int totalLines, int executableLines) {
+    return new PrefixBuilder(lineSource, fileHash, lineNumber, totalLines).build();
+  }
 }
+
