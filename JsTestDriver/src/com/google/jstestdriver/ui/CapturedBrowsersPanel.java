@@ -73,7 +73,7 @@ public class CapturedBrowsersPanel extends JPanel implements Observer {
     //add(operaLabel);
     add(safariLabel);
 
-    Dimension minimumSize = new Dimension(256 * 4, 256);
+    Dimension minimumSize = new Dimension(chrome.getColorIcon().getIconWidth() * 4, chrome.getColorIcon().getIconHeight());
     setMinimumSize(minimumSize);
     setPreferredSize(minimumSize);
   }
