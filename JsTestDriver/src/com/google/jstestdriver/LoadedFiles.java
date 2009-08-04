@@ -23,7 +23,15 @@ import java.util.LinkedHashSet;
  */
 public class LoadedFiles {
 
-  private Collection<FileResult> loadedFiles = new LinkedHashSet<FileResult>();
+  private Collection<FileResult> loadedFiles;
+
+  public LoadedFiles() {
+    loadedFiles = new LinkedHashSet<FileResult>();
+  }
+
+  public LoadedFiles(Collection<FileResult> loadedFiles) {
+    this.loadedFiles = loadedFiles;
+  }
 
   public Collection<FileResult> getLoadedFiles() {
     return loadedFiles;

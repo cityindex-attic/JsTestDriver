@@ -121,7 +121,7 @@ public class SlaveBrowser {
     return lastHeartBeat;
   }
 
-  public void addFiles(Set<FileInfo> fileSet) {
+  public void addFiles(Collection<FileInfo> fileSet) {
     this.fileSet.removeAll(fileSet);
     this.fileSet.addAll(fileSet);
   }

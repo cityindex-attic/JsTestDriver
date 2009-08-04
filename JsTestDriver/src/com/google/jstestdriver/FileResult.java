@@ -20,12 +20,21 @@ package com.google.jstestdriver;
  */
 public class FileResult {
 
-  private FileSource fileSource;
+  private FileSource file;
   private boolean success;
   private String message;
 
+  public FileResult() {
+  }
+
+  public FileResult(FileSource fileSource, boolean success, String message) {
+    this.file = fileSource;
+    this.success = success;
+    this.message = message;
+  }
+
   public FileSource getFileSource() {
-    return fileSource;
+    return file;
   }
 
   public boolean isSuccess() {

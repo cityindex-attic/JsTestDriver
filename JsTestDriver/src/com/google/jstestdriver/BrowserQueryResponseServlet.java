@@ -57,7 +57,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
       if (response != null && browser.isCommandRunning()) {
         Response res = gson.fromJson(response, Response.class);
 
-        if (res.getResponse().contains("\"errorFiles\":")) {
+        if (res.getResponse().contains("\"loadedFiles\":")) {
           LoadedFiles loadedFiles = gson.fromJson(res.getResponse(), LoadedFiles.class);
           Collection<FileResult> allLoadedFiles = loadedFiles.getLoadedFiles();
           if (!allLoadedFiles.isEmpty()) {

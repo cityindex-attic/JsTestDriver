@@ -164,26 +164,23 @@ public class FileSetServlet extends HttpServlet implements Observer {
           filesToRequest.add(info);
         }
       }
-      Set<FileInfo> filteredFilesToRequest = filterServeOnlyFiles(clientFileSet, filesToRequest);
+      Set<FileInfo> filteredFilesToRequest = filterServeOnlyFiles(filesToRequest);
 
       writer.write(gson.toJson(filteredFilesToRequest));
     }
     writer.flush();
   }
 
-  private Set<FileInfo> filterServeOnlyFiles(Collection<FileInfo> clientFileSet,
-      Set<FileInfo> filesToRequest) {
+  private Set<FileInfo> filterServeOnlyFiles(Set<FileInfo> filesToRequest) {
     Set<FileInfo> filteredFilesToRequest = new LinkedHashSet<FileInfo>();
     Set<String> cachedFiles = filesCache.getAllFileNames();
 
-    for (FileInfo fileInfo : clientFileSet) {
-      if (filesToRequest.contains(fileInfo)) {
-        if (!fileInfo.isServeOnly()
-            || !cachedFiles.contains(fileInfo.getFileName())
-            || filesCache.getFileInfo(fileInfo.getFileName()).getTimestamp() < fileInfo
-                .getTimestamp()) {
-          filteredFilesToRequest.add(fileInfo);
-        }
+    for (FileInfo fileInfo : filesToRequest) {
+      if (!fileInfo.isServeOnly()
+          || !cachedFiles.contains(fileInfo.getFileName())
+          || filesCache.getFileInfo(fileInfo.getFileName()).getTimestamp() < fileInfo
+          .getTimestamp()) {
+        filteredFilesToRequest.add(fileInfo);
       }
     }
     return filteredFilesToRequest;

@@ -41,7 +41,7 @@ public class FileSource {
   }
 
   public String getBasePath() {
-    if (basePath.equals("")) {
+    if (basePath == null) {
       basePath = fileSrc.substring(6);
     }
     return basePath;
