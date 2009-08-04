@@ -16,5 +16,5 @@ Export-Package: com.google.inject,
  com.google.jstestdriver.eclipse.internal.core,
  com.google.jstestdriver.hooks,
  com.google.jstestdriver.ui
-Bundle-ClassPath: .,
- lib/JsTestDriver.jar
+Bundle-ClassPath: lib/JsTestDriver.jar,
+ .
