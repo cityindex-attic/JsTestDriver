@@ -12,7 +12,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/JsTestDriver.jar!/" />
+          <root url="jar://$MODULE_DIR$/../JsTestDriver/target/bin/JsTestDriver.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

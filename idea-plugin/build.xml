@@ -3,15 +3,40 @@
   <property name="bin.dir" value="${target.dir}/bin" />
   <property name="obj.dir" value="${target.dir}/obj" />
   <property name="src.dir" value="src"/>
-  <property name="idea.lib.dir" value="/usr/lib/intellij-idea-7.0/lib"/>
+  <property name="idea.home" value="/usr/lib/intellij-idea-7.0"/>
   <property name="jstestdriver.lib" value="../JsTestDriver/target/bin/JsTestDriver.jar"/>
 
-  <path id="classpath">
-    <pathelement location="${jstestdriver.lib}" />
-    <pathelement location="${idea.lib.dir}/openapi.jar"/>
-    <pathelement location="${idea.lib.dir}/annotations.jar"/>
-    <pathelement location="${idea.lib.dir}/jdom.jar"/>
+  <path id="forms.classpath">
+      <fileset dir="${idea.home}/redist">
+          <include name="javac2.jar" />
+          <include name="forms_rt.jar" />
+      </fileset>
+      <fileset dir="${idea.home}/lib">
+          <include name="openapi.jar"/>
+          <include name="jdom.jar"/>
+          <include name="asm.jar"/>
+          <include name="asm-commons.jar"/>
+      </fileset>
   </path>
+
+  <path id="uidesigner.classpath">
+      <path refid="forms.classpath"/>
+      <fileset dir="${idea.home}/lib">
+          <include name="bcel.jar"/>
+      </fileset>
+  </path>
+
+  <path id="compile.classpath">
+    <pathelement location="${jstestdriver.lib}" />
+    <fileset dir="${idea.home}/lib">
+      <include name="openapi.jar"/>
+      <include name="jdom.jar"/>
+      <include name="annotations.jar"/>
+    </fileset>
+  </path>
+
+  <taskdef name="idea-form-compiler" classname="com.intellij.uiDesigner.ant.Javac2"
+           classpathref="uidesigner.classpath"/>
 
   <target name="clean">
     <delete dir="target" />
@@ -23,7 +48,7 @@
   </target>
 
   <target name="compile" depends="init">
-    <javac srcdir="${src.dir}" destdir="${obj.dir}" classpathref="classpath"/>
+    <javac srcdir="${src.dir}" destdir="${obj.dir}" classpathref="compile.classpath"/>
     <copy todir="${obj.dir}">
       <fileset dir="${src.dir}">
         <exclude name="**/*.java" />
@@ -31,10 +56,20 @@
     </copy>
   </target>
 
-  <target name="jar" depends="compile">
+  <target name="compile.forms" description="Compiles all UI form files" depends="compile">
+    <property name="forms.src" value=""/>
+    <idea-form-compiler srcdir="${src.dir}/com/google/jstestdriver/idea/ui" destdir="${obj.dir}"
+            deprecation="no" optimize="off" debug="on" verbose="on">
+      <classpath refid="forms.classpath"/>
+      <classpath refid="compile.classpath"/>
+    </idea-form-compiler>
+  </target>
+
+  <target name="jar" depends="compile, compile.forms">
     <jar destfile="${bin.dir}/${ant.project.name}.jar" basedir="${obj.dir}">
       <fileset dir="${basedir}" includes="META-INF/*"/>
       <zipfileset src="${jstestdriver.lib}"/>
     </jar>
+    <chmod perm="644" file="${bin.dir}/${ant.project.name}.jar"/> 
   </target>
 </project>
