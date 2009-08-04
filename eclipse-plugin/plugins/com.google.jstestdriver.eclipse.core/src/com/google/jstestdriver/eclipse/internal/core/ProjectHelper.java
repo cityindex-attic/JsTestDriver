@@ -15,15 +15,24 @@
  */
 package com.google.jstestdriver.eclipse.internal.core;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+
+import com.google.jstestdriver.ConfigurationParser;
 
 /**
  * @author shyamseshadri@google.com (Shyam Seshadri)
  */
 public class ProjectHelper {
 
+  private Logger logger = new Logger();
+  
   public IProject[] getAllProjects() {
     IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
     return workspaceRoot.getProjects();
@@ -32,5 +41,20 @@ public class ProjectHelper {
   public IProject getProject(String projectName) {
     IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
     return workspaceRoot.getProject(projectName);
+  }
+  
+  public ConfigurationParser getConfigurationParser(String projectName,
+      String confFileName) {
+    IProject project = getProject(projectName);
+    IResource confFileResource = project.findMember(confFileName);
+    File configFile = confFileResource.getLocation().toFile();
+    File parentDir = configFile.getParentFile();
+    ConfigurationParser configurationParser = null;
+    try {
+      configurationParser = new ConfigurationParser(parentDir, new FileReader(configFile));
+    } catch (FileNotFoundException e) {
+      logger.logException(e);
+    }
+    return configurationParser;
   }
 }

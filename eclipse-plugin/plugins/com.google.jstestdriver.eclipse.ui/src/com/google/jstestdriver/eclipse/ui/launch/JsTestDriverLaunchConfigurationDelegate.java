@@ -67,7 +67,8 @@ public class JsTestDriverLaunchConfigurationDelegate implements
     String confFileName = configuration.getAttribute(
         LaunchConfigurationConstants.CONF_FILENAME, "");
 
-    ConfigurationParser configurationParser = getConfigurationParser(
+    ProjectHelper projectHelper = new ProjectHelper();
+    ConfigurationParser configurationParser = projectHelper.getConfigurationParser(
         projectName, confFileName);
     Injector injector = Guice.createInjector(new ActionFactoryModule());
 
@@ -93,27 +94,12 @@ public class JsTestDriverLaunchConfigurationDelegate implements
         new EclipseResponseStreamFactory());
     dryRunBuilder.dryRun().build().runActions();
     
-    configurationParser = getConfigurationParser(projectName, confFileName);
+    configurationParser = projectHelper.getConfigurationParser(projectName, confFileName);
     IDEPluginActionBuilder allTestsBuilder = new IDEPluginActionBuilder(
         configurationParser, Server.SERVER_URL, injector
             .getInstance(ActionFactory.class),
         new EclipseResponseStreamFactory());
     allTestsBuilder.addAllTests().build().runActions();
-  }
-
-  private ConfigurationParser getConfigurationParser(String projectName,
-      String confFileName) {
-    IProject project = new ProjectHelper().getProject(projectName);
-    IResource confFileResource = project.findMember(confFileName);
-    File configFile = confFileResource.getLocation().toFile();
-    File parentDir = configFile.getParentFile();
-    ConfigurationParser configurationParser = null;
-    try {
-      configurationParser = new ConfigurationParser(parentDir, new FileReader(configFile));
-    } catch (FileNotFoundException e) {
-      logger.logException(e);
-    }
-    return configurationParser;
   }
 
   public boolean buildForLaunch(ILaunchConfiguration configuration,

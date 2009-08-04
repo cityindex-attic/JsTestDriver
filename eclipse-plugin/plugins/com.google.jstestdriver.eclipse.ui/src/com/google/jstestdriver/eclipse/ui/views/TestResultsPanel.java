@@ -39,9 +39,19 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.jstestdriver.ActionFactory;
+import com.google.jstestdriver.ActionFactoryModule;
+import com.google.jstestdriver.ConfigurationParser;
+import com.google.jstestdriver.IDEPluginActionBuilder;
 import com.google.jstestdriver.TestResult;
+import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
+import com.google.jstestdriver.eclipse.internal.core.ProjectHelper;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
+import com.google.jstestdriver.eclipse.ui.launch.EclipseResponseStreamFactory;
+import com.google.jstestdriver.eclipse.ui.launch.LaunchConfigurationConstants;
 import com.google.jstestdriver.eclipse.ui.launch.model.EclipseJstdTestResult;
 import com.google.jstestdriver.eclipse.ui.launch.model.EclipseJstdTestRunResult;
 import com.google.jstestdriver.eclipse.ui.launch.model.ResultModel;
@@ -79,7 +89,7 @@ public class TestResultsPanel extends Composite {
 
     GridData showOnlyFailedButtonGridData = new GridData();
     showOnlyFailedButtonGridData.horizontalAlignment = SWT.CENTER;
-    showOnlyFailedButton = new Button(this, SWT.TOGGLE);
+    showOnlyFailedButton = new Button(this, SWT.FLAT | SWT.TOGGLE);
     showOnlyFailedButton.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent e) {
       }
@@ -130,8 +140,40 @@ public class TestResultsPanel extends Composite {
     GridData refreshBrowsersButtonGridData = new GridData();
     refreshBrowsersButtonGridData.horizontalAlignment = SWT.CENTER;
     refreshBrowsersButton = new Button(this, SWT.FLAT);
-    refreshBrowsersButton.setText("RBr");
+    refreshBrowsersButton.setImage(icons.getImage("icons/icon-refresh.gif"));
     refreshBrowsersButton.setLayoutData(refreshBrowsersButtonGridData);
+    refreshBrowsersButton.addSelectionListener(new SelectionListener() {
+
+      public void widgetDefaultSelected(SelectionEvent e) {
+      }
+
+      public void widgetSelected(SelectionEvent e) {
+        if (lastLaunch == null || lastLaunch.getLaunchConfiguration() == null) {
+          return;
+        }
+        Injector injector = Guice.createInjector(new ActionFactoryModule());
+        ILaunchConfiguration launchConfiguration = lastLaunch.getLaunchConfiguration();
+        try {
+          // TODO(shyamseshadri): This seems to be a common task, maybe add a task factory which
+          // does this, or dry run, or run tests? 
+          ConfigurationParser configurationParser = new ProjectHelper().getConfigurationParser(
+              launchConfiguration.getAttribute(LaunchConfigurationConstants.PROJECT_NAME, ""),
+              launchConfiguration.getAttribute(LaunchConfigurationConstants.CONF_FILENAME, ""));
+          final IDEPluginActionBuilder resetBuilder = new IDEPluginActionBuilder(
+              configurationParser, Server.SERVER_URL, injector
+              .getInstance(ActionFactory.class),
+              new EclipseResponseStreamFactory());
+          Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+              resetBuilder.resetBrowsers().build().runActions();
+            }
+          });
+        } catch (CoreException e1) {
+          logger.logException(e1);
+        }
+      }
+      
+    });
     
     GridData totalRunLabelData = new GridData();
     totalRunLabelData.horizontalSpan = 2;

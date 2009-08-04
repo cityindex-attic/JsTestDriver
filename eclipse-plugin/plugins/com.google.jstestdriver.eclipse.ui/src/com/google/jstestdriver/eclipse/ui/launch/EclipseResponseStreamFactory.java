@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver.eclipse.ui.launch;
 
+import com.google.jstestdriver.ResetAction;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.TestResultGenerator;
@@ -33,7 +34,7 @@ public class EclipseResponseStreamFactory implements ResponseStreamFactory {
   }
 
   public ResponseStream getResetActionResponseStream() {
-    return null;
+    return new ResetAction.ResetActionResponseStream();
   }
 
   public ResponseStream getRunTestsActionResponseStream() {
