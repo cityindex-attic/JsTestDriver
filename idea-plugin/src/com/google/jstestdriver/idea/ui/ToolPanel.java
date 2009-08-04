@@ -15,16 +15,19 @@
  */
 package com.google.jstestdriver.idea.ui;
 
+import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.DryRunInfo;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.ResponseStreamFactory;
+import com.google.jstestdriver.idea.TestRunnerState;
 
 import com.intellij.util.ui.UIUtil;
 
 import java.awt.BorderLayout;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static javax.swing.BorderFactory.createTitledBorder;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -39,7 +42,9 @@ public class ToolPanel extends JPanel {
   public ToolPanel() {
     setLayout(new BorderLayout());
     setBackground(UIUtil.getTreeTextBackground());
-    add(new ServerControlPanel(), BorderLayout.NORTH);
+    add(new ServerControlPanel() {{
+      setBorder(createTitledBorder("Server"));
+    }}, BorderLayout.NORTH);
     add(testExecutionPanel, BorderLayout.CENTER);
   }
 
@@ -94,5 +99,13 @@ public class ToolPanel extends JPanel {
 
   public void dryRunComplete() {
     setTestsCount(totalTests.get());
+  }
+
+  public void setTestRunner(TestRunnerState testRunnerState) {
+    testExecutionPanel.setTestRunner(testRunnerState);
+  }
+
+  public void setResetRunner(ActionRunner resetRunner) {
+    testExecutionPanel.setResetRunner(resetRunner);
   }
 }

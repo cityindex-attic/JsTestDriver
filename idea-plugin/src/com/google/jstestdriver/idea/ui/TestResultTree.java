@@ -4,7 +4,8 @@ package com.google.jstestdriver.idea.ui;
 
 import com.google.jstestdriver.TestResult.Result;
 import com.google.jstestdriver.idea.PluginResources;
-import com.google.jstestdriver.idea.ui.TestResultTreeModel.PassFailNode;
+
+import com.intellij.ui.treeStructure.SimpleTree;
 
 import java.awt.Component;
 
@@ -22,7 +23,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  * Each browser is a root in the tree, with TestCases as children, and tests as grandchildren.
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class TestResultTree extends JTree {
+public class TestResultTree extends SimpleTree {
 
   public TestResultTree(TestResultTreeModel treeModel) {
     super(treeModel);
@@ -34,7 +35,6 @@ public class TestResultTree extends JTree {
 
 
   private class TestResultTreeModelListener implements TreeModelListener {
-
     public void treeNodesInserted(final TreeModelEvent e) {
       if (e.getTreePath().getPath().length < 2) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -43,8 +43,8 @@ public class TestResultTree extends JTree {
           }
         });
       }
-      if (e.getTreePath().getLastPathComponent() instanceof PassFailNode &&
-          ((PassFailNode) e.getTreePath().getLastPathComponent()).getResult() != Result.passed) {
+      if (e.getTreePath().getLastPathComponent() instanceof TestResultTreeNode &&
+          ((TestResultTreeNode) e.getTreePath().getLastPathComponent()).getResult() != Result.passed) {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             expandPath(e.getTreePath());
@@ -61,15 +61,14 @@ public class TestResultTree extends JTree {
   }
 
   private class TestResultTreeCellRenderer extends DefaultTreeCellRenderer {
-
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
                                                   boolean expanded, boolean leaf, int row,
                                                   boolean hasFocus) {
       JLabel label =
           (JLabel) super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-      if (value instanceof PassFailNode) {
-        PassFailNode node = (PassFailNode) value;
+      if (value instanceof TestResultTreeNode) {
+        TestResultTreeNode node = (TestResultTreeNode) value;
         label.setIcon(resultToIcon(node.getResult()));
       }
       return label;
@@ -88,5 +87,4 @@ public class TestResultTree extends JTree {
       }
     }
   }
-
 }

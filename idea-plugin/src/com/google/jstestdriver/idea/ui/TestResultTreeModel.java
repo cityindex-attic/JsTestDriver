@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
@@ -22,14 +21,50 @@ import javax.swing.tree.TreeNode;
  */
 public class TestResultTreeModel extends DefaultTreeModel {
 
-  ConcurrentMap<BrowserInfo, PassFailNode> browserNodes =
-      new ConcurrentHashMap<BrowserInfo, PassFailNode>();
-  ConcurrentMap<String, PassFailNode> testCaseNodes =
-      new ConcurrentHashMap<String, PassFailNode>();
+  private ConcurrentMap<BrowserInfo, TestResultTreeNode> browserNodes =
+      new ConcurrentHashMap<BrowserInfo, TestResultTreeNode>();
+  private ConcurrentMap<String, TestResultTreeNode> testCaseNodes =
+      new ConcurrentHashMap<String, TestResultTreeNode>();
+  private boolean passingTestsFiltered = false;
 
 
-  public TestResultTreeModel(TreeNode root) {
+  public TestResultTreeModel(TestResultTreeNode root) {
     super(root);
+  }
+
+  @Override
+  public Object getChild(Object parent, int index) {
+    if (!passingTestsFiltered) {
+      return super.getChild(parent, index);
+    }
+    TreeNode node = (TreeNode) parent;
+    int count = 0;
+    for (int i=0; i<node.getChildCount(); i++) {
+      TestResultTreeNode child = (TestResultTreeNode) node.getChildAt(i);
+      if (child.getResult() != Result.passed) {
+        if (count == index) {
+          return child;
+        }
+        count++;
+      }
+    }
+    throw new ArrayIndexOutOfBoundsException("Index " + index + " out of range");
+  }
+
+  @Override
+  public int getChildCount(Object parent) {
+    if (!passingTestsFiltered) {
+      return super.getChildCount(parent);
+    }
+    TreeNode node = (TreeNode) parent;
+    int count = 0;
+    for (int i=0; i<node.getChildCount(); i++) {
+      TestResultTreeNode child = (TestResultTreeNode) node.getChildAt(i);
+      if (child.getResult() != Result.passed) {
+        count++;
+      }
+    }
+    return count;
   }
 
   /**
@@ -41,7 +76,7 @@ public class TestResultTreeModel extends DefaultTreeModel {
     final BrowserInfo browser = result.getBrowserInfo();
     String outputLog = String.format("%s\n%s\n%s", result.getParsedMessage(), result.getStack(), result.getLog());
 
-    if (browserNodes.putIfAbsent(browser, new PassFailNode(browser)) == null) {
+    if (browserNodes.putIfAbsent(browser, new TestResultTreeNode(browser)) == null) {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           insertNodeInto(browserNodes.get(browser), (MutableTreeNode) root, root.getChildCount());
@@ -50,7 +85,7 @@ public class TestResultTreeModel extends DefaultTreeModel {
     }
 
     final String testCaseKey = browser + result.getTestCaseName();
-    if (testCaseNodes.putIfAbsent(testCaseKey, new PassFailNode(result.getTestCaseName())) == null) {
+    if (testCaseNodes.putIfAbsent(testCaseKey, new TestResultTreeNode(result.getTestCaseName())) == null) {
       SwingUtilities.invokeLater(new Runnable() {
       public void run() {
           insertNodeInto(testCaseNodes.get(testCaseKey), browserNodes.get(browser),
@@ -59,66 +94,31 @@ public class TestResultTreeModel extends DefaultTreeModel {
       });
     }
     
-    final PassFailNode testNode = new PassFailNode(result.getTestName(), result.getResult(), outputLog);
+    final TestResultTreeNode testNode = new TestResultTreeNode(result.getTestName(), result.getResult(), outputLog);
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if (browserNodes.get(browser).childTestResult(result.getResult())) {
           nodeChanged(browserNodes.get(browser));
         }
-        PassFailNode testCaseNode = testCaseNodes.get(testCaseKey);
+        TestResultTreeNode testCaseNode = testCaseNodes.get(testCaseKey);
         if (testCaseNode.childTestResult(result.getResult())) {
           nodeChanged(testCaseNode);
         }
         insertNodeInto(testNode, testCaseNode, testCaseNode.getChildCount());
       }
     });
+  }
 
+  public void setPassingTestsFilter(boolean filter) {
+    passingTestsFiltered = filter;
+    nodeStructureChanged(root);
   }
 
   public void clear() {
     browserNodes.clear();
     testCaseNodes.clear();
-    setRoot(new DefaultMutableTreeNode("Test Results Tree"));
+    setRoot(new TestResultTreeNode("Test Results Tree"));
     reload();
   }
 
-  public static class PassFailNode extends DefaultMutableTreeNode {
-    private Result result;
-    private final String outputLog;
-
-    public PassFailNode(Object userObject, Result result, String outputLog) {
-      super(userObject);
-      this.result = result;
-      this.outputLog = outputLog;
-    }
-
-    public PassFailNode(Object userObject) {
-      this(userObject, Result.passed, "");
-    }
-
-    public Result getResult() {
-      return result;
-    }
-
-    /**
-     * Let the node respond to a child result
-     * @param childResult the result of a child of this node
-     * @return true iff this node's result was changed
-     */
-    public boolean childTestResult(Result childResult) {
-      if (result == Result.passed && childResult != Result.passed) {
-        result = childResult;
-        return true;
-      }
-      if (result == Result.failed && childResult == Result.error) {
-        result = childResult;
-        return true;
-      }
-      return false;
-    }
-
-    public String getOutput() {
-      return outputLog;
-    }
-  }
 }

@@ -34,6 +34,7 @@ public class IDEPluginActionBuilder {
 
   private List<String> tests = new LinkedList<String>();
   private boolean dryRun = false;
+  private boolean reset = false;
 
   public IDEPluginActionBuilder(ConfigurationParser configParser, String serverAddress,
       ActionFactory actionFactory, ResponseStreamFactory responseStreamFactory) {
@@ -50,6 +51,11 @@ public class IDEPluginActionBuilder {
 
   public IDEPluginActionBuilder dryRun() {
     dryRun = true;
+    return this;
+  }
+
+  public IDEPluginActionBuilder resetBrowsers() {
+    reset = true;
     return this;
   }
 
@@ -70,7 +76,9 @@ public class IDEPluginActionBuilder {
 
   private List<ThreadedAction> createThreadedActions(JsTestDriverClient client) {
     List<ThreadedAction> threadedActions = new LinkedList<ThreadedAction>();
-
+    if (reset) {
+      threadedActions.add(new ResetAction(responseStreamFactory));
+    }
     if (dryRun) {
       threadedActions.add(new DryRunAction(responseStreamFactory));
     }

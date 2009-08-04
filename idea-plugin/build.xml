@@ -1,0 +1,40 @@
+<project name="JsTestDriver-idea-plugin" default="jar">
+  <property name="target.dir" value="target" />
+  <property name="bin.dir" value="${target.dir}/bin" />
+  <property name="obj.dir" value="${target.dir}/obj" />
+  <property name="src.dir" value="src"/>
+  <property name="idea.lib.dir" value="/usr/lib/intellij-idea-7.0/lib"/>
+  <property name="jstestdriver.lib" value="../JsTestDriver/target/bin/JsTestDriver.jar"/>
+
+  <path id="classpath">
+    <pathelement location="${jstestdriver.lib}" />
+    <pathelement location="${idea.lib.dir}/openapi.jar"/>
+    <pathelement location="${idea.lib.dir}/annotations.jar"/>
+    <pathelement location="${idea.lib.dir}/jdom.jar"/>
+  </path>
+
+  <target name="clean">
+    <delete dir="target" />
+  </target>
+
+  <target name="init">
+    <mkdir dir="${obj.dir}" />
+    <mkdir dir="${bin.dir}" />
+  </target>
+
+  <target name="compile" depends="init">
+    <javac srcdir="${src.dir}" destdir="${obj.dir}" classpathref="classpath"/>
+    <copy todir="${obj.dir}">
+      <fileset dir="${src.dir}">
+        <exclude name="**/*.java" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jar" depends="compile">
+    <jar destfile="${bin.dir}/${ant.project.name}.jar" basedir="${obj.dir}">
+      <fileset dir="${basedir}" includes="META-INF/*"/>
+      <zipfileset src="${jstestdriver.lib}"/>
+    </jar>
+  </target>
+</project>

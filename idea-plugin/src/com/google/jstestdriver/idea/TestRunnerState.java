@@ -70,6 +70,7 @@ public class TestRunnerState implements RunnableState {
     String serverURL = "http://localhost:" + jsTestDriverConfiguration.getServerPort();
     final ToolPanel toolPanel = (ToolPanel) window.getContentManager().getContent(0).getComponent();
     toolPanel.clearTestResults();
+    toolPanel.setTestRunner(this);
     ResponseStreamFactory responseStreamFactory = toolPanel.createResponseStreamFactory();
     final ActionRunner dryRunRunner =
         makeActionBuilder(actionFactory, path, serverURL, responseStreamFactory)
@@ -77,6 +78,10 @@ public class TestRunnerState implements RunnableState {
     final ActionRunner testRunner =
         makeActionBuilder(actionFactory, path, serverURL, responseStreamFactory)
             .addAllTests().build();
+    final ActionRunner resetRunner =
+        makeActionBuilder(actionFactory, path, serverURL, responseStreamFactory)
+            .resetBrowsers().build();
+    toolPanel.setResetRunner(resetRunner);
     final SwingWorker worker = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
