@@ -55,8 +55,8 @@ public class JsTestDriverLaunchConfigurationDelegate implements
 
   private final Logger logger = new Logger();
 
-  public void launch(ILaunchConfiguration configuration, String mode,
-      ILaunch launch, IProgressMonitor monitor) throws CoreException {
+  public void launch(final ILaunchConfiguration configuration, String mode,
+      final ILaunch launch, IProgressMonitor monitor) throws CoreException {
     if (!mode.equals(ILaunchManager.RUN_MODE)) {
       throw new IllegalStateException(
           "Can only launch JS Test Driver configuration from Run mode");
@@ -80,7 +80,7 @@ public class JsTestDriverLaunchConfigurationDelegate implements
           JsTestDriverView view = (JsTestDriverView) page
               .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
           TestResultsPanel panel = view.getTestResultsPanel();
-          panel.setupForNextTestRun();
+          panel.setupForNextTestRun(launch);
         } catch (PartInitException e) {
           logger.logException(e);
         }

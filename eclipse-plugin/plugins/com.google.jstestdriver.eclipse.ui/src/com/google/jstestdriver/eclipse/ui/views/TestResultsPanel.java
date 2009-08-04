@@ -18,6 +18,10 @@ package com.google.jstestdriver.eclipse.ui.views;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.internal.junit.ui.JUnitProgressBar;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -31,10 +35,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.google.jstestdriver.TestResult;
+import com.google.jstestdriver.eclipse.internal.core.Logger;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
 import com.google.jstestdriver.eclipse.ui.launch.model.EclipseJstdTestResult;
 import com.google.jstestdriver.eclipse.ui.launch.model.EclipseJstdTestRunResult;
@@ -47,6 +53,7 @@ import com.google.jstestdriver.eclipse.ui.launch.model.ResultModel;
  */
 public class TestResultsPanel extends Composite {
 
+  private final Logger logger = new Logger();
   private Icons icons;
   private EclipseJstdTestRunResult testRunResult;
   private TreeViewer testResultsTree;
@@ -61,6 +68,7 @@ public class TestResultsPanel extends Composite {
   private Text testDetailsText;
   private int totalNumTests;
   private ViewerFilter showOnlyFailuresFilter;
+  private ILaunch lastLaunch;
 
   public TestResultsPanel(Composite parent, int style) {
     super(parent, style);
@@ -92,6 +100,28 @@ public class TestResultsPanel extends Composite {
     rerunButton = new Button(this, SWT.FLAT);
     rerunButton.setImage(icons.getImage("icons/relaunch.gif"));
     rerunButton.setLayoutData(rerunButtonGridData);
+    rerunButton.addSelectionListener(new SelectionListener() {
+
+      public void widgetDefaultSelected(SelectionEvent e) {
+      }
+
+      public void widgetSelected(SelectionEvent e) {
+        if (lastLaunch != null && lastLaunch.getLaunchConfiguration() != null) {
+          final ILaunchConfiguration configuration = lastLaunch.getLaunchConfiguration();
+          Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+              try {
+                setupForNextTestRun(lastLaunch);
+                configuration.launch(ILaunchManager.RUN_MODE, null);
+              } catch (CoreException e1) {
+                logger.logException(e1);
+              }
+            }
+          });
+        }
+      }
+    });
+
     GridData rerunFailedFirstButtonGridData = new GridData();
     rerunFailedFirstButtonGridData.horizontalAlignment = SWT.CENTER;
     rerunFailedFirstButton = new Button(this, SWT.FLAT);
@@ -168,7 +198,7 @@ public class TestResultsPanel extends Composite {
     
   }
 
-  public void setupForNextTestRun() {
+  public void setupForNextTestRun(ILaunch launch) {
     testRunResult.clear();
     testResultsTree.refresh();
     testProgressIndicator.reset();
@@ -176,6 +206,8 @@ public class TestResultsPanel extends Composite {
     totalRunLabel.setText("Run : 0 / 0");
     errorsLabel.setText("Errors : 0");
     failuresLabel.setText("Failed : 0");
+    lastLaunch = launch;
+    update();
   }
   
   public synchronized void addNumberOfTests(int numTests) {
