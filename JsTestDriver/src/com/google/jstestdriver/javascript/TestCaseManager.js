@@ -56,6 +56,22 @@ jstestdriver.TestCaseManager.prototype.getDefaultTestRunsConfiguration = functio
 };
 
 
+jstestdriver.TestCaseManager.prototype.getTestRunsConfigurationFor = function(expressions) {
+  var testRunsConfiguration = [];
+  var size = this.testCasesInfo_.length;
+
+  for (var i = 0; i < size; i++) {
+    var testCaseInfo = this.testCasesInfo_[i];
+    var testRunConfiguration = testCaseInfo.getTestRunConfigurationFor(expressions);
+
+    if (testRunConfiguration != null) {
+      testRunsConfiguration.push(testRunConfiguration);
+    }
+  }
+  return testRunsConfiguration;
+};
+
+
 jstestdriver.TestCaseManager.prototype.getTestCasesInfo = function() {
   return this.testCasesInfo_;
 };
