@@ -21,8 +21,9 @@ import java.util.List;
 import com.google.jstestdriver.SlaveBrowser;
 
 /**
- * Information about slave browsers for a particular type of browser, like Chrome, IE, etc.
- * Knows about each slave browser, the name and what image to display in the tree.
+ * Information about slave browsers for a particular type of browser, like
+ * Chrome, IE, etc. Knows about each slave browser, the name and what image to
+ * display in the tree.
  * 
  * @author shyamseshadri@google.com (Shyam Seshadri)
  */
@@ -56,7 +57,7 @@ public class SlaveBrowserSet {
   public void clearSlaves() {
     slaves.clear();
   }
-  
+
   public boolean hasSlaves() {
     return slaves.size() > 0;
   }
@@ -66,13 +67,9 @@ public class SlaveBrowserSet {
   }
 
   public String getImagePath() {
-    if (slaves.size() == 0) {
-      return "icons/" + browserName + "_None.png";
-    } else {
-      return "icons/" + browserName + ".png";
-    }
+    return "icons/" + browserName + ".png";
   }
-  
+
   public List<String> getBrowserIds() {
     List<String> ids = new ArrayList<String>();
     for (SlaveBrowser browser : slaves) {

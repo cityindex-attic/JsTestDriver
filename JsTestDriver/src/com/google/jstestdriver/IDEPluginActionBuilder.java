@@ -48,6 +48,11 @@ public class IDEPluginActionBuilder {
     tests.add("all");
     return this;
   }
+  
+  public IDEPluginActionBuilder addTests(List<String> testCases) {
+    tests.addAll(testCases);
+    return this;
+  }
 
   public IDEPluginActionBuilder dryRun() {
     dryRun = true;

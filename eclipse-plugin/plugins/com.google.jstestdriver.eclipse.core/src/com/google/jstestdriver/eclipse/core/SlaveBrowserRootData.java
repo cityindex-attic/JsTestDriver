@@ -32,12 +32,14 @@ public class SlaveBrowserRootData extends Observable implements Observer {
   private final SlaveBrowserSet chromeSlaves;
   private final SlaveBrowserSet ieSlaves;
   private final SlaveBrowserSet safariSlaves;
+  private final SlaveBrowserSet operaSlaves;
 
   private SlaveBrowserRootData() {
     firefoxSlaves = new SlaveBrowserSet("Firefox", this);
     chromeSlaves = new SlaveBrowserSet("Chrome", this);
     ieSlaves = new SlaveBrowserSet("IE", this);
     safariSlaves = new SlaveBrowserSet("Safari", this);
+    operaSlaves = new SlaveBrowserSet("Opera", this);
   }
 
   // TODO(shyamseshadri): ICKY. GET RID OF THIS ASAP. HACK FOR NOW TO GET THINGS WORKING.
@@ -65,6 +67,10 @@ public class SlaveBrowserRootData extends Observable implements Observer {
   public SlaveBrowserSet getSafariSlaves() {
     return safariSlaves;
   }
+  
+  public SlaveBrowserSet getOperaSlaves() {
+    return operaSlaves;
+  }
 
   public void update(Observable o, Object arg) {
     SlaveBrowser slave = (SlaveBrowser) arg;
@@ -76,6 +82,8 @@ public class SlaveBrowserRootData extends Observable implements Observer {
       safariSlaves.addSlaveBrowser(slave);
     } else if (slave.getBrowserInfo().getName().contains("MSIE")) {
       ieSlaves.addSlaveBrowser(slave);
+    } else if (slave.getBrowserInfo().getName().contains("Opera")) {
+      operaSlaves.addSlaveBrowser(slave);
     }
     setChanged();
     notifyObservers(this);
@@ -86,6 +94,7 @@ public class SlaveBrowserRootData extends Observable implements Observer {
     ieSlaves.clearSlaves();
     chromeSlaves.clearSlaves();
     safariSlaves.clearSlaves();
+    operaSlaves.clearSlaves();
     setChanged();
     notifyObservers(this);
   }
@@ -96,12 +105,13 @@ public class SlaveBrowserRootData extends Observable implements Observer {
     ids.addAll(chromeSlaves.getBrowserIds());
     ids.addAll(ieSlaves.getBrowserIds());
     ids.addAll(safariSlaves.getBrowserIds());
+    ids.addAll(operaSlaves.getBrowserIds());
     return ids;
   }
 
   public boolean hasSlaves() {
     return firefoxSlaves.hasSlaves() || chromeSlaves.hasSlaves() || ieSlaves.hasSlaves()
-        || safariSlaves.hasSlaves();
+        || safariSlaves.hasSlaves() || operaSlaves.hasSlaves();
   }
 
   @Override

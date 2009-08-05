@@ -99,5 +99,32 @@
             type="com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration">
       </launchConfigurationTabGroup>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="com.google.jstestdriver.eclipse.ui.launch.JsTestDriverLaunchShortcut"
+            icon="icons/JsTestDriver.png"
+            id="com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchShortcut"
+            label="Js Test Driver Test"
+            modes="run">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate
+                        operator="or">
+                     <test
+                           property="org.eclipse.debug.ui.matchesPattern"
+                           value="*.js">
+                     </test>
+                  </iterate>
+               </with>
+            </enablement>
+         </contextualLaunch>
+      </shortcut>
+   </extension>
 
 </plugin>

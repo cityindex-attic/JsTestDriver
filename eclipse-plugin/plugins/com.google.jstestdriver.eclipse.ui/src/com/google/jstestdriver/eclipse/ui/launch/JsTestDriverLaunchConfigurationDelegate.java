@@ -15,12 +15,6 @@
  */
 package com.google.jstestdriver.eclipse.ui.launch;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -33,15 +27,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.jstestdriver.ActionFactory;
-import com.google.jstestdriver.ActionFactoryModule;
-import com.google.jstestdriver.ConfigurationParser;
-import com.google.jstestdriver.IDEPluginActionBuilder;
-import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
-import com.google.jstestdriver.eclipse.internal.core.ProjectHelper;
 import com.google.jstestdriver.eclipse.ui.views.JsTestDriverView;
 import com.google.jstestdriver.eclipse.ui.views.TestResultsPanel;
 
@@ -54,6 +40,7 @@ public class JsTestDriverLaunchConfigurationDelegate implements
     ILaunchConfigurationDelegate2 {
 
   private final Logger logger = new Logger();
+  private final ActionRunnerFactory actionRunnerFactory = new ActionRunnerFactory();
 
   public void launch(final ILaunchConfiguration configuration, String mode,
       final ILaunch launch, IProgressMonitor monitor) throws CoreException {
@@ -61,16 +48,6 @@ public class JsTestDriverLaunchConfigurationDelegate implements
       throw new IllegalStateException(
           "Can only launch JS Test Driver configuration from Run mode");
     }
-
-    String projectName = configuration.getAttribute(
-        LaunchConfigurationConstants.PROJECT_NAME, "");
-    String confFileName = configuration.getAttribute(
-        LaunchConfigurationConstants.CONF_FILENAME, "");
-
-    ProjectHelper projectHelper = new ProjectHelper();
-    ConfigurationParser configurationParser = projectHelper.getConfigurationParser(
-        projectName, confFileName);
-    Injector injector = Guice.createInjector(new ActionFactoryModule());
 
     Display.getDefault().asyncExec(new Runnable() {
 
@@ -81,25 +58,15 @@ public class JsTestDriverLaunchConfigurationDelegate implements
           JsTestDriverView view = (JsTestDriverView) page
               .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
           TestResultsPanel panel = view.getTestResultsPanel();
-          panel.setupForNextTestRun(launch);
+          panel.setupForNextTestRun(configuration);
         } catch (PartInitException e) {
           logger.logException(e);
         }
       }
     });
 
-    IDEPluginActionBuilder dryRunBuilder = new IDEPluginActionBuilder(
-        configurationParser, Server.SERVER_URL, injector
-            .getInstance(ActionFactory.class),
-        new EclipseResponseStreamFactory());
-    dryRunBuilder.dryRun().build().runActions();
-    
-    configurationParser = projectHelper.getConfigurationParser(projectName, confFileName);
-    IDEPluginActionBuilder allTestsBuilder = new IDEPluginActionBuilder(
-        configurationParser, Server.SERVER_URL, injector
-            .getInstance(ActionFactory.class),
-        new EclipseResponseStreamFactory());
-    allTestsBuilder.addAllTests().build().runActions();
+    actionRunnerFactory.getDryActionRunner(configuration).runActions();
+    actionRunnerFactory.getAllTestsActionRunner(configuration).runActions();
   }
 
   public boolean buildForLaunch(ILaunchConfiguration configuration,

@@ -20,14 +20,16 @@ import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.google.jstestdriver.eclipse.core.SlaveBrowserRootData;
+import com.google.jstestdriver.eclipse.core.SlaveBrowserSet;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
 
 /**
@@ -40,10 +42,11 @@ public class ServerInfoPanel extends Composite implements Observer {
 
   public static final String SERVER_DOWN = "NOT RUNNING";
   private Text serverUrlText;
-  private Canvas safariIcon;
-  private Canvas chromeIcon;
-  private Canvas ieIcon;
-  private Canvas ffIcon;
+  private Label safariIcon;
+  private Label chromeIcon;
+  private Label ieIcon;
+  private Label ffIcon;
+  private Label operaIcon;
   private Icons icons;
   private static final Color NOT_RUNNING = new Color(Display.getCurrent(), 255, 102, 102);
   private static final Color NO_BROWSERS = new Color(Display.getCurrent(), 255, 255, 102);
@@ -51,11 +54,11 @@ public class ServerInfoPanel extends Composite implements Observer {
 
   public ServerInfoPanel(Composite parent, int style) {
     super(parent, style);
-    setLayout(new GridLayout(4, false));
+    setLayout(new GridLayout(5, false));
     icons = new Icons();
     
     GridData textGridData = new GridData();
-    textGridData.horizontalSpan = 4;
+    textGridData.horizontalSpan = 5;
     textGridData.grabExcessHorizontalSpace = true;
     textGridData.horizontalAlignment = SWT.FILL;
     serverUrlText = new Text(this, SWT.CENTER);
@@ -66,20 +69,24 @@ public class ServerInfoPanel extends Composite implements Observer {
     serverUrlText.setOrientation(SWT.HORIZONTAL);
     GridData imgGridData = new GridData();
     imgGridData.horizontalSpan = 1;
-    imgGridData.minimumHeight = 64;
-    imgGridData.minimumWidth = 64;
-    ffIcon = new Canvas(this, SWT.NONE);
+    imgGridData.minimumHeight = 48;
+    imgGridData.minimumWidth = 48;
+    ffIcon = new Label(this, SWT.NONE);
+    
     ffIcon.setLayoutData(imgGridData);
-    ffIcon.setBackgroundImage(icons.getFirefoxDisabledIcon());
-    chromeIcon = new Canvas(this, SWT.NONE);
+    ffIcon.setImage(icons.getFirefoxDisabledIcon());
+    chromeIcon = new Label(this, SWT.NONE);
     chromeIcon.setLayoutData(imgGridData);
-    chromeIcon.setBackgroundImage(icons.getChromeDisabledIcon());
-    safariIcon = new Canvas(this, SWT.NONE);
+    chromeIcon.setImage(icons.getChromeDisabledIcon());
+    safariIcon = new Label(this, SWT.NONE);
     safariIcon.setLayoutData(imgGridData);
-    safariIcon.setBackgroundImage(icons.getSafariDisabledIcon());
-    ieIcon = new Canvas(this, SWT.NONE);
+    safariIcon.setImage(icons.getSafariDisabledIcon());
+    ieIcon = new Label(this, SWT.NONE);
     ieIcon.setLayoutData(imgGridData);
-    ieIcon.setBackgroundImage(icons.getIEDisabledIcon());
+    ieIcon.setImage(icons.getIEDisabledIcon());
+    operaIcon = new Label(this, SWT.NONE);
+    operaIcon.setLayoutData(imgGridData);
+    operaIcon.setImage(icons.getOperaDisabledIcon());
   }
 
   public void update(Observable o, final Object arg) {
@@ -88,14 +95,11 @@ public class ServerInfoPanel extends Composite implements Observer {
       public void run() {
         Display.getDefault().asyncExec(new Runnable() {
           public void run() {
-            ffIcon.setBackgroundImage(icons.getImage(data.getFirefoxSlaves()
-                .getImagePath()));
-            chromeIcon.setBackgroundImage(icons.getImage(data.getChromeSlaves()
-                .getImagePath()));
-            ieIcon.setBackgroundImage(icons.getImage(data.getIeSlaves()
-                .getImagePath()));
-            safariIcon.setBackgroundImage(icons.getImage(data.getSafariSlaves()
-                .getImagePath()));
+            ffIcon.setImage(getImage(data.getFirefoxSlaves()));
+            chromeIcon.setImage(getImage(data.getChromeSlaves()));
+            ieIcon.setImage(getImage(data.getIeSlaves()));
+            safariIcon.setImage(getImage(data.getSafariSlaves()));
+            operaIcon.setImage(getImage(data.getOperaSlaves()));
             if (data.hasSlaves()) {
               serverUrlText.setBackground(READY);
             }
@@ -103,6 +107,15 @@ public class ServerInfoPanel extends Composite implements Observer {
         });
       }
     }).start();
+  }
+  
+  public Image getImage(SlaveBrowserSet slave) {
+    Image colored = icons.getImage(slave.getImagePath());
+    if (slave.hasSlaves()) {
+      return colored;
+    } else {
+      return new Image(Display.getCurrent(), colored, SWT.IMAGE_GRAY);
+    }
   }
 
   public void setServerStarted(String serverUrl) {
