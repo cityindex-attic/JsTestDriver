@@ -40,12 +40,12 @@ public class CapturedBrowsersPanel extends JPanel implements Observer {
   private BrowserIcon chrome;
   private BrowserIcon ie;
   private BrowserIcon firefox;
-//  private BrowserIcon opera;
+  private BrowserIcon opera;
   private BrowserIcon safari;
   private JLabel chromeLabel;
   private JLabel ieLabel;
   private JLabel firefoxLabel;
-//  private JLabel operaLabel;
+  private JLabel operaLabel;
   private JLabel safariLabel;
 
   public CapturedBrowsersPanel() {
@@ -53,7 +53,7 @@ public class CapturedBrowsersPanel extends JPanel implements Observer {
       chrome = BrowserIcon.buildFromResource("Chrome.png");
       ie = BrowserIcon.buildFromResource("IE.png");
       firefox = BrowserIcon.buildFromResource("Firefox.png");
-//      opera = BrowserIcon.buildFromResource("Opera.png");
+      opera = BrowserIcon.buildFromResource("Opera.png");
       safari = BrowserIcon.buildFromResource("Safari.png");
     } catch (IOException e) {
       throw new RuntimeException();
@@ -64,13 +64,12 @@ public class CapturedBrowsersPanel extends JPanel implements Observer {
     chromeLabel = new JLabel(chrome.getGreyscaleIcon());
     ieLabel = new JLabel(ie.getGreyscaleIcon());
     firefoxLabel = new JLabel(firefox.getGreyscaleIcon());
-//    operaLabel = new JLabel(opera.getGreyscaleIcon());
+    operaLabel = new JLabel(opera.getGreyscaleIcon());
     safariLabel = new JLabel(safari.getGreyscaleIcon());
     add(chromeLabel);
     add(ieLabel);
     add(firefoxLabel);
-    // TODO(jeremie): Support opera?
-    //add(operaLabel);
+    add(operaLabel);
     add(safariLabel);
 
     Dimension minimumSize = new Dimension(chrome.getColorIcon().getIconWidth() * 4, chrome.getColorIcon().getIconHeight());
@@ -84,6 +83,8 @@ public class CapturedBrowsersPanel extends JPanel implements Observer {
       firefoxLabel.setIcon(firefox.getColorIcon());
     } else if (slave.getBrowserInfo().getName().contains("Chrome")) {
       chromeLabel.setIcon(chrome.getColorIcon());
+    } else if (slave.getBrowserInfo().getName().contains("Opera")) {
+      operaLabel.setIcon(opera.getColorIcon());
     } else if (slave.getBrowserInfo().getName().contains("Safari")) {
       safariLabel.setIcon(safari.getColorIcon());
     } else if (slave.getBrowserInfo().getName().contains("MSIE")) {
