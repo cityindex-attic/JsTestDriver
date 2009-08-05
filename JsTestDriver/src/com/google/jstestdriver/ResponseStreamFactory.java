@@ -20,7 +20,7 @@ package com.google.jstestdriver;
  */
 public interface ResponseStreamFactory {
 
-  ResponseStream getRunTestsActionResponseStream(TestResultPrinter testResultPrinter);
+  ResponseStream getRunTestsActionResponseStream(String browserId);
   ResponseStream getDryRunActionResponseStream();
   ResponseStream getEvalActionResponseStream();
   ResponseStream getResetActionResponseStream();

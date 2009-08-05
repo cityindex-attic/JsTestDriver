@@ -22,31 +22,20 @@ import java.util.List;
  */
 public class RunTestsAction extends ThreadedAction {
 
-  private final ResponsePrinterFactory responsePrinterFactory;
   private final List<String> tests;
   private final boolean captureConsole;
 
   public RunTestsAction(ResponseStreamFactory responseStreamFactory,
-      ResponsePrinterFactory responsePrinterFactory, List<String> tests, boolean captureConsole) {
+      List<String> tests, boolean captureConsole) {
     super(responseStreamFactory);
-    this.responsePrinterFactory = responsePrinterFactory;
     this.tests = tests;
     this.captureConsole = captureConsole;
-  }
-
-  private TestResultPrinter createPrinter(String id) {
-    String testSuiteName = String.format("com.google.jstestdriver.%s", id);
-    TestResultPrinter printer =
-        responsePrinterFactory.getResponsePrinter(String.format("TEST-%s.xml", testSuiteName));
-
-    printer.open(testSuiteName);
-    return printer;
   }
 
   @Override
   public void run(String id, JsTestDriverClient client) {
     ResponseStream runTestsActionResponseStream =
-        responseStreamFactory.getRunTestsActionResponseStream(createPrinter(id));
+        responseStreamFactory.getRunTestsActionResponseStream(id);
     if (tests.size() == 1 && tests.get(0).equals("all")) {
       client.runAllTests(id, runTestsActionResponseStream, captureConsole);
     } else if (tests.size() > 0) {

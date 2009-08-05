@@ -44,7 +44,6 @@ public class ActionSequenceBuilder {
   }
 
   private final ActionFactory actionFactory;
-  private final ResponseStreamFactory responseStreamFactory;
   private final FileLoader fileLoader;
 
   private List<String> browsers = new LinkedList<String>();
@@ -64,9 +63,8 @@ public class ActionSequenceBuilder {
   private List<String> commands = new LinkedList<String>();
 
   /** Begins the building of an action sequence. */
-  public ActionSequenceBuilder(ResponseStreamFactory responseStreamFactory,
-      ActionFactory actionFactory, FileLoader fileLoader) {
-    this.responseStreamFactory = responseStreamFactory;
+  public ActionSequenceBuilder(ActionFactory actionFactory,
+      FileLoader fileLoader) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
   }
@@ -157,6 +155,10 @@ public class ActionSequenceBuilder {
   /** Creates and returns all threaded actions. */
   private List<ThreadedAction> createThreadedActions(JsTestDriverClient client) {
     List<ThreadedAction> threadedActions = new ArrayList<ThreadedAction>();
+
+    ResponseStreamFactory responseStreamFactory =
+        new DefaultResponseStreamFactory(new ResponsePrinterFactory(xmlOutputDir, System.out,
+            client, verbose));
 
     if (reset) {
       threadedActions.add(actionFactory.createResetAction(responseStreamFactory));

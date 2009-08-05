@@ -93,8 +93,7 @@ public class ActionFactory {
   public RunTestsAction createRunTestsAction(JsTestDriverClient client,
       ResponseStreamFactory responseStreamFactory, String xmlOutputDir, PrintStream out,
       boolean verbose, List<String> tests, boolean captureConsole) {
-    return new RunTestsAction(responseStreamFactory, new ResponsePrinterFactory(xmlOutputDir,
-        System.out, client, verbose), tests, captureConsole);
+    return new RunTestsAction(responseStreamFactory, tests, captureConsole);
   }
 
   public EvalAction createEvalAction(ResponseStreamFactory responseStreamFactory, String cmd) {

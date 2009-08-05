@@ -57,7 +57,7 @@ public class JsTestDriverClientTest extends TestCase {
       return stream;
     }
 
-    public ResponseStream getRunTestsActionResponseStream(TestResultPrinter testResultPrinter) {
+    public ResponseStream getRunTestsActionResponseStream(String testId) {
       return stream;
     }
   }

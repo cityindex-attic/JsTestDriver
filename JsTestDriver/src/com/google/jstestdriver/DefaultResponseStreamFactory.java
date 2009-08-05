@@ -25,9 +25,21 @@ import com.google.jstestdriver.ResetAction.ResetActionResponseStream;
  */
 public class DefaultResponseStreamFactory implements ResponseStreamFactory {
 
-  public ResponseStream getRunTestsActionResponseStream(TestResultPrinter testResultPrinter) {
+  private final ResponsePrinterFactory responsePrinterFactory;
+
+  public DefaultResponseStreamFactory(ResponsePrinterFactory responsePrinterFactory) {
+    this.responsePrinterFactory = responsePrinterFactory;
+  }
+
+  public ResponseStream getRunTestsActionResponseStream(String browserId) {
+    String testSuiteName = String.format("com.google.jstestdriver.%s", browserId);
+    TestResultPrinter printer =
+        responsePrinterFactory.getResponsePrinter(String.format("TEST-%s.xml", testSuiteName));
+
+    printer.open(testSuiteName);
+    
     RunTestsActionResponseStream responseStream = new RunTestsActionResponseStream(
-        new TestResultGenerator(), testResultPrinter);
+        new TestResultGenerator(), printer);
     return responseStream;
   }
 
