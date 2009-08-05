@@ -32,6 +32,7 @@
 
   <target name="clean">
     <delete dir="target" />
+    <ant antfile="../idea-plugin/build.xml" dir="../idea-plugin" target="clean"/>
   </target>
 
   <path id="classpath">
@@ -334,7 +335,11 @@
     </java>
   </target>
 
-  <target name="cbuild" depends="clean, testability-explorer, jstestdriver, test, coverage" />
+  <target name="idea-plugin">
+    <ant antfile="../idea-plugin/build.xml" dir="../idea-plugin"/>
+  </target>
+
+  <target name="cbuild" depends="clean, testability-explorer, jstestdriver, test, coverage, idea-plugin" />
 
   <target name="testability-explorer" depends="jar">
     <taskdef name="testability" classname="com.google.ant.TestabilityTask" classpathref="ant-tasks"/>

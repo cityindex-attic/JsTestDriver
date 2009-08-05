@@ -1,42 +1,29 @@
 <project name="JsTestDriver-idea-plugin" default="jar">
-  <property name="target.dir" value="target" />
+  <property name="target.dir" value="${basedir}/target" />
   <property name="bin.dir" value="${target.dir}/bin" />
   <property name="obj.dir" value="${target.dir}/obj" />
-  <property name="src.dir" value="src"/>
-  <property name="idea.home" value="/usr/lib/intellij-idea-7.0"/>
+  <property name="src.dir" value="${basedir}/src"/>
+  <property name="lib.dir" value="${basedir}/lib"/>
   <property name="jstestdriver.lib" value="../JsTestDriver/target/bin/JsTestDriver.jar"/>
 
   <path id="forms.classpath">
-      <fileset dir="${idea.home}/redist">
-          <include name="javac2.jar" />
-          <include name="forms_rt.jar" />
-      </fileset>
-      <fileset dir="${idea.home}/lib">
-          <include name="openapi.jar"/>
-          <include name="jdom.jar"/>
-          <include name="asm.jar"/>
-          <include name="asm-commons.jar"/>
-      </fileset>
-  </path>
-
-  <path id="uidesigner.classpath">
-      <path refid="forms.classpath"/>
-      <fileset dir="${idea.home}/lib">
-          <include name="bcel.jar"/>
-      </fileset>
+    <pathelement location="${lib.dir}/asm-3.0/asm-3.0.jar"/>
+    <pathelement location="${lib.dir}/asm-commons-3.0/asm-commons-3.0.jar"/>
+    <pathelement location="${lib.dir}/jdom-1.1/jdom-1.1.jar"/>
+    <pathelement location="${lib.dir}/com.intellij/javac2-7.0.3/javac2-7.0.3.jar"/>
+    <pathelement location="${lib.dir}/com.intellij/form_rt-7.0.3/forms_rt-7.0.3.jar"/>
+    <pathelement location="${lib.dir}/com.intellij/openapi-7.0.3/openapi-7.0.3.jar"/>
   </path>
 
   <path id="compile.classpath">
     <pathelement location="${jstestdriver.lib}" />
-    <fileset dir="${idea.home}/lib">
-      <include name="openapi.jar"/>
-      <include name="jdom.jar"/>
-      <include name="annotations.jar"/>
-    </fileset>
+    <pathelement location="${lib.dir}/com.intellij/openapi-7.0.3/openapi-7.0.3.jar" />
+    <pathelement location="${lib.dir}/com.intellij/annotations-7.0.3/annotations-7.0.3.jar"/>
+    <pathelement location="${lib.dir}/jdom-1.1/jdom-1.1.jar"/>
   </path>
 
   <taskdef name="idea-form-compiler" classname="com.intellij.uiDesigner.ant.Javac2"
-           classpathref="uidesigner.classpath"/>
+           classpathref="forms.classpath"/>
 
   <target name="clean">
     <delete dir="target" />
@@ -59,7 +46,7 @@
   <target name="compile.forms" description="Compiles all UI form files" depends="compile">
     <property name="forms.src" value=""/>
     <idea-form-compiler srcdir="${src.dir}/com/google/jstestdriver/idea/ui" destdir="${obj.dir}"
-            deprecation="no" optimize="off" debug="on" verbose="on">
+                        deprecation="no" optimize="off" debug="on" verbose="on">
       <classpath refid="forms.classpath"/>
       <classpath refid="compile.classpath"/>
     </idea-form-compiler>
@@ -70,6 +57,6 @@
       <fileset dir="${basedir}" includes="META-INF/*"/>
       <zipfileset src="${jstestdriver.lib}"/>
     </jar>
-    <chmod perm="644" file="${bin.dir}/${ant.project.name}.jar"/> 
+    <chmod perm="644" file="${bin.dir}/${ant.project.name}.jar"/>
   </target>
 </project>
