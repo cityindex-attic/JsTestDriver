@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 
 /**
  * @author shyamseshadri@google.com (Shyam Seshadri)
- *
  */
 public class TestCaseNameFinder {
   private static final Pattern TESTCASE_DECLARATION_PATTERN =

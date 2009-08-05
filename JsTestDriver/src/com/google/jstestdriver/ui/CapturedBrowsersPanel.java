@@ -87,7 +87,7 @@ public class CapturedBrowsersPanel extends JPanel implements Observer {
       operaLabel.setIcon(opera.getColorIcon());
     } else if (slave.getBrowserInfo().getName().contains("Safari")) {
       safariLabel.setIcon(safari.getColorIcon());
-    } else if (slave.getBrowserInfo().getName().contains("MSIE")) {
+    } else if (slave.getBrowserInfo().getName().contains("Microsoft Internet Explorer")) {
       ieLabel.setIcon(ie.getColorIcon());
     }
   }

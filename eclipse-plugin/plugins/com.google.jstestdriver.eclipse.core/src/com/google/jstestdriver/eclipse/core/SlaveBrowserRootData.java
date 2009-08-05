@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.SlaveBrowser;
 
 /**
@@ -74,15 +75,16 @@ public class SlaveBrowserRootData extends Observable implements Observer {
 
   public void update(Observable o, Object arg) {
     SlaveBrowser slave = (SlaveBrowser) arg;
-    if (slave.getBrowserInfo().getName().contains("Firefox")) {
+    BrowserInfo browserInfo = slave.getBrowserInfo();
+    if (browserInfo.getName().contains("Firefox")) {
       firefoxSlaves.addSlaveBrowser(slave);
-    } else if (slave.getBrowserInfo().getName().contains("Chrome")) {
+    } else if (browserInfo.getName().contains("Chrome")) {
       chromeSlaves.addSlaveBrowser(slave);
-    } else if (slave.getBrowserInfo().getName().contains("Safari")) {
+    } else if (browserInfo.getName().contains("Safari")) {
       safariSlaves.addSlaveBrowser(slave);
-    } else if (slave.getBrowserInfo().getName().contains("MSIE")) {
+    } else if (browserInfo.getName().contains("Microsoft Internet Explorer")) {
       ieSlaves.addSlaveBrowser(slave);
-    } else if (slave.getBrowserInfo().getName().contains("Opera")) {
+    } else if (browserInfo.getName().contains("Opera")) {
       operaSlaves.addSlaveBrowser(slave);
     }
     setChanged();

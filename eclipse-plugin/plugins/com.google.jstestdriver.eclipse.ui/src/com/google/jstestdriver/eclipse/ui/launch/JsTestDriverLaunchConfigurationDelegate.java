@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver.eclipse.ui.launch;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -48,6 +51,8 @@ public class JsTestDriverLaunchConfigurationDelegate implements
       throw new IllegalStateException(
           "Can only launch JS Test Driver configuration from Run mode");
     }
+    final List<String> testsToRun = configuration.getAttribute(
+        LaunchConfigurationConstants.TESTS_TO_RUN, new ArrayList<String>());
 
     Display.getDefault().asyncExec(new Runnable() {
 
@@ -59,14 +64,22 @@ public class JsTestDriverLaunchConfigurationDelegate implements
               .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
           TestResultsPanel panel = view.getTestResultsPanel();
           panel.setupForNextTestRun(configuration);
+          if (!testsToRun.isEmpty()) {
+            panel.addNumberOfTests(testsToRun.size());
+          }
         } catch (PartInitException e) {
           logger.logException(e);
         }
       }
     });
 
-    actionRunnerFactory.getDryActionRunner(configuration).runActions();
-    actionRunnerFactory.getAllTestsActionRunner(configuration).runActions();
+    if (testsToRun.isEmpty()) {
+      actionRunnerFactory.getDryActionRunner(configuration).runActions();
+      actionRunnerFactory.getAllTestsActionRunner(configuration).runActions();
+    } else {
+      // TODO(shyamseshadri): Handle the case where all the tests might not be run by the browser. 
+      actionRunnerFactory.getSpecificTestsActionRunner(configuration, testsToRun).runActions();
+    }
   }
 
   public boolean buildForLaunch(ILaunchConfiguration configuration,

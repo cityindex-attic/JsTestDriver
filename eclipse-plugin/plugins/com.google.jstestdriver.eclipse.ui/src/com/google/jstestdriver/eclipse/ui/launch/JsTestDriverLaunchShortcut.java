@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.viewers.ISelection;
@@ -60,12 +61,16 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
             "com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration");
         ILaunchConfiguration[] launchConfigurations = launchManager.getLaunchConfigurations(type);
         if (launchConfigurations.length < 1) {
+          // Error out.
           return;
         }
         IFileEditorInput editorInput = (IFileEditorInput) editor.getEditorInput();
         File jsFile = editorInput.getFile().getLocation().toFile();
-        List<String> testCases = finder.getTestCases(jsFile);
-        final ILaunchConfiguration configuration = launchConfigurations[0];
+        final List<String> testCases = finder.getTestCases(jsFile);
+        ILaunchConfigurationWorkingCopy workingCopy = 
+            launchConfigurations[0].copy("new run").getWorkingCopy();
+        workingCopy.setAttribute(LaunchConfigurationConstants.TESTS_TO_RUN, testCases);
+        final ILaunchConfiguration configuration = workingCopy.doSave();
         Display.getDefault().asyncExec(new Runnable() {
 
           public void run() {
@@ -76,14 +81,14 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
                   .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
               TestResultsPanel panel = view.getTestResultsPanel();
               panel.setupForNextTestRun(configuration);
+              panel.addNumberOfTests(testCases.size());
             } catch (PartInitException e) {
               logger.logException(e);
             }
           }
         });
         // Might need a specific tests dry run
-        // Commenting out the next run because it hangs
-        actionRunnerFactory.getSpecificTestsActionRunner(configuration, testCases).runActions();
+        actionRunnerFactory.getSpecificTestsActionRunner(workingCopy, testCases).runActions();
       } catch (IOException e) {
         logger.logException(e);
       } catch (CoreException e) {
