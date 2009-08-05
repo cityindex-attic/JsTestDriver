@@ -25,7 +25,7 @@ import com.google.jstestdriver.TestResultGenerator;
  */
 public class EclipseResponseStreamFactory implements ResponseStreamFactory {
 
-  public ResponseStream getDryRunActionResponseStream() {
+  public ResponseStream getDryRunActionResponseStream(String browserId) {
     return new EclipseDryRunActionResponseStream();
   }
 
