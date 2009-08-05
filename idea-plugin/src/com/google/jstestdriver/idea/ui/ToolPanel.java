@@ -20,6 +20,7 @@ import com.google.jstestdriver.DryRunInfo;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.ResponseStreamFactory;
+import com.google.jstestdriver.TestResultPrinter;
 import com.google.jstestdriver.idea.TestRunnerState;
 
 import com.intellij.util.ui.UIUtil;
@@ -71,7 +72,7 @@ public class ToolPanel extends JPanel {
 
   public ResponseStreamFactory createResponseStreamFactory() {
     return new ResponseStreamFactory() {
-      public ResponseStream getRunTestsActionResponseStream() {
+      public ResponseStream getRunTestsActionResponseStream(String browserId) {
         return getTestResultStream();
       }
 
