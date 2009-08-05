@@ -34,14 +34,13 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.util.concurrency.SwingWorker;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-
-import javax.swing.SwingWorker;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -84,7 +83,7 @@ public class TestRunnerState implements RunnableState {
     toolPanel.setResetRunner(resetRunner);
     final SwingWorker worker = new SwingWorker() {
       @Override
-      protected Object doInBackground() throws Exception {
+      public Object construct() {
         dryRunRunner.runActions();
         toolPanel.dryRunComplete();
         testRunner.runActions();
@@ -93,7 +92,7 @@ public class TestRunnerState implements RunnableState {
     };
     window.show(new Runnable() {
       public void run() {
-        worker.execute();
+        worker.start();
       }
     });
 
