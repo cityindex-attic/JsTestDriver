@@ -3,44 +3,44 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src-test"/>
 	<classpathentry kind="src" path="src-generated"/>
-	<classpathentry kind="lib" path="lib/ant-googlecode-0.0.2/ant-googlecode-0.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/args4j-2.0.1/args4j-2.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.1.1/commons-logging-1.1.1-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.1.1/commons-logging-1.1.1-sources.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/google-gson-1.2.3/gson-1.2.3-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/google-gson-1.2.3/gson-1.2.3-sources.jar"/>
-	<classpathentry kind="lib" path="lib/google-gson-1.2.3/gson-1.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/guice/guice-2.0-no_aop.jar"/>
-	<classpathentry kind="lib" path="lib/guice/guice-multibindings-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar"/>
-	<classpathentry kind="lib" path="lib/jetty/jetty-6.1.14.jar"/>
-	<classpathentry kind="lib" path="lib/jetty/jetty-util-6.1.14.jar"/>
-	<classpathentry kind="lib" path="lib/jetty/servlet-api-2.5-6.1.14.jar"/>
-	<classpathentry kind="lib" path="lib/joda-time-1.6/joda-time-1.6-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/joda-time-1.6/joda-time-1.6-sources.jar"/>
-	<classpathentry kind="lib" path="lib/joda-time-1.6/joda-time-1.6.jar"/>
-	<classpathentry kind="lib" path="lib/junit/junit.jar"/>
-	<classpathentry kind="lib" path="lib/jvyaml-0.2/lib/jvyaml.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-1.5.6/slf4j-api-1.5.6-sources.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-1.5.6/slf4j-api-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-1.5.6/slf4j-jcl-1.5.6-sources.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-1.5.6/slf4j-jcl-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib/svnant-1.2.1/lib/ganymed.jar"/>
-	<classpathentry kind="lib" path="lib/svnant-1.2.1/lib/svnant.jar"/>
-	<classpathentry kind="lib" path="lib/svnant-1.2.1/lib/svnClientAdapter.jar"/>
-	<classpathentry kind="lib" path="lib/svnant-1.2.1/lib/svnjavahl.jar"/>
-	<classpathentry kind="lib" path="lib/svnant-1.2.1/lib/svnkit.jar"/>
-	<classpathentry kind="lib" path="lib/testability-explorer/ant-testability-explorer-1.3.0-r275.jar"/>
-	<classpathentry kind="lib" path="lib/testability-explorer/testability-explorer-1.3.0-r275.jar"/>
-	<classpathentry kind="lib" path="lib/xerces-2_9_1/resolver.jar"/>
-	<classpathentry kind="lib" path="lib/xerces-2_9_1/serializer.jar"/>
-	<classpathentry kind="lib" path="lib/xerces-2_9_1/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="lib/xerces-2_9_1/xml-apis.jar"/>
-	<classpathentry kind="lib" path="lib/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar"/>
-	<classpathentry kind="lib" path="lib/yuicompressor-2.4.2/lib/jargs-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/yuicompressor-2.4.2/lib/rhino-1.6R7.jar"/>
-	<classpathentry kind="lib" path="lib/antlr-3.1.3/antlr-3.1.3.jar" sourcepath="/Users/corysmith/Downloads/antlr-3.1.3/runtime/Java/src/main/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="lib/ant-googlecode-0.0.2/ant-googlecode-0.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/args4j-2.0.1/args4j-2.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.1.1/commons-logging-1.1.1-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.1.1/commons-logging-1.1.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/google-gson-1.2.3/gson-1.2.3-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/google-gson-1.2.3/gson-1.2.3-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/google-gson-1.2.3/gson-1.2.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice/guice-2.0-no_aop.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guice/guice-multibindings-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty/jetty-6.1.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty/jetty-util-6.1.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty/servlet-api-2.5-6.1.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/joda-time-1.6/joda-time-1.6-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/joda-time-1.6/joda-time-1.6-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/joda-time-1.6/joda-time-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/junit/junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jvyaml-0.2/lib/jvyaml.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.5.6/slf4j-api-1.5.6-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.5.6/slf4j-api-1.5.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.5.6/slf4j-jcl-1.5.6-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.5.6/slf4j-jcl-1.5.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/svnant-1.2.1/lib/ganymed.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/svnant-1.2.1/lib/svnant.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/svnant-1.2.1/lib/svnClientAdapter.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/svnant-1.2.1/lib/svnjavahl.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/svnant-1.2.1/lib/svnkit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/testability-explorer/ant-testability-explorer-1.3.0-r275.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/testability-explorer/testability-explorer-1.3.0-r275.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xerces-2_9_1/resolver.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xerces-2_9_1/serializer.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xerces-2_9_1/xercesImpl.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xerces-2_9_1/xml-apis.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/yuicompressor-2.4.2/lib/jargs-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/yuicompressor-2.4.2/lib/rhino-1.6R7.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/antlr-3.1.3/antlr-3.1.3.jar" sourcepath="/Users/corysmith/Downloads/antlr-3.1.3/runtime/Java/src/main/java"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

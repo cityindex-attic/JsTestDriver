@@ -22,7 +22,7 @@ import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-import com.google.jstestdriver.hooks.FileLoadingPreProcessor;
+import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 
 /**
  * A simple loader for files.
@@ -32,13 +32,13 @@ public class ProcessingFileLoader implements FileLoader {
   private final JsTestDriverFileFilter filter;
   private final FileReader reader;
   private final Set<FileLoadPostProcessor> postprocessors;
-  private final Set<FileLoadingPreProcessor> preProcessors;
+  private final Set<FileLoadPreProcessor> preProcessors;
 
   @Inject
   public ProcessingFileLoader(JsTestDriverFileFilter filter,
                               FileReader reader,
                               Set<FileLoadPostProcessor> postprocessors,
-                              Set<FileLoadingPreProcessor> preProcessors) {
+                              Set<FileLoadPreProcessor> preProcessors) {
     this.filter = filter;
     this.reader = reader;
     this.postprocessors = postprocessors;
@@ -78,7 +78,7 @@ public class ProcessingFileLoader implements FileLoader {
   
   private List<FileInfo> preProcessFiles(Set<FileInfo> filesToLoad) {
     List<FileInfo> files = new LinkedList<FileInfo>(filesToLoad);
-    for (FileLoadingPreProcessor processor : preProcessors) {
+    for (FileLoadPreProcessor processor : preProcessors) {
       files = processor.process(files);
     }
     return files;

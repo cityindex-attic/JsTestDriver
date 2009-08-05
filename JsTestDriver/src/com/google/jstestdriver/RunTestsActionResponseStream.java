@@ -26,10 +26,12 @@ public class RunTestsActionResponseStream implements ResponseStream {
 
   private TestResultPrinter printer;
 
-  public RunTestsActionResponseStream(TestResultGenerator testResultGenerator) {
+  public RunTestsActionResponseStream(TestResultGenerator testResultGenerator,
+      TestResultPrinter printer) {
     this.testResultGenerator = testResultGenerator;
+    this.printer = printer;
   }
-  
+
   public void stream(Response response) {
     if (response.getError().equals("PANIC")) {
       System.err.println(response.getResponse());
@@ -43,9 +45,5 @@ public class RunTestsActionResponseStream implements ResponseStream {
 
   public void finish() {
     printer.close();
-  }
-
-  public void setResponsePrinter(TestResultPrinter printer) {
-    this.printer = printer;
   }
 }

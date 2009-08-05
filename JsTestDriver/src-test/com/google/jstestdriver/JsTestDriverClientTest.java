@@ -53,11 +53,11 @@ public class JsTestDriverClientTest extends TestCase {
       return stream;
     }
 
-    public ResponseStream getRunTestsActionResponseStream() {
+    public ResponseStream getDryRunActionResponseStream() {
       return stream;
     }
 
-    public ResponseStream getDryRunActionResponseStream() {
+    public ResponseStream getRunTestsActionResponseStream(TestResultPrinter testResultPrinter) {
       return stream;
     }
   }

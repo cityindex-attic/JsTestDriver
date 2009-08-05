@@ -82,14 +82,16 @@ public class IDEPluginActionBuilder {
   private List<ThreadedAction> createThreadedActions(JsTestDriverClient client) {
     List<ThreadedAction> threadedActions = new LinkedList<ThreadedAction>();
     if (reset) {
-      threadedActions.add(new ResetAction(responseStreamFactory));
+      threadedActions.add(actionFactory.createDryRunAction(responseStreamFactory));
     }
     if (dryRun) {
-      threadedActions.add(new DryRunAction(responseStreamFactory));
+      threadedActions.add(actionFactory.createDryRunAction(responseStreamFactory));
     }
     if (!tests.isEmpty()) {
-      threadedActions.add(new RunTestsAction(responseStreamFactory, new ResponsePrinterFactory("",
-          System.out, client, false), tests, true));
+      RunTestsAction runTestsAction = actionFactory.createRunTestsAction(client,
+          responseStreamFactory, "", System.out,
+              false, tests, true);
+      threadedActions.add(runTestsAction);
     }
     return threadedActions;
   }

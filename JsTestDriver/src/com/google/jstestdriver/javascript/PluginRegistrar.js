@@ -48,6 +48,7 @@ jstestdriver.initializePluginRegistrar = function() {
  * 
  * The list of supported methods is:
  * - loadSource
+ * - runTestConfiguration
  * 
  * For more information regarding the supported method just read the documentation for the method
  * in this class.

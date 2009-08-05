@@ -21,12 +21,14 @@ import com.google.jstestdriver.ResetAction.ResetActionResponseStream;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
- *
+ * 
  */
 public class DefaultResponseStreamFactory implements ResponseStreamFactory {
 
-  public ResponseStream getRunTestsActionResponseStream() {
-    return new RunTestsActionResponseStream(new TestResultGenerator());
+  public ResponseStream getRunTestsActionResponseStream(TestResultPrinter testResultPrinter) {
+    RunTestsActionResponseStream responseStream = new RunTestsActionResponseStream(
+        new TestResultGenerator(), testResultPrinter);
+    return responseStream;
   }
 
   public ResponseStream getDryRunActionResponseStream() {
@@ -40,4 +42,5 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
   public ResponseStream getResetActionResponseStream() {
     return new ResetActionResponseStream();
   }
+
 }

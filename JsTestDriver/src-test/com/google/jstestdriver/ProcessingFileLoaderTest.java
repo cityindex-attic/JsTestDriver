@@ -25,7 +25,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-import com.google.jstestdriver.hooks.FileLoadingPreProcessor;
+import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 
 public class ProcessingFileLoaderTest extends TestCase {
 
@@ -106,7 +106,7 @@ public class ProcessingFileLoaderTest extends TestCase {
       }
 
     }, Collections.<FileLoadPostProcessor> emptySet(), Collections
-        .<FileLoadingPreProcessor> emptySet()).loadFiles(Collections.singleton(info), shouldReset);
+        .<FileLoadPreProcessor> emptySet()).loadFiles(Collections.singleton(info), shouldReset);
 
     assertEquals(infoData + "filtered", actual.get(0).getData());
     assertEquals(info.getFileName(), actual.get(0).getFileName());
@@ -131,7 +131,7 @@ public class ProcessingFileLoaderTest extends TestCase {
     };
 
     List<FileInfo> actual = new ProcessingFileLoader(new MockFileFilter(shouldReset, infoData),
-        new FileReaderStub(infoData, info), Collections.singleton(processor), Collections.<FileLoadingPreProcessor> emptySet()).loadFiles(
+        new FileReaderStub(infoData, info), Collections.singleton(processor), Collections.<FileLoadPreProcessor> emptySet()).loadFiles(
         Collections.singleton(info), shouldReset);
 
     assertEquals(expected, actual.get(0));
@@ -159,7 +159,7 @@ public class ProcessingFileLoaderTest extends TestCase {
       }
 
     }, mockFileReader, Collections.<FileLoadPostProcessor> emptySet(), Collections
-        .<FileLoadingPreProcessor> emptySet()).loadFiles(Collections.singleton(info), shouldReset);
+        .<FileLoadPreProcessor> emptySet()).loadFiles(Collections.singleton(info), shouldReset);
 
     assertEquals(infoData + "filtered" + patchData, actual.get(0).getData());
     assertEquals(info.getFileName(), actual.get(0).getFileName());
@@ -171,7 +171,7 @@ public class ProcessingFileLoaderTest extends TestCase {
     final FileInfo info = new FileInfo("http://local/foo.js", -1, false, false, null);
     final boolean shouldReset = false;
     List<FileInfo> actual = new ProcessingFileLoader(null, null, Collections
-        .<FileLoadPostProcessor> emptySet(), Collections.<FileLoadingPreProcessor> emptySet())
+        .<FileLoadPostProcessor> emptySet(), Collections.<FileLoadPreProcessor> emptySet())
         .loadFiles(Collections.singleton(info), shouldReset);
 
     assertEquals("", actual.get(0).getData());
@@ -187,7 +187,7 @@ public class ProcessingFileLoaderTest extends TestCase {
     final String addedData = "foobar";
     final boolean shouldReset = false;
     
-    FileLoadingPreProcessor preProcessor = new FileLoadingPreProcessor(){
+    FileLoadPreProcessor preProcessor = new FileLoadPreProcessor(){
       public List<FileInfo> process(List<FileInfo> files) {
         files.add(addedInfo);
         return new LinkedList<FileInfo>(files);

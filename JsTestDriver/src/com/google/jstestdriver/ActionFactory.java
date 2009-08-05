@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -79,5 +80,24 @@ public class ActionFactory {
     public List<String> resolveFilesDeps(String file) {
       return Collections.singletonList(file);
     }
+  }
+
+  public ResetAction createResetAction(ResponseStreamFactory responseStreamFactory) {
+    return new ResetAction(responseStreamFactory);
+  }
+
+  public DryRunAction createDryRunAction(ResponseStreamFactory responseStreamFactory) {
+    return new DryRunAction(responseStreamFactory);
+  }
+
+  public RunTestsAction createRunTestsAction(JsTestDriverClient client,
+      ResponseStreamFactory responseStreamFactory, String xmlOutputDir, PrintStream out,
+      boolean verbose, List<String> tests, boolean captureConsole) {
+    return new RunTestsAction(responseStreamFactory, new ResponsePrinterFactory(xmlOutputDir,
+        System.out, client, verbose), tests, captureConsole);
+  }
+
+  public EvalAction createEvalAction(ResponseStreamFactory responseStreamFactory, String cmd) {
+    return new EvalAction(responseStreamFactory, cmd);
   }
 }

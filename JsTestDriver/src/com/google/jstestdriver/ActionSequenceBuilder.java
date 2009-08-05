@@ -159,18 +159,20 @@ public class ActionSequenceBuilder {
     List<ThreadedAction> threadedActions = new ArrayList<ThreadedAction>();
 
     if (reset) {
-      threadedActions.add(new ResetAction(responseStreamFactory));
+      threadedActions.add(actionFactory.createResetAction(responseStreamFactory));
     }
     if (dryRun) {
-      threadedActions.add(new DryRunAction(responseStreamFactory));
+      threadedActions.add(actionFactory.createDryRunAction(responseStreamFactory));
     }
     if (!tests.isEmpty()) {
-      threadedActions.add(new RunTestsAction(responseStreamFactory, new ResponsePrinterFactory(
-          xmlOutputDir, System.out, client, verbose), tests, captureConsole));
+      RunTestsAction runTestsAction = actionFactory.createRunTestsAction(client,
+          responseStreamFactory, xmlOutputDir, System.out,
+              verbose, tests, captureConsole);
+      threadedActions.add(runTestsAction);
     }
     if (!commands.isEmpty()) {
       for (String cmd : commands) {
-        threadedActions.add(new EvalAction(responseStreamFactory, cmd));
+        threadedActions.add(actionFactory.createEvalAction(responseStreamFactory, cmd));
       }
     }
     return threadedActions;

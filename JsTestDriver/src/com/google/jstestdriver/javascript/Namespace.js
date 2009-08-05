@@ -14,6 +14,7 @@
  * the License.
  */
 jstestdriver = {};
+jstestdriver.global = this;
 jstestdriver.plugins = {};
 
 if (typeof console == 'undefined') console = {};
