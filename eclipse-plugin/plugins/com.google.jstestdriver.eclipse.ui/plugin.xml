@@ -111,9 +111,6 @@
             <enablement>
                <with
                      variable="selection">
-                  <count
-                        value="1">
-                  </count>
                   <iterate
                         operator="or">
                      <test
