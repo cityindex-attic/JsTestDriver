@@ -30,25 +30,41 @@ public class TestCaseNameFinderTest extends TestCase {
     String input = "//Some Stupid comment\n"
         + "var assertsTest = jstestdriver.testCaseManager.TestCase('assertsTest');\n"
         + "\n" + "assertsTest.prototype.testA = function() {};";
-    List<String> testCases = finder.getTestCases(new ByteArrayInputStream(input.getBytes()));
+    List<String> testCases = finder.getTestCases(new ByteArrayInputStream(input
+        .getBytes()));
     assertEquals(1, testCases.size());
-    assertEquals("assertsTest.testA", testCases.get(0));
+    assertEquals("assertsTest.prototype.testA", testCases.get(0));
   }
 
   public void testGetTestCasesFindsMultipleTestCases() throws Exception {
     String input = "//Some Stupid comment\n"
         + "var assertsTest = jstestdriver.testCaseManager.TestCase('assertsTest');\n"
-        + "\n" + "assertsTest.prototype.testA = function() {};\n\n"
+        + "\n"
+        + "assertsTest.prototype.testA = function() {};\n\n"
         + "var libLoaderTest = jstestdriver.testCaseManager.TestCase('libLoaderTest');\n"
         + "\n" + "libLoaderTest.prototype.testAB = function() {};\n\n";
-    List<String> testCases = finder.getTestCases(new ByteArrayInputStream(input.getBytes()));
+    List<String> testCases = finder.getTestCases(new ByteArrayInputStream(input
+        .getBytes()));
     assertEquals(2, testCases.size());
-    assertEquals("assertsTest.testA", testCases.get(0));
-    assertEquals("libLoaderTest.testAB", testCases.get(1));
+    assertEquals("assertsTest.prototype.testA", testCases.get(0));
+    assertEquals("libLoaderTest.prototype.testAB", testCases.get(1));
   }
-  
+
   public void testGetTestCasesNoTestsReturnsEmptyList() throws Exception {
     assertEquals(0, finder.getTestCases(
         new ByteArrayInputStream("No Tests here".getBytes())).size());
+  }
+
+  public void testGetTestCasesFromSource() throws Exception {
+    String input = "//Some Stupid comment\n"
+        + "var assertsTest = jstestdriver.testCaseManager.TestCase('assertsTest');\n"
+        + "\n"
+        + "assertsTest.prototype.testA = function() {};\n\n"
+        + "var libLoaderTest = jstestdriver.testCaseManager.TestCase('libLoaderTest');\n"
+        + "\n" + "libLoaderTest.prototype.testAB = function() {};\n\n";
+    List<String> testCases = finder.getTestCases(input);
+    assertEquals(2, testCases.size());
+    assertEquals("assertsTest.prototype.testA", testCases.get(0));
+    assertEquals("libLoaderTest.prototype.testAB", testCases.get(1));
   }
 }

@@ -30,10 +30,14 @@ import java.util.regex.Pattern;
  * @author shyamseshadri@google.com (Shyam Seshadri)
  */
 public class TestCaseNameFinder {
-  private static final Pattern TESTCASE_DECLARATION_PATTERN =
-      Pattern.compile(".*jstestdriver\\.testCaseManager\\.TestCase\\(\'(.*?)\'\\);.*");
+  // TODO(shyamseshadri): Handle the following case
+  /**
+   * TestCase('name', { testMooh: function() {
+   * }, testMeuh: function() {} });
+   * 
+   */
   private static final Pattern TESTMETHOD_DECLARATION_PATTERN =
-      Pattern.compile(".*\\.prototype\\.(test.*?)[\\s=].*");
+      Pattern.compile("\\s*([a-zA-Z_]*\\.prototype\\.test.*?)[\\s=].*");
 
   public List<String> getTestCases(File jsFile) throws IOException {
     return getTestCases(new FileInputStream(jsFile));
@@ -41,21 +45,24 @@ public class TestCaseNameFinder {
   
   public List<String> getTestCases(InputStream jsStream) throws IOException {
     BufferedReader reader = new BufferedReader(new InputStreamReader(jsStream));
-    List<String> testCases = new ArrayList<String>();
     String input = null;
-    String testCaseName = null;
+    StringBuilder builder = new StringBuilder();
     while ((input = reader.readLine()) != null) {
-      Matcher matcher = TESTCASE_DECLARATION_PATTERN.matcher(input);
+      builder.append(input + "\n");
+    }
+    String source = builder.toString();
+    return getTestCases(source);
+  }
+  
+  public List<String> getTestCases(String source) {
+    List<String> testMethods = new ArrayList<String>();
+    for (String line : source.split("\n")) {
+      Matcher matcher = TESTMETHOD_DECLARATION_PATTERN.matcher(line);
       if (matcher.matches()) {
-        testCaseName = matcher.group(1);
-      } else {
-        matcher = TESTMETHOD_DECLARATION_PATTERN.matcher(input);
-        if (matcher.matches()) {
-          String testMethodName = matcher.group(1);
-          testCases.add(testCaseName + "." + testMethodName);
-        }
+        testMethods.add(matcher.group(1));
       }
     }
-    return testCases;
+    return testMethods;
   }
+  
 }

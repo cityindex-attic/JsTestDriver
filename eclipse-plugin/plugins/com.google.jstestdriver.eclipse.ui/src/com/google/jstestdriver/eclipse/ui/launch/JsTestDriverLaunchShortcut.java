@@ -28,6 +28,10 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
@@ -36,6 +40,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.TextEditor;
 
 import com.google.jstestdriver.eclipse.internal.core.Logger;
 import com.google.jstestdriver.eclipse.ui.views.JsTestDriverView;
@@ -75,37 +80,79 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
       }
     }
   }
-  
+
   private List<String> getTestCases(File file) throws IOException {
     return finder.getTestCases(file);
   }
 
   public void launch(IEditorPart editor, String mode) {
-    // org.eclipse.ui.editors.text.TextEditor
-    // org.eclipse.ui.part.FileEditorInput
-    if (editor.getEditorInput() instanceof IFileEditorInput) {
-      try {
-        ILaunchConfiguration[] launchConfigurations = getJstdLaunchConfigurations();
-        if (launchConfigurations.length < 1) {
-          // Error out.
-          return;
-        }
-        IFileEditorInput editorInput = (IFileEditorInput) editor.getEditorInput();
-        File jsFile = editorInput.getFile().getLocation().toFile();
-        runTests(launchConfigurations[0], getTestCases(jsFile));
-      } catch (IOException e) {
-        logger.logException(e);
-      } catch (CoreException e) {
-        logger.logException(e);
+    List<String> testCases = new ArrayList<String>();
+    try {
+      ILaunchConfiguration[] launchConfigurations = getJstdLaunchConfigurations();
+      if (launchConfigurations.length < 1) {
+        // Error out.
+        return;
       }
+      if (editor instanceof TextEditor) {
+        TextEditor textEditor = (TextEditor) editor;
+        if (textEditor.getSelectionProvider().getSelection() instanceof ITextSelection) {
+          int startLine = updateTestCasesFromSelection(testCases, textEditor);
+          if (testCases.isEmpty()) {
+            updateTestCasesFromCurrentLine(testCases, textEditor, startLine);
+          }
+        }
+      }
+      if (editor.getEditorInput() instanceof IFileEditorInput) {
+        if (testCases.isEmpty()) {
+          updateTestCasesFromFile(editor, testCases);
+        }
+      }
+      runTests(launchConfigurations[0], testCases);
+    } catch (CoreException e) {
+      logger.logException(e);
+    } catch (IOException e) {
+      logger.logException(e);
+    }
+  }
+
+  private void updateTestCasesFromFile(IEditorPart editor,
+      List<String> testCases) throws IOException {
+    IFileEditorInput editorInput = (IFileEditorInput) editor.getEditorInput();
+    File jsFile = editorInput.getFile().getLocation().toFile();
+    testCases.addAll(getTestCases(jsFile));
+  }
+
+  private int updateTestCasesFromSelection(List<String> testCases,
+      TextEditor textEditor) {
+    ITextSelection selection = (ITextSelection) textEditor
+        .getSelectionProvider().getSelection();
+    int startLine = selection.getStartLine();
+    String selectionString = selection.getText();
+    if (selectionString != null && !"".equals(selectionString.trim())) {
+      testCases.addAll(finder.getTestCases(selectionString));
+    }
+    return startLine;
+  }
+
+  private void updateTestCasesFromCurrentLine(List<String> testCases,
+      TextEditor textEditor, int startLine) {
+    IDocument document = textEditor.getDocumentProvider().getDocument(
+        textEditor.getEditorInput());
+    try {
+      IRegion region = document.getLineInformation(startLine);
+      String sourceCode = document.get(region.getOffset(), region.getLength());
+      testCases.addAll(finder.getTestCases(sourceCode));
+    } catch (BadLocationException e) {
+      logger.logException(e);
     }
   }
 
   private void runTests(ILaunchConfiguration launchConfiguration,
       final List<String> testCases) throws CoreException {
-    ILaunchConfigurationWorkingCopy workingCopy = 
-        launchConfiguration.copy("new run").getWorkingCopy();
-    workingCopy.setAttribute(LaunchConfigurationConstants.TESTS_TO_RUN, testCases);
+    ILaunchConfigurationWorkingCopy workingCopy = launchConfiguration.copy(
+        "new run").getWorkingCopy();
+    workingCopy.setAttribute(LaunchConfigurationConstants.TESTS_TO_RUN,
+        testCases);
     final ILaunchConfiguration configuration = workingCopy.doSave();
     Display.getDefault().asyncExec(new Runnable() {
 
@@ -124,15 +171,17 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
       }
     });
     // Might need a specific tests dry run
-    actionRunnerFactory.getSpecificTestsActionRunner(workingCopy, testCases).runActions();
+    actionRunnerFactory.getSpecificTestsActionRunner(workingCopy, testCases)
+        .runActions();
   }
 
   private ILaunchConfiguration[] getJstdLaunchConfigurations()
       throws CoreException {
     ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-    ILaunchConfigurationType type = launchManager.getLaunchConfigurationType(
-        "com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration");
-    ILaunchConfiguration[] launchConfigurations = launchManager.getLaunchConfigurations(type);
+    ILaunchConfigurationType type = launchManager
+        .getLaunchConfigurationType("com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration");
+    ILaunchConfiguration[] launchConfigurations = launchManager
+        .getLaunchConfigurations(type);
     return launchConfigurations;
   }
 
