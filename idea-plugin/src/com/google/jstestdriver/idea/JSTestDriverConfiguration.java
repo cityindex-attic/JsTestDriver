@@ -31,8 +31,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectJdk;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
@@ -53,7 +51,6 @@ import java.util.List;
 public class JSTestDriverConfiguration extends ModuleBasedConfiguration {
 
   private final JSTestDriverConfigurationFactory jsTestDriverConfigurationFactory;
-  private final String pluginName;
 
   public String settingsFile;
   private String serverPort;
@@ -63,7 +60,6 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration {
                                    String pluginName) {
     super(pluginName, new RunConfigurationModule(project, true), jsTestDriverConfigurationFactory);
     this.jsTestDriverConfigurationFactory = jsTestDriverConfigurationFactory;
-    this.pluginName = pluginName;
   }
 
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
@@ -74,9 +70,7 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration {
                                   RunnerSettings runnerSettings,
                                   ConfigurationPerRunnerSettings configurationSettings)
       throws ExecutionException {
-    ProjectJdk projectJdk = ProjectRootManager.getInstance(getProject()).getProjectJdk();
-    return new TestRunnerState(runnerInfo, runnerSettings, configurationSettings, this,
-        getProject());
+    return new TestRunnerState(this, getProject());
   }
 
   @Override

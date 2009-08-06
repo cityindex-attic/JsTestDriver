@@ -20,6 +20,7 @@
   <version>0.1</version>
   <vendor>Google</vendor>
   <idea-version since-build="7973"/>
+  <depends>com.intellij.modules.lang</depends>
   <application-components>
     <component>
       <implementation-class>com.google.jstestdriver.idea.JSTestDriverComponent</implementation-class>

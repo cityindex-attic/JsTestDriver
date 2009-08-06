@@ -20,7 +20,7 @@ import com.intellij.execution.configurations.ConfigurationType;
 
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 /**
  * Top-level of the plugin - this class is registered in the plugin XML.
@@ -52,6 +52,12 @@ public class JSTestDriverComponent implements ConfigurationType {
 
   public Icon getIcon() {
     return PluginResources.getSmallIcon();
+  }
+
+  // For IDEA 8
+  @NotNull
+  public String getId() {
+    return getComponentName();
   }
 
   public ConfigurationFactory[] getConfigurationFactories() {

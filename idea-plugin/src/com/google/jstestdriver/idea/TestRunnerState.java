@@ -29,11 +29,11 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
 import com.intellij.execution.configurations.RunnableState;
 import com.intellij.execution.configurations.RunnerSettings;
-import com.intellij.execution.runners.RunnerInfo;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.content.Content;
 import com.intellij.util.concurrency.SwingWorker;
 
 import org.jetbrains.annotations.Nullable;
@@ -50,11 +50,7 @@ public class TestRunnerState implements RunnableState {
   private final JSTestDriverConfiguration jsTestDriverConfiguration;
   private final Project project;
 
-  public TestRunnerState(
-      RunnerInfo runnerInfo, RunnerSettings runnerSettings,
-      ConfigurationPerRunnerSettings configurationSettings,
-      JSTestDriverConfiguration jsTestDriverConfiguration, Project project) {
-
+  public TestRunnerState(JSTestDriverConfiguration jsTestDriverConfiguration, Project project) {
     this.jsTestDriverConfiguration = jsTestDriverConfiguration;
     this.project = project;
   }
@@ -67,7 +63,9 @@ public class TestRunnerState implements RunnableState {
     ToolWindow window =
         ToolWindowManager.getInstance(project).getToolWindow(JSTestDriverToolWindow.TOOL_WINDOW_ID);
     String serverURL = "http://localhost:" + jsTestDriverConfiguration.getServerPort();
-    final ToolPanel toolPanel = (ToolPanel) window.getContentManager().getContent(0).getComponent();
+    Content content = window.getContentManager().getContent(0);
+
+    final ToolPanel toolPanel = (ToolPanel) content.getComponent();
     toolPanel.clearTestResults();
     toolPanel.setTestRunner(this);
     ResponseStreamFactory responseStreamFactory = toolPanel.createResponseStreamFactory();

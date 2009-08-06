@@ -335,7 +335,7 @@
     </java>
   </target>
 
-  <target name="idea-plugin">
+  <target name="idea-plugin" depends="jar">
     <ant antfile="../idea-plugin/build.xml" dir="../idea-plugin"/>
   </target>
 
