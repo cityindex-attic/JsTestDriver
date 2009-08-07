@@ -24,7 +24,13 @@ import junit.framework.TestCase;
  * @author shyamseshadri@google.com (Shyam Seshadri)
  */
 public class TestCaseNameFinderTest extends TestCase {
-  private TestCaseNameFinder finder = new TestCaseNameFinder();
+  private TestCaseNameFinder finder;
+  
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    finder = new TestCaseNameFinder();
+  }
 
   public void testGetTestCasesFindsSingleTestCase() throws Exception {
     String input = "//Some Stupid comment\n"

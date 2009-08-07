@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="project" default="default">
-  <property environment="env"/>
+ <property environment="env"/>
+ <path id="classpath">
+    <fileset dir="${basedir}/tmp/eclipse/plugins">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${env.ECLIPSE_BASE_DIR}/plugins">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="plugins/com.google.jstestdriver.eclipse.ui_test/lib">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="../JsTestDriver/target/bin" includes="JsTestDriver.jar"/>
+ </path>
   <!-- Mac likes to be cute, and not have the default rt.jar like everyone else. Nooo. instead, it has two jars, classes and ui. So handle that case -->
   <!-- if Mac OS X -->
   <condition property="jre.runtime" value="/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Classes/ui.jar" else="${env.JAVA_HOME}/jre/lib/rt.jar">
     <and> <os family="mac"/> <os family="unix"/> </and>
   </condition>
-  <target name="default">
+  <target name="default" depends="compile"></target>
+  <target name="compile">
     <copy tofile="plugins/com.google.jstestdriver.eclipse.core/lib/JsTestDriver.jar">
       <fileset dir="../JsTestDriver/target/bin" includes="JsTestDriver.jar"/>
     </copy>
@@ -22,6 +35,25 @@
       <arg value="-DJ2SE-1.5=${jre.runtime}"/>
    </java>
  </target>
+ <target name="test-compile" depends="compile">
+   <javac srcdir="plugins/com.google.jstestdriver.eclipse.ui_test/src" destdir="target">
+     <classpath refid="classpath"/>
+   </javac>
+ </target>
+ <target name="test" depends="test-compile">
+   <junit printsummary="true" haltonfailure="false" fork="true">
+     <classpath refid="classpath"/>
+     <classpath>
+       <pathelement location="target"/>
+     </classpath>
+     <formatter type="xml" usefile="true"/>
+     <batchtest fork="true" haltonfailure="false">
+       <fileset dir="plugins/com.google.jstestdriver.eclipse.ui_test/src">
+         <include name="**/*Test.java" />
+       </fileset>
+     </batchtest>
+   </junit>
+ </target>
  <target name="clean">
   <delete includeemptydirs="true" failonerror="false" verbose="true">
     <fileset dir="target" id="targetFolder"/>
@@ -29,6 +61,7 @@
     <fileset dir="." id="assembleFiles" includes="assemble*"/>
     <fileset dir="." id="finalFiles" includes="final*"/>
     <fileset dir="." id="packageFiles" includes="package*"/>
+    <fileset dir="." id="testFiles" includes="TEST*.xml"/>
     <fileset dir="plugins/com.google.jstestdriver.eclipse.core/@dot" id="coreDotFolder"/>
     <fileset dir="plugins/com.google.jstestdriver.eclipse.core/temp.folder" id="coreTmpFolder"/>
     <fileset dir="plugins/com.google.jstestdriver.eclipse.ui/@dot" id="uiDotFolder"/>

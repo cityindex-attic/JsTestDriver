@@ -25,10 +25,6 @@ import com.google.jstestdriver.TestResultGenerator;
  */
 public class EclipseResponseStreamFactory implements ResponseStreamFactory {
 
-  public ResponseStream getDryRunActionResponseStream(String browserId) {
-    return new EclipseDryRunActionResponseStream();
-  }
-
   public ResponseStream getEvalActionResponseStream() {
     return null;
   }
@@ -37,7 +33,11 @@ public class EclipseResponseStreamFactory implements ResponseStreamFactory {
     return new ResetAction.ResetActionResponseStream();
   }
 
-  public ResponseStream getRunTestsActionResponseStream() {
+  public ResponseStream getRunTestsActionResponseStream(String browserId) {
     return new EclipseRunTestsResponseStream(new TestResultGenerator());
+  }
+
+  public ResponseStream getDryRunActionResponseStream() {
+    return new EclipseDryRunActionResponseStream();
   }
 }
