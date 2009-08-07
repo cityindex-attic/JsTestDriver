@@ -123,5 +123,19 @@
          </contextualLaunch>
       </shortcut>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.google.jstestdriver.eclipse.ui.WorkbenchPreferencePage"
+            id="com.google.jstestdriver.eclipse.ui.jstdPreferencePage"
+            name="JS Test Driver">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="com.google.jstestdriver.eclipse.ui.JsTestDriverDefaultPreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

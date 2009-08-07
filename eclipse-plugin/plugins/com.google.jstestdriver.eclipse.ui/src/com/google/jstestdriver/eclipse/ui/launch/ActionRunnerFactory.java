@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver.eclipse.ui.launch;
 
+import static java.lang.String.format;
+
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -30,6 +32,8 @@ import com.google.jstestdriver.IDEPluginActionBuilder;
 import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
 import com.google.jstestdriver.eclipse.internal.core.ProjectHelper;
+import com.google.jstestdriver.eclipse.ui.Activator;
+import com.google.jstestdriver.eclipse.ui.WorkbenchPreferencePage;
 
 /**
  * @author shyamseshadri@google.com (Shyam Seshadri)
@@ -57,6 +61,9 @@ public class ActionRunnerFactory {
     return getActionBuilder(configuration).addTests(testCases).build();
   }
   private IDEPluginActionBuilder getActionBuilder(ILaunchConfiguration configuration) {
+    int port = Activator.getDefault().getPreferenceStore().getInt(
+        WorkbenchPreferencePage.PREFERRED_SERVER_PORT);
+    String serverUrl = format(Server.SERVER_URL, port);
     String projectName = "";
     String confFileName = "";
     try {
@@ -69,7 +76,7 @@ public class ActionRunnerFactory {
     }
     ConfigurationParser configurationParser = projectHelper.getConfigurationParser(projectName,
         confFileName);
-    return new IDEPluginActionBuilder(configurationParser, Server.SERVER_URL,
+    return new IDEPluginActionBuilder(configurationParser, serverUrl,
         injector.getInstance(ActionFactory.class), new EclipseResponseStreamFactory());
   }
 }

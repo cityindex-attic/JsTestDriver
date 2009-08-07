@@ -42,6 +42,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
 
+import com.google.jstestdriver.eclipse.core.SlaveBrowserRootData;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
 import com.google.jstestdriver.eclipse.ui.views.JsTestDriverView;
 import com.google.jstestdriver.eclipse.ui.views.TestResultsPanel;
@@ -164,22 +165,23 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
               .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
           TestResultsPanel panel = view.getTestResultsPanel();
           panel.setupForNextTestRun(configuration);
-          panel.addNumberOfTests(testCases.size());
+          SlaveBrowserRootData data = SlaveBrowserRootData.getInstance();
+          panel.addNumberOfTests(testCases.size() * data.getNumberOfSlaves());
         } catch (PartInitException e) {
           logger.logException(e);
         }
       }
     });
-    // Might need a specific tests dry run
-    actionRunnerFactory.getSpecificTestsActionRunner(workingCopy, testCases)
-        .runActions();
+    // Might need a specific tests dry run in case there are some tests which are not run 
+    // in a specific browser
+    actionRunnerFactory.getSpecificTestsActionRunner(workingCopy, testCases).runActions();
   }
 
   private ILaunchConfiguration[] getJstdLaunchConfigurations()
       throws CoreException {
     ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-    ILaunchConfigurationType type = launchManager
-        .getLaunchConfigurationType("com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration");
+    ILaunchConfigurationType type = launchManager.getLaunchConfigurationType(
+        "com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration");
     ILaunchConfiguration[] launchConfigurations = launchManager
         .getLaunchConfigurations(type);
     return launchConfigurations;

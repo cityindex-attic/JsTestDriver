@@ -29,7 +29,7 @@ public class ServerStartStopViewActionDelegateTest extends TestCase {
   protected boolean stopServerIconCalled = false;
 
   public void testClickingOnActionToglesIconAndTextBetweenStartStop() {
-    Server server = new Server();
+    Server server = new Server(4224);
     ServerStartStopViewActionDelegate delegate = new ServerStartStopViewActionDelegate(
         server, new Icons() {
 

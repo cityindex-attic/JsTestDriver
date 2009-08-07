@@ -49,6 +49,10 @@ public class SlaveBrowserSet {
   public List<SlaveBrowser> getSlaves() {
     return slaves;
   }
+  
+  public int getNumberOfSlaves() {
+    return slaves.size();
+  }
 
   public void addSlaveBrowser(SlaveBrowser browser) {
     slaves.add(browser);
@@ -70,11 +74,4 @@ public class SlaveBrowserSet {
     return "icons/" + browserName + ".png";
   }
 
-  public List<String> getBrowserIds() {
-    List<String> ids = new ArrayList<String>();
-    for (SlaveBrowser browser : slaves) {
-      ids.add(browser.getBrowserInfo().getId().toString());
-    }
-    return ids;
-  }
 }

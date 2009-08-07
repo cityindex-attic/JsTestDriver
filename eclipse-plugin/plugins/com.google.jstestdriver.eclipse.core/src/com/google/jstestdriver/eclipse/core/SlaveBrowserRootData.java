@@ -13,8 +13,6 @@
  */
 package com.google.jstestdriver.eclipse.core;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,8 +20,8 @@ import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.SlaveBrowser;
 
 /**
- * Root object to hold information about all the slave browsers. Is registered as a listener so that
- * it knows whenever a slave browser is captured.
+ * Root object to hold information about all the slave browsers. Is registered
+ * as a listener so that it knows whenever a slave browser is captured.
  * 
  * @author shyamseshadri@google.com (Shyam Seshadri)
  */
@@ -43,7 +41,8 @@ public class SlaveBrowserRootData extends Observable implements Observer {
     operaSlaves = new SlaveBrowserSet("Opera", this);
   }
 
-  // TODO(shyamseshadri): ICKY. GET RID OF THIS ASAP. HACK FOR NOW TO GET THINGS WORKING.
+  // TODO(shyamseshadri): ICKY. GET RID OF THIS ASAP. HACK FOR NOW TO GET THINGS
+  // WORKING.
   private static SlaveBrowserRootData instance = null;
 
   public static SlaveBrowserRootData getInstance() {
@@ -68,9 +67,15 @@ public class SlaveBrowserRootData extends Observable implements Observer {
   public SlaveBrowserSet getSafariSlaves() {
     return safariSlaves;
   }
-  
+
   public SlaveBrowserSet getOperaSlaves() {
     return operaSlaves;
+  }
+
+  public int getNumberOfSlaves() {
+    return firefoxSlaves.getNumberOfSlaves() + ieSlaves.getNumberOfSlaves()
+        + chromeSlaves.getNumberOfSlaves() + safariSlaves.getNumberOfSlaves()
+        + operaSlaves.getNumberOfSlaves();
   }
 
   public void update(Observable o, Object arg) {
@@ -101,19 +106,10 @@ public class SlaveBrowserRootData extends Observable implements Observer {
     notifyObservers(this);
   }
 
-  public List<String> getSlaveBrowserIds() {
-    List<String> ids = new ArrayList<String>();
-    ids.addAll(firefoxSlaves.getBrowserIds());
-    ids.addAll(chromeSlaves.getBrowserIds());
-    ids.addAll(ieSlaves.getBrowserIds());
-    ids.addAll(safariSlaves.getBrowserIds());
-    ids.addAll(operaSlaves.getBrowserIds());
-    return ids;
-  }
-
   public boolean hasSlaves() {
-    return firefoxSlaves.hasSlaves() || chromeSlaves.hasSlaves() || ieSlaves.hasSlaves()
-        || safariSlaves.hasSlaves() || operaSlaves.hasSlaves();
+    return firefoxSlaves.hasSlaves() || chromeSlaves.hasSlaves()
+        || ieSlaves.hasSlaves() || safariSlaves.hasSlaves()
+        || operaSlaves.hasSlaves();
   }
 
   @Override

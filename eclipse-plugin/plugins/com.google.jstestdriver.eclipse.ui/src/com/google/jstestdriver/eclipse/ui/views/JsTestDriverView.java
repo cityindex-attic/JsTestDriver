@@ -29,9 +29,6 @@ public class JsTestDriverView extends ViewPart {
 
   public static final String ID = "com.google.jstestdriver.eclipse.ui.views.JsTestDriverView";
 
-//  private final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench()
-//      .getHelpSystem();
-
   private ServerInfoPanel serverInfoPanel;
   private TestResultsPanel testResultsPanel;
 
@@ -40,15 +37,11 @@ public class JsTestDriverView extends ViewPart {
     parent.setLayout(new GridLayout(1, false));
     serverInfoPanel = new ServerInfoPanel(parent, SWT.NONE);
     testResultsPanel = new TestResultsPanel(parent, SWT.NONE);
-
-//    helpSystem.setHelp(viewer.getControl(),
-//        "com.google.jstestdriver.eclipse.ui.viewer");
   }
 
   @Override
   public void setFocus() {
     serverInfoPanel.getParent().setFocus();
-    //viewer.getControl().setFocus();
   }
 
   public ServerInfoPanel getServerInfoPanel() {

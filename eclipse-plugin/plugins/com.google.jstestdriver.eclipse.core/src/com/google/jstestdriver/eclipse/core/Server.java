@@ -25,12 +25,14 @@ import com.google.jstestdriver.ServerStartupAction;
 public class Server {
 
   private ServerStartupAction startupAction;
-  public static final int SERVER_PORT = 4224;
-  public static final String SERVER_URL = "http://localhost:" + SERVER_PORT;
-  public static final String SERVER_CAPTURE_URL = "http://localhost:" + SERVER_PORT + "/capture";
+  public static final int DEFAULT_SERVER_PORT = 4224;
+  public static final String SERVER_URL = "http://localhost:%d";
+  public static final String SERVER_CAPTURE_URL = "http://localhost:%d/capture";
   private final CapturedBrowsers capturedBrowsers;
+  private final int port;
   
-  public Server() {
+  public Server(int port) {
+    this.port = port;
     capturedBrowsers = new CapturedBrowsers();
   }
   
@@ -40,7 +42,7 @@ public class Server {
 
   public void start() {
     // TODO(shyamseshadri): Get rid of this and use the builder when we have something substantial.
-    startupAction = new ServerStartupAction(SERVER_PORT, capturedBrowsers,
+    startupAction = new ServerStartupAction(port, capturedBrowsers,
         new FilesCache(new HashMap<String, FileInfo>()));
     startupAction.run();
   }

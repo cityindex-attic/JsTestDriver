@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver.eclipse.ui.views;
 
+import static java.lang.String.format;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
@@ -22,6 +24,8 @@ import org.eclipse.ui.IViewPart;
 
 import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.core.SlaveBrowserRootData;
+import com.google.jstestdriver.eclipse.ui.Activator;
+import com.google.jstestdriver.eclipse.ui.WorkbenchPreferencePage;
 import com.google.jstestdriver.eclipse.ui.icon.Icons;
 
 /**
@@ -35,13 +39,17 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
   private Server server;
   private final Icons icons;
   private ServerInfoPanel view;
+  private final int port;
   
   public ServerStartStopViewActionDelegate() {
-    server = new Server();
+    port = Activator.getDefault().getPreferenceStore().getInt(
+        WorkbenchPreferencePage.PREFERRED_SERVER_PORT);
+    server = new Server(port);
     icons = new Icons();
   }
 
   public ServerStartStopViewActionDelegate(Server server, Icons icons) {
+    port = 4224;
     this.server = server;
     this.icons = icons;
   }
@@ -52,6 +60,7 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
       SlaveBrowserRootData data = SlaveBrowserRootData.getInstance();
       server.getCapturedBrowsers().addObserver(data);
       data.addObserver(this.view);
+      data.addObserver(this.view.getBrowserButtonPanel());
     }
   }
 
@@ -71,7 +80,7 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
     action.setToolTipText("Stop Server");
     action.setImageDescriptor(icons.stopServerIcon());
     if (view != null) {
-      view.setServerStarted(Server.SERVER_CAPTURE_URL);
+      view.setServerStarted(format(Server.SERVER_CAPTURE_URL, port));
     }
   }
 

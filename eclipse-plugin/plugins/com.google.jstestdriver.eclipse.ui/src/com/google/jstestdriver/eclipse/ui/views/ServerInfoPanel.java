@@ -20,17 +20,13 @@ import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.google.jstestdriver.eclipse.core.SlaveBrowserRootData;
-import com.google.jstestdriver.eclipse.core.SlaveBrowserSet;
-import com.google.jstestdriver.eclipse.ui.icon.Icons;
 
 /**
  * Panel which displays info about the server, incuding status, capture url and
@@ -42,23 +38,17 @@ public class ServerInfoPanel extends Composite implements Observer {
 
   public static final String SERVER_DOWN = "NOT RUNNING";
   private Text serverUrlText;
-  private Label safariIcon;
-  private Label chromeIcon;
-  private Label ieIcon;
-  private Label ffIcon;
-  private Label operaIcon;
-  private Icons icons;
   private static final Color NOT_RUNNING = new Color(Display.getCurrent(), 255, 102, 102);
   private static final Color NO_BROWSERS = new Color(Display.getCurrent(), 255, 255, 102);
   private static final Color READY = new Color(Display.getCurrent(), 102, 204, 102);
+  private BrowserButtonPanel browserButtonPanel;
 
   public ServerInfoPanel(Composite parent, int style) {
     super(parent, style);
-    setLayout(new GridLayout(5, false));
-    icons = new Icons();
+    GridLayout layout = new GridLayout(1, false);
+    setLayout(layout);
     
     GridData textGridData = new GridData();
-    textGridData.horizontalSpan = 5;
     textGridData.grabExcessHorizontalSpace = true;
     textGridData.horizontalAlignment = SWT.FILL;
     serverUrlText = new Text(this, SWT.CENTER);
@@ -67,26 +57,8 @@ public class ServerInfoPanel extends Composite implements Observer {
     serverUrlText.setLayoutData(textGridData);
     serverUrlText.setEditable(false);
     serverUrlText.setOrientation(SWT.HORIZONTAL);
-    GridData imgGridData = new GridData();
-    imgGridData.horizontalSpan = 1;
-    imgGridData.minimumHeight = 48;
-    imgGridData.minimumWidth = 48;
-    ffIcon = new Label(this, SWT.NONE);
     
-    ffIcon.setLayoutData(imgGridData);
-    ffIcon.setImage(icons.getFirefoxDisabledIcon());
-    chromeIcon = new Label(this, SWT.NONE);
-    chromeIcon.setLayoutData(imgGridData);
-    chromeIcon.setImage(icons.getChromeDisabledIcon());
-    safariIcon = new Label(this, SWT.NONE);
-    safariIcon.setLayoutData(imgGridData);
-    safariIcon.setImage(icons.getSafariDisabledIcon());
-    ieIcon = new Label(this, SWT.NONE);
-    ieIcon.setLayoutData(imgGridData);
-    ieIcon.setImage(icons.getIEDisabledIcon());
-    operaIcon = new Label(this, SWT.NONE);
-    operaIcon.setLayoutData(imgGridData);
-    operaIcon.setImage(icons.getOperaDisabledIcon());
+    browserButtonPanel = new BrowserButtonPanel(this, SWT.NONE);
   }
 
   public void update(Observable o, final Object arg) {
@@ -95,11 +67,6 @@ public class ServerInfoPanel extends Composite implements Observer {
       public void run() {
         Display.getDefault().asyncExec(new Runnable() {
           public void run() {
-            ffIcon.setImage(getImage(data.getFirefoxSlaves()));
-            chromeIcon.setImage(getImage(data.getChromeSlaves()));
-            ieIcon.setImage(getImage(data.getIeSlaves()));
-            safariIcon.setImage(getImage(data.getSafariSlaves()));
-            operaIcon.setImage(getImage(data.getOperaSlaves()));
             if (data.hasSlaves()) {
               serverUrlText.setBackground(READY);
             }
@@ -109,13 +76,8 @@ public class ServerInfoPanel extends Composite implements Observer {
     }).start();
   }
   
-  public Image getImage(SlaveBrowserSet slave) {
-    Image colored = icons.getImage(slave.getImagePath());
-    if (slave.hasSlaves()) {
-      return colored;
-    } else {
-      return new Image(Display.getCurrent(), colored, SWT.IMAGE_GRAY);
-    }
+  public BrowserButtonPanel getBrowserButtonPanel() {
+    return browserButtonPanel;
   }
 
   public void setServerStarted(String serverUrl) {
