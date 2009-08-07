@@ -41,13 +41,13 @@
    </javac>
  </target>
  <target name="test" depends="test-compile">
-   <junit printsummary="true" haltonfailure="false" fork="true">
+   <junit printsummary="true" haltonfailure="false">
      <classpath refid="classpath"/>
      <classpath>
        <pathelement location="target"/>
      </classpath>
      <formatter type="xml" usefile="true"/>
-     <batchtest fork="true" haltonfailure="false">
+     <batchtest haltonfailure="false">
        <fileset dir="plugins/com.google.jstestdriver.eclipse.ui_test/src">
          <include name="**/*Test.java" />
        </fileset>
