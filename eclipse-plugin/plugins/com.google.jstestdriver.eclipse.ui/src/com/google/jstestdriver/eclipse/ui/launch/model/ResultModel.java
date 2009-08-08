@@ -29,12 +29,12 @@ import com.google.jstestdriver.eclipse.ui.icon.Icons;
  */
 public abstract class ResultModel {
 
-  public static final String TEST_SUITE_PASS_ICON = "icons/tsuiteok.gif";
-  public static final String TEST_SUITE_FAIL_ICON = "icons/tsuitefail.gif";
-  public static final String TEST_SUITE_ERROR_ICON = "icons/tsuiteerror.gif";
-  public static final String TEST_PASS_ICON = "icons/testok.gif";
-  public static final String TEST_FAIL_ICON = "icons/testfail.gif";
-  public static final String TEST_ERROR_ICON = "icons/testerr.gif";
+  public static final String TEST_SUITE_PASS_ICON = "/icons/tsuiteok.gif";
+  public static final String TEST_SUITE_FAIL_ICON = "/icons/tsuitefail.gif";
+  public static final String TEST_SUITE_ERROR_ICON = "/icons/tsuiteerror.gif";
+  public static final String TEST_PASS_ICON = "/icons/testok.gif";
+  public static final String TEST_FAIL_ICON = "/icons/testfail.gif";
+  public static final String TEST_ERROR_ICON = "/icons/testerr.gif";
   private final String label;
   private final ResultModel parent;
   protected Map<String, ResultModel> results;

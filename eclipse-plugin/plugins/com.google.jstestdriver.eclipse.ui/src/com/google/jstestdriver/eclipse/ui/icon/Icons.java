@@ -10,46 +10,46 @@ import com.google.jstestdriver.eclipse.ui.Activator;
 public class Icons {
 
   public ImageDescriptor startServerIcon() {
-    return Activator.getDefault().getImageDescriptor("icons/startServer.png");
+    return Activator.getDefault().getImageDescriptor("/icons/startServer.png");
   }
 
   public ImageDescriptor stopServerIcon() {
-    return Activator.getDefault().getImageDescriptor("icons/stopServer.png");
+    return Activator.getDefault().getImageDescriptor("/icons/stopServer.png");
   }
 
   public ImageDescriptor configurationFileIcon() {
-    return Activator.getDefault().getImageDescriptor("icons/configuration.png");
+    return Activator.getDefault().getImageDescriptor("/icons/configuration.png");
   }
 
   public ImageDescriptor projectIcon() {
-    return Activator.getDefault().getImageDescriptor("icons/projects.gif");
+    return Activator.getDefault().getImageDescriptor("/icons/projects.gif");
   }
 
   public Image getChromeDisabledIcon() {
     return new Image(Display.getCurrent(), Activator.getDefault()
-        .getImageDescriptor("icons/Chrome.png").createImage(), SWT.IMAGE_GRAY);
+        .getImageDescriptor("/icons/Chrome.png").createImage(), SWT.IMAGE_GRAY);
   }
 
   public Image getIEDisabledIcon() {
     return new Image(Display.getCurrent(), Activator.getDefault()
-        .getImageDescriptor("icons/IE.png").createImage(), SWT.IMAGE_GRAY);
+        .getImageDescriptor("/icons/IE.png").createImage(), SWT.IMAGE_GRAY);
   }
 
   public Image getFirefoxDisabledIcon() {
     return new Image(Display.getCurrent(), Activator.getDefault()
-        .getImageDescriptor("icons/Firefox.png").createImage(),
+        .getImageDescriptor("/icons/Firefox.png").createImage(),
         SWT.IMAGE_GRAY);
   }
 
   public Image getSafariDisabledIcon() {
     return new Image(Display.getCurrent(), Activator.getDefault()
-        .getImageDescriptor("icons/Safari.png").createImage(),
+        .getImageDescriptor("/icons/Safari.png").createImage(),
         SWT.IMAGE_GRAY);
   }
 
   public Image getOperaDisabledIcon() {
     return new Image(Display.getCurrent(), Activator.getDefault()
-        .getImageDescriptor("icons/Opera.png").createImage(),
+        .getImageDescriptor("/icons/Opera.png").createImage(),
         SWT.IMAGE_GRAY);
   }
 

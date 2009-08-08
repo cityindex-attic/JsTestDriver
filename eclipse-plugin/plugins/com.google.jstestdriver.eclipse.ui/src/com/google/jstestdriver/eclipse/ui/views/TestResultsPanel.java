@@ -74,6 +74,12 @@ public class TestResultsPanel extends Composite {
   public TestResultsPanel(Composite parent, int style) {
     super(parent, style);
     setLayout(new GridLayout(4, true));
+    GridData layoutData = new GridData();
+    layoutData.grabExcessHorizontalSpace = true;
+    layoutData.grabExcessVerticalSpace = true;
+    layoutData.verticalAlignment = SWT.FILL;
+    layoutData.horizontalAlignment = SWT.FILL;
+    setLayoutData(layoutData );
     testRunResult = new EclipseJstdTestRunResult();
     showOnlyFailuresFilter = new FailureOnlyViewerFilter();
 
@@ -93,12 +99,12 @@ public class TestResultsPanel extends Composite {
       }
       
     });
-    showOnlyFailedButton.setImage(icons.getImage("icons/failures.gif"));
+    showOnlyFailedButton.setImage(icons.getImage("/icons/failures.gif"));
     showOnlyFailedButton.setLayoutData(showOnlyFailedButtonGridData);
     GridData rerunButtonGridData = new GridData();
     rerunButtonGridData.horizontalAlignment = SWT.CENTER;
     rerunButton = new Button(this, SWT.FLAT);
-    rerunButton.setImage(icons.getImage("icons/relaunch.gif"));
+    rerunButton.setImage(icons.getImage("/icons/relaunch.gif"));
     rerunButton.setLayoutData(rerunButtonGridData);
     rerunButton.addSelectionListener(new SelectionListener() {
 
@@ -173,6 +179,7 @@ public class TestResultsPanel extends Composite {
     treeData.horizontalSpan = 4;
     treeData.horizontalAlignment = SWT.FILL;
     treeData.grabExcessHorizontalSpace = true;
+    treeData.grabExcessVerticalSpace = true;
     treeData.heightHint = 240;
     treeData.verticalAlignment = SWT.FILL;
     testResultsTree = new TreeViewer(this, SWT.NONE);
