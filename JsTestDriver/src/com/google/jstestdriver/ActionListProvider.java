@@ -24,9 +24,10 @@ import com.google.inject.internal.Nullable;
 import com.google.inject.name.Named;
 
 /**
- * Parses the flags into a sequence of actions.
+ * Provides a sequence of actions from a large number of arguments.
  * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
+ * @author corysmith@google.com (Cory Smith)
  */
 public class ActionListProvider implements Provider<List<Action>> {
 

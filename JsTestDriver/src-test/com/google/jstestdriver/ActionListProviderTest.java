@@ -26,8 +26,9 @@ import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
+ * @author corysmith@google.com (Cory Smith)
  */
-public class ActionParserTest extends TestCase {
+public class ActionListProviderTest extends TestCase {
 
   public void testParseFlagsAndCreateActionQueue() throws Exception {
     List<String> browsers = Arrays.asList("browser");

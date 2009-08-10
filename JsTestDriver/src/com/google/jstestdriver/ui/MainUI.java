@@ -38,13 +38,9 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.mortbay.log.Slf4jLog;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.util.Providers;
 import com.google.jstestdriver.ActionFactory;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.CapturedBrowsers;
@@ -52,9 +48,7 @@ import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.FlagsImpl;
-import com.google.jstestdriver.HttpServer;
 import com.google.jstestdriver.JsTestDriverModule;
-import com.google.jstestdriver.Server;
 import com.google.jstestdriver.ServerStartupAction;
 
 /**
@@ -136,46 +130,18 @@ public class MainUI {
             new JsTestDriverModule(flags,
                                    fileSet,
                                    defaultServerAddress,
-                                   Collections.<Class<? extends Module>>emptyList()),
-            new MainUIModule(statusBar, capturedBrowsersPanel));
-      injector.getInstance(ActionRunner.class).runActions();
-    } catch (Exception e) {
-      logger.log(Level.SEVERE, "Failed to start the server: ", e);
-      System.exit(1);
-    }
-
-    JFrame appFrame = buildMainAppFrame();
-    appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    appFrame.pack();
-    appFrame.setVisible(true);
-  }
-  
-  static class MainUIModule extends AbstractModule {
-    private final StatusBar statusBar;
-    private final CapturedBrowsersPanel capturedBrowsersPanel;
-    public MainUIModule(StatusBar statusBar, CapturedBrowsersPanel capturedBrowsersPanel) {
-      this.capturedBrowsersPanel = capturedBrowsersPanel;
-      this.statusBar = statusBar;
-    }
-
-    @Override
-    protected void configure() {
-      
-    }
-    
-    @Provides
-    public ActionFactory createActionFactory() {
-      ActionFactory actionFactory =
-        new ActionFactory(null, Providers.<Server>of(new HttpServer()));
+                                   Collections.<Class<? extends Module>>emptyList()));
+      ActionFactory actionFactory = injector.getInstance(ActionFactory.class);
       actionFactory.registerListener(ServerStartupAction.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, capturedBrowsersPanel);
-      return actionFactory;
-    }
-    
-    @Provides @Singleton
-    public Server createServer() {
-      return new HttpServer();
+      injector.getInstance(ActionRunner.class).runActions();
+      JFrame appFrame = buildMainAppFrame();
+      appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      appFrame.pack();
+      appFrame.setVisible(true);
+    } catch (Exception e) {
+      logger.log(Level.SEVERE, "Failed to start the server: ", e);
     }
   }
 

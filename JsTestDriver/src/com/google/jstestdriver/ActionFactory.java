@@ -17,6 +17,7 @@ package com.google.jstestdriver;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
 import java.io.PrintStream;
 import java.util.Collections;
@@ -33,7 +34,7 @@ import java.util.Set;
  * @author alexeagle@google.com (Alex Eagle)
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-
+@Singleton
 public class ActionFactory {
 
   Map<Class<?>, List<Observer>> observers = new HashMap<Class<?>, List<Observer>>();
