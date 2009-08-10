@@ -68,7 +68,7 @@ public class ActionListProviderTest extends TestCase {
 
     FlagsImpl flags = new FlagsImpl();
     flags.setServer(serverAddress);
-    flags.setBrowser("browser1");
+    flags.setBrowser(Arrays.asList("browser1"));
     flags.setReset(true);
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
@@ -104,8 +104,8 @@ public class ActionListProviderTest extends TestCase {
     ActionListProvider parser = createProvider(Arrays.asList("browser1"), -1, null, false, Arrays.asList("foo.testBar"));
     FlagsImpl flags = new FlagsImpl();
 
-    flags.setBrowser("browser");
-    flags.setTests("foo.testBar");
+    flags.setBrowser(Arrays.asList("browser"));
+    flags.setTests(Arrays.asList("foo.testBar"));
     try {
       parser.get();
       fail("expected no server and no port exception");

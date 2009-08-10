@@ -35,7 +35,6 @@ import javax.swing.JSplitPane;
 
 import org.apache.commons.logging.LogFactory;
 import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
 import org.mortbay.log.Slf4jLog;
 
 import com.google.inject.Guice;
@@ -47,7 +46,7 @@ import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
-import com.google.jstestdriver.FlagsImpl;
+import com.google.jstestdriver.FlagsParser;
 import com.google.jstestdriver.JsTestDriverModule;
 import com.google.jstestdriver.ServerStartupAction;
 
@@ -76,18 +75,15 @@ public class MainUI {
   }
 
   public static void main(String[] args) {
-    Flags flags = new FlagsImpl();
-    CmdLineParser parser = new CmdLineParser(flags);
     try {
-      parser.parseArgument(args);
+      Flags flags = new FlagsParser().parseArgument(args);
+      configureLogging();
+      ResourceBundle bundle = ResourceBundle.getBundle("com.google.jstestdriver.ui.messages");
+      new MainUI(flags, bundle).startUI();
     } catch (CmdLineException e) {
+      // exit naturally, if the flags suck.
       System.err.println(e.getMessage());
-      parser.printUsage(System.err);
     }
-
-    configureLogging();
-    ResourceBundle bundle = ResourceBundle.getBundle("com.google.jstestdriver.ui.messages");
-    new MainUI(flags, bundle).startUI();
   }
 
   private static void configureLogging() {
@@ -112,8 +108,7 @@ public class MainUI {
       Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
       String defaultServerAddress = "";
 
-      if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty() ||
-          flags.getPreloadFiles() || flags.getDryRun()) {
+      if (flags.hasWork()) {
         if (!config.exists()) {
           throw new RuntimeException("Config file doesn't exist: " + flags.getConfig());
         }

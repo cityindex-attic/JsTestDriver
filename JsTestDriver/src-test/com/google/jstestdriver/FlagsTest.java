@@ -15,12 +15,11 @@
  */
 package com.google.jstestdriver;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-
-import java.util.List;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -28,27 +27,26 @@ import java.util.List;
 public class FlagsTest extends TestCase {
 
   public void testFlagsAreSet() throws Exception {
-    Flags flags = new FlagsImpl();
-    CmdLineParser parser = new CmdLineParser(flags);
+    Flags flags;
+    FlagsParser parser = new FlagsParser();
 
     try {
-      parser.parseArgument(new String[] { "--port", "1234" });
-      assertEquals((int) flags.getPort(), 1234);
-      parser.parseArgument(new String[] { "--server", "http://localhost:1234" });
+      flags = parser.parseArgument(new String[] { "--port", "1234", "--server", "http://localhost:1234" });
+      assertEquals(1234, (int) flags.getPort());
       assertEquals((int) flags.getPort(), 1234);
       assertEquals(flags.getServer(), "http://localhost:1234");
 
-      parser.parseArgument(new String[] { "--testOutput", "/path/file"});
+      flags = parser.parseArgument(new String[] { "--testOutput", "/path/file"});
       assertEquals("/path/file", flags.getTestOutput());
-      parser.parseArgument(new String[] { "--browser", "/path/browser,beep"});
+      flags = parser.parseArgument(new String[] { "--browser", "/path/browser,beep"});
       List<String> browserPath = flags.getBrowser();
 
       assertEquals(2, browserPath.size());
       assertEquals("/path/browser", browserPath.get(0));
       assertEquals("beep", browserPath.get(1));
-      parser.parseArgument(new String[] { "--reset" });
+      flags = parser.parseArgument(new String[] { "--reset" });
       assertTrue(flags.getReset());
-      parser.parseArgument(new String[] { "--tests", "testCase.testName"});
+      flags = parser.parseArgument(new String[] { "--tests", "testCase.testName"});
       List<String> tests = flags.getTests();
 
       assertNotNull(tests);
@@ -60,14 +58,16 @@ public class FlagsTest extends TestCase {
   }
 
   public void testDefaultFlagsAreSet() throws Exception {
-    Flags flags = new FlagsImpl();
-    CmdLineParser parser = new CmdLineParser(flags);
+    Flags flags;
+    FlagsParser parser = new FlagsParser();
 
     try {
-      parser.parseArgument(new String[0]);
+      flags = parser.parseArgument(new String[]{"--browser", "foo"});
       assertEquals(-1, (int) flags.getPort());
       assertNull(flags.getServer());
       assertNotNull(flags.getTestOutput());
+
+      flags = parser.parseArgument(new String[]{"--port", "12345"});
       assertNotNull(flags.getBrowser());
       assertFalse(flags.getReset());
       assertNotNull(flags.getTests());

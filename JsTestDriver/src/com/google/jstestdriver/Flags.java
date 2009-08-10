@@ -59,4 +59,8 @@ public interface Flags {
 
   @GuiceBinding(name="dryRun")
   public boolean getDryRun();
+  
+  public boolean getDisplayHelp();
+
+  public boolean hasWork();
 }

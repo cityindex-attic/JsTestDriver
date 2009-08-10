@@ -16,7 +16,6 @@
 package com.google.jstestdriver;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.kohsuke.args4j.Argument;
@@ -66,7 +65,7 @@ public class FlagsImpl implements Flags {
   }
 
   @Option(name="--testOutput", usage="A directory to which serialize the results of the tests as" +
-  		" XML")
+      " XML")
   public void setTestOutput(String testOutput) {
     this.testOutput = testOutput;
   }
@@ -76,8 +75,8 @@ public class FlagsImpl implements Flags {
   }
 
   @Option(name="--browser", usage="The path to the browser executable")
-  public void setBrowser(String browser) {
-    this.browser = Arrays.asList(browser.split(","));
+  public void setBrowser(List<String> browsers) {
+    this.browser = browsers;
   }
 
   public List<String> getBrowser() {
@@ -102,9 +101,10 @@ public class FlagsImpl implements Flags {
     return config;
   }
 
-  @Option(name="--tests", usage="Run the tests specified in the form testCase.testName")
-  public void setTests(String tests) {
-    this.tests = Arrays.asList(tests.split(","));
+  @Option(name="--tests",
+          usage="Run the tests specified in the form testCase.testName")
+  public void setTests(List<String> tests) {
+    this.tests = tests;
   }
 
   public List<String> getTests() {
@@ -155,5 +155,10 @@ public class FlagsImpl implements Flags {
 
   public boolean getDryRun() {
     return dryRun;
+  }
+  
+  public  boolean hasWork() {
+    return getTests().size() > 0 || getReset() || !getArguments().isEmpty() ||
+        getPreloadFiles() || getDryRun();
   }
 }

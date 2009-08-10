@@ -245,7 +245,7 @@
       <zipfileset src="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
       <zipfileset src="${lib.dir}/guice/guice-2.0-no_aop.jar" />
       <zipfileset src="${lib.dir}/guice/guice-multibindings-2.0.jar" />
-      <zipfileset src="${lib.dir}/args4j-2.0.1/args4j-2.0.1.jar" />
+      <zipfileset src="${lib.dir}/args4j-2.0.12/args4j-2.0.12.jar" />
       <zipfileset src="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
       <zipfileset src="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
       <zipfileset src="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />

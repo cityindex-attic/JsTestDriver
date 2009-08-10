@@ -26,13 +26,13 @@ import java.util.Set;
 import javax.servlet.http.HttpServlet;
 
 import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.jetty.servlet.ServletHolder;
 
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
@@ -105,26 +105,14 @@ public class JsTestDriverServer extends Observable {
   }
 
   public static void main(String[] args) {
-    FlagsImpl flags = new FlagsImpl();
-    CmdLineParser parser = new CmdLineParser(flags);
-
-    if (args.length == 0) {
-      parser.printUsage(System.out);
-      System.exit(0);
-    }
     try {
-      parser.parseArgument(args);
-      if (flags.getDisplayHelp()) {
-        parser.printUsage(System.out);
-        System.exit(0);
-      }
+      Flags flags = new FlagsParser().parseArgument(args);
       File config = new File(flags.getConfig());
       Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
       List<Class<? extends Module>> plugins = new LinkedList<Class<? extends Module>>();
       String defaultServerAddress = null;
 
-      if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty()
-          || flags.getPreloadFiles() || flags.getDryRun()) {
+      if (flags.hasWork()) {
         if (!config.exists()) {
           throw new RuntimeException("Config file doesn't exist: " + flags.getConfig());
         }
@@ -137,11 +125,10 @@ public class JsTestDriverServer extends Observable {
         defaultServerAddress = configParser.getServer();
         plugins = pluginLoader.load(configParser.getPlugins());
       }
-      Guice.createInjector(new JsTestDriverModule(flags, fileSet, defaultServerAddress, plugins))
-          .getInstance(ActionRunner.class).runActions();
+      Injector injector = Guice.createInjector(new JsTestDriverModule(flags, fileSet, defaultServerAddress, plugins));
+      injector.getInstance(ActionRunner.class).runActions();
     } catch (CmdLineException e) {
       System.err.println(e.getMessage());
-      parser.printUsage(System.err);
     } catch (Exception e) {
       System.err.println(e);
       System.exit(1);

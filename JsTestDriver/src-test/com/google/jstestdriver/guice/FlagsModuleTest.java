@@ -16,6 +16,8 @@
 
 package com.google.jstestdriver.guice;
 
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 import com.google.inject.Guice;
@@ -49,7 +51,7 @@ public class FlagsModuleTest extends TestCase {
 
   public void testBindParameterized() throws Exception {
     final FlagsImpl flags = new FlagsImpl();
-    flags.setTests("foo,bar,baz");
+    flags.setTests(Arrays.asList("foo","bar","baz"));
     Injector injector = Guice.createInjector(new FlagsModule(flags));
     assertEquals(flags.getTests(),
         injector.getInstance(Key.get(Types.listOf(String.class), Names.named("tests"))));
