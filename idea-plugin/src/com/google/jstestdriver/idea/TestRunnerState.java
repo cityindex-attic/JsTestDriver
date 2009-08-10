@@ -57,8 +57,6 @@ public class TestRunnerState implements RunnableState {
 
   @Nullable
   public ExecutionResult execute() throws ExecutionException {
-    ActionFactory actionFactory =
-        Guice.createInjector(new ActionFactoryModule()).getInstance(ActionFactory.class);
     File path = new File("/usr/local/google/alexeagle/js-test-driver/JsTestDriver");
     ToolWindow window =
         ToolWindowManager.getInstance(project).getToolWindow(JSTestDriverToolWindow.TOOL_WINDOW_ID);
@@ -70,13 +68,13 @@ public class TestRunnerState implements RunnableState {
     toolPanel.setTestRunner(this);
     ResponseStreamFactory responseStreamFactory = toolPanel.createResponseStreamFactory();
     final ActionRunner dryRunRunner =
-        makeActionBuilder(actionFactory, path, serverURL, responseStreamFactory)
+        makeActionBuilder(path, serverURL, responseStreamFactory)
             .dryRun().build();
     final ActionRunner testRunner =
-        makeActionBuilder(actionFactory, path, serverURL, responseStreamFactory)
+        makeActionBuilder(path, serverURL, responseStreamFactory)
             .addAllTests().build();
     final ActionRunner resetRunner =
-        makeActionBuilder(actionFactory, path, serverURL, responseStreamFactory)
+        makeActionBuilder(path, serverURL, responseStreamFactory)
             .resetBrowsers().build();
     toolPanel.setResetRunner(resetRunner);
     final SwingWorker worker = new SwingWorker() {
@@ -97,15 +95,14 @@ public class TestRunnerState implements RunnableState {
     return null;
   }
 
-  private IDEPluginActionBuilder makeActionBuilder(ActionFactory actionFactory, File path,
+  private IDEPluginActionBuilder makeActionBuilder(File path,
                                                    String serverURL,
                                                    ResponseStreamFactory responseStreamFactory)
       throws ExecutionException {
     try {
       FileReader fileReader = new FileReader(jsTestDriverConfiguration.getSettingsFile());
       ConfigurationParser configurationParser = new ConfigurationParser(path, fileReader);
-      return new IDEPluginActionBuilder(configurationParser, serverURL, actionFactory,
-          responseStreamFactory);
+      return new IDEPluginActionBuilder(configurationParser, serverURL, responseStreamFactory);
     } catch (FileNotFoundException e) {
       throw new ExecutionException("Failed to read settings file " +
                                    jsTestDriverConfiguration.getSettingsFile(), e);
