@@ -3,12 +3,8 @@
 <plugin>
    <extension
          point="org.eclipse.ui.views">
-      <category
-            id="com.google.jstestdriver.eclipse.ui"
-            name="JavaScript">
-      </category>
       <view
-            category="com.google.jstestdriver.eclipse.ui"
+            category="org.eclipse.wst.jsdt.ui.java"
             class="com.google.jstestdriver.eclipse.ui.views.JsTestDriverView"
             icon="icons/JsTestDriver.png"
             id="com.google.jstestdriver.eclipse.ui.views.JsTestDriverView"
@@ -47,6 +43,36 @@
                style="push"
                toolbarPath="additions"
                tooltip="Start Server">
+         </action>
+         <action
+               class="com.google.jstestdriver.eclipse.ui.views.FilterTestResultsActionDelegate"
+               icon="icons/failures.gif"
+               id="com.google.jstestdriver.eclipse.ui.filterTestResultsAction"
+               label="Show Only Failures"
+               menubarPath="results"
+               style="toggle"
+               toolbarPath="results"
+               tooltip="Show only failures">
+         </action>
+         <action
+               class="com.google.jstestdriver.eclipse.ui.views.RerunLastLaunchActionDelegate"
+               icon="icons/relaunch.gif"
+               id="com.google.jstestdriver.eclipse.ui.rerunLastLaunchAction"
+               label="Rerun last configuration"
+               menubarPath="results"
+               style="push"
+               toolbarPath="results"
+               tooltip="Rerun last configuration">
+         </action>
+         <action
+               class="com.google.jstestdriver.eclipse.ui.views.ResetBrowsersActionDelegate"
+               icon="icons/icon-refresh.gif"
+               id="com.google.jstestdriver.eclipse.ui.resetBrowsersAction"
+               label="Reset Browsers"
+               menubarPath="results"
+               style="push"
+               toolbarPath="results"
+               tooltip="Reset Browsers">
          </action>
       </viewContribution>
    </extension>
@@ -130,12 +156,6 @@
             id="com.google.jstestdriver.eclipse.ui.jstdPreferencePage"
             name="JS Test Driver">
       </page>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="com.google.jstestdriver.eclipse.ui.JsTestDriverDefaultPreferenceInitializer">
-      </initializer>
    </extension>
 
 </plugin>

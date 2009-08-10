@@ -60,6 +60,7 @@ public class ActionRunnerFactory {
       List<String> testCases) {
     return getActionBuilder(configuration).addTests(testCases).build();
   }
+
   private IDEPluginActionBuilder getActionBuilder(ILaunchConfiguration configuration) {
     int port = Activator.getDefault().getPreferenceStore().getInt(
         WorkbenchPreferencePage.PREFERRED_SERVER_PORT);

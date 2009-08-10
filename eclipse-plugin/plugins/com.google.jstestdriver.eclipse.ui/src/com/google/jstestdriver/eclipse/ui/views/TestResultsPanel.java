@@ -53,105 +53,28 @@ import com.google.jstestdriver.eclipse.ui.launch.model.ResultModel;
  */
 public class TestResultsPanel extends Composite {
 
-  private final Logger logger = new Logger();
-  private final ActionRunnerFactory actionRunnerFactory = new ActionRunnerFactory();
-  private final Icons icons = new Icons();
   private EclipseJstdTestRunResult testRunResult;
   private TreeViewer testResultsTree;
   private JUnitProgressBar testProgressIndicator;
   private Label failuresLabel;
   private Label errorsLabel;
   private Label totalRunLabel;
-  private Button rerunFailedFirstButton;
-  private Button rerunButton;
-  private Button showOnlyFailedButton;
-  private Button refreshBrowsersButton;
   private Text testDetailsText;
   private int totalNumTests;
-  private ViewerFilter showOnlyFailuresFilter;
   private ILaunchConfiguration lastLaunchConfiguration;
 
   public TestResultsPanel(Composite parent, int style) {
     super(parent, style);
-    setLayout(new GridLayout(4, true));
+    setLayout(new GridLayout(3, true));
     GridData layoutData = new GridData();
     layoutData.grabExcessHorizontalSpace = true;
     layoutData.grabExcessVerticalSpace = true;
     layoutData.verticalAlignment = SWT.FILL;
     layoutData.horizontalAlignment = SWT.FILL;
-    setLayoutData(layoutData );
+    setLayoutData(layoutData);
     testRunResult = new EclipseJstdTestRunResult();
-    showOnlyFailuresFilter = new FailureOnlyViewerFilter();
-
-    GridData showOnlyFailedButtonGridData = new GridData();
-    showOnlyFailedButtonGridData.horizontalAlignment = SWT.CENTER;
-    showOnlyFailedButton = new Button(this, SWT.FLAT | SWT.TOGGLE);
-    showOnlyFailedButton.addSelectionListener(new SelectionListener() {
-      public void widgetDefaultSelected(SelectionEvent e) {
-      }
-      
-      public void widgetSelected(SelectionEvent e) {
-        if (showOnlyFailedButton.getSelection()) {
-          testResultsTree.setFilters(new ViewerFilter[] {showOnlyFailuresFilter});
-        } else {
-          testResultsTree.setFilters(new ViewerFilter[0]);
-        }
-      }
-      
-    });
-    showOnlyFailedButton.setImage(icons.getImage("/icons/failures.gif"));
-    showOnlyFailedButton.setLayoutData(showOnlyFailedButtonGridData);
-    GridData rerunButtonGridData = new GridData();
-    rerunButtonGridData.horizontalAlignment = SWT.CENTER;
-    rerunButton = new Button(this, SWT.FLAT);
-    rerunButton.setImage(icons.getImage("/icons/relaunch.gif"));
-    rerunButton.setLayoutData(rerunButtonGridData);
-    rerunButton.addSelectionListener(new SelectionListener() {
-
-      public void widgetDefaultSelected(SelectionEvent e) {
-      }
-
-      public void widgetSelected(SelectionEvent e) {
-        if (lastLaunchConfiguration != null) {
-          Display.getDefault().asyncExec(new Runnable() {
-            public void run() {
-              try {
-                setupForNextTestRun(lastLaunchConfiguration);
-                lastLaunchConfiguration.launch(ILaunchManager.RUN_MODE, null);
-              } catch (CoreException e1) {
-                logger.logException(e1);
-              }
-            }
-          });
-        }
-      }
-    });
-
-    GridData rerunFailedFirstButtonGridData = new GridData();
-    rerunFailedFirstButtonGridData.horizontalAlignment = SWT.CENTER;
-    rerunFailedFirstButton = new Button(this, SWT.FLAT);
-    rerunFailedFirstButton.setText("RFF");
-    rerunFailedFirstButton.setLayoutData(rerunFailedFirstButtonGridData);
-    GridData refreshBrowsersButtonGridData = new GridData();
-    refreshBrowsersButtonGridData.horizontalAlignment = SWT.CENTER;
-    refreshBrowsersButton = new Button(this, SWT.FLAT);
-    refreshBrowsersButton.setImage(icons.getImage("icons/icon-refresh.gif"));
-    refreshBrowsersButton.setLayoutData(refreshBrowsersButtonGridData);
-    refreshBrowsersButton.addSelectionListener(new SelectionListener() {
-
-      public void widgetDefaultSelected(SelectionEvent e) {
-      }
-
-      public void widgetSelected(SelectionEvent e) {
-        if (lastLaunchConfiguration == null) {
-          return;
-        }
-        actionRunnerFactory.getResetBrowsersActionRunner(lastLaunchConfiguration);
-      }
-    });
 
     GridData totalRunLabelData = new GridData();
-    totalRunLabelData.horizontalSpan = 2;
     totalRunLabelData.grabExcessHorizontalSpace = true;
     totalRunLabelData.horizontalAlignment = SWT.FILL;
     totalRunLabel = new Label(this, SWT.CENTER);
@@ -176,7 +99,7 @@ public class TestResultsPanel extends Composite {
     testProgressIndicator.setLayoutData(progressIndicatorData);
     
     GridData treeData = new GridData();
-    treeData.horizontalSpan = 4;
+    treeData.horizontalSpan = 3;
     treeData.horizontalAlignment = SWT.FILL;
     treeData.grabExcessHorizontalSpace = true;
     treeData.grabExcessVerticalSpace = true;
@@ -206,16 +129,19 @@ public class TestResultsPanel extends Composite {
     });
 
     GridData testDetailsData = new GridData();
-    testDetailsData.horizontalSpan = 4;
+    testDetailsData.horizontalSpan = 3;
     testDetailsData.grabExcessHorizontalSpace = true;
     testDetailsData.heightHint = 100;
     testDetailsData.verticalAlignment = SWT.FILL;
     testDetailsData.horizontalAlignment = SWT.FILL;
     testDetailsText = new Text(this, SWT.MULTI | SWT.WRAP);
     testDetailsText.setLayoutData(testDetailsData);
-    
   }
 
+  public ILaunchConfiguration getLastLaunchConfiguration() {
+    return lastLaunchConfiguration;
+  }
+  
   public void setupForNextTestRun(ILaunchConfiguration launchConfiguration) {
     lastLaunchConfiguration = launchConfiguration;
     testRunResult.clear();
@@ -251,5 +177,13 @@ public class TestResultsPanel extends Composite {
     errorsLabel.setText("Errors : " + testRunResult.getNumberOfErrors());
     failuresLabel.setText("Failed : " + testRunResult.getNumberOfFailures());
     totalRunLabel.setText("Run : " + testRunResult.getNumberOfTests() + " / " + totalNumTests);
+  }
+
+  public void setTreeFilter(ViewerFilter filter) {
+    testResultsTree.setFilters(new ViewerFilter[] { filter });
+  }
+
+  public void clearTreeFilter() {
+    testResultsTree.setFilters(new ViewerFilter[0]);
   }
 }

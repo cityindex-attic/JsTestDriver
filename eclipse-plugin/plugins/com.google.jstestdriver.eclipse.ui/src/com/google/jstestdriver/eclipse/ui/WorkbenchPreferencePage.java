@@ -15,8 +15,8 @@
  */
 package com.google.jstestdriver.eclipse.ui;
 
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -49,11 +49,11 @@ public class WorkbenchPreferencePage extends FieldEditorPreferencePage
   protected void createFieldEditors() {
     addField(new IntegerFieldEditor(PREFERRED_SERVER_PORT, "Port to start server on",
         getFieldEditorParent()));
-    addField(new DirectoryFieldEditor(SAFARI_PATH, "Path to Safari", getFieldEditorParent()));
-    addField(new DirectoryFieldEditor(FIREFOX_PATH, "Path to Firefox", getFieldEditorParent()));
-    addField(new DirectoryFieldEditor(CHROME_PATH, "Path to Chrome", getFieldEditorParent()));
-    addField(new DirectoryFieldEditor(IE_PATH, "Path to IE", getFieldEditorParent()));
-    addField(new DirectoryFieldEditor(OPERA_PATH, "Path to Opera", getFieldEditorParent()));
+    addField(new FileFieldEditor(SAFARI_PATH, "Path to Safari", getFieldEditorParent()));
+    addField(new FileFieldEditor(FIREFOX_PATH, "Path to Firefox", getFieldEditorParent()));
+    addField(new FileFieldEditor(CHROME_PATH, "Path to Chrome", getFieldEditorParent()));
+    addField(new FileFieldEditor(IE_PATH, "Path to IE", getFieldEditorParent()));
+    addField(new FileFieldEditor(OPERA_PATH, "Path to Opera", getFieldEditorParent()));
   }
 
 }

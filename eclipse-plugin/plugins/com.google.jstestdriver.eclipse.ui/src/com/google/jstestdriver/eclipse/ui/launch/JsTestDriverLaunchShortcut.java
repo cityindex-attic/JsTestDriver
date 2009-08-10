@@ -41,6 +41,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import com.google.jstestdriver.eclipse.core.SlaveBrowserRootData;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
@@ -82,10 +83,6 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
     }
   }
 
-  private List<String> getTestCases(File file) throws IOException {
-    return finder.getTestCases(file);
-  }
-
   public void launch(IEditorPart editor, String mode) {
     List<String> testCases = new ArrayList<String>();
     try {
@@ -94,8 +91,9 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
         // Error out.
         return;
       }
-      if (editor instanceof TextEditor) {
-        TextEditor textEditor = (TextEditor) editor;
+      if (editor instanceof AbstractTextEditor) {
+        AbstractTextEditor textEditor = (AbstractTextEditor) editor;
+        //org.eclipse.wst.jsdt.internal.ui.javaeditor.CompilationUnitEditor
         if (textEditor.getSelectionProvider().getSelection() instanceof ITextSelection) {
           int startLine = updateTestCasesFromSelection(testCases, textEditor);
           if (testCases.isEmpty()) {
@@ -120,11 +118,11 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
       List<String> testCases) throws IOException {
     IFileEditorInput editorInput = (IFileEditorInput) editor.getEditorInput();
     File jsFile = editorInput.getFile().getLocation().toFile();
-    testCases.addAll(getTestCases(jsFile));
+    testCases.addAll(finder.getTestCases(jsFile));
   }
 
   private int updateTestCasesFromSelection(List<String> testCases,
-      TextEditor textEditor) {
+      AbstractTextEditor textEditor) {
     ITextSelection selection = (ITextSelection) textEditor
         .getSelectionProvider().getSelection();
     int startLine = selection.getStartLine();
@@ -136,7 +134,7 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
   }
 
   private void updateTestCasesFromCurrentLine(List<String> testCases,
-      TextEditor textEditor, int startLine) {
+      AbstractTextEditor textEditor, int startLine) {
     IDocument document = textEditor.getDocumentProvider().getDocument(
         textEditor.getEditorInput());
     try {
