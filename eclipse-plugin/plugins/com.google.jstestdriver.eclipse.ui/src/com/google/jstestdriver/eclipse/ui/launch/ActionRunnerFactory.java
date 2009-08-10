@@ -77,7 +77,6 @@ public class ActionRunnerFactory {
     }
     ConfigurationParser configurationParser = projectHelper.getConfigurationParser(projectName,
         confFileName);
-    return new IDEPluginActionBuilder(configurationParser, serverUrl,
-        injector.getInstance(ActionFactory.class), new EclipseResponseStreamFactory());
+    return new IDEPluginActionBuilder(configurationParser, serverUrl, new EclipseResponseStreamFactory());
   }
 }
