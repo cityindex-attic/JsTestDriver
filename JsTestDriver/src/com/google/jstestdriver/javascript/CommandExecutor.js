@@ -24,7 +24,11 @@ jstestdriver.listen = function() {
   jstestdriver.testCaseManager = new jstestdriver.TestCaseManager();
   var testRunner = new jstestdriver.TestRunner(jstestdriver.pluginRegistrar);
   jstestdriver.testCaseBuilder = new jstestdriver.TestCaseBuilder(jstestdriver.testCaseManager);
+  jstestdriver.global.TestCase = jstestdriver.bind(jstestdriver.testCaseBuilder,
+      jstestdriver.testCaseBuilder.TestCase);
 
+  // legacy
+  jstestdriver.testCaseManager.TestCase = jstestdriver.global.TestCase;
   new jstestdriver.CommandExecutor(parseInt(id),
       url,
       jstestdriver.convertToJson(jstestdriver.jQuery.post),
