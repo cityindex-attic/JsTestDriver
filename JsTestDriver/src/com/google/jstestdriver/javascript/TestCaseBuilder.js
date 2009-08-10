@@ -18,7 +18,6 @@ jstestdriver.TestCaseBuilder = function(testCaseManager) {
   jstestdriver.global.TestCase = jstestdriver.bind(this, this.TestCase);
 
   // legacy
-  jstestdriver.testCaseManager = {};
   jstestdriver.testCaseManager.TestCase = TestCase;
 };
 

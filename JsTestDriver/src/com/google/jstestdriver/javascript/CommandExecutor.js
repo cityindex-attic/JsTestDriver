@@ -21,14 +21,14 @@ jstestdriver.listen = function() {
   var url = jstestdriver.SERVER_URL + id;
 
   jstestdriver.initializePluginRegistrar();
-  var testCaseManager = new jstestdriver.TestCaseManager();
+  jstestdriver.testCaseManager = new jstestdriver.TestCaseManager();
   var testRunner = new jstestdriver.TestRunner(jstestdriver.pluginRegistrar);
-  jstestdriver.testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
+  jstestdriver.testCaseBuilder = new jstestdriver.TestCaseBuilder(jstestdriver.testCaseManager);
 
   new jstestdriver.CommandExecutor(parseInt(id),
       url,
       jstestdriver.convertToJson(jstestdriver.jQuery.post),
-      testCaseManager,
+      jstestdriver.testCaseManager,
       testRunner,
       jstestdriver.pluginRegistrar).listen();
 };
