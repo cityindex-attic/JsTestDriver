@@ -97,7 +97,7 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"error\":\"error2\",\"executionTime\":6},\"last\":true}");
 
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new ActionFactory.ActionFactoryFileFilter(), null, new Provider<HeartBeatManager>() {
+        new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
@@ -128,7 +128,7 @@ public class JsTestDriverClientTest extends TestCase {
         + "{\"id\":0, \"name\":\"name0\", \"version\":\"ver0\", \"os\":\"os0\"},"
         + "{\"id\":1, \"name\":\"name1\", \"version\":\"ver1\", \"os\":\"os1\"}]");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new ActionFactory.ActionFactoryFileFilter(), null, new Provider<HeartBeatManager>() {
+        new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
@@ -164,7 +164,7 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new ActionFactory.ActionFactoryFileFilter(), null, new Provider<HeartBeatManager>() {
+        new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
@@ -189,7 +189,7 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new ActionFactory.ActionFactoryFileFilter(), null, new Provider<HeartBeatManager>() {
+        new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }

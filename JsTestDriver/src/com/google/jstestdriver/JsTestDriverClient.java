@@ -18,10 +18,13 @@ package com.google.jstestdriver;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.inject.ImplementedBy;
+
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+@ImplementedBy(JsTestDriverClientImpl.class)
 public interface JsTestDriverClient {
 
   public Collection<BrowserInfo> listBrowsers();

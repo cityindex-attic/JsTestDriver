@@ -13,21 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.multibindings.Multibinder;
-import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+package com.google.jstestdriver.guice;
+
+import java.util.List;
+
+import com.google.inject.Provider;
+import com.google.jstestdriver.ThreadedAction;
 
 /**
- * Module for the action handler.
- * @author alexeagle@google.com (Alex Eagle)
+ * Provides {@link ThreadedAction}s for the JsTestDriverClient. Implement this interface and bind
+ * it in Guice to provide your own {@link ThreadedAction} sequences.
+ * @author corysmith@google.com (Cory Smith)
  */
-public class ActionFactoryModule extends AbstractModule {
-  @Override
-  protected void configure() {
-    Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class);
-    Multibinder.newSetBinder(binder(), FileLoadPreProcessor.class);
-  }
+public interface ThreadedActionProvider extends Provider<List<ThreadedAction>>{
+  public abstract List<ThreadedAction> get();
 }

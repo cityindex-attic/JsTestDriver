@@ -16,10 +16,13 @@
 
 package com.google.jstestdriver;
 
+import com.google.inject.ImplementedBy;
+
 /**
  * Defines the interface for the FileReader
  * @author corysmith
  */
+@ImplementedBy(SimpleFileReader.class)
 public interface FileReader {
   public String readFile(String file);
 }

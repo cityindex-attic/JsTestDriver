@@ -31,8 +31,9 @@ public class CommandTaskFactory {
   private final FileLoader fileLoader;
 
   @Inject
-  public CommandTaskFactory(JsTestDriverFileFilter filter, FileLoader fileLoader,
-      Provider<HeartBeatManager> heartBeatProvider) {
+  public CommandTaskFactory(JsTestDriverFileFilter filter,
+                            FileLoader fileLoader,
+                            Provider<HeartBeatManager> heartBeatProvider) {
     this.filter = filter;
     this.fileLoader = fileLoader;
     this.heartBeatProvider = heartBeatProvider;

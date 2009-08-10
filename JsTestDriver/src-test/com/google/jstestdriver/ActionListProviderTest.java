@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.inject.util.Providers;
+import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
 
 import junit.framework.TestCase;
 
@@ -45,12 +46,11 @@ public class ActionListProviderTest extends TestCase {
 
   private ActionListProvider createProvider(List<String> browsers,
       int port, String serverAddress, boolean reset, List<String> tests) {
-    return new ActionListProvider(new ActionFactory(null, Providers.<Server>of(null)),
+    ActionFactory actionFactory = new ActionFactory(null);
+    return new ActionListProvider(
+        actionFactory,
         null,
         tests,
-        null,
-        false,
-        false,
         Collections.<String>emptyList(),
         browsers,
         reset,
@@ -59,7 +59,10 @@ public class ActionListProviderTest extends TestCase {
         port,
         Collections.<FileInfo>emptySet(),
         serverAddress,
-        null);
+        null,
+        null,
+        new DefaultThreadedActionProvider(actionFactory, null, reset, false, false, tests, Collections.<String>emptyList()),
+        Providers.<JsTestDriverClient>of(null));
   }
 
   public void testParseWithServerAndReset() throws Exception {

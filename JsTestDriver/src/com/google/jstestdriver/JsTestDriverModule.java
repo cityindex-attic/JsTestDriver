@@ -23,6 +23,7 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.inject.util.Providers;
+import com.google.jstestdriver.guice.ClientModule;
 import com.google.jstestdriver.guice.FlagsModule;
 
 /**
@@ -48,6 +49,7 @@ public class JsTestDriverModule extends AbstractModule {
 
   @Override
   protected void configure() {
+    install(new ClientModule(System.out));
     // install plugin modules.
     for (Class<? extends Module> module : plugins) {
       try {
@@ -58,11 +60,17 @@ public class JsTestDriverModule extends AbstractModule {
         throw new RuntimeException(e);
       }
     }
+    // TODO(corysmith): Change this to an actual class, so that we can JITI it.
+    bind(new TypeLiteral<Set<FileInfo>>() {})
+         .annotatedWith(Names.named("fileSet")).toInstance(fileSet);
+
+    // TODO(corysmith): Determine a way to resolve the server address before injection.
     bind(String.class).annotatedWith(Names.named("defaultServerAddress"))
         .toProvider(Providers.of(defaultServerAddress));
-    bind(new TypeLiteral<Set<FileInfo>>() {})
-        .annotatedWith(Names.named("fileSet")).toInstance(fileSet);
+
+    // TODO(corysmith): Change this to an actual interface, so that we can JITI it.
     bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
+
     install(new FlagsModule(flags));
     install(new ActionFactoryModule());
   }

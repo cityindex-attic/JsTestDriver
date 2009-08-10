@@ -15,19 +15,16 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.util.Modules;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Map;
+
+import junit.framework.TestCase;
+
+import com.google.gson.Gson;
+import com.google.inject.AbstractModule;
 
 /**
  * Tests for {@link com.google.jstestdriver.IDEPluginActionBuilder}
@@ -46,21 +43,39 @@ public class IDEPluginActionBuilderTest extends TestCase {
   }
 
   public void testExample() throws Exception {
-    Reader configReader = new StringReader("load:\n- blash.js");
+    Reader configReader = new StringReader("load:\n- blash.js\nserver:\n -http://foo");
     ConfigurationParser configParser = new ConfigurationParser(tmpDir, configReader);
-    Injector injector =
-        Guice.createInjector(Modules.override(new ActionFactoryModule()).with(new AbstractModule() {
-          @Override
-          protected void configure() {
-            bind(Server.class).to(MyServer.class);
-          }
-        }));
+
     IDEPluginActionBuilder builder = new IDEPluginActionBuilder(configParser, "http://address",
-        injector.getInstance(ActionFactory.class), null);
+        new ResponseStreamFactoryStub());
+    builder.install(new AbstractModule(){
+                     @Override
+                     protected void configure() {
+                       bind(Server.class).to(MyServer.class);
+                     }
+                   });
     builder.addAllTests();
     ActionRunner runner = builder.build();
 
     runner.runActions();
+  }
+
+  private final class ResponseStreamFactoryStub implements ResponseStreamFactory {
+    public ResponseStream getDryRunActionResponseStream() {
+      return null;
+    }
+
+    public ResponseStream getEvalActionResponseStream() {
+      return null;
+    }
+
+    public ResponseStream getResetActionResponseStream() {
+      return null;
+    }
+
+    public ResponseStream getRunTestsActionResponseStream(String browserId) {
+      return null;
+    }
   }
 
   static class MyServer implements Server {

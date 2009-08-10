@@ -21,6 +21,9 @@ import java.io.PrintStream;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
@@ -35,8 +38,11 @@ public class ResponsePrinterFactory {
   private final ConcurrentHashMap<String, RunData> browsersRunData =
     new ConcurrentHashMap<String, RunData>();
 
-  public ResponsePrinterFactory(String xmlDir, PrintStream out, JsTestDriverClient client,
-      boolean verbose) {
+  @Inject
+  public ResponsePrinterFactory(@Named("testOutput") String xmlDir,
+                                @Named("outputStream") PrintStream out,
+                                JsTestDriverClient client,
+                                @Named("verbose") boolean verbose) {
     this.xmlDir = xmlDir;
     this.out = out;
     this.client = client;
@@ -49,7 +55,7 @@ public class ResponsePrinterFactory {
     }
     if (xmlDir.trim().length() > 0) {
       try {
-        return new XmlPrinter(System.out, new TestXmlSerializer(new FileOutputStream(
+        return new XmlPrinter(out, new TestXmlSerializer(new FileOutputStream(
             String.format("%s/%s", xmlDir, xmlFile))), numberOfBrowsers, browsersRunData);
       } catch (FileNotFoundException e) {
         throw new RuntimeException(e);

@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.internal.Nullable;
 import com.google.inject.name.Named;
+import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
 
 /**
  * Provides a sequence of actions from a large number of arguments.
@@ -34,9 +35,6 @@ public class ActionListProvider implements Provider<List<Action>> {
   private final ActionFactory actionFactory;
   private final FileLoader fileLoader;
   private final List<String> tests;
-  private final String testOutput;
-  private final boolean verbose;
-  private final boolean captureConsole;
   private final List<String> arguments;
   private final List<String> browsers;
   private final boolean reset;
@@ -46,16 +44,17 @@ public class ActionListProvider implements Provider<List<Action>> {
   private final boolean preloadFiles;
   private final Set<FileInfo> fileSet;
   private final String defaultServerAddress;
+  private final ResponseStreamFactory responseStreamFactory;
+  private final Provider<List<ThreadedAction>> threadedActionProvider;
+  private final Provider<JsTestDriverClient> clientProvider;
 
   // TODO(corysmith): Refactor this. Currently in a temporary,
   //  make dependencies visible to aid refactoring state.
   @Inject
-  public ActionListProvider(ActionFactory actionFactory,
+  public ActionListProvider(
+                      ActionFactory actionFactory,
                       FileLoader fileLoader,
                       @Named("tests") List<String> tests,
-                      @Named("testOutput") String testOutput,
-                      @Named("verbose") boolean verbose,
-                      @Named("captureConsole") boolean captureConsole,
                       @Named("arguments") List<String> arguments,
                       @Named("browsers") List<String> browsers,
                       @Named("reset") boolean reset,
@@ -64,13 +63,13 @@ public class ActionListProvider implements Provider<List<Action>> {
                       @Named("port") int port,
                       @Named("fileSet") Set<FileInfo> fileSet,
                       @Nullable @Named("server") String server,
-                      @Named("defaultServerAddress") String defaultServerAddress) {
+                      @Named("defaultServerAddress") String defaultServerAddress,
+                      ResponseStreamFactory responseStreamFactory,
+                      DefaultThreadedActionProvider threadedActionProvider,// using direct ref to the provider fo JITI
+                      Provider<JsTestDriverClient> clientProvider) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.tests = tests;
-    this.testOutput = testOutput;
-    this.verbose = verbose;
-    this.captureConsole = captureConsole;
     this.arguments = arguments;
     this.browsers = browsers;
     this.reset = reset;
@@ -80,16 +79,20 @@ public class ActionListProvider implements Provider<List<Action>> {
     this.fileSet = fileSet;
     this.server = server;
     this.defaultServerAddress = defaultServerAddress;
+    this.responseStreamFactory = responseStreamFactory;
+    this.threadedActionProvider = threadedActionProvider;
+    this.clientProvider = clientProvider;
   }
   
   public List<Action> get() {
     ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(actionFactory, fileLoader);
+        new ActionSequenceBuilder(actionFactory,
+                                  fileLoader,
+                                  responseStreamFactory,
+                                  threadedActionProvider,
+                                  clientProvider);
     builder.usingFiles(fileSet, preloadFiles)
-           .addTests(tests,
-                     testOutput,
-                     verbose, 
-                     captureConsole)
+           .addTests(tests)
            .addCommands(arguments)
            .onBrowsers(browsers)
            .reset(reset)

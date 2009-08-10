@@ -13,21 +13,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+
+package com.google.jstestdriver.guice;
+
+import java.io.PrintStream;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.multibindings.Multibinder;
-import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.inject.name.Names;
 
 /**
- * Module for the action handler.
- * @author alexeagle@google.com (Alex Eagle)
+ * Module that defines the configuration for a JsTestDriverClient.
+ * @author corysmith
+ *
  */
-public class ActionFactoryModule extends AbstractModule {
+public class ClientModule extends AbstractModule {
+
+  private final PrintStream out;
+
+  public ClientModule(PrintStream out) {
+    this.out = out;
+  }
+
   @Override
   protected void configure() {
-    Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class);
-    Multibinder.newSetBinder(binder(), FileLoadPreProcessor.class);
+    bind(PrintStream.class).annotatedWith(Names.named("outputStream")).toInstance(out);
   }
 }

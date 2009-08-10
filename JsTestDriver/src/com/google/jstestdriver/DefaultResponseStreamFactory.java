@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Inject;
 import com.google.jstestdriver.DryRunAction.DryRunActionResponseStream;
 import com.google.jstestdriver.EvalAction.EvalActionResponseStream;
 import com.google.jstestdriver.ResetAction.ResetActionResponseStream;
@@ -27,6 +28,7 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
 
   private final ResponsePrinterFactory responsePrinterFactory;
 
+  @Inject
   public DefaultResponseStreamFactory(ResponsePrinterFactory responsePrinterFactory) {
     this.responsePrinterFactory = responsePrinterFactory;
   }
@@ -54,5 +56,4 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
   public ResponseStream getResetActionResponseStream() {
     return new ResetActionResponseStream();
   }
-
 }

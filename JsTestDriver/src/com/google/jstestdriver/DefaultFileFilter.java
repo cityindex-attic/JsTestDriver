@@ -13,21 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package com.google.jstestdriver;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.multibindings.Multibinder;
-import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import java.util.Collections;
+import java.util.List;
 
-/**
- * Module for the action handler.
- * @author alexeagle@google.com (Alex Eagle)
- */
-public class ActionFactoryModule extends AbstractModule {
-  @Override
-  protected void configure() {
-    Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class);
-    Multibinder.newSetBinder(binder(), FileLoadPreProcessor.class);
+public class DefaultFileFilter implements JsTestDriverFileFilter {
+  public String filterFile(String content, boolean reload) {
+    return content;
+  }
+
+  public List<String> resolveFilesDeps(String file) {
+    return Collections.singletonList(file);
   }
 }

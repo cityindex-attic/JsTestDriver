@@ -15,18 +15,16 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
-
-import java.io.PrintStream;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
 import java.util.Set;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
 /**
  * Produces instances of Actions, so they can have observers, and other stuff.
@@ -38,18 +36,13 @@ import java.util.Set;
 public class ActionFactory {
 
   Map<Class<?>, List<Observer>> observers = new HashMap<Class<?>, List<Observer>>();
-  private final CommandTaskFactory commandTaskFactory;
-  private final Provider<Server> server;
+  private final Provider<JsTestDriverClient> clientProvider;
 
   @Inject
-  public ActionFactory(CommandTaskFactory commandTaskFactory, Provider<Server> server) {
-    this.commandTaskFactory = commandTaskFactory;
-    this.server = server;
+  public ActionFactory(Provider<JsTestDriverClient> clientProvider) {
+    this.clientProvider = clientProvider;
   }
 
-  public JsTestDriverClient getJsTestDriverClient(Set<FileInfo> files, String serverAddress) {
-    return new JsTestDriverClientImpl(commandTaskFactory, files, serverAddress, server.get());
-  }
 
   public ServerStartupAction getServerStartupAction(Integer port,
       CapturedBrowsers capturedBrowsers, FilesCache preloadedFilesCache) {
@@ -73,16 +66,6 @@ public class ActionFactory {
     observers.get(clazz).add(observer);
   }
 
-  public static class ActionFactoryFileFilter implements JsTestDriverFileFilter {
-    public String filterFile(String content, boolean reload) {
-      return content;
-    }
-
-    public List<String> resolveFilesDeps(String file) {
-      return Collections.singletonList(file);
-    }
-  }
-
   public ResetAction createResetAction(ResponseStreamFactory responseStreamFactory) {
     return new ResetAction(responseStreamFactory);
   }
@@ -91,13 +74,17 @@ public class ActionFactory {
     return new DryRunAction(responseStreamFactory);
   }
 
-  public RunTestsAction createRunTestsAction(JsTestDriverClient client,
-      ResponseStreamFactory responseStreamFactory, String xmlOutputDir, PrintStream out,
-      boolean verbose, List<String> tests, boolean captureConsole) {
+  public RunTestsAction createRunTestsAction(ResponseStreamFactory responseStreamFactory,
+      List<String> tests, boolean captureConsole) {
+    
     return new RunTestsAction(responseStreamFactory, tests, captureConsole);
   }
 
   public EvalAction createEvalAction(ResponseStreamFactory responseStreamFactory, String cmd) {
     return new EvalAction(responseStreamFactory, cmd);
+  }
+
+  public JsTestDriverClient getJsTestDriverClient(Set<FileInfo> filesList, String serverAddress) {
+    return clientProvider.get();
   }
 }

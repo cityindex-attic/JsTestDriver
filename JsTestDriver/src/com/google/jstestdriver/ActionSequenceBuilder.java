@@ -15,13 +15,14 @@
  */
 package com.google.jstestdriver;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
+
+import com.google.inject.Provider;
 
 /**
  * A builder for creating a sequence of {@link Action}s to be run by the
@@ -45,9 +46,10 @@ public class ActionSequenceBuilder {
 
   private final ActionFactory actionFactory;
   private final FileLoader fileLoader;
+  private final Provider<List<ThreadedAction>> threadedActionProvider;
+  private final Provider<JsTestDriverClient> clientProvider;
 
   private List<String> browsers = new LinkedList<String>();
-  private boolean captureConsole;
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
   private boolean dryRun;
   private HashMap<String, FileInfo> files = new HashMap<String, FileInfo>();
@@ -58,15 +60,25 @@ public class ActionSequenceBuilder {
   private boolean reset;
   private List<String> tests = new LinkedList<String>();
   private List<ThreadedAction> threadedActions;
-  private boolean verbose;
-  private String xmlOutputDir;
   private List<String> commands = new LinkedList<String>();
 
-  /** Begins the building of an action sequence. */
+  /**
+   * Begins the building of an action sequence.
+   * 
+   * @param threadedActionProvider
+   *          TODO
+   * @param clientProvider
+   *          TODO
+   */
   public ActionSequenceBuilder(ActionFactory actionFactory,
-      FileLoader fileLoader) {
+                               FileLoader fileLoader,
+                               ResponseStreamFactory responseStreamFactory,
+                               Provider<List<ThreadedAction>> threadedActionProvider,
+                               Provider<JsTestDriverClient> clientProvider) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
+    this.threadedActionProvider = threadedActionProvider;
+    this.clientProvider = clientProvider;
   }
 
   /** Add the Browser startup and shutdown actions to the actions stack. */
@@ -103,20 +115,10 @@ public class ActionSequenceBuilder {
    * 
    * @param tests
    *          The list of tests to be executed during this sequence.
-   * @param xmlOutputDir
-   *          The directory to store the test results in.
-   * @param verbose
-   *          Indicates if the test output should be verbose.
-   * @param captureConsole
-   *          Indicates if the console messaging should be included in the test.
    * @return the current builder.
    */
-  public ActionSequenceBuilder addTests(List<String> tests, String xmlOutputDir, boolean verbose,
-      boolean captureConsole) {
+  public ActionSequenceBuilder addTests(List<String> tests) {
     this.tests.addAll(tests);
-    this.xmlOutputDir = xmlOutputDir;
-    this.verbose = verbose;
-    this.captureConsole = captureConsole;
     return this;
   }
 
@@ -130,9 +132,9 @@ public class ActionSequenceBuilder {
   public List<Action> build() {
     List<Action> actions = new LinkedList<Action>();
     require(getServerAddress(), "Oh snap! the Server address was never defined!");
-    JsTestDriverClient client = actionFactory.getJsTestDriverClient(fileSet, getServerAddress());
+    JsTestDriverClient client = clientProvider.get();
 
-    threadedActions = createThreadedActions(client);
+    threadedActions = threadedActionProvider.get();
 
     if (!threadedActions.isEmpty()) {
       actions.add(new ThreadedActionsRunner(client, threadedActions, Executors
@@ -150,34 +152,6 @@ public class ActionSequenceBuilder {
   /** Method that derives whether or not to leave the server running. */
   private boolean leaveServerRunning() {
     return tests.isEmpty() && commands.isEmpty() && !dryRun && !reset;
-  }
-
-  /** Creates and returns all threaded actions. */
-  private List<ThreadedAction> createThreadedActions(JsTestDriverClient client) {
-    List<ThreadedAction> threadedActions = new ArrayList<ThreadedAction>();
-
-    ResponseStreamFactory responseStreamFactory =
-        new DefaultResponseStreamFactory(new ResponsePrinterFactory(xmlOutputDir, System.out,
-            client, verbose));
-
-    if (reset) {
-      threadedActions.add(actionFactory.createResetAction(responseStreamFactory));
-    }
-    if (dryRun) {
-      threadedActions.add(actionFactory.createDryRunAction(responseStreamFactory));
-    }
-    if (!tests.isEmpty()) {
-      RunTestsAction runTestsAction = actionFactory.createRunTestsAction(client,
-          responseStreamFactory, xmlOutputDir, System.out,
-              verbose, tests, captureConsole);
-      threadedActions.add(runTestsAction);
-    }
-    if (!commands.isEmpty()) {
-      for (String cmd : commands) {
-        threadedActions.add(actionFactory.createEvalAction(responseStreamFactory, cmd));
-      }
-    }
-    return threadedActions;
   }
 
   private String getServerAddress() {

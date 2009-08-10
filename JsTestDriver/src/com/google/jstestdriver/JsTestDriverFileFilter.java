@@ -17,9 +17,12 @@ package com.google.jstestdriver;
 
 import java.util.Collection;
 
+import com.google.inject.ImplementedBy;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+@ImplementedBy(DefaultFileFilter.class)
 public interface JsTestDriverFileFilter {
 
   public String filterFile(String content, boolean reload);

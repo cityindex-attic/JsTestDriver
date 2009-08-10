@@ -25,11 +25,15 @@ import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import com.google.jstestdriver.JsonCommand.CommandType;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+@Singleton
 public class JsTestDriverClientImpl implements JsTestDriverClient {
 
   private final Gson gson = new Gson();
@@ -39,8 +43,11 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   private final String baseUrl;
   private final Server server;
 
-  public JsTestDriverClientImpl(CommandTaskFactory commandTaskFactory, Set<FileInfo> fileSet,
-      String baseUrl, Server server) {
+  @Inject
+  public JsTestDriverClientImpl(CommandTaskFactory commandTaskFactory,
+                                @Named("fileSet") Set<FileInfo> fileSet,
+                                String baseUrl,
+                                Server server) {
     this.commandTaskFactory = commandTaskFactory;
     this.fileSet = fileSet;
     this.baseUrl = baseUrl;

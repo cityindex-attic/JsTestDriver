@@ -15,28 +15,32 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.util.Providers;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
+import com.google.inject.util.Providers;
+import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
 
 public class ActionSequenceBuilderTest extends TestCase {
 
   private LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
+  ActionFactory actionFactory = new ActionFactory(null);
 
   public void testAddTestsWithRemoteServerAddress() throws Exception {
-    ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null,
-            Providers.<Server> of(new HttpServer())), null);
-    String xmlOutputDir = "/out";
-    boolean verbose = true;
+    List<String> tests = tests();
     boolean captureConsole = true;
     List<String> browsers = browsers();
-    List<String> tests = tests();
+    ActionSequenceBuilder builder =
+        new ActionSequenceBuilder(actionFactory,
+                                  null,
+                                  null,
+                                  threadedActionProvider(tests, Collections.<String>emptyList(), false, false, captureConsole),
+                                  Providers.<JsTestDriverClient>of(null));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(BrowserStartupAction.class);
@@ -44,7 +48,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     expectedActions.add(BrowserShutdownAction.class);
     builder.withRemoteServer("http://foo").usingFiles(files, false).onBrowsers(browsers);
 
-    List<Action> sequence = builder.addTests(tests, xmlOutputDir, verbose, captureConsole).build();
+    List<Action> sequence = builder.addTests(tests).build();
 
     assertSequence(expectedActions, sequence);
 
@@ -55,15 +59,21 @@ public class ActionSequenceBuilderTest extends TestCase {
     assertEquals(captureConsole, testAction.isCaptureConsole());
   }
 
+  private DefaultThreadedActionProvider threadedActionProvider(List<String> tests, List<String> commands,
+      boolean reset, boolean dryRun, boolean captureConsole) {
+    return new DefaultThreadedActionProvider(actionFactory, null, reset, dryRun, captureConsole, tests, commands);
+  }
+
   public void testAddTestsWithLocalServer() throws Exception {
-    ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null,
-            Providers.<Server> of(new HttpServer())), null);
-    String xmlOutputDir = "/out";
-    boolean verbose = true;
-    boolean captureConsole = true;
-    List<String> browsers = browsers();
     List<String> tests = tests();
+    boolean captureConsole = true;
+    ActionSequenceBuilder builder =
+        new ActionSequenceBuilder(new ActionFactory(null), 
+            null, null,
+            threadedActionProvider(tests,
+                                   Collections.<String>emptyList(), false, false, captureConsole),
+            Providers.<JsTestDriverClient>of(null));
+    List<String> browsers = browsers();
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -73,7 +83,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     expectedActions.add(ServerShutdownAction.class);
     builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(browsers);
 
-    List<Action> sequence = builder.addTests(tests, xmlOutputDir, verbose, captureConsole).build();
+    List<Action> sequence = builder.addTests(tests).build();
 
     assertSequence(expectedActions, sequence);
 
@@ -85,11 +95,14 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testAddTestsAndDryrun() throws Exception {
+    List<String> tests = tests();
+    boolean dryRun = true;
     ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null,
-            Providers.<Server> of(new HttpServer())), null);
+        new ActionSequenceBuilder(new ActionFactory(null), null, null,
+            threadedActionProvider(tests, Collections.<String>emptyList(), false, dryRun, false),
+            Providers.<JsTestDriverClient>of(null));
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
-        browsers()).addTests(tests(), "/out", false, false).asDryRun(true).build();
+        browsers()).addTests(tests).asDryRun(dryRun).build();
 
     ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
     assertEquals(2, runner.getActions().size());
@@ -101,12 +114,16 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testAddTestsAndReset() throws Exception {
+    List<String> tests = tests();
+    boolean reset = true;
     ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null,
-            Providers.<Server> of(new HttpServer())), null);
+        new ActionSequenceBuilder(new ActionFactory(null), null, null,
+                                  threadedActionProvider(tests, Collections.<String>emptyList(),
+                                      reset, false, false),
+                                  Providers.<JsTestDriverClient>of(null));
 
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
-        browsers()).addTests(tests(), "/out", false, false).reset(true).build();
+        browsers()).addTests(tests).reset(reset).build();
 
     ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
     assertEquals(2, runner.getActions().size());
@@ -118,12 +135,16 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testAddTestsWithDryRunAndReset() throws Exception {
+    List<String> tests = tests();
+    boolean dryRun = true;
+    boolean reset = true;
     ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null,
-            Providers.<Server> of(new HttpServer())), null);
+        new ActionSequenceBuilder(new ActionFactory(null), null, null,
+            threadedActionProvider(tests, Collections.<String>emptyList(), dryRun, reset, false),
+            Providers.<JsTestDriverClient>of(null));
 
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
-        browsers()).addTests(tests(), "/out", false, false).asDryRun(true).reset(true).build();
+        browsers()).addTests(tests).asDryRun(dryRun).reset(reset).build();
 
     ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
     assertEquals(3, runner.getActions().size());
@@ -136,10 +157,12 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testAddCommands() throws Exception {
-    ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null,
-            Providers.<Server> of(new HttpServer())), null);
     List<String> commands = Arrays.asList("'foo'+'bar'", "1+1");
+    ActionSequenceBuilder builder =
+        new ActionSequenceBuilder(new ActionFactory(null), null, null,
+            threadedActionProvider(Collections.<String>emptyList(),
+                                   commands, false, false, false),
+            Providers.<JsTestDriverClient>of(null));
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addCommands(commands).build();
 
@@ -157,11 +180,11 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   public void testNoBrowsers() throws Exception {
+    List<String> tests = tests();
     ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null,
-            Providers.<Server> of(new HttpServer())), null);
+        new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(tests, Collections.<String>emptyList(), false, false, false), Providers.<JsTestDriverClient>of(null));
 
-    List<Action> actions = builder.addTests(tests(), "/out", false, false).withLocalServerPort(999)
+    List<Action> actions = builder.addTests(tests).withLocalServerPort(999)
         .usingFiles(files, false).build();
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -174,11 +197,10 @@ public class ActionSequenceBuilderTest extends TestCase {
 
   public void testNoServer() throws Exception {
     ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null,
-            Providers.<Server> of(new HttpServer())), null);
+        new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(tests(), Collections.<String>emptyList(), false, false, false), Providers.<JsTestDriverClient>of(null));
 
     try {
-      builder.addTests(tests(), "/out", false, false).onBrowsers(browsers()).usingFiles(files,
+      builder.addTests(tests()).onBrowsers(browsers()).usingFiles(files,
           false).build();
       fail("expected and exception because we have no server.");
     } catch (IllegalArgumentException e) {

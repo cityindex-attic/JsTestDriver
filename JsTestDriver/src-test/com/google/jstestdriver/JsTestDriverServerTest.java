@@ -61,7 +61,7 @@ public class JsTestDriverServerTest extends TestCase {
 
   public void testListBrowsers() throws Exception {
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new ActionFactory.ActionFactoryFileFilter(), null, null), new LinkedHashSet<FileInfo>(),
+        new DefaultFileFilter(), null, null), new LinkedHashSet<FileInfo>(),
         "http://localhost:4224", new HttpServer());
 
     server.start();

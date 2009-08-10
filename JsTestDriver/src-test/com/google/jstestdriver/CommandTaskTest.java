@@ -177,7 +177,7 @@ public class CommandTaskTest extends TestCase {
   private CommandTask createCommandTask(MockServer server, LinkedHashSet<FileInfo> files,
       LinkedHashSet<FileInfo> serveFiles, Map<String, String> params, FakeResponseStream stream,
       MockFileLoader fileLoader) {
-    CommandTask task = new CommandTask(new ActionFactory.ActionFactoryFileFilter(), stream, files,
+    CommandTask task = new CommandTask(new DefaultFileFilter(), stream, files,
         "http://localhost", server, params, new HeartBeatManagerStub(), fileLoader);
     return task;
   }
