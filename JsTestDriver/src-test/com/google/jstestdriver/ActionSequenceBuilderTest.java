@@ -195,19 +195,6 @@ public class ActionSequenceBuilderTest extends TestCase {
     this.<Action>assertSequence(expectedActions, actions);
   }
 
-  public void testNoServer() throws Exception {
-    ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(tests(), Collections.<String>emptyList(), false, false, false), Providers.<JsTestDriverClient>of(null));
-
-    try {
-      builder.addTests(tests()).onBrowsers(browsers()).usingFiles(files,
-          false).build();
-      fail("expected and exception because we have no server.");
-    } catch (IllegalArgumentException e) {
-      // pass
-    }
-  }
-
   private List<String> tests() {
     List<String> tests = new ArrayList<String>();
     tests.add("test.testFoo");

@@ -43,10 +43,10 @@ public class FlagsModuleTest extends TestCase {
 
   public void testBindNullFlag() throws Exception {
     final FlagsImpl flags = new FlagsImpl();
-    flags.setServer(null);
+    flags.setTestOutput(null);
     Injector injector = Guice.createInjector(new FlagsModule(flags));
     assertEquals(flags.getServer(),
-        injector.getInstance(Key.get(String.class, Names.named("server"))));
+        injector.getInstance(Key.get(String.class, Names.named("testOutput"))));
   }
 
   public void testBindParameterized() throws Exception {

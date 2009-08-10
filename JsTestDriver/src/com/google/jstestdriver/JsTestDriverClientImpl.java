@@ -46,7 +46,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   @Inject
   public JsTestDriverClientImpl(CommandTaskFactory commandTaskFactory,
                                 @Named("fileSet") Set<FileInfo> fileSet,
-                                String baseUrl,
+                                @Named("server") String baseUrl,
                                 Server server) {
     this.commandTaskFactory = commandTaskFactory;
     this.fileSet = fileSet;

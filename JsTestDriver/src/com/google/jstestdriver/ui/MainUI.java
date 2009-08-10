@@ -124,8 +124,7 @@ public class MainUI {
         Guice.createInjector(
             new JsTestDriverModule(flags,
                                    fileSet,
-                                   defaultServerAddress,
-                                   Collections.<Class<? extends Module>>emptyList()));
+                                   Collections.<Class<? extends Module>>emptyList(), null));
       ActionFactory actionFactory = injector.getInstance(ActionFactory.class);
       actionFactory.registerListener(ServerStartupAction.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, statusBar);

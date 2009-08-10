@@ -22,7 +22,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
-import com.google.inject.util.Providers;
 import com.google.jstestdriver.guice.ClientModule;
 import com.google.jstestdriver.guice.FlagsModule;
 
@@ -35,16 +34,18 @@ import com.google.jstestdriver.guice.FlagsModule;
 public class JsTestDriverModule extends AbstractModule {
 
   private final Flags flags;
-  private final String defaultServerAddress;
   private final Set<FileInfo> fileSet;
   private final List<Class<? extends Module>> plugins;
+  private final String serverAddress;
 
-  public JsTestDriverModule(Flags flags, Set<FileInfo> fileSet, String defaultServerAddress,
-      List<Class<? extends Module>> plugins) {
+  public JsTestDriverModule(Flags flags,
+                            Set<FileInfo> fileSet,
+                            List<Class<? extends Module>> plugins,
+                            String serverAddress) {
     this.flags = flags;
     this.fileSet = fileSet;
-    this.defaultServerAddress = defaultServerAddress;
     this.plugins = plugins;
+    this.serverAddress = serverAddress;
   }
 
   @Override
@@ -64,9 +65,8 @@ public class JsTestDriverModule extends AbstractModule {
     bind(new TypeLiteral<Set<FileInfo>>() {})
          .annotatedWith(Names.named("fileSet")).toInstance(fileSet);
 
-    // TODO(corysmith): Determine a way to resolve the server address before injection.
-    bind(String.class).annotatedWith(Names.named("defaultServerAddress"))
-        .toProvider(Providers.of(defaultServerAddress));
+    bind(String.class)
+         .annotatedWith(Names.named("server")).toInstance(serverAddress);
 
     // TODO(corysmith): Change this to an actual interface, so that we can JITI it.
     bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);

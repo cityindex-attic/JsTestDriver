@@ -60,7 +60,6 @@ public class ActionListProviderTest extends TestCase {
         Collections.<FileInfo>emptySet(),
         serverAddress,
         null,
-        null,
         new DefaultThreadedActionProvider(actionFactory, null, reset, false, false, tests, Collections.<String>emptyList()),
         Providers.<JsTestDriverClient>of(null));
   }
@@ -101,20 +100,6 @@ public class ActionListProviderTest extends TestCase {
     BrowserStartupAction action = findAction(actions, BrowserStartupAction.class);
     assertNotNull("Server action not created", action);
     assertEquals(serverAddress, action.getServerAddress());
-  }
-
-  public void testParseFlagsNoPortNoServer() throws Exception {
-    ActionListProvider parser = createProvider(Arrays.asList("browser1"), -1, null, false, Arrays.asList("foo.testBar"));
-    FlagsImpl flags = new FlagsImpl();
-
-    flags.setBrowser(Arrays.asList("browser"));
-    flags.setTests(Arrays.asList("foo.testBar"));
-    try {
-      parser.get();
-      fail("expected no server and no port exception");
-    } catch (IllegalArgumentException e) {
-      // pass
-    }
   }
 
   public void testParseFlagsAndCreateTestActions() throws Exception {

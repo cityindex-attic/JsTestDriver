@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,18 +30,6 @@ import com.google.inject.Provider;
  * @author corysmith
  */
 public class ActionSequenceBuilder {
-
-  static private void require(Object obj, String msg) {
-    if (obj == null) {
-      throw new IllegalArgumentException(msg);
-    }
-    if (obj instanceof String && ((String) obj).length() < 1) {
-      throw new IllegalArgumentException(msg);
-    }
-    if (obj instanceof Collection<?> && ((Collection<?>) obj).size() < 1) {
-      throw new IllegalArgumentException(msg);
-    }
-  }
 
   private final ActionFactory actionFactory;
   private final FileLoader fileLoader;
@@ -85,7 +72,7 @@ public class ActionSequenceBuilder {
   private void addBrowserControlActions(List<Action> actions) {
     if (!browsers.isEmpty()) {
       BrowserStartupAction browserStartupAction = new BrowserStartupAction(browsers,
-          getServerAddress());
+          remoteServerAddress);
       capturedBrowsers.addObserver(browserStartupAction);
       actions.add(0, browserStartupAction);
       actions.add(new BrowserShutdownAction(browserStartupAction));
@@ -131,7 +118,7 @@ public class ActionSequenceBuilder {
   /** Creates and returns a sequence of actions. */
   public List<Action> build() {
     List<Action> actions = new LinkedList<Action>();
-    require(getServerAddress(), "Oh snap! the Server address was never defined!");
+
     JsTestDriverClient client = clientProvider.get();
 
     threadedActions = threadedActionProvider.get();
@@ -152,16 +139,6 @@ public class ActionSequenceBuilder {
   /** Method that derives whether or not to leave the server running. */
   private boolean leaveServerRunning() {
     return tests.isEmpty() && commands.isEmpty() && !dryRun && !reset;
-  }
-
-  private String getServerAddress() {
-    if (remoteServerAddress != null) {
-      return remoteServerAddress;
-    }
-    if (localServerPort != -1) {
-      return String.format("http://%s:%d", "127.0.0.1", localServerPort);
-    }
-    return null;
   }
 
   private boolean needToStartServer() {

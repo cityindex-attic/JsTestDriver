@@ -30,9 +30,9 @@ import com.google.inject.Module;
 public class JsTestDriverModuleTest extends TestCase {
   public void testGetActionRunner() throws Exception {
     FlagsImpl flags = new FlagsImpl();
-    flags.setServer("foo");
     Guice.createInjector(new JsTestDriverModule(flags,
-        Collections.<FileInfo>emptySet(), "",
-        Collections.<Class<? extends Module>>emptyList())).getInstance(ActionRunner.class);
+        Collections.<FileInfo>emptySet(),
+        Collections.<Class<? extends Module>>emptyList(),
+        "http://foo")).getInstance(ActionRunner.class);
   }
 }

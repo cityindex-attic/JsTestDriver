@@ -110,8 +110,9 @@ public class JsTestDriverServer extends Observable {
       File config = new File(flags.getConfig());
       Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
       List<Class<? extends Module>> plugins = new LinkedList<Class<? extends Module>>();
-      String defaultServerAddress = null;
 
+      // TODO(corysmith): move the handling of the serverAddress into a configuration class
+      String serverAddress = flags.getServer();
       if (flags.hasWork()) {
         if (!config.exists()) {
           throw new RuntimeException("Config file doesn't exist: " + flags.getConfig());
@@ -122,10 +123,19 @@ public class JsTestDriverServer extends Observable {
         PluginLoader pluginLoader = new PluginLoader();
         configParser.parse();
         fileSet = configParser.getFilesList();
-        defaultServerAddress = configParser.getServer();
+        if (serverAddress == null || serverAddress.length() == 0) {
+          serverAddress = configParser.getServer();
+        }
         plugins = pluginLoader.load(configParser.getPlugins());
       }
-      Injector injector = Guice.createInjector(new JsTestDriverModule(flags, fileSet, defaultServerAddress, plugins));
+      if (serverAddress == null || serverAddress.length() == 0) {
+        if (flags.getPort() == -1) {
+          throw new RuntimeException("Oh Snap! No server defined!");
+        }
+        serverAddress = String.format("http://%s:%d", "127.0.0.1", flags.getPort());
+      }
+      Injector injector =
+          Guice.createInjector(new JsTestDriverModule(flags, fileSet, plugins, serverAddress));
       injector.getInstance(ActionRunner.class).runActions();
     } catch (CmdLineException e) {
       System.err.println(e.getMessage());

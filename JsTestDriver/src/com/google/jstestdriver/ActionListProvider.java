@@ -43,7 +43,6 @@ public class ActionListProvider implements Provider<List<Action>> {
   private final String server;
   private final boolean preloadFiles;
   private final Set<FileInfo> fileSet;
-  private final String defaultServerAddress;
   private final ResponseStreamFactory responseStreamFactory;
   private final Provider<List<ThreadedAction>> threadedActionProvider;
   private final Provider<JsTestDriverClient> clientProvider;
@@ -62,10 +61,9 @@ public class ActionListProvider implements Provider<List<Action>> {
                       @Named("preloadFiles") boolean preloadFiles,
                       @Named("port") int port,
                       @Named("fileSet") Set<FileInfo> fileSet,
-                      @Nullable @Named("server") String server,
-                      @Named("defaultServerAddress") String defaultServerAddress,
+                      @Named("server") String server,
                       ResponseStreamFactory responseStreamFactory,
-                      DefaultThreadedActionProvider threadedActionProvider,// using direct ref to the provider fo JITI
+                      DefaultThreadedActionProvider threadedActionProvider,
                       Provider<JsTestDriverClient> clientProvider) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
@@ -78,7 +76,6 @@ public class ActionListProvider implements Provider<List<Action>> {
     this.port = port;
     this.fileSet = fileSet;
     this.server = server;
-    this.defaultServerAddress = defaultServerAddress;
     this.responseStreamFactory = responseStreamFactory;
     this.threadedActionProvider = threadedActionProvider;
     this.clientProvider = clientProvider;
@@ -96,13 +93,9 @@ public class ActionListProvider implements Provider<List<Action>> {
            .addCommands(arguments)
            .onBrowsers(browsers)
            .reset(reset)
-           .asDryRun(dryRun);
-    if (port != -1) {
-      builder.withLocalServerPort(port);
-    } else {
-      builder.withRemoteServer(server != null ?
-                               server : defaultServerAddress);
-    }
+           .asDryRun(dryRun)
+           .withLocalServerPort(port)
+           .withRemoteServer(server);
     return builder.build();
   }
 }

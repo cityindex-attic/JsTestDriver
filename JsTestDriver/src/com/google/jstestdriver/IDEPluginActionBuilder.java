@@ -81,16 +81,19 @@ public class IDEPluginActionBuilder {
 
   public ActionRunner build() {
     configParser.parse();
-    LinkedList<Module> childModules = new LinkedList<Module>();
-    childModules.add(new ConfigurationModule(tests, reset, dryRun, serverAddress,
-        configParser.getFilesList(),
-        responseStreamFactory, configParser.getServer()));
-    childModules.addAll(modules);
-    Injector injector = baseInjector.createChildInjector(childModules);
+
+    Injector injector = baseInjector.createChildInjector(new ConfigurationModule(
+      modules,
+      tests,
+      reset,
+      dryRun,
+      serverAddress != null ? serverAddress : configParser.getServer(),
+      configParser.getFilesList(),
+      responseStreamFactory));
 
     return injector.getInstance(ActionRunner.class);
   }
-
+  // TODO(corysmith): Combine this class with the JsTestDriverModule
   private static class ConfigurationModule extends AbstractModule{
 
     private final List<String> tests;
@@ -99,18 +102,18 @@ public class IDEPluginActionBuilder {
     private final String serverAddress;
     private final Set<FileInfo> fileSet;
     private final ResponseStreamFactory responseStreamFactory;
-    private final String defaultServer;
+    private final LinkedList<Module> modules;
 
-    public ConfigurationModule(List<String> tests, boolean reset, boolean dryRun,
-        String serverAddress, Set<FileInfo> fileSet, ResponseStreamFactory responseStreamFactory,
-        String defaultServer) {
+    public ConfigurationModule(LinkedList<Module> modules, List<String> tests,
+        boolean reset, boolean dryRun, String serverAddress,
+        Set<FileInfo> fileSet, ResponseStreamFactory responseStreamFactory) {
+      this.modules = modules;
       this.tests = tests;
       this.reset = reset;
       this.dryRun = dryRun;
       this.serverAddress = serverAddress;
       this.fileSet = fileSet;
       this.responseStreamFactory = responseStreamFactory;
-      this.defaultServer = defaultServer;
     }
 
     @Override
@@ -119,17 +122,21 @@ public class IDEPluginActionBuilder {
       flags.setTests(tests);
       flags.setReset(reset);
       flags.setDryRun(dryRun);
-      flags.setServer(serverAddress);
       install(new FlagsModule(flags));
+      bind(String.class).annotatedWith(Names.named("server")).toInstance(serverAddress);
 
       // TODO(corysmith): Change this to an actual class, so that we can JITI it.
       bind(new TypeLiteral<Set<FileInfo>>(){})
           .annotatedWith(Names.named("fileSet"))
           .toInstance(fileSet != null ? fileSet : Collections.<FileInfo>emptySet());
       bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
+
+      // TODO(corysmith): Change this to an actual class, so that we can JITI it.
       bind(ResponseStreamFactory.class).toInstance(responseStreamFactory);
-      bind(String.class)
-          .annotatedWith(Names.named("defaultServerAddress")).toInstance(defaultServer);
+      
+      for (Module module : modules) {
+        install(module);
+      }
     }
   }
 }

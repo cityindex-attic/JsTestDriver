@@ -27,7 +27,7 @@ public interface Flags {
   @GuiceBinding(name="port")
   public Integer getPort();
 
-  @GuiceBinding(name="server")
+  // server is not bound into Guice.
   public String getServer();
 
   @GuiceBinding(name="arguments", parameterizedType = String.class)
