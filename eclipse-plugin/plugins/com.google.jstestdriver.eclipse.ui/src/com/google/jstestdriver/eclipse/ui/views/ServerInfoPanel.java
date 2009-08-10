@@ -61,11 +61,11 @@ public class ServerInfoPanel extends Composite implements Observer {
     serverUrlText.setEditable(false);
     serverUrlText.setOrientation(SWT.HORIZONTAL);
     
-    GridData panelGridData = new GridData();
-    panelGridData.grabExcessHorizontalSpace = true;
-    panelGridData.horizontalAlignment = SWT.FILL;
     browserButtonPanel = new BrowserButtonPanel(this, SWT.NONE);
-    browserButtonPanel.setLayoutData(panelGridData);
+    GridData browserLayoutData = new GridData();
+    browserLayoutData.grabExcessHorizontalSpace = true;
+    browserLayoutData.horizontalAlignment = SWT.FILL;
+    setLayoutData(browserLayoutData);
   }
 
   public void update(Observable o, final Object arg) {

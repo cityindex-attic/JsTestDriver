@@ -18,9 +18,7 @@ package com.google.jstestdriver.eclipse.ui.views;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.internal.junit.ui.JUnitProgressBar;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -28,20 +26,14 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.google.jstestdriver.TestResult;
-import com.google.jstestdriver.eclipse.internal.core.Logger;
-import com.google.jstestdriver.eclipse.ui.icon.Icons;
-import com.google.jstestdriver.eclipse.ui.launch.ActionRunnerFactory;
 import com.google.jstestdriver.eclipse.ui.launch.model.EclipseJstdTestResult;
 import com.google.jstestdriver.eclipse.ui.launch.model.EclipseJstdTestRunResult;
 import com.google.jstestdriver.eclipse.ui.launch.model.ResultModel;
@@ -98,15 +90,17 @@ public class TestResultsPanel extends Composite {
     testProgressIndicator = new JUnitProgressBar(this);
     testProgressIndicator.setLayoutData(progressIndicatorData);
     
-    GridData treeData = new GridData();
-    treeData.horizontalSpan = 3;
-    treeData.horizontalAlignment = SWT.FILL;
-    treeData.grabExcessHorizontalSpace = true;
-    treeData.grabExcessVerticalSpace = true;
-    treeData.heightHint = 240;
-    treeData.verticalAlignment = SWT.FILL;
-    testResultsTree = new TreeViewer(this, SWT.NONE);
-    testResultsTree.getTree().setLayoutData(treeData);
+    SashForm resultsSashForm = new SashForm(this, SWT.VERTICAL);
+    GridData sashFormData = new GridData();
+    sashFormData.horizontalSpan = 3;
+    sashFormData.horizontalAlignment = SWT.FILL;
+    sashFormData.grabExcessHorizontalSpace = true;
+    sashFormData.grabExcessVerticalSpace = true;
+    sashFormData.heightHint = 340;
+    sashFormData.verticalAlignment = SWT.FILL;
+    resultsSashForm.setLayoutData(sashFormData);
+    testResultsTree = new TreeViewer(resultsSashForm, SWT.NONE);
+    testResultsTree.getTree().setLayoutData(sashFormData);
     testResultsTree.setLabelProvider(new TestResultsTreeLabelProvider());
     testResultsTree.setContentProvider(new TestResultsTreeContentProvider());
     testResultsTree.setInput(testRunResult);
@@ -134,7 +128,7 @@ public class TestResultsPanel extends Composite {
     testDetailsData.heightHint = 100;
     testDetailsData.verticalAlignment = SWT.FILL;
     testDetailsData.horizontalAlignment = SWT.FILL;
-    testDetailsText = new Text(this, SWT.MULTI | SWT.WRAP);
+    testDetailsText = new Text(resultsSashForm, SWT.MULTI | SWT.WRAP);
     testDetailsText.setLayoutData(testDetailsData);
   }
 
