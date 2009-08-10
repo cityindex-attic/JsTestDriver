@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver;
 
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.Option;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.Option;
 
 /**
  * FlagsParser for the JsTestDriver.
@@ -60,7 +60,7 @@ public class FlagsImpl implements Flags {
   public String getServer() {
     return server;
   }
-
+  
   public List<String> getArguments() {
     return arguments;
   }
@@ -115,7 +115,7 @@ public class FlagsImpl implements Flags {
   public void setDisplayHelp(boolean displayHelp) {
     this.displayHelp = displayHelp;
   }
-
+  
   public boolean getDisplayHelp() {
     return displayHelp;
   }
@@ -148,7 +148,7 @@ public class FlagsImpl implements Flags {
   }
 
   @Option(name="--dryRun", usage="Outputs the number of tests that are going to be run as well as" +
-  		" their names")
+          " their names")
   public void setDryRun(boolean dryRun) {
     this.dryRun = dryRun;
   }

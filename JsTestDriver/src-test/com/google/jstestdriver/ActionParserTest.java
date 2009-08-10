@@ -15,14 +15,14 @@
  */
 package com.google.jstestdriver;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import com.google.inject.util.Providers;
 
 import junit.framework.TestCase;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -30,30 +30,42 @@ import java.util.List;
 public class ActionParserTest extends TestCase {
 
   public void testParseFlagsAndCreateActionQueue() throws Exception {
-    ActionParser parser = new ActionParser(new ActionFactory(null, Providers.<Server>of(new HttpServer())), null);
-    FlagsImpl flags = new FlagsImpl();
-    List<String> browserPaths = new ArrayList<String>();
-    browserPaths.add("browser");
-    for (String browserPath: browserPaths) {
-      flags.setBrowser(browserPath);
-    }
-
-    flags.setPort(9876);
-    List<Action> actions = parser.parseFlags(flags, new LinkedHashSet<FileInfo>(), "");
+    List<String> browsers = Arrays.asList("browser");
+    ActionListProvider parser = createProvider(browsers, 9876, null, false, Collections.<String>emptyList());
+    List<Action> actions = parser.get();
 
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
     expectedActions.add(BrowserStartupAction.class);
     expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
-    assertEquals(browserPaths, findAction(actions, BrowserStartupAction.class).getBrowserPath());
+    assertEquals(browsers, findAction(actions, BrowserStartupAction.class).getBrowserPath());
+  }
+
+  private ActionListProvider createProvider(List<String> browsers,
+      int port, String serverAddress, boolean reset, List<String> tests) {
+    return new ActionListProvider(new ActionFactory(null, Providers.<Server>of(null)),
+        null,
+        tests,
+        null,
+        false,
+        false,
+        Collections.<String>emptyList(),
+        browsers,
+        reset,
+        false,
+        false,
+        port,
+        Collections.<FileInfo>emptySet(),
+        serverAddress,
+        null);
   }
 
   public void testParseWithServerAndReset() throws Exception {
-    ActionParser parser = new ActionParser(new ActionFactory(null, Providers.<Server>of(new HttpServer())), null);
+    String serverAddress = "http://otherserver:8989";
+    ActionListProvider parser = createProvider(Arrays.asList("browser1"), -1, serverAddress, true, Collections.<String>emptyList());
 
     FlagsImpl flags = new FlagsImpl();
-    String serverAddress = "http://otherserver:8989";
     flags.setServer(serverAddress);
     flags.setBrowser("browser1");
     flags.setReset(true);
@@ -63,7 +75,7 @@ public class ActionParserTest extends TestCase {
     expectedActions.add(ThreadedActionsRunner.class);
     expectedActions.add(BrowserShutdownAction.class);
 
-    List<Action> actions = parser.parseFlags(flags, new LinkedHashSet<FileInfo>(), "");
+    List<Action> actions = parser.get();
     assertSequence(expectedActions, actions);
 
     ThreadedActionsRunner action = findAction(actions, ThreadedActionsRunner.class);
@@ -74,18 +86,13 @@ public class ActionParserTest extends TestCase {
   }
 
   public void testParseFlagsWithServer() throws Exception {
-    ActionParser parser = new ActionParser(new ActionFactory(null, Providers.<Server>of(new HttpServer())), null);
-    FlagsImpl flags = new FlagsImpl();
     List<String> browserPaths = new ArrayList<String>();
     browserPaths.add("browser");
     browserPaths.add("browser2");
-    for (String browserPath: browserPaths) {
-      flags.setBrowser(browserPath);
-    }
-
     String serverAddress = "http://otherserver:8989";
-    flags.setServer(serverAddress);
-    List<Action> actions = parser.parseFlags(flags, new LinkedHashSet<FileInfo>(), "");
+    ActionListProvider parser = createProvider(browserPaths, -1, serverAddress, false, Collections.<String>emptyList());
+
+    List<Action> actions = parser.get();
 
     BrowserStartupAction action = findAction(actions, BrowserStartupAction.class);
     assertNotNull("Server action not created", action);
@@ -93,13 +100,13 @@ public class ActionParserTest extends TestCase {
   }
 
   public void testParseFlagsNoPortNoServer() throws Exception {
-    ActionParser parser = new ActionParser(new ActionFactory(null, Providers.<Server>of(new HttpServer())), null);
+    ActionListProvider parser = createProvider(Arrays.asList("browser1"), -1, null, false, Arrays.asList("foo.testBar"));
     FlagsImpl flags = new FlagsImpl();
 
     flags.setBrowser("browser");
     flags.setTests("foo.testBar");
     try {
-      parser.parseFlags(flags, new LinkedHashSet<FileInfo>(), "");
+      parser.get();
       fail("expected no server and no port exception");
     } catch (IllegalArgumentException e) {
       // pass
@@ -107,10 +114,8 @@ public class ActionParserTest extends TestCase {
   }
 
   public void testParseFlagsAndCreateTestActions() throws Exception {
-    ActionParser parser = new ActionParser(new ActionFactory(null, Providers.<Server>of(new HttpServer())), null);
-    FlagsImpl flags = new FlagsImpl();
-    List<String> tests = new ArrayList<String>();
-    tests.add("foo.testBar");
+    List<String> tests = Arrays.asList("foo.testBar");
+    ActionListProvider parser = createProvider(Arrays.asList("browser"), 9876, null, false, tests);
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -119,12 +124,7 @@ public class ActionParserTest extends TestCase {
     expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
 
-    flags.setBrowser("browser");
-    flags.setTests(tests.get(0));
-    flags.setPort(9876);
-    flags.setTestOutput("/out");
-
-    List<Action> actions = parser.parseFlags(flags, new HashSet<FileInfo>(), "");
+    List<Action> actions = parser.get();
     assertSequence(expectedActions, actions);
 
     ThreadedActionsRunner testRunner = findAction(actions, ThreadedActionsRunner.class);

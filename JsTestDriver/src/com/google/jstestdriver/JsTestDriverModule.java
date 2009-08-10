@@ -20,7 +20,10 @@ import java.util.Set;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
+import com.google.inject.util.Providers;
+import com.google.jstestdriver.guice.FlagsModule;
 
 /**
  * Guice module for configuring JsTestDriver.
@@ -30,13 +33,13 @@ import com.google.inject.Provides;
  */
 public class JsTestDriverModule extends AbstractModule {
 
-  private final FlagsImpl flags;
+  private final Flags flags;
   private final String defaultServerAddress;
   private final Set<FileInfo> fileSet;
   private final List<Class<? extends Module>> plugins;
 
-  public JsTestDriverModule(FlagsImpl flags, Set<FileInfo> fileSet,
-      String defaultServerAddress, List<Class<? extends Module>> plugins) {
+  public JsTestDriverModule(Flags flags, Set<FileInfo> fileSet, String defaultServerAddress,
+      List<Class<? extends Module>> plugins) {
     this.flags = flags;
     this.fileSet = fileSet;
     this.defaultServerAddress = defaultServerAddress;
@@ -55,11 +58,12 @@ public class JsTestDriverModule extends AbstractModule {
         throw new RuntimeException(e);
       }
     }
+    bind(String.class).annotatedWith(Names.named("defaultServerAddress"))
+        .toProvider(Providers.of(defaultServerAddress));
+    bind(new TypeLiteral<Set<FileInfo>>() {})
+        .annotatedWith(Names.named("fileSet")).toInstance(fileSet);
+    bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
+    install(new FlagsModule(flags));
     install(new ActionFactoryModule());
-  }
-
-  @Provides
-  public List<Action> createActions(ActionFactory factory, FileLoader fileLoader) {
-    return new ActionParser(factory, fileLoader).parseFlags(flags, fileSet, defaultServerAddress);
   }
 }

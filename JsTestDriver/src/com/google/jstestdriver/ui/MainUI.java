@@ -15,10 +15,37 @@
  */
 package com.google.jstestdriver.ui;
 
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.NORTH;
+import static java.awt.BorderLayout.SOUTH;
+
+import java.awt.BorderLayout;
+import java.io.File;
+import java.io.Reader;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
+import org.apache.commons.logging.LogFactory;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.mortbay.log.Slf4jLog;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.util.Providers;
-import com.google.jstestdriver.Action;
 import com.google.jstestdriver.ActionFactory;
-import com.google.jstestdriver.ActionParser;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.ConfigurationParser;
@@ -26,28 +53,9 @@ import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.HttpServer;
+import com.google.jstestdriver.JsTestDriverModule;
 import com.google.jstestdriver.Server;
 import com.google.jstestdriver.ServerStartupAction;
-
-import org.apache.commons.logging.LogFactory;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.mortbay.log.Slf4jLog;
-
-import java.awt.*;
-import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.NORTH;
-import static java.awt.BorderLayout.SOUTH;
-import java.io.File;
-import java.io.Reader;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.*;
 
 /**
  * Entry point for the Swing GUI of JSTestDriver.
@@ -84,7 +92,7 @@ public class MainUI {
     }
 
     configureLogging();
-    ResourceBundle bundle = ResourceBundle.getBundle("com.google.jspuppet.ui.messages");
+    ResourceBundle bundle = ResourceBundle.getBundle("com.google.jstestdriver.ui.messages");
     new MainUI(flags, bundle).startUI();
   }
 
@@ -106,42 +114,69 @@ public class MainUI {
     LogPanelLog.LogPanelHolder.setLogPanel(logPanel);
 
     try {
-      // TODO(corysmith): Guicefy.
-      ActionFactory actionFactory =
-          new ActionFactory(null, Providers.<Server>of(new HttpServer()));
-      actionFactory.registerListener(ServerStartupAction.class, statusBar);
-      actionFactory.registerListener(CapturedBrowsers.class, statusBar);
-      actionFactory.registerListener(CapturedBrowsers.class, capturedBrowsersPanel);
       File config = new File(flags.getConfig());
       Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
-      String defaultServerAddress = null;
+      String defaultServerAddress = "";
 
       if (flags.getTests().size() > 0 || flags.getReset() || !flags.getArguments().isEmpty() ||
           flags.getPreloadFiles() || flags.getDryRun()) {
-        if (config.exists()) {
-          Reader configReader = new java.io.FileReader(flags.getConfig());
-          ConfigurationParser configParser = new ConfigurationParser(config.getParentFile(),
-              configReader);
-
-          configParser.parse();
-          fileSet = configParser.getFilesList();
-          defaultServerAddress = configParser.getServer();
-        } else {
+        if (!config.exists()) {
           throw new RuntimeException("Config file doesn't exist: " + flags.getConfig());
         }
+        Reader configReader = new java.io.FileReader(flags.getConfig());
+        ConfigurationParser configParser = new ConfigurationParser(config.getParentFile(),
+            configReader);
+
+        configParser.parse();
+        fileSet = configParser.getFilesList();
+        defaultServerAddress = configParser.getServer(); 
       }
-      List<Action> actions = new ActionParser(actionFactory, null).parseFlags(flags, fileSet,
-          defaultServerAddress);
-      ActionRunner runner = new ActionRunner(actions);
-      runner.runActions();
+      Injector injector =
+        Guice.createInjector(
+            new JsTestDriverModule(flags,
+                                   fileSet,
+                                   defaultServerAddress,
+                                   Collections.<Class<? extends Module>>emptyList()),
+            new MainUIModule(statusBar, capturedBrowsersPanel));
+      injector.getInstance(ActionRunner.class).runActions();
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Failed to start the server: ", e);
+      System.exit(1);
     }
 
     JFrame appFrame = buildMainAppFrame();
     appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     appFrame.pack();
     appFrame.setVisible(true);
+  }
+  
+  static class MainUIModule extends AbstractModule {
+    private final StatusBar statusBar;
+    private final CapturedBrowsersPanel capturedBrowsersPanel;
+    public MainUIModule(StatusBar statusBar, CapturedBrowsersPanel capturedBrowsersPanel) {
+      this.capturedBrowsersPanel = capturedBrowsersPanel;
+      this.statusBar = statusBar;
+    }
+
+    @Override
+    protected void configure() {
+      
+    }
+    
+    @Provides
+    public ActionFactory createActionFactory() {
+      ActionFactory actionFactory =
+        new ActionFactory(null, Providers.<Server>of(new HttpServer()));
+      actionFactory.registerListener(ServerStartupAction.class, statusBar);
+      actionFactory.registerListener(CapturedBrowsers.class, statusBar);
+      actionFactory.registerListener(CapturedBrowsers.class, capturedBrowsersPanel);
+      return actionFactory;
+    }
+    
+    @Provides @Singleton
+    public Server createServer() {
+      return new HttpServer();
+    }
   }
 
   @SuppressWarnings("serial")
@@ -159,6 +194,4 @@ public class MainUI {
       }});
     }};  
   }
-
-
 }

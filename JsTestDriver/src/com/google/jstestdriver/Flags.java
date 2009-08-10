@@ -17,32 +17,46 @@ package com.google.jstestdriver;
 
 import java.util.List;
 
+import com.google.jstestdriver.guice.GuiceBinding;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public interface Flags {
 
+  @GuiceBinding(name="port")
   public Integer getPort();
 
+  @GuiceBinding(name="server")
   public String getServer();
 
+  @GuiceBinding(name="arguments", parameterizedType = String.class)
   public List<String> getArguments();
 
+  @GuiceBinding(name="testOutput")
   public String getTestOutput();
 
+  @GuiceBinding(name="browsers", parameterizedType = String.class)
   public List<String> getBrowser();
 
+  @GuiceBinding(name="reset")
   public boolean getReset();
 
+  @GuiceBinding(name="config")
   public String getConfig();
 
+  @GuiceBinding(name="tests", parameterizedType = String.class)
   public List<String> getTests();
 
+  @GuiceBinding(name="verbose")
   public boolean getVerbose();
 
+  @GuiceBinding(name="captureConsole")
   public boolean getCaptureConsole();
 
+  @GuiceBinding(name="preloadFiles")
   public boolean getPreloadFiles();
 
+  @GuiceBinding(name="dryRun")
   public boolean getDryRun();
 }
