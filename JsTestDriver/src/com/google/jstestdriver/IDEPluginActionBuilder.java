@@ -39,6 +39,7 @@ public class IDEPluginActionBuilder {
   private final ConfigurationParser configParser;
   private final String serverAddress;
   private final ResponseStreamFactory responseStreamFactory;
+  private final Injector baseInjector = Guice.createInjector(new ActionFactoryModule());
 
   private List<String> tests = new LinkedList<String>();
   private final LinkedList<Module> modules = new LinkedList<Module>();
@@ -51,6 +52,7 @@ public class IDEPluginActionBuilder {
     this.serverAddress = serverAddress;
     this.responseStreamFactory = responseStreamFactory;
   }
+
 
   public IDEPluginActionBuilder addAllTests() {
     tests.add("all");
@@ -78,14 +80,13 @@ public class IDEPluginActionBuilder {
   }
 
   public ActionRunner build() {
-    // TODO(corysmith): Get this injector out of here, once we have a good
-    // methodology for creating a clean API. It would be best to have a single parent injector,
-    // and create new injector with every action runner.
     configParser.parse();
-    Injector injector = Guice.createInjector(modules).createChildInjector(
-        new ActionFactoryModule(),
-        new ConfigurationModule(tests, reset, dryRun, serverAddress, configParser.getFilesList(),
-            responseStreamFactory, configParser.getServer()));
+    LinkedList<Module> childModules = new LinkedList<Module>();
+    childModules.add(new ConfigurationModule(tests, reset, dryRun, serverAddress,
+        configParser.getFilesList(),
+        responseStreamFactory, configParser.getServer()));
+    childModules.addAll(modules);
+    Injector injector = baseInjector.createChildInjector(childModules);
 
     return injector.getInstance(ActionRunner.class);
   }

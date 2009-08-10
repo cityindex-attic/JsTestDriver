@@ -16,10 +16,14 @@
 package com.google.jstestdriver;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -40,6 +44,8 @@ public class IDEPluginActionBuilderTest extends TestCase {
     tmpDir.delete();
     tmpDir.mkdir();
     tmpDir.deleteOnExit();
+    File file = new File(tmpDir, "blash.js");
+    new FileWriter(file).append("a = 1;").close();
   }
 
   public void testExample() throws Exception {
@@ -59,6 +65,31 @@ public class IDEPluginActionBuilderTest extends TestCase {
 
     runner.runActions();
   }
+  
+  public void testInstallModuleOverwritingResolvedJustInTimeInjection() throws Exception {
+    Reader configReader = new StringReader("load:\n- blash.js\nserver:\n -http://foo");
+    ConfigurationParser configParser = new ConfigurationParser(tmpDir, configReader);
+
+    IDEPluginActionBuilder builder = new IDEPluginActionBuilder(configParser, "http://address",
+        new ResponseStreamFactoryStub());
+    builder.install(new AbstractModule(){
+                     @Override
+                     protected void configure() {
+                       bind(Server.class).to(MyServer.class);
+                     }
+                   });
+    builder.addAllTests();
+    builder.build();
+    configReader.reset();
+
+    builder.install(new AbstractModule(){
+      @Override
+      protected void configure() {
+        bind(FileLoader.class).to(MyFileLoader.class);
+      }
+    });
+    builder.build();
+  }
 
   private final class ResponseStreamFactoryStub implements ResponseStreamFactory {
     public ResponseStream getDryRunActionResponseStream() {
@@ -75,6 +106,13 @@ public class IDEPluginActionBuilderTest extends TestCase {
 
     public ResponseStream getRunTestsActionResponseStream(String browserId) {
       return null;
+    }
+  }
+  
+  static class MyFileLoader implements FileLoader {
+
+    public List<FileInfo> loadFiles(Set<FileInfo> filesToLoad, boolean shouldReset) {
+      return new LinkedList<FileInfo>(filesToLoad);
     }
   }
 
