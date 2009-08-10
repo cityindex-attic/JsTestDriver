@@ -49,47 +49,49 @@ public class BrowserButtonPanel extends Composite implements Observer {
     super(parent, style);
     icons = new Icons();
     IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
-    setLayout(new GridLayout(5, true));
+    GridLayout gridLayout = new GridLayout(5, true);
+    gridLayout.horizontalSpacing = 0;
+    gridLayout.makeColumnsEqualWidth = true;
+    gridLayout.marginWidth = 0;
+    setLayout(gridLayout);
+    GridData browserLayoutData = new GridData();
+    browserLayoutData.grabExcessHorizontalSpace = true;
+    browserLayoutData.horizontalAlignment = SWT.FILL;
+    setLayoutData(browserLayoutData);
 
-    GridData ffButtonGridData = new GridData();
-    ffButtonGridData.horizontalAlignment = SWT.CENTER;
+    GridData buttonGridData = new GridData();
+    buttonGridData.horizontalAlignment = SWT.CENTER;
+    buttonGridData.grabExcessHorizontalSpace = true;
+    buttonGridData.minimumWidth = 42;
     ffIcon = new Button(this, SWT.FLAT);
     ffIcon.setImage(icons.getFirefoxDisabledIcon());
     ffIcon.addSelectionListener(new BrowserLaunchCapableSelectionListener(
         preferenceStore.getString(WorkbenchPreferencePage.FIREFOX_PATH)));
-    ffIcon.setLayoutData(ffButtonGridData);
+    ffIcon.setLayoutData(buttonGridData);
     
-    GridData chromeButtonGridData = new GridData();
-    chromeButtonGridData.horizontalAlignment = SWT.CENTER;
     chromeIcon = new Button(this, SWT.FLAT);
     chromeIcon.setImage(icons.getChromeDisabledIcon());
     chromeIcon.addSelectionListener(new BrowserLaunchCapableSelectionListener(
         preferenceStore.getString(WorkbenchPreferencePage.CHROME_PATH)));
-    chromeIcon.setLayoutData(chromeButtonGridData);
+    chromeIcon.setLayoutData(buttonGridData);
     
-    GridData safariButtonGridData = new GridData();
-    safariButtonGridData.horizontalAlignment = SWT.CENTER;
     safariIcon = new Button(this, SWT.FLAT);
     safariIcon.setImage(icons.getSafariDisabledIcon());
     safariIcon.addSelectionListener(new BrowserLaunchCapableSelectionListener(
         preferenceStore.getString(WorkbenchPreferencePage.SAFARI_PATH)));
-    safariIcon.setLayoutData(safariButtonGridData);
+    safariIcon.setLayoutData(buttonGridData);
     
-    GridData ieButtonGridData = new GridData();
-    ieButtonGridData.horizontalAlignment = SWT.CENTER;
     ieIcon = new Button(this, SWT.FLAT);
     ieIcon.setImage(icons.getIEDisabledIcon());
     ieIcon.addSelectionListener(new BrowserLaunchCapableSelectionListener(
         preferenceStore.getString(WorkbenchPreferencePage.IE_PATH)));
-    ieIcon.setLayoutData(ieButtonGridData);
+    ieIcon.setLayoutData(buttonGridData);
     
-    GridData operaButtonGridData = new GridData();
-    operaButtonGridData.horizontalAlignment = SWT.CENTER;
     operaIcon = new Button(this, SWT.FLAT);
     operaIcon.setImage(icons.getOperaDisabledIcon());
     operaIcon.addSelectionListener(new BrowserLaunchCapableSelectionListener(
         preferenceStore.getString(WorkbenchPreferencePage.OPERA_PATH)));
-    operaIcon.setLayoutData(operaButtonGridData);
+    operaIcon.setLayoutData(buttonGridData);
   }
 
   public void update(Observable o, Object arg) {
