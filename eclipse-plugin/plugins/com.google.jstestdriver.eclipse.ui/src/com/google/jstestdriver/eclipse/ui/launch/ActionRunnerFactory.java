@@ -43,6 +43,10 @@ public class ActionRunnerFactory {
   public ActionRunner getDryActionRunner(ILaunchConfiguration configuration) {
     return getActionBuilder(configuration).dryRunFor(Arrays.asList("all")).build();
   }
+  
+  public ActionRunner getDryActionRunner(ILaunchConfiguration configuration, List<String> tests) {
+    return getActionBuilder(configuration).dryRunFor(tests).build();
+  }
 
   public ActionRunner getAllTestsActionRunner(ILaunchConfiguration configuration) {
     return getActionBuilder(configuration).addAllTests().build();

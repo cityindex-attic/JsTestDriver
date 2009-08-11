@@ -30,14 +30,29 @@ public class Server {
   public static final String SERVER_CAPTURE_URL = "http://localhost:%d/capture";
   private final CapturedBrowsers capturedBrowsers;
   private final int port;
+  private boolean started = false;
   
-  public Server(int port) {
+  private static Server instance = null;
+  
+  private Server(int port) {
     this.port = port;
     capturedBrowsers = new CapturedBrowsers();
   }
   
+  public static Server getInstance() {
+    return instance;
+  }
+  
   public CapturedBrowsers getCapturedBrowsers() {
     return capturedBrowsers;
+  }
+  
+  public boolean isStarted() {
+    return started;
+  }
+  
+  public boolean isReadyToRunTests() {
+    return capturedBrowsers.getSlaveBrowsers().size() > 0;
   }
 
   public void start() {
@@ -45,9 +60,21 @@ public class Server {
     startupAction = new ServerStartupAction(port, capturedBrowsers,
         new FilesCache(new HashMap<String, FileInfo>()));
     startupAction.run();
+    started = true;
   }
 
   public void stop() {
     startupAction.getServer().stop();
+    capturedBrowsers.getSlaveBrowsers().clear();
+    capturedBrowsers.getBrowsers().clear();
+    SlaveBrowserRootData.getInstance().clear();
+    started = false;
+  }
+
+  public static Server createInstance(int port) {
+    if (instance == null) {
+      instance = new Server(port);
+    }
+    return instance;
   }
 }

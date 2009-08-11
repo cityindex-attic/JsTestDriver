@@ -20,6 +20,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.jstestdriver.eclipse.core.Server;
+
 /**
  * The main JS Test Driver View.
  * 
@@ -50,5 +52,13 @@ public class JsTestDriverView extends ViewPart {
   
   public TestResultsPanel getTestResultsPanel() {
     return testResultsPanel;
+  }
+  
+  @Override
+  public void dispose() {
+    Server server = Server.getInstance();
+    if (server != null && server.isStarted()) {
+      server.stop();
+    }
   }
 }

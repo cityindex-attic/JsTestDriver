@@ -35,7 +35,6 @@ import com.google.jstestdriver.eclipse.ui.icon.Icons;
  */
 public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
 
-  private boolean isRunning = false;
   private Server server;
   private final Icons icons;
   private ServerInfoPanel view;
@@ -44,7 +43,7 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
   public ServerStartStopViewActionDelegate() {
     port = Activator.getDefault().getPreferenceStore().getInt(
         WorkbenchPreferencePage.PREFERRED_SERVER_PORT);
-    server = new Server(port);
+    server = Server.createInstance(port);
     icons = new Icons();
   }
 
@@ -65,8 +64,7 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
   }
 
   public void run(IAction action) {
-    isRunning = !isRunning;
-    if (isRunning) {
+    if (!server.isStarted()) {
       server.start();
       setStopServerState(action);
     } else {
@@ -91,7 +89,6 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
     if (view != null) {
       view.setServerStopped();
     }
-    SlaveBrowserRootData.getInstance().clear();
   }
 
   public void selectionChanged(IAction action, ISelection selection) {

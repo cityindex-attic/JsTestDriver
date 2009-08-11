@@ -16,18 +16,23 @@
 package com.google.jstestdriver.eclipse.ui.views;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
+import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
+import com.google.jstestdriver.eclipse.ui.Activator;
 
 /**
  * @author shyamseshadri@google.com (Shyam Seshadri)
- *
+ * 
  */
 public class RerunLastLaunchActionDelegate implements IViewActionDelegate {
 
@@ -41,17 +46,30 @@ public class RerunLastLaunchActionDelegate implements IViewActionDelegate {
   }
 
   public void run(IAction action) {
+    if (Server.getInstance() == null || !Server.getInstance().isStarted()) {
+      IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+          "Cannot run tests if server is not running");
+      ErrorDialog.openError(Display.getCurrent().getActiveShell(),
+          "JS Test Driver", "JS Test Driver Error", status);
+      return;
+    } else if (!Server.getInstance().isReadyToRunTests()) {
+          IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+          "Cannot run tests if no browsers captured");
+      ErrorDialog.openError(Display.getCurrent().getActiveShell(),
+          "JS Test Driver", "JS Test Driver Error", status);
+      return;
+    }
     if (view.getLastLaunchConfiguration() != null) {
       Display.getDefault().asyncExec(new Runnable() {
         public void run() {
-          try {
-            view.setupForNextTestRun(view.getLastLaunchConfiguration());
-            view.getLastLaunchConfiguration().launch(ILaunchManager.RUN_MODE, null);
-          } catch (CoreException e) {
-            logger.logException(e);
-          }
+          view.setupForNextTestRun(view.getLastLaunchConfiguration());
         }
       });
+      try {
+        view.getLastLaunchConfiguration().launch(ILaunchManager.RUN_MODE, null);
+      } catch (CoreException e) {
+        logger.logException(e);
+      }
     }
   }
 

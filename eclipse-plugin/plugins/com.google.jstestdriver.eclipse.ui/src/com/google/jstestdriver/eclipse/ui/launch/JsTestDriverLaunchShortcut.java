@@ -22,12 +22,15 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -42,8 +45,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
-import com.google.jstestdriver.eclipse.core.SlaveBrowserRootData;
+import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
+import com.google.jstestdriver.eclipse.ui.Activator;
 import com.google.jstestdriver.eclipse.ui.views.JsTestDriverView;
 import com.google.jstestdriver.eclipse.ui.views.TestResultsPanel;
 
@@ -58,6 +62,19 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
   private final Logger logger = new Logger();
 
   public void launch(ISelection selection, String mode) {
+    if (Server.getInstance() == null || !Server.getInstance().isStarted()) {
+      IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+          "Cannot run tests if server is not running");
+      ErrorDialog.openError(Display.getCurrent().getActiveShell(),
+          "JS Test Driver", "JS Test Driver Error", status);
+      return;
+    } else if (!Server.getInstance().isReadyToRunTests()) {
+      IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+          "Cannot run tests if no browsers captured");
+      ErrorDialog.openError(Display.getCurrent().getActiveShell(),
+          "JS Test Driver", "JS Test Driver Error", status);
+      return;
+    }
     if (selection instanceof IStructuredSelection) {
       try {
         IStructuredSelection structuredSelection = (IStructuredSelection) selection;
@@ -83,6 +100,19 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
   }
 
   public void launch(IEditorPart editor, String mode) {
+    if (Server.getInstance() == null || !Server.getInstance().isStarted()) {
+      IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+          "Cannot run tests if server is not running");
+      ErrorDialog.openError(Display.getCurrent().getActiveShell(),
+          "JS Test Driver", "JS Test Driver Error", status);
+      return;
+    } else if (!Server.getInstance().isReadyToRunTests()) {
+      IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+          "Cannot run tests if no browsers captured");
+      ErrorDialog.openError(Display.getCurrent().getActiveShell(),
+          "JS Test Driver", "JS Test Driver Error", status);
+      return;
+    }
     List<String> testCases = new ArrayList<String>();
     try {
       ILaunchConfiguration[] launchConfigurations = getJstdLaunchConfigurations();
@@ -162,15 +192,12 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
               .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
           TestResultsPanel panel = view.getTestResultsPanel();
           panel.setupForNextTestRun(configuration);
-          SlaveBrowserRootData data = SlaveBrowserRootData.getInstance();
-          panel.addNumberOfTests(testCases.size() * data.getNumberOfSlaves());
         } catch (PartInitException e) {
           logger.logException(e);
         }
       }
     });
-    // Might need a specific tests dry run in case there are some tests which are not run 
-    // in a specific browser
+    actionRunnerFactory.getDryActionRunner(configuration, testCases).runActions();
     actionRunnerFactory.getSpecificTestsActionRunner(workingCopy, testCases).runActions();
   }
 

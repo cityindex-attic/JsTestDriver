@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
 import com.google.jstestdriver.eclipse.ui.views.JsTestDriverView;
 import com.google.jstestdriver.eclipse.ui.views.TestResultsPanel;
@@ -64,9 +65,6 @@ public class JsTestDriverLaunchConfigurationDelegate implements
               .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
           TestResultsPanel panel = view.getTestResultsPanel();
           panel.setupForNextTestRun(configuration);
-          if (!testsToRun.isEmpty()) {
-            panel.addNumberOfTests(testsToRun.size());
-          }
         } catch (PartInitException e) {
           logger.logException(e);
         }
@@ -77,7 +75,7 @@ public class JsTestDriverLaunchConfigurationDelegate implements
       actionRunnerFactory.getDryActionRunner(configuration).runActions();
       actionRunnerFactory.getAllTestsActionRunner(configuration).runActions();
     } else {
-      // TODO(shyamseshadri): Handle the case where all the tests might not be run by the browser. 
+      actionRunnerFactory.getDryActionRunner(configuration, testsToRun).runActions();
       actionRunnerFactory.getSpecificTestsActionRunner(configuration, testsToRun).runActions();
     }
   }
@@ -103,7 +101,9 @@ public class JsTestDriverLaunchConfigurationDelegate implements
 
   public boolean preLaunchCheck(ILaunchConfiguration configuration,
       String mode, IProgressMonitor monitor) {
-    return mode.equals(ILaunchManager.RUN_MODE) && !monitor.isCanceled();
+    return mode.equals(ILaunchManager.RUN_MODE) && !monitor.isCanceled()
+        && Server.getInstance() != null && Server.getInstance().isStarted()
+        && Server.getInstance().isReadyToRunTests();
   }
 
 }
