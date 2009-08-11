@@ -17,9 +17,12 @@ package com.google.jstestdriver.eclipse.ui.launch;
 
 import static java.lang.String.format;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.jstestdriver.ActionFactoryModule;
+import java.util.Arrays;
+import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.IDEPluginActionBuilder;
@@ -29,39 +32,34 @@ import com.google.jstestdriver.eclipse.internal.core.ProjectHelper;
 import com.google.jstestdriver.eclipse.ui.Activator;
 import com.google.jstestdriver.eclipse.ui.WorkbenchPreferencePage;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
-
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * @author shyamseshadri@google.com (Shyam Seshadri)
- *
+ * 
  */
 public class ActionRunnerFactory {
   private final ProjectHelper projectHelper = new ProjectHelper();
-  private final Injector injector = Guice.createInjector(new ActionFactoryModule());
   private final Logger logger = new Logger();
-  
+
   public ActionRunner getDryActionRunner(ILaunchConfiguration configuration) {
     return getActionBuilder(configuration).dryRunFor(Arrays.asList("all")).build();
   }
-  
+
   public ActionRunner getAllTestsActionRunner(ILaunchConfiguration configuration) {
     return getActionBuilder(configuration).addAllTests().build();
   }
 
-  public ActionRunner getResetBrowsersActionRunner(ILaunchConfiguration configuration) {
+  public ActionRunner getResetBrowsersActionRunner(
+      ILaunchConfiguration configuration) {
     return getActionBuilder(configuration).resetBrowsers().build();
   }
 
-  public ActionRunner getSpecificTestsActionRunner(ILaunchConfiguration configuration,
-      List<String> testCases) {
+  public ActionRunner getSpecificTestsActionRunner(
+      ILaunchConfiguration configuration, List<String> testCases) {
     return getActionBuilder(configuration).addTests(testCases).build();
   }
 
-  private IDEPluginActionBuilder getActionBuilder(ILaunchConfiguration configuration) {
+  private IDEPluginActionBuilder getActionBuilder(
+      ILaunchConfiguration configuration) {
     int port = Activator.getDefault().getPreferenceStore().getInt(
         WorkbenchPreferencePage.PREFERRED_SERVER_PORT);
     String serverUrl = format(Server.SERVER_URL, port);
@@ -75,8 +73,9 @@ public class ActionRunnerFactory {
     } catch (CoreException e) {
       logger.logException(e);
     }
-    ConfigurationParser configurationParser = projectHelper.getConfigurationParser(projectName,
-        confFileName);
-    return new IDEPluginActionBuilder(configurationParser, serverUrl, new EclipseResponseStreamFactory());
+    ConfigurationParser configurationParser = projectHelper
+        .getConfigurationParser(projectName, confFileName);
+    return new IDEPluginActionBuilder(configurationParser, serverUrl,
+        new EclipseResponseStreamFactory());
   }
 }

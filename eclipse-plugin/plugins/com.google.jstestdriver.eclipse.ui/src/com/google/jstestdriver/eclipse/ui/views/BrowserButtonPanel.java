@@ -66,31 +66,31 @@ public class BrowserButtonPanel extends Composite implements Observer {
     ffIcon = new Button(this, SWT.FLAT);
     ffIcon.setImage(icons.getFirefoxDisabledIcon());
     ffIcon.addSelectionListener(new BrowserLaunchCapableSelectionListener(
-        preferenceStore.getString(WorkbenchPreferencePage.FIREFOX_PATH)));
+        preferenceStore, WorkbenchPreferencePage.FIREFOX_PATH));
     ffIcon.setLayoutData(buttonGridData);
     
     chromeIcon = new Button(this, SWT.FLAT);
     chromeIcon.setImage(icons.getChromeDisabledIcon());
     chromeIcon.addSelectionListener(new BrowserLaunchCapableSelectionListener(
-        preferenceStore.getString(WorkbenchPreferencePage.CHROME_PATH)));
+        preferenceStore, WorkbenchPreferencePage.CHROME_PATH));
     chromeIcon.setLayoutData(buttonGridData);
     
     safariIcon = new Button(this, SWT.FLAT);
     safariIcon.setImage(icons.getSafariDisabledIcon());
     safariIcon.addSelectionListener(new BrowserLaunchCapableSelectionListener(
-        preferenceStore.getString(WorkbenchPreferencePage.SAFARI_PATH)));
+        preferenceStore, WorkbenchPreferencePage.SAFARI_PATH));
     safariIcon.setLayoutData(buttonGridData);
     
     ieIcon = new Button(this, SWT.FLAT);
     ieIcon.setImage(icons.getIEDisabledIcon());
     ieIcon.addSelectionListener(new BrowserLaunchCapableSelectionListener(
-        preferenceStore.getString(WorkbenchPreferencePage.IE_PATH)));
+        preferenceStore, WorkbenchPreferencePage.IE_PATH));
     ieIcon.setLayoutData(buttonGridData);
     
     operaIcon = new Button(this, SWT.FLAT);
     operaIcon.setImage(icons.getOperaDisabledIcon());
     operaIcon.addSelectionListener(new BrowserLaunchCapableSelectionListener(
-        preferenceStore.getString(WorkbenchPreferencePage.OPERA_PATH)));
+        preferenceStore, WorkbenchPreferencePage.OPERA_PATH));
     operaIcon.setLayoutData(buttonGridData);
   }
 

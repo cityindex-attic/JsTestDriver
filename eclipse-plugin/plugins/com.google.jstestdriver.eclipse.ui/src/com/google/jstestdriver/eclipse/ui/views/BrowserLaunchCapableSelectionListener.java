@@ -19,11 +19,11 @@ import static java.lang.String.format;
 
 import java.io.IOException;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
 import com.google.jstestdriver.eclipse.core.Server;
-import com.google.jstestdriver.eclipse.ui.Activator;
 import com.google.jstestdriver.eclipse.ui.WorkbenchPreferencePage;
 
 /**
@@ -34,10 +34,13 @@ import com.google.jstestdriver.eclipse.ui.WorkbenchPreferencePage;
  */
 public class BrowserLaunchCapableSelectionListener implements SelectionListener {
 
-  private final String pathToBrowser;
+  private final IPreferenceStore preferenceStore;
+  private final String browserName;
 
-  public BrowserLaunchCapableSelectionListener(String pathToBrowser) {
-    this.pathToBrowser = pathToBrowser;
+  public BrowserLaunchCapableSelectionListener(
+      IPreferenceStore preferenceStore, String browserName) {
+    this.preferenceStore = preferenceStore;
+    this.browserName = browserName;
   }
 
   public void widgetDefaultSelected(SelectionEvent e) {
@@ -45,11 +48,11 @@ public class BrowserLaunchCapableSelectionListener implements SelectionListener 
 
   public void widgetSelected(SelectionEvent e) {
     try {
+      String pathToBrowser = preferenceStore.getString(browserName);
       if (pathToBrowser == null || "".equals(pathToBrowser.trim())) {
         return;
       }
-      int port = Activator.getDefault().getPreferenceStore().getInt(
-          WorkbenchPreferencePage.PREFERRED_SERVER_PORT);
+      int port = preferenceStore.getInt(WorkbenchPreferencePage.PREFERRED_SERVER_PORT);
       String serverUrl = format(Server.SERVER_CAPTURE_URL, port);
       String os = System.getProperty("os.name");
       if (os.toLowerCase().contains("mac os")) {
