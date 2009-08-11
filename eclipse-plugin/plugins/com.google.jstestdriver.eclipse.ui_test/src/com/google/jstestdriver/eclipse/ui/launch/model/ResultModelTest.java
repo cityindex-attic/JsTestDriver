@@ -25,13 +25,13 @@ import com.google.jstestdriver.TestResult;
  * @author shyamseshadri@google.com (Shyam Seshadri)
  */
 public class ResultModelTest extends TestCase {
-  TestResult passing1 = new TestResult(null, "passed", "", "", "testcase1", "test1", 0f);
-  TestResult passing2 = new TestResult(null, "passed", "", "", "testcase", "test2", 0f);
-  TestResult failed1 = new TestResult(null, "failed", "", "", "testcase1", "test3", 0f);
-  TestResult failed2 = new TestResult(null, "failed", "", "", "testcase", "test4", 0f);
-  TestResult failed3 = new TestResult(null, "failed", "", "", "testcase", "test5", 0f);
-  TestResult error1 = new TestResult(null, "error", "", "", "testcase1", "test6", 0f);
-  TestResult error2 = new TestResult(null, "error", "", "", "testcase", "test7", 0f);
+  TestResult passing1 = new TestResult(null, "passed", "", "", "testcase1", "test1", 1f);
+  TestResult passing2 = new TestResult(null, "passed", "", "", "testcase", "test2", 2f);
+  TestResult failed1 = new TestResult(null, "failed", "", "", "testcase1", "test3", 3f);
+  TestResult failed2 = new TestResult(null, "failed", "", "", "testcase", "test4", 4f);
+  TestResult failed3 = new TestResult(null, "failed", "", "", "testcase", "test5", 5f);
+  TestResult error1 = new TestResult(null, "error", "", "", "testcase1", "test6", 6f);
+  TestResult error2 = new TestResult(null, "error", "", "", "testcase", "test7", 7f);
 
   public void testDidPass() throws Exception {
     ResultModel model = new EclipseJstdTestCaseResult(null, "testcase");
@@ -98,16 +98,38 @@ public class ResultModelTest extends TestCase {
     ResultModel testcase1 = iterator.next();
     ResultModel testcase2 = iterator.next();
     
-    assertEquals("testcase1", testcase1.getDisplayLabel());
+    assertEquals("testcase1 (10.0 ms)", testcase1.getDisplayLabel());
     assertEquals(3, testcase1.getNumberOfTests());
     assertEquals(1, testcase1.getNumberOfErrors());
     assertEquals(1, testcase1.getNumberOfFailures());
 
-    assertEquals("testcase", testcase2.getDisplayLabel());
+    assertEquals("testcase (18.0 ms)", testcase2.getDisplayLabel());
     assertEquals(4, testcase2.getNumberOfTests());
     assertEquals(1, testcase2.getNumberOfErrors());
     assertEquals(2, testcase2.getNumberOfFailures());
-    
+  }
+  
+  public void testGetTotalTimeTaken() throws Exception {
+    ResultModel model = new EclipseJstdBrowserRunResult(null, "browser");
 
+    model.addTestResult(passing1);
+    model.addTestResult(failed1);
+    model.addTestResult(error1);
+    model.addTestResult(passing2);
+    model.addTestResult(failed2);
+    model.addTestResult(failed3);
+    model.addTestResult(error2);
+    
+    assertEquals(2, model.getChildren().size());
+    assertEquals(28f, model.getTotalTimeTaken());
+    Iterator<ResultModel> iterator = model.getChildren().iterator();
+    ResultModel testcase1 = iterator.next();
+    ResultModel testcase2 = iterator.next();
+    
+    assertEquals("testcase1 (10.0 ms)", testcase1.getDisplayLabel());
+    assertEquals(10f, testcase1.getTotalTimeTaken());
+
+    assertEquals("testcase (18.0 ms)", testcase2.getDisplayLabel());
+    assertEquals(18f, testcase2.getTotalTimeTaken());
   }
 }

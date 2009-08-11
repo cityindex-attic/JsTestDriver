@@ -65,6 +65,11 @@ public class EclipseJstdTestResult extends ResultModel {
   public int getNumberOfFailures() {
     return result.getResult() == TestResult.Result.failed ? 1 : 0;
   }
+  
+  @Override
+  public float getTotalTimeTaken() {
+    return result.getTime();
+  }
 
   @Override
   public Image getDisplayImage() {

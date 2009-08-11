@@ -86,7 +86,7 @@ public abstract class ResultModel {
   }
   
   public String getDisplayLabel() {
-    return label;
+    return label + " (" + getTotalTimeTaken() + " ms)";
   }
 
   public Collection<ResultModel> getChildren() {
@@ -116,5 +116,13 @@ public abstract class ResultModel {
     } else {
       return icon.getImage(TEST_SUITE_FAIL_ICON);
     }
+  }
+
+  public float getTotalTimeTaken() {
+    float total = 0f;
+    for (ResultModel model : results.values()) {
+      total += model.getTotalTimeTaken();
+    }
+    return total;
   }
 }

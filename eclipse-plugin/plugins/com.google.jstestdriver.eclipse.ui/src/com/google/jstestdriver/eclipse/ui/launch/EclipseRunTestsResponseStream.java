@@ -51,5 +51,4 @@ public class EclipseRunTestsResponseStream implements ResponseStream {
       }
     });
   }
-
 }
