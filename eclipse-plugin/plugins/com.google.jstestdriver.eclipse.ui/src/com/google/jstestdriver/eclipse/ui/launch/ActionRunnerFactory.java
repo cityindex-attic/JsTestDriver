@@ -17,14 +17,8 @@ package com.google.jstestdriver.eclipse.ui.launch;
 
 import static java.lang.String.format;
 
-import java.util.List;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.jstestdriver.ActionFactory;
 import com.google.jstestdriver.ActionFactoryModule;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.ConfigurationParser;
@@ -34,6 +28,12 @@ import com.google.jstestdriver.eclipse.internal.core.Logger;
 import com.google.jstestdriver.eclipse.internal.core.ProjectHelper;
 import com.google.jstestdriver.eclipse.ui.Activator;
 import com.google.jstestdriver.eclipse.ui.WorkbenchPreferencePage;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author shyamseshadri@google.com (Shyam Seshadri)
@@ -45,7 +45,7 @@ public class ActionRunnerFactory {
   private final Logger logger = new Logger();
   
   public ActionRunner getDryActionRunner(ILaunchConfiguration configuration) {
-    return getActionBuilder(configuration).dryRun().build();
+    return getActionBuilder(configuration).dryRunFor(Arrays.asList("all")).build();
   }
   
   public ActionRunner getAllTestsActionRunner(ILaunchConfiguration configuration) {

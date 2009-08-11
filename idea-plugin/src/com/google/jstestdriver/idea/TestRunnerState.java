@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.Arrays;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -69,7 +70,7 @@ public class TestRunnerState implements RunnableState {
     ResponseStreamFactory responseStreamFactory = toolPanel.createResponseStreamFactory();
     final ActionRunner dryRunRunner =
         makeActionBuilder(path, serverURL, responseStreamFactory)
-            .dryRun().build();
+          .dryRunFor(Arrays.asList("all")).build();
     final ActionRunner testRunner =
         makeActionBuilder(path, serverURL, responseStreamFactory)
             .addAllTests().build();
