@@ -17,10 +17,14 @@ package com.google.jstestdriver;
 
 import com.google.gson.Gson;
 
+import java.util.List;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class DryRunAction extends ThreadedAction {
+
+  private final List<String> expressions;
 
   public static class DryRunActionResponseStream implements ResponseStream {
 
@@ -38,12 +42,17 @@ public class DryRunAction extends ThreadedAction {
     }
   }
 
-  public DryRunAction(ResponseStreamFactory responseStreamFactory) {
+  public DryRunAction(ResponseStreamFactory responseStreamFactory, List<String> expressions) {
     super(responseStreamFactory);
+    this.expressions = expressions;
   }
 
   @Override
   public void run(String id, JsTestDriverClient client) {
-    client.dryRun(id, responseStreamFactory.getDryRunActionResponseStream());
+    if (!expressions.isEmpty()) {
+      client.dryRunFor(id, responseStreamFactory.getDryRunActionResponseStream(), expressions);
+    } else {
+      client.dryRun(id, responseStreamFactory.getDryRunActionResponseStream());
+    }
   }
 }

@@ -15,14 +15,13 @@
  */
 package com.google.jstestdriver;
 
-import java.util.List;
-import java.util.Set;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.internal.Nullable;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Provides a sequence of actions from a large number of arguments.
@@ -39,6 +38,7 @@ public class ActionListProvider implements Provider<List<Action>> {
   private final List<String> browsers;
   private final boolean reset;
   private final boolean dryRun;
+  private final List<String> dryRunFor;
   private final int port;
   private final String server;
   private final boolean preloadFiles;
@@ -46,6 +46,7 @@ public class ActionListProvider implements Provider<List<Action>> {
   private final ResponseStreamFactory responseStreamFactory;
   private final Provider<List<ThreadedAction>> threadedActionProvider;
   private final Provider<JsTestDriverClient> clientProvider;
+  
 
   // TODO(corysmith): Refactor this. Currently in a temporary,
   //  make dependencies visible to aid refactoring state.
@@ -58,6 +59,7 @@ public class ActionListProvider implements Provider<List<Action>> {
                       @Named("browsers") List<String> browsers,
                       @Named("reset") boolean reset,
                       @Named("dryRun") boolean dryRun,
+                      @Named("dryRunFor") List<String> dryRunFor,
                       @Named("preloadFiles") boolean preloadFiles,
                       @Named("port") int port,
                       @Named("fileSet") Set<FileInfo> fileSet,
@@ -72,6 +74,7 @@ public class ActionListProvider implements Provider<List<Action>> {
     this.browsers = browsers;
     this.reset = reset;
     this.dryRun = dryRun;
+    this.dryRunFor = dryRunFor;
     this.preloadFiles = preloadFiles;
     this.port = port;
     this.fileSet = fileSet;
@@ -94,6 +97,7 @@ public class ActionListProvider implements Provider<List<Action>> {
            .onBrowsers(browsers)
            .reset(reset)
            .asDryRun(dryRun)
+           .asDryRunFor(dryRunFor)
            .withLocalServerPort(port)
            .withRemoteServer(server);
     return builder.build();

@@ -15,11 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -27,6 +22,11 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.guice.FlagsModule;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A builder for IDE's to use. Minimizes the surface area of the API which needs to
@@ -45,6 +45,7 @@ public class IDEPluginActionBuilder {
   private final LinkedList<Module> modules = new LinkedList<Module>();
   private boolean dryRun = false;
   private boolean reset = false;
+  private List<String> dryRunFor = new LinkedList<String>();
 
   public IDEPluginActionBuilder(ConfigurationParser configParser, String serverAddress,
       ResponseStreamFactory responseStreamFactory) {
@@ -69,6 +70,11 @@ public class IDEPluginActionBuilder {
     return this;
   }
 
+  public IDEPluginActionBuilder dryRunFor(List<String> dryRunFor) {
+    this.dryRunFor.addAll(dryRunFor);
+    return this;
+  }
+
   public IDEPluginActionBuilder resetBrowsers() {
     reset = true;
     return this;
@@ -87,6 +93,7 @@ public class IDEPluginActionBuilder {
       tests,
       reset,
       dryRun,
+      dryRunFor,
       serverAddress != null ? serverAddress : configParser.getServer(),
       configParser.getFilesList(),
       responseStreamFactory));
@@ -99,18 +106,20 @@ public class IDEPluginActionBuilder {
     private final List<String> tests;
     private final boolean reset;
     private final boolean dryRun;
+    private final List<String> dryRunFor;
     private final String serverAddress;
     private final Set<FileInfo> fileSet;
     private final ResponseStreamFactory responseStreamFactory;
     private final LinkedList<Module> modules;
 
     public ConfigurationModule(LinkedList<Module> modules, List<String> tests,
-        boolean reset, boolean dryRun, String serverAddress,
+        boolean reset, boolean dryRun, List<String> dryRunFor, String serverAddress,
         Set<FileInfo> fileSet, ResponseStreamFactory responseStreamFactory) {
       this.modules = modules;
       this.tests = tests;
       this.reset = reset;
       this.dryRun = dryRun;
+      this.dryRunFor = dryRunFor;
       this.serverAddress = serverAddress;
       this.fileSet = fileSet;
       this.responseStreamFactory = responseStreamFactory;
@@ -122,6 +131,7 @@ public class IDEPluginActionBuilder {
       flags.setTests(tests);
       flags.setReset(reset);
       flags.setDryRun(dryRun);
+      flags.setDryRunFor(dryRunFor);
       install(new FlagsModule(flags));
       bind(String.class).annotatedWith(Names.named("server")).toInstance(serverAddress);
 

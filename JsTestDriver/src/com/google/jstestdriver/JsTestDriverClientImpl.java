@@ -110,5 +110,14 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     JsonCommand cmd = new JsonCommand(CommandType.DRYRUN, Collections.<String>emptyList());
 
     sendCommand(id, responseStream, gson.toJson(cmd));
+  }
+
+  public void dryRunFor(String id, ResponseStream responseStream, List<String> expressions) {
+    List<String> parameters = new LinkedList<String>();
+
+    parameters.add(gson.toJson(expressions));
+    JsonCommand cmd = new JsonCommand(CommandType.DRYRUNFOR, parameters);
+
+    sendCommand(id, responseStream, gson.toJson(cmd));
   }  
 }

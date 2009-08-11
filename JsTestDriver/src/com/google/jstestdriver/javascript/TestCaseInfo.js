@@ -80,15 +80,25 @@ jstestdriver.TestCaseInfo.prototype.getTestRunConfigurationFor = function(expres
       // not recognized, what to do?
     }
   }
-  var tests = testRunsConfigurationMap[this.testCaseName_];
+  var testNames = testRunsConfigurationMap[this.testCaseName_];
 
-  if (!tests) {
+  if (!testNames) {
     return null;
   }
-  if (tests.length == 0) {
-    tests = this.getTestNames();
+  if (testNames.length == 0) {
+    return this.createTestRunConfiguration_(this.getTestNames());
   }
-  return this.createTestRunConfiguration_(tests);
+  var filteredTests = [];
+  var testNamesSize = testNames.length;
+
+  for (var i = 0; i < testNamesSize; i++) {
+    var testName = testNames[i];
+
+    if (testName in this.template_.prototype) {
+      filteredTests.push(testName);
+    }
+  }
+  return this.createTestRunConfiguration_(filteredTests);
 };
 
 

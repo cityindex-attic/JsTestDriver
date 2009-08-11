@@ -33,7 +33,8 @@ public class ActionListProviderTest extends TestCase {
 
   public void testParseFlagsAndCreateActionQueue() throws Exception {
     List<String> browsers = Arrays.asList("browser");
-    ActionListProvider parser = createProvider(browsers, 9876, null, false, Collections.<String>emptyList());
+    ActionListProvider parser =
+        createProvider(browsers, 9876, null, false, Collections.<String> emptyList());
     List<Action> actions = parser.get();
 
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
@@ -55,18 +56,22 @@ public class ActionListProviderTest extends TestCase {
         browsers,
         reset,
         false,
+        Collections.<String>emptyList(),
         false,
         port,
         Collections.<FileInfo>emptySet(),
         serverAddress,
         null,
-        new DefaultThreadedActionProvider(actionFactory, null, reset, false, false, tests, Collections.<String>emptyList()),
+        new DefaultThreadedActionProvider(actionFactory, null, reset, false, Collections
+            .<String> emptyList(), false, tests, Collections.<String> emptyList()),
         Providers.<JsTestDriverClient>of(null));
   }
 
   public void testParseWithServerAndReset() throws Exception {
     String serverAddress = "http://otherserver:8989";
-    ActionListProvider parser = createProvider(Arrays.asList("browser1"), -1, serverAddress, true, Collections.<String>emptyList());
+    ActionListProvider parser =
+        createProvider(Arrays.asList("browser1"), -1, serverAddress, true, Collections
+            .<String> emptyList());
 
     FlagsImpl flags = new FlagsImpl();
     flags.setServer(serverAddress);
@@ -93,7 +98,8 @@ public class ActionListProviderTest extends TestCase {
     browserPaths.add("browser");
     browserPaths.add("browser2");
     String serverAddress = "http://otherserver:8989";
-    ActionListProvider parser = createProvider(browserPaths, -1, serverAddress, false, Collections.<String>emptyList());
+    ActionListProvider parser =
+        createProvider(browserPaths, -1, serverAddress, false, Collections.<String> emptyList());
 
     List<Action> actions = parser.get();
 

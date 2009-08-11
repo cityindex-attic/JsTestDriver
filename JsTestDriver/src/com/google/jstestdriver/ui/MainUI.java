@@ -19,6 +19,23 @@ import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.NORTH;
 import static java.awt.BorderLayout.SOUTH;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.jstestdriver.ActionFactory;
+import com.google.jstestdriver.ActionRunner;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.ConfigurationParser;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.Flags;
+import com.google.jstestdriver.FlagsParser;
+import com.google.jstestdriver.JsTestDriverModule;
+import com.google.jstestdriver.ServerStartupAction;
+
+import org.apache.commons.logging.LogFactory;
+import org.kohsuke.args4j.CmdLineException;
+import org.mortbay.log.Slf4jLog;
+
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.Reader;
@@ -32,23 +49,6 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-
-import org.apache.commons.logging.LogFactory;
-import org.kohsuke.args4j.CmdLineException;
-import org.mortbay.log.Slf4jLog;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.jstestdriver.ActionFactory;
-import com.google.jstestdriver.ActionRunner;
-import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.ConfigurationParser;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.Flags;
-import com.google.jstestdriver.FlagsParser;
-import com.google.jstestdriver.JsTestDriverModule;
-import com.google.jstestdriver.ServerStartupAction;
 
 /**
  * Entry point for the Swing GUI of JSTestDriver.

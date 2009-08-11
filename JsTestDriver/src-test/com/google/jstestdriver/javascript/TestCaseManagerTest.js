@@ -96,3 +96,27 @@ TestCaseManagerTest.prototype.testCurrentlyLoadedTestInfoAreCorrect = function()
   assertEquals('testCase1.testBar', testNames[1]);
   assertEquals('testCase2.testFu', testNames[2]);
 };
+
+
+TestCaseManagerTest.prototype.testCurrentlyLoadedTestForExpressionsInfoAreCorrect = function() {
+  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
+  var testCase1 = testCaseBuilder.TestCase('testCase1');
+
+  testCase1.prototype.testFoo = function() {};
+  testCase1.prototype.testBar = function() {};
+  var testCase2 = testCaseBuilder.TestCase('testCase2');
+
+  testCase2.prototype.testFu = function() {};
+  var expressions = [];
+
+  expressions.push('testCase1.prototype.testFoo');
+  expressions.push('testCase2.testFu');
+  var currentlyLoadedTest = testCaseManager.getCurrentlyLoadedTestFor(expressions);
+  var testNames = currentlyLoadedTest.testNames;
+
+  assertEquals(2, currentlyLoadedTest.numTests);
+  assertEquals(2, testNames.length);
+  assertEquals('testCase1.testFoo', testNames[0]);
+  assertEquals('testCase2.testFu', testNames[1]);
+};

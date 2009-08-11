@@ -59,6 +59,9 @@ public interface Flags {
 
   @GuiceBinding(name="dryRun")
   public boolean getDryRun();
+
+  @GuiceBinding(name="dryRunFor", parameterizedType = String.class)
+  public List<String> getDryRunFor();
   
   public boolean getDisplayHelp();
 

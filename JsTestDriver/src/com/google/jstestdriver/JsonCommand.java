@@ -30,7 +30,8 @@ public class JsonCommand {
     LOADTEST("loadTest"),
     RESET("reset"),
 //    REGISTERCOMMAND("registerCommand"),
-    DRYRUN("dryRun");
+    DRYRUN("dryRun"),
+    DRYRUNFOR("dryRunFor");
 
     private final String command;
 

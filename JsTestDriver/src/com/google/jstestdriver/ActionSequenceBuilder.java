@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Provider;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
-
-import com.google.inject.Provider;
 
 /**
  * A builder for creating a sequence of {@link Action}s to be run by the
@@ -46,6 +46,7 @@ public class ActionSequenceBuilder {
   private String remoteServerAddress;
   private boolean reset;
   private List<String> tests = new LinkedList<String>();
+  private List<String> dryRunFor = new LinkedList<String>();
   private List<ThreadedAction> threadedActions;
   private List<String> commands = new LinkedList<String>();
 
@@ -112,6 +113,11 @@ public class ActionSequenceBuilder {
   /** Indicates that any tests should be executed as a dry run. */
   public ActionSequenceBuilder asDryRun(boolean dryRun) {
     this.dryRun = dryRun;
+    return this;
+  }
+
+  public ActionSequenceBuilder asDryRunFor(List<String> dryRunFor) {
+    this.dryRunFor.addAll(dryRunFor);
     return this;
   }
 

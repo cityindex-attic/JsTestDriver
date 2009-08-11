@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * FlagsParser for the JsTestDriver.
@@ -39,6 +39,7 @@ public class FlagsImpl implements Flags {
   private boolean captureConsole = false;
   private boolean preloadFiles = false;
   private boolean dryRun = false;
+  private List<String> dryRunFor = new ArrayList<String>();
   @Argument
   private List<String> arguments = new ArrayList<String>();
 
@@ -156,9 +157,19 @@ public class FlagsImpl implements Flags {
   public boolean getDryRun() {
     return dryRun;
   }
+
+  @Option(name="--dryRunFor", usage="Outputs the number of tests that are going to be run as well" +
+  		" as their names for a set of expressions")
+  public void setDryRunFor(List<String> dryRunFor) {
+    this.dryRunFor = dryRunFor;
+  }
+
+  public List<String> getDryRunFor() {
+    return dryRunFor;
+  }
   
   public  boolean hasWork() {
     return getTests().size() > 0 || getReset() || !getArguments().isEmpty() ||
-        getPreloadFiles() || getDryRun();
+        getPreloadFiles() || getDryRun() || !getDryRunFor().isEmpty();
   }
 }

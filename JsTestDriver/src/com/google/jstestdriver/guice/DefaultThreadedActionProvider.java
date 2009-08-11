@@ -17,6 +17,7 @@
 package com.google.jstestdriver.guice;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -36,6 +37,7 @@ public class DefaultThreadedActionProvider implements ThreadedActionProvider {
   private final ActionFactory actionFactory;
   private final boolean reset;
   private final boolean dryRun;
+  private final List<String> dryRunFor;
   private final List<String> tests;
   private final List<String> commands;
   private final ResponseStreamFactory responseStreamFactory;
@@ -43,19 +45,21 @@ public class DefaultThreadedActionProvider implements ThreadedActionProvider {
 
   @Inject
   public DefaultThreadedActionProvider(ActionFactory actionFactory,
-                                ResponseStreamFactory responseStreamFactory,
-                                @Named("reset") boolean reset,
-                                @Named("dryRun") boolean dryRun,
-                                @Named("captureConsole") boolean captureConsole,
-                                @Named("tests") List<String> tests,
-                                @Named("arguments") List<String> commands) {
-        this.actionFactory = actionFactory;
-        this.reset = reset;
-        this.dryRun = dryRun;
-        this.captureConsole = captureConsole;
-        this.tests = tests;
-        this.commands = commands;
-        this.responseStreamFactory = responseStreamFactory;
+      ResponseStreamFactory responseStreamFactory,
+      @Named("reset") boolean reset,
+      @Named("dryRun") boolean dryRun,
+      @Named("dryRunFor") List<String> dryRunFor,
+      @Named("captureConsole") boolean captureConsole,
+      @Named("tests") List<String> tests,
+      @Named("arguments") List<String> commands) {
+    this.actionFactory = actionFactory;
+    this.reset = reset;
+    this.dryRun = dryRun;
+    this.dryRunFor = dryRunFor;
+    this.captureConsole = captureConsole;
+    this.tests = tests;
+    this.commands = commands;
+    this.responseStreamFactory = responseStreamFactory;
   }
 
   public List<ThreadedAction> get() {
@@ -65,7 +69,11 @@ public class DefaultThreadedActionProvider implements ThreadedActionProvider {
       threadedActions.add(actionFactory.createResetAction(responseStreamFactory));
     }
     if (dryRun) {
-      threadedActions.add(actionFactory.createDryRunAction(responseStreamFactory));
+      threadedActions.add(actionFactory.createDryRunAction(responseStreamFactory, Collections
+          .<String> emptyList()));
+    }
+    if (!dryRunFor.isEmpty()) {
+      threadedActions.add(actionFactory.createDryRunAction(responseStreamFactory, dryRunFor));
     }
     if (!tests.isEmpty()) {
       RunTestsAction runTestsAction = actionFactory.createRunTestsAction(responseStreamFactory,

@@ -78,7 +78,6 @@ jstestdriver.TestCaseManager.prototype.getTestCasesInfo = function() {
 
 
 jstestdriver.TestCaseManager.prototype.getCurrentlyLoadedTest = function() {
-  var numberOfTests = 0;
   var testNames = [];
   var size = this.testCasesInfo_.length;
 
@@ -89,12 +88,35 @@ jstestdriver.TestCaseManager.prototype.getCurrentlyLoadedTest = function() {
     var testsSize = tests.length;
 
     for (var j = 0; j < testsSize; j++) {
-      numberOfTests++;
       testNames.push(testCaseName + '.' + tests[j]);
     }
   }
   return {
-    numTests: numberOfTests,
+    numTests: testNames.length,
+    testNames: testNames
+  };
+};
+
+
+jstestdriver.TestCaseManager.prototype.getCurrentlyLoadedTestFor = function(expressions) {
+  var testRunsConfiguration = this.getTestRunsConfigurationFor(expressions);
+  var size = testRunsConfiguration.length;
+  var testNames = [];
+
+  for (var i = 0; i < size; i++) {
+    var testRunConfiguration = testRunsConfiguration[i];
+    var testCaseName = testRunConfiguration.getTestCaseInfo().getTestCaseName();
+    var tests = testRunConfiguration.getTests();
+    var testsSize = tests.length;
+
+    for (var j = 0; j < testsSize; j++) {
+      var testName = tests[j];
+
+      testNames.push(testCaseName + '.' + testName);
+    }
+  }
+  return {
+    numTests: testNames.length,
     testNames: testNames
   };
 };

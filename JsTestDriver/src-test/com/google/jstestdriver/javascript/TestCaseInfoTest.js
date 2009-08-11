@@ -71,7 +71,7 @@ TestCaseInfoTest.prototype.testTestRunConfigurationFor = function() {
   testCaseClass.prototype.testFooBar = function() {};
   var testCaseInfo = new jstestdriver.TestCaseInfo('testCase', testCaseClass);
   var testRunConfiguration = testCaseInfo.getTestRunConfigurationFor(new Array('testCase.testFoo',
-      'testCase.prototype.testBar', 'randomstuff.plouf'));
+      'testCase.prototype.testBar', 'randomstuff.plouf', 'dontexist.notcool'));
 
   assertNotNull(testRunConfiguration);
   assertEquals(new Array('testFoo', 'testBar'), testRunConfiguration.getTests());

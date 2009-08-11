@@ -70,8 +70,9 @@ public class ActionFactory {
     return new ResetAction(responseStreamFactory);
   }
 
-  public DryRunAction createDryRunAction(ResponseStreamFactory responseStreamFactory) {
-    return new DryRunAction(responseStreamFactory);
+  public DryRunAction createDryRunAction(ResponseStreamFactory responseStreamFactory,
+      List<String> expressions) {
+    return new DryRunAction(responseStreamFactory, expressions);
   }
 
   public RunTestsAction createRunTestsAction(ResponseStreamFactory responseStreamFactory,
