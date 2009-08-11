@@ -49,10 +49,10 @@ public class DryRunAction extends ThreadedAction {
 
   @Override
   public void run(String id, JsTestDriverClient client) {
-    if (!expressions.isEmpty()) {
-      client.dryRunFor(id, responseStreamFactory.getDryRunActionResponseStream(), expressions);
-    } else {
+    if (expressions.size() == 1 && expressions.get(0).equals("all")) {
       client.dryRun(id, responseStreamFactory.getDryRunActionResponseStream());
+    } else {
+      client.dryRunFor(id, responseStreamFactory.getDryRunActionResponseStream(), expressions);
     }
   }
 }

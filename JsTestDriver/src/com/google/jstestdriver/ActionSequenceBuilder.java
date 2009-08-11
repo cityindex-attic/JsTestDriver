@@ -38,7 +38,6 @@ public class ActionSequenceBuilder {
 
   private List<String> browsers = new LinkedList<String>();
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-  private boolean dryRun;
   private HashMap<String, FileInfo> files = new HashMap<String, FileInfo>();
   private Set<FileInfo> fileSet;
   private int localServerPort = -1;
@@ -110,12 +109,7 @@ public class ActionSequenceBuilder {
     return this;
   }
 
-  /** Indicates that any tests should be executed as a dry run. */
-  public ActionSequenceBuilder asDryRun(boolean dryRun) {
-    this.dryRun = dryRun;
-    return this;
-  }
-
+  /** Indicates that tests should be executed as a dry run. */
   public ActionSequenceBuilder asDryRunFor(List<String> dryRunFor) {
     this.dryRunFor.addAll(dryRunFor);
     return this;
@@ -144,7 +138,7 @@ public class ActionSequenceBuilder {
 
   /** Method that derives whether or not to leave the server running. */
   private boolean leaveServerRunning() {
-    return tests.isEmpty() && commands.isEmpty() && !dryRun && !reset;
+    return tests.isEmpty() && commands.isEmpty() && !reset && dryRunFor.isEmpty();
   }
 
   private boolean needToStartServer() {

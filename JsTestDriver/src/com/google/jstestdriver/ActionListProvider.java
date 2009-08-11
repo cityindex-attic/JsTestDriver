@@ -37,7 +37,6 @@ public class ActionListProvider implements Provider<List<Action>> {
   private final List<String> arguments;
   private final List<String> browsers;
   private final boolean reset;
-  private final boolean dryRun;
   private final List<String> dryRunFor;
   private final int port;
   private final String server;
@@ -58,7 +57,6 @@ public class ActionListProvider implements Provider<List<Action>> {
                       @Named("arguments") List<String> arguments,
                       @Named("browsers") List<String> browsers,
                       @Named("reset") boolean reset,
-                      @Named("dryRun") boolean dryRun,
                       @Named("dryRunFor") List<String> dryRunFor,
                       @Named("preloadFiles") boolean preloadFiles,
                       @Named("port") int port,
@@ -73,7 +71,6 @@ public class ActionListProvider implements Provider<List<Action>> {
     this.arguments = arguments;
     this.browsers = browsers;
     this.reset = reset;
-    this.dryRun = dryRun;
     this.dryRunFor = dryRunFor;
     this.preloadFiles = preloadFiles;
     this.port = port;
@@ -96,7 +93,6 @@ public class ActionListProvider implements Provider<List<Action>> {
            .addCommands(arguments)
            .onBrowsers(browsers)
            .reset(reset)
-           .asDryRun(dryRun)
            .asDryRunFor(dryRunFor)
            .withLocalServerPort(port)
            .withRemoteServer(server);

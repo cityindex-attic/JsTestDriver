@@ -16,16 +16,15 @@
 
 package com.google.jstestdriver.guice;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.ActionFactory;
 import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.RunTestsAction;
 import com.google.jstestdriver.ThreadedAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Provides ThreadedActions based constructor arguments. This is the default implementation for 
@@ -36,7 +35,6 @@ import com.google.jstestdriver.ThreadedAction;
 public class DefaultThreadedActionProvider implements ThreadedActionProvider {
   private final ActionFactory actionFactory;
   private final boolean reset;
-  private final boolean dryRun;
   private final List<String> dryRunFor;
   private final List<String> tests;
   private final List<String> commands;
@@ -47,14 +45,12 @@ public class DefaultThreadedActionProvider implements ThreadedActionProvider {
   public DefaultThreadedActionProvider(ActionFactory actionFactory,
       ResponseStreamFactory responseStreamFactory,
       @Named("reset") boolean reset,
-      @Named("dryRun") boolean dryRun,
       @Named("dryRunFor") List<String> dryRunFor,
       @Named("captureConsole") boolean captureConsole,
       @Named("tests") List<String> tests,
       @Named("arguments") List<String> commands) {
     this.actionFactory = actionFactory;
     this.reset = reset;
-    this.dryRun = dryRun;
     this.dryRunFor = dryRunFor;
     this.captureConsole = captureConsole;
     this.tests = tests;
@@ -67,10 +63,6 @@ public class DefaultThreadedActionProvider implements ThreadedActionProvider {
 
     if (reset) {
       threadedActions.add(actionFactory.createResetAction(responseStreamFactory));
-    }
-    if (dryRun) {
-      threadedActions.add(actionFactory.createDryRunAction(responseStreamFactory, Collections
-          .<String> emptyList()));
     }
     if (!dryRunFor.isEmpty()) {
       threadedActions.add(actionFactory.createDryRunAction(responseStreamFactory, dryRunFor));

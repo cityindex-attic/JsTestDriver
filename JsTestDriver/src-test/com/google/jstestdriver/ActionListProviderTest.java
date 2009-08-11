@@ -55,14 +55,13 @@ public class ActionListProviderTest extends TestCase {
         Collections.<String>emptyList(),
         browsers,
         reset,
-        false,
         Collections.<String>emptyList(),
         false,
         port,
         Collections.<FileInfo>emptySet(),
         serverAddress,
         null,
-        new DefaultThreadedActionProvider(actionFactory, null, reset, false, Collections
+        new DefaultThreadedActionProvider(actionFactory, null, reset, Collections
             .<String> emptyList(), false, tests, Collections.<String> emptyList()),
         Providers.<JsTestDriverClient>of(null));
   }

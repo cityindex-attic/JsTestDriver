@@ -43,7 +43,6 @@ public class IDEPluginActionBuilder {
 
   private List<String> tests = new LinkedList<String>();
   private final LinkedList<Module> modules = new LinkedList<Module>();
-  private boolean dryRun = false;
   private boolean reset = false;
   private List<String> dryRunFor = new LinkedList<String>();
 
@@ -62,11 +61,6 @@ public class IDEPluginActionBuilder {
   
   public IDEPluginActionBuilder addTests(List<String> testCases) {
     tests.addAll(testCases);
-    return this;
-  }
-
-  public IDEPluginActionBuilder dryRun() {
-    dryRun = true;
     return this;
   }
 
@@ -92,7 +86,6 @@ public class IDEPluginActionBuilder {
       modules,
       tests,
       reset,
-      dryRun,
       dryRunFor,
       serverAddress != null ? serverAddress : configParser.getServer(),
       configParser.getFilesList(),
@@ -105,7 +98,6 @@ public class IDEPluginActionBuilder {
 
     private final List<String> tests;
     private final boolean reset;
-    private final boolean dryRun;
     private final List<String> dryRunFor;
     private final String serverAddress;
     private final Set<FileInfo> fileSet;
@@ -113,12 +105,11 @@ public class IDEPluginActionBuilder {
     private final LinkedList<Module> modules;
 
     public ConfigurationModule(LinkedList<Module> modules, List<String> tests,
-        boolean reset, boolean dryRun, List<String> dryRunFor, String serverAddress,
+        boolean reset, List<String> dryRunFor, String serverAddress,
         Set<FileInfo> fileSet, ResponseStreamFactory responseStreamFactory) {
       this.modules = modules;
       this.tests = tests;
       this.reset = reset;
-      this.dryRun = dryRun;
       this.dryRunFor = dryRunFor;
       this.serverAddress = serverAddress;
       this.fileSet = fileSet;
@@ -130,7 +121,6 @@ public class IDEPluginActionBuilder {
       FlagsImpl flags = new FlagsImpl();
       flags.setTests(tests);
       flags.setReset(reset);
-      flags.setDryRun(dryRun);
       flags.setDryRunFor(dryRunFor);
       install(new FlagsModule(flags));
       bind(String.class).annotatedWith(Names.named("server")).toInstance(serverAddress);

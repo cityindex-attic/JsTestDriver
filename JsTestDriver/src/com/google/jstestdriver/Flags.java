@@ -57,9 +57,6 @@ public interface Flags {
   @GuiceBinding(name="preloadFiles")
   public boolean getPreloadFiles();
 
-  @GuiceBinding(name="dryRun")
-  public boolean getDryRun();
-
   @GuiceBinding(name="dryRunFor", parameterizedType = String.class)
   public List<String> getDryRunFor();
   

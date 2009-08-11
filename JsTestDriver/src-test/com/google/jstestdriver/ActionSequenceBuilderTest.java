@@ -38,7 +38,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<String> browsers = browsers();
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(actionFactory, null, null, threadedActionProvider(tests,
-            Collections.<String> emptyList(), false, false, Collections.<String> emptyList(),
+            Collections.<String> emptyList(), false, Collections.<String> emptyList(),
             captureConsole), Providers.<JsTestDriverClient> of(null));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
@@ -59,9 +59,9 @@ public class ActionSequenceBuilderTest extends TestCase {
   }
 
   private DefaultThreadedActionProvider threadedActionProvider(List<String> tests,
-      List<String> commands, boolean reset, boolean dryRun, List<String> dryRunFor,
+      List<String> commands, boolean reset, List<String> dryRunFor,
       boolean captureConsole) {
-    return new DefaultThreadedActionProvider(actionFactory, null, reset, dryRun, dryRunFor,
+    return new DefaultThreadedActionProvider(actionFactory, null, reset, dryRunFor,
         captureConsole, tests, commands);
   }
 
@@ -70,7 +70,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     boolean captureConsole = true;
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
-            tests, Collections.<String> emptyList(), false, false,
+            tests, Collections.<String> emptyList(), false,
             Collections.<String> emptyList(), captureConsole), Providers
             .<JsTestDriverClient> of(null));
     List<String> browsers = browsers();
@@ -94,25 +94,6 @@ public class ActionSequenceBuilderTest extends TestCase {
     assertEquals(captureConsole, testAction.isCaptureConsole());
   }
 
-  public void testAddTestsAndDryrun() throws Exception {
-    List<String> tests = tests();
-    boolean dryRun = true;
-    ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
-            tests, Collections.<String> emptyList(), false, dryRun, Collections
-                .<String> emptyList(), false), Providers.<JsTestDriverClient> of(null));
-    List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
-        browsers()).addTests(tests).asDryRun(dryRun).build();
-
-    ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
-    assertEquals(2, runner.getActions().size());
-    List<Class<? extends ThreadedAction>> expectedThreadedActions =
-        new ArrayList<Class<? extends ThreadedAction>>();
-    expectedThreadedActions.add(DryRunAction.class);
-    expectedThreadedActions.add(RunTestsAction.class);
-    this.<ThreadedAction> assertSequence(expectedThreadedActions, runner.getActions());
-  }
-
   public void testAddTestsAndDryRunFor() throws Exception {
     List<String> tests = tests();
     List<String> dryRunFor = new LinkedList<String>();
@@ -120,7 +101,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     dryRunFor.add("test.testFoo");
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
-            tests, Collections.<String> emptyList(), false, false, dryRunFor, false), Providers
+            tests, Collections.<String> emptyList(), false, dryRunFor, false), Providers
             .<JsTestDriverClient> of(null));
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addTests(tests).asDryRunFor(dryRunFor).build();
@@ -138,9 +119,9 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<String> tests = tests();
     boolean reset = true;
     ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
-            tests, Collections.<String> emptyList(), reset, false,
-            Collections.<String> emptyList(), false), Providers.<JsTestDriverClient> of(null));
+        new ActionSequenceBuilder(new ActionFactory(null), null, null,
+            threadedActionProvider(tests, Collections.<String> emptyList(), reset, Collections
+                .<String> emptyList(), false), Providers.<JsTestDriverClient> of(null));
 
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addTests(tests).reset(reset).build();
@@ -153,28 +134,6 @@ public class ActionSequenceBuilderTest extends TestCase {
     expectedThreadedActions.add(RunTestsAction.class);
     this.<ThreadedAction> assertSequence(expectedThreadedActions, runner.getActions());
   }
-
-  public void testAddTestsWithDryRunAndReset() throws Exception {
-    List<String> tests = tests();
-    boolean dryRun = true;
-    boolean reset = true;
-    ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
-            tests, Collections.<String> emptyList(), reset, dryRun, Collections
-                .<String> emptyList(), false), Providers.<JsTestDriverClient> of(null));
-
-    List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
-        browsers()).addTests(tests).asDryRun(dryRun).reset(reset).build();
-
-    ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
-    assertEquals(3, runner.getActions().size());
-    List<Class<? extends ThreadedAction>> expectedThreadedActions =
-        new ArrayList<Class<? extends ThreadedAction>>();
-    expectedThreadedActions.add(ResetAction.class);
-    expectedThreadedActions.add(DryRunAction.class);
-    expectedThreadedActions.add(RunTestsAction.class);
-    this.<ThreadedAction> assertSequence(expectedThreadedActions, runner.getActions());
-  }
   
   public void testAddTestsWithDryRunForAndReset() throws Exception {
     List<String> tests = tests();
@@ -184,7 +143,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     boolean reset = true;
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
-            tests, Collections.<String> emptyList(), reset, false, dryRunFor, false), Providers
+            tests, Collections.<String> emptyList(), reset, dryRunFor, false), Providers
             .<JsTestDriverClient> of(null));
 
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
@@ -204,7 +163,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<String> commands = Arrays.asList("'foo'+'bar'", "1+1");
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
-            Collections.<String> emptyList(), commands, false, false, Collections
+            Collections.<String> emptyList(), commands, false, Collections
                 .<String> emptyList(), false), Providers.<JsTestDriverClient> of(null));
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addCommands(commands).build();
@@ -225,9 +184,9 @@ public class ActionSequenceBuilderTest extends TestCase {
   public void testNoBrowsers() throws Exception {
     List<String> tests = tests();
     ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
-            tests, Collections.<String> emptyList(), false, false,
-            Collections.<String> emptyList(), false), Providers.<JsTestDriverClient> of(null));
+        new ActionSequenceBuilder(new ActionFactory(null), null, null,
+            threadedActionProvider(tests, Collections.<String> emptyList(), false, Collections
+                .<String> emptyList(), false), Providers.<JsTestDriverClient> of(null));
 
     List<Action> actions = builder.addTests(tests).withLocalServerPort(999)
         .usingFiles(files, false).build();

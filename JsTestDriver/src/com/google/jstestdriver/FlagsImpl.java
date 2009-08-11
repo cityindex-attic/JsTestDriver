@@ -38,7 +38,6 @@ public class FlagsImpl implements Flags {
   private boolean verbose = false;
   private boolean captureConsole = false;
   private boolean preloadFiles = false;
-  private boolean dryRun = false;
   private List<String> dryRunFor = new ArrayList<String>();
   @Argument
   private List<String> arguments = new ArrayList<String>();
@@ -148,18 +147,8 @@ public class FlagsImpl implements Flags {
     return preloadFiles;
   }
 
-  @Option(name="--dryRun", usage="Outputs the number of tests that are going to be run as well as" +
-          " their names")
-  public void setDryRun(boolean dryRun) {
-    this.dryRun = dryRun;
-  }
-
-  public boolean getDryRun() {
-    return dryRun;
-  }
-
   @Option(name="--dryRunFor", usage="Outputs the number of tests that are going to be run as well" +
-  		" as their names for a set of expressions")
+  		" as their names for a set of expressions or all to see all the tests")
   public void setDryRunFor(List<String> dryRunFor) {
     this.dryRunFor = dryRunFor;
   }
@@ -170,6 +159,6 @@ public class FlagsImpl implements Flags {
   
   public  boolean hasWork() {
     return getTests().size() > 0 || getReset() || !getArguments().isEmpty() ||
-        getPreloadFiles() || getDryRun() || !getDryRunFor().isEmpty();
+        getPreloadFiles() || !getDryRunFor().isEmpty();
   }
 }
