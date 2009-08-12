@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.internal.junit.ui.JUnitProgressBar;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -47,7 +46,7 @@ public class TestResultsPanel extends Composite {
 
   private EclipseJstdTestRunResult testRunResult;
   private TreeViewer testResultsTree;
-  private JUnitProgressBar testProgressIndicator;
+  private TestResultProgressBar testProgressIndicator;
   private Label failuresLabel;
   private Label errorsLabel;
   private Label totalRunLabel;
@@ -85,9 +84,9 @@ public class TestResultsPanel extends Composite {
     progressIndicatorData.horizontalSpan = 4;
     progressIndicatorData.horizontalAlignment = SWT.FILL;
     progressIndicatorData.verticalAlignment = SWT.FILL;
-    progressIndicatorData.minimumHeight = 20;
+    progressIndicatorData.heightHint = 20;
     progressIndicatorData.minimumWidth = 180;
-    testProgressIndicator = new JUnitProgressBar(this);
+    testProgressIndicator = new TestResultProgressBar(this, SWT.NONE);
     testProgressIndicator.setLayoutData(progressIndicatorData);
     
     SashForm resultsSashForm = new SashForm(this, SWT.VERTICAL);
@@ -137,32 +136,32 @@ public class TestResultsPanel extends Composite {
   }
   
   public void setupForNextTestRun(ILaunchConfiguration launchConfiguration) {
-    lastLaunchConfiguration = launchConfiguration;
-    testRunResult.clear();
-    testResultsTree.refresh();
-    testProgressIndicator.reset();
     totalNumTests = 0;
     totalRunLabel.setText("Run : 0 / 0");
     errorsLabel.setText("Errors : 0");
     failuresLabel.setText("Failed : 0");
+    lastLaunchConfiguration = launchConfiguration;
+    testRunResult.clear();
+    testResultsTree.refresh();
+    testProgressIndicator.reset();
     update();
   }
   
   public synchronized void addNumberOfTests(int numTests) {
     totalNumTests += numTests;
-    testProgressIndicator.setMaximum(totalNumTests);
+    testProgressIndicator.setMax(totalNumTests);
     totalRunLabel.setText("Run : 0 / " + totalNumTests);
   }
 
   public synchronized void addTestResults(Collection<TestResult> testResults) {
     Collection<ResultModel> failedTests = new ArrayList<ResultModel>();
     for (TestResult result : testResults) {
-      testProgressIndicator.step(result.getResult() == TestResult.Result.passed ? 0 : 1);
       ResultModel addedResult = testRunResult.addTestResult(result);
       if (!addedResult.didPass()) {
         failedTests.add(addedResult);
       }
     }
+    testProgressIndicator.step(testResults.size(), failedTests.size() == 0);
     testResultsTree.refresh();
     
     for (ResultModel resultModel : failedTests) {
