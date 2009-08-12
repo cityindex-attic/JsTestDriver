@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
@@ -33,6 +36,11 @@ public class TestResult {
   private String testName;
   private float time;
   private BrowserInfo browserInfo;
+  private Map<String, String> data = new HashMap<String, String>();
+
+  public Map<String, String> getData() {
+    return data;
+  }
 
   public TestResult(BrowserInfo browser, String result, String message, String log,
       String testCaseName, String testName, float time) {
@@ -94,5 +102,91 @@ public class TestResult {
 
   public String getLog() {
     return log;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+      + ((browserInfo == null) ? 0 : browserInfo.hashCode());
+    result = prime * result + ((log == null) ? 0 : log.hashCode());
+    result = prime * result + ((message == null) ? 0 : message.hashCode());
+    result = prime * result
+      + ((parsedMessage == null) ? 0 : parsedMessage.hashCode());
+    result = prime * result
+      + ((this.result == null) ? 0 : this.result.hashCode());
+    result = prime * result + ((stack == null) ? 0 : stack.hashCode());
+    result = prime * result
+      + ((testCaseName == null) ? 0 : testCaseName.hashCode());
+    result = prime * result + ((testName == null) ? 0 : testName.hashCode());
+    result = prime * result + Float.floatToIntBits(time);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    TestResult other = (TestResult) obj;
+    if (browserInfo == null) {
+      if (other.browserInfo != null)
+        return false;
+    } else if (!browserInfo.equals(other.browserInfo))
+      return false;
+    if (log == null) {
+      if (other.log != null)
+        return false;
+    } else if (!log.equals(other.log))
+      return false;
+    if (message == null) {
+      if (other.message != null)
+        return false;
+    } else if (!message.equals(other.message))
+      return false;
+    if (parsedMessage == null) {
+      if (other.parsedMessage != null)
+        return false;
+    } else if (!parsedMessage.equals(other.parsedMessage))
+      return false;
+    if (result == null) {
+      if (other.result != null)
+        return false;
+    } else if (!result.equals(other.result))
+      return false;
+    if (stack == null) {
+      if (other.stack != null)
+        return false;
+    } else if (!stack.equals(other.stack))
+      return false;
+    if (testCaseName == null) {
+      if (other.testCaseName != null)
+        return false;
+    } else if (!testCaseName.equals(other.testCaseName))
+      return false;
+    if (testName == null) {
+      if (other.testName != null)
+        return false;
+    } else if (!testName.equals(other.testName))
+      return false;
+    if (Float.floatToIntBits(time) != Float.floatToIntBits(other.time))
+      return false;
+    return true;
+  }
+  @Override
+  public String toString() {
+    return String.format("%s: %s; %s; %s; %s; %s,; %s; %s", 
+                         getClass().getSimpleName(),
+                         browserInfo,
+                         result,
+                         message,
+                         log,
+                         testCaseName,
+                         testName,
+                         time);
   }
 }

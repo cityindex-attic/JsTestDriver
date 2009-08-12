@@ -49,9 +49,6 @@ public class DefaultPrinter implements TestResultPrinter {
     this.lineLength = lineLength;
   }
 
-  public void open() {
-  }
-
   public void open(String name) {
   }
 

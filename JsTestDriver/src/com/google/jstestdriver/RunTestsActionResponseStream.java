@@ -33,10 +33,6 @@ public class RunTestsActionResponseStream implements ResponseStream {
   }
 
   public void stream(Response response) {
-    if (response.getError().equals("PANIC")) {
-      System.err.println(response.getResponse());
-      System.exit(1);
-    }
     Collection<TestResult> testResults = testResultGenerator.getTestResults(response);
     for (TestResult result : testResults) {
       printer.print(result);

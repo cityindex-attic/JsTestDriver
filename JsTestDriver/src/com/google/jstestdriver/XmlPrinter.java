@@ -50,10 +50,6 @@ public class XmlPrinter implements TestResultPrinter {
     this.browsersRunData = browsersRunData;
   }
 
-  public void open() {
-    serializer.startTestSuite();
-  }
-
   public void open(String name) {
     serializer.startTestSuite(name);
   }

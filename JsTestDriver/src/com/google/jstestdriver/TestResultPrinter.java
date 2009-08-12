@@ -19,8 +19,6 @@ package com.google.jstestdriver;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public interface TestResultPrinter {
-
-  public void open();
   public void open(String name);
   public void print(TestResult testResult);
   public void close();
