@@ -44,9 +44,9 @@
     <pathelement location="${lib.dir}/guice/guice-2.0-no_aop.jar" />
     <pathelement location="${lib.dir}/guice/guice-multibindings-2.0.jar" />
     <pathelement location="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
-    <pathelement location="${lib.dir}/jetty/jetty-6.1.14.jar" />
-    <pathelement location="${lib.dir}/jetty/jetty-util-6.1.14.jar" />
-    <pathelement location="${lib.dir}/jetty/servlet-api-2.5-6.1.14.jar" />
+    <pathelement location="${lib.dir}/jetty/jetty-6.1.19.jar" />
+    <pathelement location="${lib.dir}/jetty/jetty-util-6.1.19.jar" />
+    <pathelement location="${lib.dir}/jetty/servlet-api-2.5-20081211.jar" />
     <pathelement location="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
     <pathelement location="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
     <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
@@ -239,9 +239,9 @@
       <manifest>
         <attribute name="Main-Class" value="${main-class}" />
       </manifest>
-      <zipfileset src="${lib.dir}/jetty/servlet-api-2.5-6.1.14.jar" />
-      <zipfileset src="${lib.dir}/jetty/jetty-6.1.14.jar" />
-      <zipfileset src="${lib.dir}/jetty/jetty-util-6.1.14.jar" />
+      <zipfileset src="${lib.dir}/jetty/servlet-api-2.5-20081211.jar" />
+      <zipfileset src="${lib.dir}/jetty/jetty-6.1.19.jar" />
+      <zipfileset src="${lib.dir}/jetty/jetty-util-6.1.19.jar" />
       <zipfileset src="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
       <zipfileset src="${lib.dir}/guice/guice-2.0-no_aop.jar" />
       <zipfileset src="${lib.dir}/guice/guice-multibindings-2.0.jar" />

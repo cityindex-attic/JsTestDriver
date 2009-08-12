@@ -15,6 +15,16 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+
+import org.kohsuke.args4j.CmdLineException;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.servlet.ServletHandler;
+import org.mortbay.jetty.servlet.ServletHolder;
+
 import java.io.File;
 import java.io.Reader;
 import java.util.LinkedHashSet;
@@ -23,17 +33,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 
-import javax.servlet.http.HttpServlet;
-
-import org.kohsuke.args4j.CmdLineException;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.jetty.servlet.ServletHolder;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
+import javax.servlet.Servlet;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -71,9 +71,10 @@ public class JsTestDriverServer extends Observable {
     addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesCache));
     addServlet("/", new HomeServlet(capturedBrowsers));
+    addServlet("/*", new ForwardingServlet(new ForwardingMapper()));
   }
 
-  private void addServlet(String url, HttpServlet servlet) {
+  private void addServlet(String url, Servlet servlet) {
     servletHandler.addServletWithMapping(new ServletHolder(servlet), url);
   }
 
