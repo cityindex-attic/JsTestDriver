@@ -13,27 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+package com.google.jstestdriver.coverage;
 
-package com.google.jstestdriver;
-
-import java.util.Collections;
-
-import junit.framework.TestCase;
-
-import com.google.inject.Guice;
-import com.google.inject.Module;
-import com.google.jstestdriver.guice.PrintStreamClientModule;
+import com.google.inject.AbstractModule;
+import com.google.jstestdriver.ResponseStreamFactory;
 
 /**
  * @author corysmith
  *
  */
-public class JsTestDriverModuleTest extends TestCase {
-  public void testGetActionRunner() throws Exception {
-    FlagsImpl flags = new FlagsImpl();
-    Guice.createInjector(new JsTestDriverModule(flags,
-        Collections.<FileInfo>emptySet(),
-        Collections.<Module>singletonList(new PrintStreamClientModule(System.out)),
-        "http://foo")).getInstance(ActionRunner.class);
+public class CoverageModule extends AbstractModule {
+
+  @Override
+  protected void configure() {
+    bind(ResponseStreamFactory.class).to(CoverageResponseStreamFactory.class);
   }
 }

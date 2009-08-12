@@ -15,6 +15,16 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+
+import org.kohsuke.args4j.CmdLineException;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.servlet.ServletHandler;
+import org.mortbay.jetty.servlet.ServletHolder;
+
 import java.io.File;
 import java.io.Reader;
 import java.util.LinkedHashSet;
@@ -23,7 +33,10 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 
+<<<<<<< HEAD:src/com/google/jstestdriver/JsTestDriverServer.java
 import javax.servlet.Servlet;
+=======
+import javax.servlet.http.HttpServlet;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.mortbay.jetty.Server;
@@ -34,8 +47,9 @@ import org.mortbay.jetty.servlet.ServletHolder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.jstestdriver.guice.PrintStreamClientModule;
-import com.google.jstestdriver.guice.XmlClientModule;
+import com.google.jstestdriver.output.PrintStreamResponsePrinterFactory;
+import com.google.jstestdriver.output.XmlResponsePrinterFactory;
+>>>>>>> split up the ResponsePrinterFactory to get an interface for testing, and move the conditional logic to the intialization.:src/com/google/jstestdriver/JsTestDriverServer.java
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -112,10 +126,9 @@ public class JsTestDriverServer extends Observable {
       Flags flags = new FlagsParser().parseArgument(args);
       File config = new File(flags.getConfig());
       Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
-      List<Module> modules = new LinkedList<Module>();
+      List<Class<? extends Module>> plugins = new LinkedList<Class<? extends Module>>();
 
-      // TODO(corysmith): move the handling of the serverAddress into a configuration class that 
-      // returns an appropriate module configuration.
+      // TODO(corysmith): move the handling of the serverAddress into a configuration class
       String serverAddress = flags.getServer();
       if (flags.hasWork()) {
         if (!config.exists()) {
@@ -130,7 +143,7 @@ public class JsTestDriverServer extends Observable {
         if (serverAddress == null || serverAddress.length() == 0) {
           serverAddress = configParser.getServer();
         }
-        modules.addAll(pluginLoader.load(configParser.getPlugins()));
+        plugins = pluginLoader.load(configParser.getPlugins());
       }
       if (serverAddress == null || serverAddress.length() == 0) {
         if (flags.getPort() == -1) {
@@ -138,16 +151,15 @@ public class JsTestDriverServer extends Observable {
         }
         serverAddress = String.format("http://%s:%d", "127.0.0.1", flags.getPort());
       }
-
       // TODO(corysmith): move this to the same configuration class as the serverAddress
+      Class<? extends ResponsePrinterFactory> printerFactoryClass =
+          PrintStreamResponsePrinterFactory.class;
       if (flags.getTestOutput().length() > 0) {
-        modules.add(new XmlClientModule(System.out));
-      } else {
-        modules.add(new PrintStreamClientModule(System.out));
+        printerFactoryClass = XmlResponsePrinterFactory.class;
       }
       Injector injector =
           Guice.createInjector(
-              new JsTestDriverModule(flags, fileSet, modules, serverAddress));
+              new JsTestDriverModule(flags, fileSet, plugins, serverAddress, printerFactoryClass));
       injector.getInstance(ActionRunner.class).runActions();
     } catch (CmdLineException e) {
       System.err.println(e.getMessage());

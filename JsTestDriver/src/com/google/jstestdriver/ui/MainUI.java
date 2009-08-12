@@ -22,8 +22,9 @@ import static java.awt.BorderLayout.SOUTH;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.Reader;
-import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
@@ -49,7 +50,8 @@ import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.FlagsParser;
 import com.google.jstestdriver.JsTestDriverModule;
 import com.google.jstestdriver.ServerStartupAction;
-import com.google.jstestdriver.output.PrintStreamResponsePrinterFactory;
+import com.google.jstestdriver.guice.PrintStreamClientModule;
+import com.google.jstestdriver.guice.XmlClientModule;
 
 /**
  * Entry point for the Swing GUI of JSTestDriver.
@@ -107,7 +109,8 @@ public class MainUI {
     try {
       File config = new File(flags.getConfig());
       Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
-
+      // TODO(corysmith): move the handling of the serverAddress into a configuration class that 
+      // returns an appropriate module configuration.
       String serverAddress = null;
       if (flags.hasWork()) {
         if (!config.exists()) {
@@ -128,13 +131,19 @@ public class MainUI {
         }
         serverAddress = String.format("http://%s:%d", "127.0.0.1", flags.getPort());
       }
+      List<Module> modules = new LinkedList<Module>();
+      // TODO(corysmith): Figure out how to avoid creating a client.
+      if (flags.getTestOutput().length() > 0) {
+        modules.add(new XmlClientModule(System.out));
+      } else {
+        modules.add(new PrintStreamClientModule(System.out));
+      }
       Injector injector =
         Guice.createInjector(
             new JsTestDriverModule(flags,
                                    fileSet,
-                                   Collections.<Class<? extends Module>>emptyList(),
-                                   serverAddress,
-                                   PrintStreamResponsePrinterFactory.class));
+                                   modules,
+                                   serverAddress));
       ActionFactory actionFactory = injector.getInstance(ActionFactory.class);
       actionFactory.registerListener(ServerStartupAction.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, statusBar);

@@ -34,19 +34,29 @@ public class PluginLoader {
   /**
    * For each plugin, the specified jar is loaded, then the specified class is
    * extracted from the Jar.
+   * @return 
    */
   @SuppressWarnings("unchecked")
-  public List<Class<? extends Module>> load(List<Plugin> plugins) throws MalformedURLException,
-      ClassNotFoundException {
-    List<Class<? extends Module>> pluginClasses = new LinkedList<Class<? extends Module>>();
+  public List<Module> load(List<Plugin> plugins) {
+    List<Module> modules = new LinkedList<Module>();
     for (Plugin plugin : plugins) {
       // TODO(corysmith): figure out how to test this...
-      URLClassLoader urlClassLoader = new URLClassLoader(
-          new URL[] { new URL("jar:" + plugin.getPathToJar() + "!/") },
-          getClass().getClassLoader());
-      Class<?> module = Class.forName(plugin.getModuleName(), true, urlClassLoader);
-      pluginClasses.add((Class<? extends Module>) Module.class.asSubclass(module));
+      try {
+        URLClassLoader urlClassLoader = new URLClassLoader(
+            new URL[] { new URL("jar:" + plugin.getPathToJar() + "!/") },
+            getClass().getClassLoader());
+        Class<?> module = Class.forName(plugin.getModuleName(), true, urlClassLoader);
+        modules.add(((Class<? extends Module>) Module.class.asSubclass(module)).newInstance());
+      } catch (InstantiationException e) {
+        throw new RuntimeException(e);
+      } catch (IllegalAccessException e) {
+        throw new RuntimeException(e);
+      } catch (MalformedURLException e) {
+        throw new RuntimeException(e);
+      } catch (ClassNotFoundException e) {
+        throw new RuntimeException(e);
+      }
     }
-    return pluginClasses;
+    return modules;
   }
 }

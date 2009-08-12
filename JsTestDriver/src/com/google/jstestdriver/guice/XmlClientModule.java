@@ -20,23 +20,25 @@ import java.io.PrintStream;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+import com.google.jstestdriver.ResponsePrinterFactory;
+import com.google.jstestdriver.output.XmlResponsePrinterFactory;
 
 /**
- * Module that defines the client command line configuration for a JsTestDriverClient.
+ * Module that defines the client command line configuration for a JsTestDriverClient
+ * that writes the response as a JUnit Xml File.
  * @author corysmith
- *
  */
-public class ClientModule extends AbstractModule {
+public class XmlClientModule extends AbstractModule {
 
   private final PrintStream out;
 
-  public ClientModule(PrintStream out) {
+  public XmlClientModule(PrintStream out) {
     this.out = out;
   }
 
   @Override
   protected void configure() {
     bind(PrintStream.class).annotatedWith(Names.named("outputStream")).toInstance(out);
-    
+    bind(ResponsePrinterFactory.class).to(XmlResponsePrinterFactory.class);
   }
 }

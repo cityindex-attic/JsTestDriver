@@ -22,7 +22,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
-import com.google.jstestdriver.guice.ClientModule;
 import com.google.jstestdriver.guice.FlagsModule;
 
 /**
@@ -35,26 +34,21 @@ public class JsTestDriverModule extends AbstractModule {
 
   private final Flags flags;
   private final Set<FileInfo> fileSet;
-  private final List<Class<? extends Module>> plugins;
+  private final List<Module> plugins;
   private final String serverAddress;
-  private final Class<? extends ResponsePrinterFactory> printerFactoryClass;
 
   public JsTestDriverModule(Flags flags,
                             Set<FileInfo> fileSet,
-                            List<Class<? extends Module>> plugins,
-                            String serverAddress,
-                            Class<? extends ResponsePrinterFactory> printerFactoryClass) {
+                            List<Module> plugins,
+                            String serverAddress) {
     this.flags = flags;
     this.fileSet = fileSet;
     this.plugins = plugins;
     this.serverAddress = serverAddress;
-    this.printerFactoryClass = printerFactoryClass;
   }
 
   @Override
   protected void configure() {
-    install(new ClientModule(System.out));
-    bind(ResponsePrinterFactory.class).to(printerFactoryClass);
     // TODO(corysmith): Change this to an actual class, so that we can JITI it.
     bind(new TypeLiteral<Set<FileInfo>>() {})
          .annotatedWith(Names.named("fileSet")).toInstance(fileSet);
@@ -69,14 +63,8 @@ public class JsTestDriverModule extends AbstractModule {
     install(new ActionFactoryModule());
 
     // install plugin modules.
-    for (Class<? extends Module> module : plugins) {
-      try {
-        install(module.newInstance());
-      } catch (InstantiationException e) {
-        throw new RuntimeException(e);
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException(e);
-      }
+    for (Module module : plugins) {
+      install(module);
     }
   }
 }
