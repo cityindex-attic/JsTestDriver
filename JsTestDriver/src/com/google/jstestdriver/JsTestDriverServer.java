@@ -15,16 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-
-import org.kohsuke.args4j.CmdLineException;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.jetty.servlet.ServletHolder;
-
 import java.io.File;
 import java.io.Reader;
 import java.util.LinkedHashSet;
@@ -34,6 +24,18 @@ import java.util.Observable;
 import java.util.Set;
 
 import javax.servlet.Servlet;
+
+import org.kohsuke.args4j.CmdLineException;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.servlet.ServletHandler;
+import org.mortbay.jetty.servlet.ServletHolder;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.jstestdriver.output.PrintStreamResponsePrinterFactory;
+import com.google.jstestdriver.output.XmlResponsePrinterFactory;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -135,8 +137,15 @@ public class JsTestDriverServer extends Observable {
         }
         serverAddress = String.format("http://%s:%d", "127.0.0.1", flags.getPort());
       }
+      // TODO(corysmith): move this to the same configuration class as the serverAddress
+      Class<? extends ResponsePrinterFactory> printerFactoryClass =
+          PrintStreamResponsePrinterFactory.class;
+      if (flags.getTestOutput().length() > 0) {
+        printerFactoryClass = XmlResponsePrinterFactory.class;
+      }
       Injector injector =
-          Guice.createInjector(new JsTestDriverModule(flags, fileSet, plugins, serverAddress));
+          Guice.createInjector(
+              new JsTestDriverModule(flags, fileSet, plugins, serverAddress, printerFactoryClass));
       injector.getInstance(ActionRunner.class).runActions();
     } catch (CmdLineException e) {
       System.err.println(e.getMessage());

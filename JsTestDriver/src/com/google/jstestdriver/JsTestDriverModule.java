@@ -37,30 +37,24 @@ public class JsTestDriverModule extends AbstractModule {
   private final Set<FileInfo> fileSet;
   private final List<Class<? extends Module>> plugins;
   private final String serverAddress;
+  private final Class<? extends ResponsePrinterFactory> printerFactoryClass;
 
   public JsTestDriverModule(Flags flags,
                             Set<FileInfo> fileSet,
                             List<Class<? extends Module>> plugins,
-                            String serverAddress) {
+                            String serverAddress,
+                            Class<? extends ResponsePrinterFactory> printerFactoryClass) {
     this.flags = flags;
     this.fileSet = fileSet;
     this.plugins = plugins;
     this.serverAddress = serverAddress;
+    this.printerFactoryClass = printerFactoryClass;
   }
 
   @Override
   protected void configure() {
     install(new ClientModule(System.out));
-    // install plugin modules.
-    for (Class<? extends Module> module : plugins) {
-      try {
-        install(module.newInstance());
-      } catch (InstantiationException e) {
-        throw new RuntimeException(e);
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException(e);
-      }
-    }
+    bind(ResponsePrinterFactory.class).to(printerFactoryClass);
     // TODO(corysmith): Change this to an actual class, so that we can JITI it.
     bind(new TypeLiteral<Set<FileInfo>>() {})
          .annotatedWith(Names.named("fileSet")).toInstance(fileSet);
@@ -73,5 +67,16 @@ public class JsTestDriverModule extends AbstractModule {
 
     install(new FlagsModule(flags));
     install(new ActionFactoryModule());
+
+    // install plugin modules.
+    for (Class<? extends Module> module : plugins) {
+      try {
+        install(module.newInstance());
+      } catch (InstantiationException e) {
+        throw new RuntimeException(e);
+      } catch (IllegalAccessException e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 }

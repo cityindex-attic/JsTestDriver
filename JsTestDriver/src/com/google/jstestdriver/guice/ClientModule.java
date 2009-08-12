@@ -22,7 +22,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 
 /**
- * Module that defines the configuration for a JsTestDriverClient.
+ * Module that defines the client command line configuration for a JsTestDriverClient.
  * @author corysmith
  *
  */
@@ -37,5 +37,6 @@ public class ClientModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(PrintStream.class).annotatedWith(Names.named("outputStream")).toInstance(out);
+    
   }
 }

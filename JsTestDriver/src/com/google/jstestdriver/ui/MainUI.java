@@ -19,23 +19,6 @@ import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.NORTH;
 import static java.awt.BorderLayout.SOUTH;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.jstestdriver.ActionFactory;
-import com.google.jstestdriver.ActionRunner;
-import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.ConfigurationParser;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.Flags;
-import com.google.jstestdriver.FlagsParser;
-import com.google.jstestdriver.JsTestDriverModule;
-import com.google.jstestdriver.ServerStartupAction;
-
-import org.apache.commons.logging.LogFactory;
-import org.kohsuke.args4j.CmdLineException;
-import org.mortbay.log.Slf4jLog;
-
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.Reader;
@@ -49,6 +32,24 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+
+import org.apache.commons.logging.LogFactory;
+import org.kohsuke.args4j.CmdLineException;
+import org.mortbay.log.Slf4jLog;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.jstestdriver.ActionFactory;
+import com.google.jstestdriver.ActionRunner;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.ConfigurationParser;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.Flags;
+import com.google.jstestdriver.FlagsParser;
+import com.google.jstestdriver.JsTestDriverModule;
+import com.google.jstestdriver.ServerStartupAction;
+import com.google.jstestdriver.output.PrintStreamResponsePrinterFactory;
 
 /**
  * Entry point for the Swing GUI of JSTestDriver.
@@ -106,8 +107,8 @@ public class MainUI {
     try {
       File config = new File(flags.getConfig());
       Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
-      String defaultServerAddress = "";
 
+      String serverAddress = null;
       if (flags.hasWork()) {
         if (!config.exists()) {
           throw new RuntimeException("Config file doesn't exist: " + flags.getConfig());
@@ -118,13 +119,22 @@ public class MainUI {
 
         configParser.parse();
         fileSet = configParser.getFilesList();
-        defaultServerAddress = configParser.getServer(); 
+        serverAddress = configParser.getServer();
+      }
+      serverAddress = flags.getServer() != null ? flags.getServer() : serverAddress;
+      if (serverAddress == null || serverAddress.length() == 0) {
+        if (flags.getPort() == -1) {
+          throw new RuntimeException("Oh Snap! No server defined!");
+        }
+        serverAddress = String.format("http://%s:%d", "127.0.0.1", flags.getPort());
       }
       Injector injector =
         Guice.createInjector(
             new JsTestDriverModule(flags,
                                    fileSet,
-                                   Collections.<Class<? extends Module>>emptyList(), null));
+                                   Collections.<Class<? extends Module>>emptyList(),
+                                   serverAddress,
+                                   PrintStreamResponsePrinterFactory.class));
       ActionFactory actionFactory = injector.getInstance(ActionFactory.class);
       actionFactory.registerListener(ServerStartupAction.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, statusBar);

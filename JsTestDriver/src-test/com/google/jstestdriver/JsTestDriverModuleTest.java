@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 
 import com.google.inject.Guice;
 import com.google.inject.Module;
+import com.google.jstestdriver.output.PrintStreamResponsePrinterFactory;
 
 /**
  * @author corysmith
@@ -33,6 +34,7 @@ public class JsTestDriverModuleTest extends TestCase {
     Guice.createInjector(new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
         Collections.<Class<? extends Module>>emptyList(),
-        "http://foo")).getInstance(ActionRunner.class);
+        "http://foo",
+        PrintStreamResponsePrinterFactory.class)).getInstance(ActionRunner.class);
   }
 }
