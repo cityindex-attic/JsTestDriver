@@ -33,7 +33,7 @@ public class ActionListProviderTest extends TestCase {
 
   public void testParseFlagsAndCreateActionQueue() throws Exception {
     List<String> browsers = Arrays.asList("browser");
-    ActionListProvider parser =
+    DefaultActionListProvider parser =
         createProvider(browsers, 9876, null, false, Collections.<String> emptyList());
     List<Action> actions = parser.get();
 
@@ -45,10 +45,10 @@ public class ActionListProviderTest extends TestCase {
     assertEquals(browsers, findAction(actions, BrowserStartupAction.class).getBrowserPath());
   }
 
-  private ActionListProvider createProvider(List<String> browsers,
+  private DefaultActionListProvider createProvider(List<String> browsers,
       int port, String serverAddress, boolean reset, List<String> tests) {
     ActionFactory actionFactory = new ActionFactory(null);
-    return new ActionListProvider(
+    return new DefaultActionListProvider(
         actionFactory,
         null,
         tests,
@@ -68,7 +68,7 @@ public class ActionListProviderTest extends TestCase {
 
   public void testParseWithServerAndReset() throws Exception {
     String serverAddress = "http://otherserver:8989";
-    ActionListProvider parser =
+    DefaultActionListProvider parser =
         createProvider(Arrays.asList("browser1"), -1, serverAddress, true, Collections
             .<String> emptyList());
 
@@ -97,7 +97,7 @@ public class ActionListProviderTest extends TestCase {
     browserPaths.add("browser");
     browserPaths.add("browser2");
     String serverAddress = "http://otherserver:8989";
-    ActionListProvider parser =
+    DefaultActionListProvider parser =
         createProvider(browserPaths, -1, serverAddress, false, Collections.<String> emptyList());
 
     List<Action> actions = parser.get();
@@ -109,7 +109,7 @@ public class ActionListProviderTest extends TestCase {
 
   public void testParseFlagsAndCreateTestActions() throws Exception {
     List<String> tests = Arrays.asList("foo.testBar");
-    ActionListProvider parser = createProvider(Arrays.asList("browser"), 9876, null, false, tests);
+    DefaultActionListProvider parser = createProvider(Arrays.asList("browser"), 9876, null, false, tests);
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);

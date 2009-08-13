@@ -30,12 +30,30 @@ import org.kohsuke.args4j.CmdLineParser;
  */
 public class FlagsParserTest extends TestCase {
   public void testParseList() throws Exception {
-    Flags flags = new FlagsParser().parseArgument(new String[]{"--tests", "foo bar baz"});
+    Flags flags = new FlagsParser().parseArgument(new String[]{"--tests", "foo,bar,baz"});
     assertEquals(Arrays.asList("foo", "bar", "baz"), flags.getTests());
   }
   public void testParseListWithSlash() throws Exception {
-    Flags flags = new FlagsParser().parseArgument(new String[]{"--browser", "/path/browser,beep"});
-    assertEquals(Arrays.asList("/path/browser", "beep"), flags.getBrowser());
+    Flags flags = new FlagsParser().parseArgument(new String[]{"--browser", "/path/browser,/beep"});
+    assertEquals(Arrays.asList("/path/browser", "/beep"), flags.getBrowser());
+  }
+  public void testParseListWithSlashAndComma() throws Exception {
+    Flags flags = new FlagsParser().parseArgument(new String[]{"--browser",
+        "open,/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome"});
+    assertEquals(Arrays.asList("open", "/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome"), flags.getBrowser());
+  }
+  public void testParseListWindowsOpts() throws Exception {
+    Flags flags = new FlagsParser().parseArgument(new String[]{"--browser",
+      "C:\\Program Files\\Mozilla Firefox\\firefox.exe," +
+      "C:\\Program Files\\Safari\\Safari.exe," +
+      "C:\\Program Files\\Internet Explorer\\iexplore.exe," +
+      "C:\\Documents and Settings\\Misko\\Local Settings" +
+      "\\Application Data\\Google\\Chrome\\Application\\chrome.exe"});
+    assertEquals(Arrays.asList("C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+      "C:\\Program Files\\Safari\\Safari.exe",
+      "C:\\Program Files\\Internet Explorer\\iexplore.exe",
+      "C:\\Documents and Settings\\Misko\\Local Settings" +
+      "\\Application Data\\Google\\Chrome\\Application\\chrome.exe"), flags.getBrowser());
   }
   public void testParseInteger() throws Exception {
     Flags flags = new FlagsParser().parseArgument(new String[]{"--port", "4504"});

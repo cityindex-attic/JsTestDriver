@@ -55,8 +55,7 @@ public class JsTestDriverModule extends AbstractModule {
 
     bind(String.class)
          .annotatedWith(Names.named("server")).toInstance(serverAddress);
-
-    // TODO(corysmith): Change this to an actual interface, so that we can JITI it.
+    
     bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
 
     install(new FlagsModule(flags));

@@ -51,7 +51,7 @@ public class FlagsParser {
   
     @Override
     public int parseArguments(Parameters params) throws CmdLineException {
-      setter.addValue(Arrays.asList(params.getParameter(0).split("(,|\\s)")));
+      setter.addValue(Arrays.asList(params.getParameter(0).split(",")));
       return 1;
     }
   }
