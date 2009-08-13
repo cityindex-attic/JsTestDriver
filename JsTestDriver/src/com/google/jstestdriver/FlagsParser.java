@@ -17,7 +17,7 @@
 package com.google.jstestdriver;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -51,7 +51,12 @@ public class FlagsParser {
   
     @Override
     public int parseArguments(Parameters params) throws CmdLineException {
-      setter.addValue(Arrays.asList(params.getParameter(0).split(",")));
+      String[] rawArgs = params.getParameter(0).split(",");
+      List<String> args = new ArrayList<String>(rawArgs.length);
+      for (String arg : rawArgs) {
+        args.add(arg.trim());
+      }
+      setter.addValue(args);
       return 1;
     }
   }

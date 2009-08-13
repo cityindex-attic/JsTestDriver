@@ -33,6 +33,10 @@ public class FlagsParserTest extends TestCase {
     Flags flags = new FlagsParser().parseArgument(new String[]{"--tests", "foo,bar,baz"});
     assertEquals(Arrays.asList("foo", "bar", "baz"), flags.getTests());
   }
+  public void testParseListTrailingWhiteSpace() throws Exception {
+    Flags flags = new FlagsParser().parseArgument(new String[]{"--tests", "foo, bar,\nbaz"});
+    assertEquals(Arrays.asList("foo", "bar", "baz"), flags.getTests());
+  }
   public void testParseListWithSlash() throws Exception {
     Flags flags = new FlagsParser().parseArgument(new String[]{"--browser", "/path/browser,/beep"});
     assertEquals(Arrays.asList("/path/browser", "/beep"), flags.getBrowser());
@@ -40,8 +44,10 @@ public class FlagsParserTest extends TestCase {
   public void testParseListWithSlashAndComma() throws Exception {
     Flags flags = new FlagsParser().parseArgument(new String[]{"--browser",
         "open,/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome"});
-    assertEquals(Arrays.asList("open", "/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome"), flags.getBrowser());
+    assertEquals(Arrays.asList("open", "/Applications/Google\\ Chrome.app/" +
+        "Contents/MacOS/Google\\ Chrome"), flags.getBrowser());
   }
+
   public void testParseListWindowsOpts() throws Exception {
     Flags flags = new FlagsParser().parseArgument(new String[]{"--browser",
       "C:\\Program Files\\Mozilla Firefox\\firefox.exe," +
