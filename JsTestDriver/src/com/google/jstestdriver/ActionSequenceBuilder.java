@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 
 /**
@@ -72,7 +73,7 @@ public class ActionSequenceBuilder {
   private void addBrowserControlActions(List<Action> actions) {
     if (!browsers.isEmpty()) {
       BrowserStartupAction browserStartupAction = new BrowserStartupAction(browsers,
-          remoteServerAddress);
+          remoteServerAddress, new SimpleProcessFactory(), new CountDownLatch(browsers.size()));
       capturedBrowsers.addObserver(browserStartupAction);
       actions.add(0, browserStartupAction);
       actions.add(new BrowserShutdownAction(browserStartupAction));

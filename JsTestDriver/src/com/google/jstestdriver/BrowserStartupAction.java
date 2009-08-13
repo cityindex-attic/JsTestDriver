@@ -15,9 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +22,9 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Starts a list of browsers when run.
@@ -37,11 +37,14 @@ public class BrowserStartupAction implements Action, Observer {
   private final List<String> browserPath;
   private final String serverAddress;
   private volatile List<Process> processes = new ArrayList<Process>();
+  private final ProcessFactory processFactory;
 
-  public BrowserStartupAction(List<String> browserPath, String serverAddress) {
+  public BrowserStartupAction(List<String> browserPath, String serverAddress,
+      ProcessFactory processFactory, CountDownLatch latch) {
     this.browserPath = browserPath;
     this.serverAddress = serverAddress;
-    latch = new CountDownLatch(browserPath.size());
+    this.processFactory = processFactory;
+    this.latch = latch;
   }
 
   public void run() {
@@ -49,11 +52,10 @@ public class BrowserStartupAction implements Action, Observer {
       String url = String.format("%s/capture", serverAddress);
 
       for (String browser : browserPath) {
-        ProcessBuilder builder = new ProcessBuilder(browser, url);
         try {
-          processes.add(builder.start());
+          processes.add(processFactory.start(browser, url));
         } catch (IOException e) {
-          logger.error("Could not start: %s because %s", e, browser);
+          logger.error("Could not start: {} because {}", browser, e.toString());
         }
       }
       if (!latch.await(30, TimeUnit.SECONDS)) {
@@ -67,7 +69,7 @@ public class BrowserStartupAction implements Action, Observer {
         }
       }
     } catch (InterruptedException e) {
-      logger.error("Error in starting browsers: %s", e);
+      logger.error("Error in starting browsers: {}", e.toString());
     }
   }
 
