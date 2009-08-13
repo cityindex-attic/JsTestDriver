@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class BrowserStartupAction implements Action, Observer {
 
-  private static final Logger logger = LoggerFactory.getLogger(BrowserStartupAction.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(BrowserStartupAction.class);
   private final CountDownLatch latch;
   private final List<String> browserPath;
   private final String serverAddress;
@@ -50,8 +50,11 @@ public class BrowserStartupAction implements Action, Observer {
 
       for (String browser : browserPath) {
         ProcessBuilder builder = new ProcessBuilder(browser, url);
-
-        processes.add(builder.start());
+        try {
+          processes.add(builder.start());
+        } catch (IOException e) {
+          logger.error("Could not start: %s because %s", e, browser);
+        }
       }
       if (!latch.await(30, TimeUnit.SECONDS)) {
         long count = latch.getCount();
@@ -64,9 +67,7 @@ public class BrowserStartupAction implements Action, Observer {
         }
       }
     } catch (InterruptedException e) {
-      
-    } catch (IOException e) {
-      
+      logger.error("Error in starting browsers: %s", e);
     }
   }
 

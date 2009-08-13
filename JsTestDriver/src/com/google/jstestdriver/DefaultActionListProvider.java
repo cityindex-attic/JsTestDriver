@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
 
@@ -30,6 +31,7 @@ import java.util.Set;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  * @author corysmith@google.com (Cory Smith)
  */
+@Singleton
 public class DefaultActionListProvider implements ActionListProvider {
 
   private final ActionFactory actionFactory;

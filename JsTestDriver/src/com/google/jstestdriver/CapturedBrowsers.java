@@ -61,4 +61,9 @@ public class CapturedBrowsers extends Observable {
   public void removeSlave(String id) {
     slaves.remove(id);
   }
+  
+  @Override
+  public String toString() {
+    return String.format("CapturedBrowsers(%s)", slaves);
+  }
 }

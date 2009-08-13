@@ -37,6 +37,7 @@ public class ThreadedActionsRunner implements Action {
   }
 
   public void run() {
+    
     Collection<BrowserInfo> browsers = client.listBrowsers();
     int browsersNumber = browsers.size();
 

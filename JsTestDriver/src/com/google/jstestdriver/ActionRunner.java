@@ -18,12 +18,16 @@ package com.google.jstestdriver;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Inject;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class ActionRunner {
+  private static final Logger logger = LoggerFactory.getLogger(ActionRunner.class);
 
   private final List<Action> actions;
 
@@ -37,6 +41,7 @@ public class ActionRunner {
 
     while (iterator.hasNext()) {
       Action action = iterator.next();
+      logger.debug("Running %s", action);
 
       action.run();
     }

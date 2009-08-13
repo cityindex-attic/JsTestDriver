@@ -19,11 +19,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class ServerStartupAction implements ObservableAction {
-
+  private static final Logger logger = LoggerFactory.getLogger(ServerStartupAction.class);
   private final int port;
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache preloadedFilesCache;
@@ -42,6 +45,7 @@ public class ServerStartupAction implements ObservableAction {
   }
 
   public void run() {
+    logger.debug("Starting server...");
     server = new JsTestDriverServer(port, capturedBrowsers, preloadedFilesCache);
     for (Observer o : observerList) {
       server.addObserver(o);
