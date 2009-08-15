@@ -31,7 +31,8 @@ import com.google.jstestdriver.TestXmlSerializer;
 import com.google.jstestdriver.XmlPrinter;
 
 /**
- *  Provides a printer that prints the responses to an xml file that JUnit understands.
+ * Provides a printer that prints the responses to an xml file that JUnit understands.
+ * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  * @author corysmith@google.com (Cory Smith)
  */

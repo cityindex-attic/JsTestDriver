@@ -39,9 +39,9 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
         responsePrinterFactory.getResponsePrinter(String.format("TEST-%s.xml", testSuiteName));
 
     printer.open(testSuiteName);
-    
     RunTestsActionResponseStream responseStream = new RunTestsActionResponseStream(
         new TestResultGenerator(), printer);
+
     return responseStream;
   }
 

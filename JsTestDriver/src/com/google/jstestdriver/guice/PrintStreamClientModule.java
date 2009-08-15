@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver.guice;
 
-import java.io.PrintStream;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.ResponsePrinterFactory;
-import com.google.jstestdriver.output.XmlResponsePrinterFactory;
+import com.google.jstestdriver.output.PrintStreamResponsePrinterFactory;
+
+import java.io.PrintStream;
 
 
 /**
@@ -38,6 +38,6 @@ public class PrintStreamClientModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(PrintStream.class).annotatedWith(Names.named("outputStream")).toInstance(out);
-    bind(ResponsePrinterFactory.class).to(XmlResponsePrinterFactory.class);
+    bind(ResponsePrinterFactory.class).to(PrintStreamResponsePrinterFactory.class);
   }
 }

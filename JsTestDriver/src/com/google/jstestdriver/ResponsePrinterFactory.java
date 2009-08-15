@@ -15,15 +15,10 @@
  */
 package com.google.jstestdriver;
 
-
-
-/*
- * *
- * 
+/**
  * @author corysmith
  */
 public interface ResponsePrinterFactory {
 
   public abstract TestResultPrinter getResponsePrinter(String xmlFile);
-
 }

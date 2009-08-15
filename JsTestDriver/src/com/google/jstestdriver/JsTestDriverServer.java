@@ -76,7 +76,6 @@ public class JsTestDriverServer extends Observable {
     addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesCache));
     addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/", new HomeServlet(capturedBrowsers));
-    
     addServlet("/*", new ForwardingServlet(forwardingMapper));
   }
 
@@ -150,8 +149,8 @@ public class JsTestDriverServer extends Observable {
         modules.add(new PrintStreamClientModule(System.out));
       }
       Injector injector =
-          Guice.createInjector(
-              new JsTestDriverModule(flags, fileSet, modules, serverAddress));
+          Guice.createInjector(new JsTestDriverModule(flags, fileSet, modules, serverAddress));
+
       injector.getInstance(ActionRunner.class).runActions();
     } catch (CmdLineException e) {
       System.err.println(e.getMessage());

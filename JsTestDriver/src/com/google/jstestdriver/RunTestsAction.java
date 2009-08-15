@@ -35,7 +35,8 @@ public class RunTestsAction extends ThreadedAction {
   @Override
   public void run(String id, JsTestDriverClient client) {
     ResponseStream runTestsActionResponseStream =
-        responseStreamFactory.getRunTestsActionResponseStream(id);
+          responseStreamFactory.getRunTestsActionResponseStream(id);
+
     if (tests.size() == 1 && tests.get(0).equals("all")) {
       client.runAllTests(id, runTestsActionResponseStream, captureConsole);
     } else if (tests.size() > 0) {

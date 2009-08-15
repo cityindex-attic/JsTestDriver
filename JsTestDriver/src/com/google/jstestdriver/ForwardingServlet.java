@@ -56,10 +56,14 @@ public class ForwardingServlet extends ProxyServlet.Transparent {
   @Override
   protected URL proxyHttpURL(String scheme, String serverName, int serverPort, String uri)
       throws MalformedURLException {
-    HttpServletRequest request = threadLocal.get();
+    if (!uri.equals("/favicon.ico")) {
+      HttpServletRequest request = threadLocal.get();
 
-    return getForwardingUrl(scheme, serverName, serverPort, uri, request.getParameter("jstdid"),
-        request.getHeader("Referer"));
+      return getForwardingUrl(scheme, serverName, serverPort, uri, request.getParameter("jstdid"),
+          request.getHeader("Referer"));
+    } else {
+      return super.proxyHttpURL(scheme, serverName, serverPort, uri);
+    }
   }
 
   public URL getForwardingUrl(String scheme, String serverName, int serverPort, String uri,
