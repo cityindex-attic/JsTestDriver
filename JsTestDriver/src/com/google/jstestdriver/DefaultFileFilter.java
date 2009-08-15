@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class DefaultFileFilter implements JsTestDriverFileFilter {
+
   public String filterFile(String content, boolean reload) {
     return content;
   }

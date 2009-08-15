@@ -56,5 +56,13 @@ public class URLQueryParserTest extends TestCase {
     } catch (NullPointerException e) {
       fail("Exception was thrown when nothing should have happen");
     }
-  }  
+  }
+
+  public void testQuestionMark() throws Exception {
+    URLQueryParser parser = new URLQueryParser("/somestuff/?key1=value1&key2=value2");
+
+    parser.parse();
+    assertEquals("value1", parser.getParameter("key1"));
+    assertEquals("value2", parser.getParameter("key2"));    
+  }
 }

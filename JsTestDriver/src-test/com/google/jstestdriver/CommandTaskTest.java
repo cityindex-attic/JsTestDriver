@@ -15,7 +15,14 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.Gson;
+import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
+import com.google.jstestdriver.JsonCommand.CommandType;
+
+import junit.framework.TestCase;
+
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -23,13 +30,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import junit.framework.TestCase;
-
-import com.google.gson.Gson;
-import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
-import com.google.jstestdriver.JsonCommand.CommandType;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -189,7 +189,7 @@ public class CommandTaskTest extends TestCase {
       expected.put(file, contents);
     }
 
-    public List<FileInfo> loadFiles(Set<FileInfo> filesToLoad, boolean shouldReset) {
+    public List<FileInfo> loadFiles(Collection<FileInfo> filesToLoad, boolean shouldReset) {
       List<FileInfo> loaded = new LinkedList<FileInfo>();
       for (FileInfo info : filesToLoad) {
         assertTrue("File " + info + " was not found in " + expected.keySet(), expected

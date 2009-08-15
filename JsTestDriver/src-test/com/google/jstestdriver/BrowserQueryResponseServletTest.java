@@ -44,7 +44,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
     slave.createCommand(data);
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers);
+    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
 
     servlet.service(id, null, null, null, writer);
     assertEquals(data, out.toString());
@@ -56,7 +56,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo());
 
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers);
+    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
     slave.createCommand("awaitingResponse");
     slave.dequeueCommand();
     slave.createCommand("BrowserCommand");
@@ -85,7 +85,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
     slave.setDequeueTimeout(0L, TimeUnit.NANOSECONDS);
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers);
+    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
 
     servlet.service(id, null, null, null, writer);
     assertEquals("noop", out.toString());
@@ -100,7 +100,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
     slave.createCommand(data);
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers);
+    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
 
     servlet.service(id, null, null, null, writer);
     assertEquals(42L, slave.getLastHeartBeat().getMillis());
@@ -108,7 +108,8 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
   public void testBrowserIsNotSlave() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(capturedBrowsers);
+    BrowserQueryResponseServlet servlet =
+        new BrowserQueryResponseServlet(capturedBrowsers, null, null);
 
     servlet.service("1", null, "response", "", writer);
     assertEquals(0, out.toString().length());
@@ -120,7 +121,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo());
 
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers);
+    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
     slave.createCommand("awaitingResponse");
     slave.dequeueCommand();
     slave.createCommand("BrowserCommand");
@@ -145,7 +146,8 @@ public class BrowserQueryResponseServletTest extends TestCase {
     SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo());
 
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers);
+    BrowserQueryResponseServlet servlet =
+        new BrowserQueryResponseServlet(browsers, null, new ForwardingMapper());
     List<FileResult> fileResults = new LinkedList<FileResult>();
 
     fileResults.add(new FileResult(new FileSource("/test/filename1.js", 123), true, ""));

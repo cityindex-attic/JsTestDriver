@@ -19,10 +19,10 @@ jstestdriver.plugins.FileLoaderPlugin = function(scriptLoader, stylesheetLoader)
 };
 
 
-jstestdriver.plugins.FileLoaderPlugin.prototype.loadSource = function(file, onSourceLoaded) {  
-  if (file.fileSrc.match(/\.js$/)) {
-    this.scriptLoader_.load(file, onSourceLoaded);
-  } else if (file.fileSrc.match(/\.css$/)) {
+jstestdriver.plugins.FileLoaderPlugin.prototype.loadSource = function(file, onSourceLoaded) {
+  if (file.fileSrc.match(/\.css$/)) {
     this.stylesheetLoader_.load(file, onSourceLoaded);
+  } else {
+    this.scriptLoader_.load(file, onSourceLoaded);
   }
 };

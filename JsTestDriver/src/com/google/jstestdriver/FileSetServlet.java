@@ -40,12 +40,12 @@ import javax.servlet.http.HttpServletResponse;
 public class FileSetServlet extends HttpServlet implements Observer {
 
   private static final long serialVersionUID = -5224290018208979639L;
-
   private static final int HEARTBEAT_TIMEOUT = 2000;
 
-  private final Gson gson = new Gson();
-  private final CapturedBrowsers capturedBrowsers;
+  private final Gson gson = new Gson();  
   private final Map<String, Lock> locks = new ConcurrentHashMap<String, Lock>();
+
+  private final CapturedBrowsers capturedBrowsers;
 
   // Shared with the TestResourceServlet
   private final FilesCache filesCache;

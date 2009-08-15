@@ -16,10 +16,12 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.SlaveBrowser.CommandResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,10 +34,17 @@ public class CommandServlet extends HttpServlet {
 
   private static final long serialVersionUID = 7210927357890630427L;
 
-  private final CapturedBrowsers capturedBrowsers;
+  private final Gson gson = new Gson();
 
-  public CommandServlet(CapturedBrowsers browsers) {
+  private final CapturedBrowsers capturedBrowsers;
+  private final URLTranslator urlTranslator;
+  private final ForwardingMapper forwardingMapper;
+
+  public CommandServlet(CapturedBrowsers browsers, URLTranslator urlTranslator,
+      ForwardingMapper forwardingMapper) {
     this.capturedBrowsers = browsers;
+    this.urlTranslator = urlTranslator;
+    this.forwardingMapper = forwardingMapper;
   }
 
   @Override
@@ -59,15 +68,51 @@ public class CommandServlet extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    service(req.getParameter("id"), req.getParameter("data"), resp.getWriter());
+    service(req.getParameter("id"), req.getParameter("data"));
   }
 
   public String listBrowsers() {
-    return new Gson().toJson(capturedBrowsers.getBrowsers());
+    return gson.toJson(capturedBrowsers.getBrowsers());
   }
 
-  public void service(String id, String data, PrintWriter writer) {
+  public void service(String id, String data) {
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
+
+    data = translateUrls(data);
     browser.createCommand(data);
+  }
+
+  private String translateUrls(String data) {
+    JsonCommand command = gson.fromJson(data, JsonCommand.class);
+
+    if (command.getCommand().equals(JsonCommand.CommandType.LOADTEST.getCommand())) {
+      List<String> parameters = command.getParameters();
+      String fileSourcesList = parameters.get(0);
+      List<FileSource> fileSources =
+          gson.fromJson(fileSourcesList, new TypeToken<List<FileSource>>() {}.getType());
+
+      for (FileSource fileSource : fileSources) {
+        String url = fileSource.getFileSrc();
+
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+          String translation = urlTranslator.getTranslation(url);
+
+          if (translation == null) {
+            urlTranslator.translate(url);
+            translation = urlTranslator.getTranslation(url);
+            URLQueryParser parser = new URLQueryParser(translation);
+
+            parser.parse();
+            forwardingMapper.addForwardingMapping(parser.getParameter("jstdid"), url);
+          }
+          fileSource.setBasePath(url);
+          fileSource.setFileSource(translation);
+        }
+      }
+      parameters.remove(0);
+      parameters.add(0, gson.toJson(fileSources));
+      return gson.toJson(command);
+    }
+    return data;
   }
 }

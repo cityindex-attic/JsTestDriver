@@ -23,7 +23,6 @@ import java.util.List;
 public class JsonCommand {
 
   public enum CommandType {
-    LOADLIBRARIES("loadLibraries"),
     EXECUTE("execute"),
     RUNALLTESTS("runAllTests"),
     RUNTESTS("runTests"),

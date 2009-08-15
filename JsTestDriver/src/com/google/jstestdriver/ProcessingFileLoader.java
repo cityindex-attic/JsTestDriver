@@ -16,13 +16,14 @@
 
 package com.google.jstestdriver;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import com.google.inject.Inject;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A simple loader for files.
@@ -45,7 +46,7 @@ public class ProcessingFileLoader implements FileLoader {
     this.preProcessors = preProcessors;
   }
 
-  public List<FileInfo> loadFiles(Set<FileInfo> filesToLoad, boolean shouldReset) {
+  public List<FileInfo> loadFiles(Collection<FileInfo> filesToLoad, boolean shouldReset) {
     List<FileInfo> loadedFiles = new LinkedList<FileInfo>();
     for (FileInfo file : preProcessFiles(filesToLoad)) {
       StringBuilder fileContent = new StringBuilder();
@@ -76,7 +77,7 @@ public class ProcessingFileLoader implements FileLoader {
     return processed;
   }
   
-  private List<FileInfo> preProcessFiles(Set<FileInfo> filesToLoad) {
+  private List<FileInfo> preProcessFiles(Collection<FileInfo> filesToLoad) {
     List<FileInfo> files = new LinkedList<FileInfo>(filesToLoad);
     for (FileLoadPreProcessor processor : preProcessors) {
       files = processor.process(files);

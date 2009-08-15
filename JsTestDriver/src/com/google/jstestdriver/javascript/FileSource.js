@@ -13,7 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.FileSource = function(fileSrc, timestamp) {
+jstestdriver.FileSource = function(fileSrc, timestamp, basePath) {
   this.fileSrc = fileSrc;
   this.timestamp = timestamp;
+  this.basePath = basePath;
 };

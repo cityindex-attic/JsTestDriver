@@ -59,6 +59,9 @@ public class JsTestDriverServer extends Observable {
   }
 
   private void initServlets() {
+    URLTranslator urlTranslator = new URLTranslator(new UUIDIdGenerator());
+    ForwardingMapper forwardingMapper = new ForwardingMapper();
+
     addServlet("/hello", new HelloServlet());
     addServlet("/heartbeat", new HeartbeatServlet(capturedBrowsers, new TimeImpl()));
     addServlet("/capture", new CaptureServlet(new BrowserHunter(capturedBrowsers)));
@@ -67,13 +70,14 @@ public class JsTestDriverServer extends Observable {
             SlaveResourceService.RESOURCE_LOCATION)));
     addServlet("/slave/*", new SlaveResourceServlet(new SlaveResourceService(
         SlaveResourceService.RESOURCE_LOCATION)));
-    addServlet("/cmd", new CommandServlet(capturedBrowsers));
-    addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers));
-
-    addServlet("/test/*", new TestResourceServlet(filesCache));
+    addServlet("/cmd", new CommandServlet(capturedBrowsers, urlTranslator, forwardingMapper));
+    addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers, urlTranslator,
+        forwardingMapper));
     addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesCache));
+    addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/", new HomeServlet(capturedBrowsers));
-    addServlet("/*", new ForwardingServlet(new ForwardingMapper()));
+    
+    addServlet("/*", new ForwardingServlet(forwardingMapper));
   }
 
   private void addServlet(String url, Servlet servlet) {

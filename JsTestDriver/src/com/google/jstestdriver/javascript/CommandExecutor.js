@@ -57,7 +57,6 @@ jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager, t
   this.boundOnFileLoaded_ = jstestdriver.bind(this, this.onFileLoaded);
   this.boundOnFileLoadedRunnerMode_ = jstestdriver.bind(this, this.onFileLoadedRunnerMode);
   this.commandMap_ = {
-      loadLibraries: jstestdriver.bind(this, this.loadLibraries),
       execute: jstestdriver.bind(this, this.execute),
       runAllTests: jstestdriver.bind(this, this.runAllTests),
       runTests: jstestdriver.bind(this, this.runTests),

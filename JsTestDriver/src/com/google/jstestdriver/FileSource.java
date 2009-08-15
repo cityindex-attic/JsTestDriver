@@ -42,8 +42,20 @@ public class FileSource {
 
   public String getBasePath() {
     if (basePath == null) {
-      basePath = fileSrc.substring(6);
+      if (fileSrc.startsWith("/test/")) {
+        basePath = fileSrc.substring(6);
+      } else {
+        basePath = fileSrc;
+      }
     }
     return basePath;
+  }
+
+  public void setFileSource(String fileSrc) {
+    this.fileSrc = fileSrc;
+  }
+
+  public void setBasePath(String basePath) {
+    this.basePath = basePath;
   }
 }

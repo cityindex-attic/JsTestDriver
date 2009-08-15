@@ -15,26 +15,35 @@
  */
 package com.google.jstestdriver;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  *
  */
-public class ForwardingMapper {
+public class URLTranslator {
 
-  private final Map<String, String> forwardingMap = new HashMap<String, String>();
+  private final BiMap<String, String> cache = HashBiMap.create();
+  private final IdGenerator idGenerator;
 
-  public void addForwardingMapping(String id, String forwardTo) {
-    forwardingMap.put(id, forwardTo);
+  public URLTranslator(IdGenerator idGenerator) {
+    this.idGenerator = idGenerator;
   }
 
-  public String getForwardTo(String url) {
-    return forwardingMap.get(url);
+  public void translate(String url) {
+    cache.put(url, "/?jstdid=" + idGenerator.generate());
+  }
+
+  public String getTranslation(String url) {
+    return cache.get(url);
+  }
+
+  public String getOriginal(String translatedUrl) {
+    return cache.inverse().get(translatedUrl);
   }
 
   public void clear() {
-    forwardingMap.clear();
+    cache.clear();
   }
 }

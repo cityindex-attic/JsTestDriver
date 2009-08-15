@@ -127,9 +127,10 @@ jstestdriver.PluginRegistrar.prototype.getIndexOfPlugin_ = function(name) {
  * files.
  * 
  * loadSource takes 2 parameters:
- *  - file: A file object defined as -> { fileSrc: string, timestamp: number }
+ *  - file: A file object defined as -> { fileSrc: string, timestamp: number, basePath: string }
  *    fileSrc is the name of the file
  *    timestamp is the last modified date of the file
+ *    basePath is defined if the file is a URL and the URL has been rewritten
  *  - onSourceLoad: A callback that must be called once the file has been loaded the callback takes
  *    1 parameter defined as -> { file: file object, success: boolean, message: string }
  *    file: A file object

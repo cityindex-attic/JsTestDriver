@@ -15,20 +15,20 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.Gson;
+import com.google.inject.AbstractModule;
+
+import junit.framework.TestCase;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import junit.framework.TestCase;
-
-import com.google.gson.Gson;
-import com.google.inject.AbstractModule;
 
 /**
  * Tests for {@link com.google.jstestdriver.IDEPluginActionBuilder}
@@ -111,7 +111,7 @@ public class IDEPluginActionBuilderTest extends TestCase {
   
   static class MyFileLoader implements FileLoader {
 
-    public List<FileInfo> loadFiles(Set<FileInfo> filesToLoad, boolean shouldReset) {
+    public List<FileInfo> loadFiles(Collection<FileInfo> filesToLoad, boolean shouldReset) {
       return new LinkedList<FileInfo>(filesToLoad);
     }
   }

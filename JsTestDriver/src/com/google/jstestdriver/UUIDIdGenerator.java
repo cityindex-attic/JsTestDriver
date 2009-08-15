@@ -15,18 +15,15 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.ImplementedBy;
-
-import java.util.Collection;
-import java.util.List;
+import java.util.UUID;
 
 /**
- * Defines the interface for all FileLoaders. Used by JsTestDriver to load files from disk.
- * Separated to allow easy mocking.
- * @author corysmith
+ * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  *
  */
-@ImplementedBy(ProcessingFileLoader.class)
-public interface FileLoader {
-  public List<FileInfo> loadFiles(Collection<FileInfo> filesToLoad, boolean shouldReset);
+public class UUIDIdGenerator implements IdGenerator {
+
+  public String generate() {
+    return UUID.randomUUID().toString();
+  }
 }

@@ -33,14 +33,20 @@ public class BrowserQueryResponseServlet extends HttpServlet {
 
   private static final long serialVersionUID = 995720234973219411L;
 
+  /** for something completely unrelated see: http://noop.googlecode.com/ */
   private static final String NOOP = "noop";
 
   private final Gson gson = new Gson();
 
   private final CapturedBrowsers browsers;
+  private final URLTranslator urlTranslator;
+  private final ForwardingMapper forwardingMapper;
 
-  public BrowserQueryResponseServlet(CapturedBrowsers browsers) {
+  public BrowserQueryResponseServlet(CapturedBrowsers browsers, URLTranslator urlTranslator,
+      ForwardingMapper forwardingMapper) {
     this.browsers = browsers;
+    this.urlTranslator = urlTranslator;
+    this.forwardingMapper = forwardingMapper;
   }
 
   @Override
@@ -68,6 +74,8 @@ public class BrowserQueryResponseServlet extends HttpServlet {
               FileSource fileSource = fileResult.getFileSource();
 
               if (fileResult.isSuccess()) {
+                String filePath = fileSource.getFileSrc();
+
                 fileInfos.add(new FileInfo(fileSource.getBasePath(), fileSource.getTimestamp(),
                     false, false, null));
               } else {
@@ -79,6 +87,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
               browser.removeFiles(errorFiles);
             }
           }
+          forwardingMapper.clear();
         }
         boolean isLast = done != null;
 
@@ -93,11 +102,11 @@ public class BrowserQueryResponseServlet extends HttpServlet {
 
       if (start != null) {
         browser.resetFileSet();
+        urlTranslator.clear();
         Command commandRunning = browser.getCommandRunning();
 
         if (commandRunning != null) {
-          JsonCommand jsonCommand =
-            gson.fromJson(commandRunning.getCommand(), JsonCommand.class);
+          JsonCommand jsonCommand = gson.fromJson(commandRunning.getCommand(), JsonCommand.class);
 
           if (jsonCommand.getCommand().equals(JsonCommand.CommandType.RESET.getCommand())) {
             command = browser.getLastDequeuedCommand();

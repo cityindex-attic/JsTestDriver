@@ -33,29 +33,42 @@ public class URLQueryParser {
   private final String query;
   private final Map<String, String> parameters = new HashMap<String, String>();
 
+  private boolean parsed = false;
+
   public URLQueryParser(String query) {
     this.query = query;
   }
 
   public void parse() {
-    if (query == null) {
-      return;
-    }
-    String[] pairs = query.split("&");
-
-    for (String pair : pairs) {
-      String[] keyValue = pair.split("=", 2);
-      String key = "";
-      String value = "";
-
-      try {
-        key = URLDecoder.decode(keyValue[0], "UTF-8");
-        value = keyValue.length == 2 ? URLDecoder.decode(keyValue[1], "UTF-8") : "";
-
-        parameters.put(key, value);
-      } catch (UnsupportedEncodingException e) {
-        LOGGER.warn("Could not decode: [ " + key + ", " + value + " ]", e);
+    if (!parsed) {
+      if (query == null) {
+        parsed = true;
+        return;
       }
+      String queryString = query;
+
+      int indexOf = query.indexOf("?");
+
+      if (indexOf != -1) {
+        queryString = query.substring(indexOf + 1);
+      }
+      String[] pairs = queryString.split("&");
+
+      for (String pair : pairs) {
+        String[] keyValue = pair.split("=", 2);
+        String key = "";
+        String value = "";
+
+        try {
+          key = URLDecoder.decode(keyValue[0], "UTF-8");
+          value = keyValue.length == 2 ? URLDecoder.decode(keyValue[1], "UTF-8") : "";
+
+          parameters.put(key, value);
+        } catch (UnsupportedEncodingException e) {
+          LOGGER.warn("Could not decode: [ " + key + ", " + value + " ]", e);
+        }
+      }
+      parsed = true;
     }
   }
 

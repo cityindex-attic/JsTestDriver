@@ -40,48 +40,11 @@ public class ForwardingServlet extends ProxyServlet.Transparent {
     this.forwardingMapper = forwardingMapper;
   }
 
-//  private static class HttpServletRequestWrapperCustomReferer extends HttpServletRequestWrapper {
-//
-//    private final String customReferer;
-//    private final String host;
-//
-//    public HttpServletRequestWrapperCustomReferer(HttpServletRequest request,
-//        String customReferer, String host) {
-//      super(request);
-//      this.customReferer = customReferer;
-//      this.host = host;
-//    }
-//
-//    @Override
-//    public String getHeader(String name) {
-//      if (name.equals("Referer") || name.equals("referer")) {
-//        return customReferer;
-//      }
-//      if (name.equals("Host") || name.equals("host")) {
-//        return host;
-//      }
-//      return super.getHeader(name);
-//    }
-//  }
-
   @Override
   public void service(ServletRequest req, ServletResponse resp) throws ServletException,
       IOException {
     try {
       HttpServletRequest request = (HttpServletRequest) req;
-//      String uri=request.getRequestURI();
-//
-//      if (request.getQueryString()!=null) {
-//        uri += "?"+request.getQueryString();
-//      }
-//      String referer = request.getHeader("Referer");
-//
-//      URL forwardingUrl =
-//          getForwardingUrl(request.getScheme(), request.getServerName(), request.getServerPort(),
-//              uri, request.getParameter("jstdid"), referer);
-//      HttpServletRequest wrappedRequest =
-//          new HttpServletRequestWrapperCustomReferer(request, transformReferer(forwardingUrl,
-//              referer), forwardingUrl.getAuthority());
 
       threadLocal.set(request);
       super.service(req, resp);
@@ -90,31 +53,9 @@ public class ForwardingServlet extends ProxyServlet.Transparent {
     }
   }
 
-//  private String transformReferer(URL forwardingUrl, String referer) throws MalformedURLException {
-//    if (referer == null) {
-//      return null;
-//    }
-//    URL refererUrl = new URL(referer);
-//    StringBuilder sb = new StringBuilder();
-//
-//    sb.append(forwardingUrl.getProtocol());
-//    sb.append("://");
-//    sb.append(forwardingUrl.getHost());
-//    int port = refererUrl.getPort();
-//
-//    if (port != -1) {
-//      sb.append(":");
-//      sb.append(Integer.toString(port));
-//    }
-//    sb.append(refererUrl.getFile());
-//
-//    return sb.toString();
-//  }
-
   @Override
   protected URL proxyHttpURL(String scheme, String serverName, int serverPort, String uri)
       throws MalformedURLException {
-//    return threadLocal.get();
     HttpServletRequest request = threadLocal.get();
 
     return getForwardingUrl(scheme, serverName, serverPort, uri, request.getParameter("jstdid"),
@@ -123,11 +64,10 @@ public class ForwardingServlet extends ProxyServlet.Transparent {
 
   public URL getForwardingUrl(String scheme, String serverName, int serverPort, String uri,
       String jstdid, String referer) throws MalformedURLException {
-    String incomingUrl = String.format("%s://%s:%d%s", scheme, serverName, serverPort, uri);
-
     if (jstdid != null) {
       return new URL(forwardingMapper.getForwardTo(jstdid));
     }
+    String incomingUrl = String.format("%s://%s:%d%s", scheme, serverName, serverPort, uri);
     URL refererUrl = new URL(referer);
     URLQueryParser urlQueryParser = new URLQueryParser(refererUrl.getQuery());
 

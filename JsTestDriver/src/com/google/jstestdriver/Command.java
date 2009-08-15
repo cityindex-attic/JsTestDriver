@@ -15,8 +15,6 @@
  */
 package com.google.jstestdriver;
 
-// import java.util.concurrent.CountDownLatch;
-
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */

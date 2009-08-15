@@ -51,6 +51,7 @@
     <pathelement location="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
     <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
     <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
+  	<pathelement location="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
   </path>
   
   <path id="emma">
@@ -252,6 +253,7 @@
       <zipfileset src="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
       <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
       <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
+    	<zipfileset src="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
       <fileset dir="${obj.dir}/">
         <include name="${javascript-resources}/jstestdrivernamespace.js" />
         <include name="${javascript-resources}/runner.js" />

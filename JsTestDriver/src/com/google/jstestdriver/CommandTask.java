@@ -115,9 +115,8 @@ public class CommandTask {
     String postResult = server.post(baseUrl + "/fileSet", fileSetParams);
 
     if (postResult.length() > 0) {
-      Collection<FileInfo> filesToUpload = gson.fromJson(postResult,
-          new TypeToken<Collection<FileInfo>>() {
-          }.getType());
+      Collection<FileInfo> filesToUpload =
+          gson.fromJson(postResult, new TypeToken<Collection<FileInfo>>() {}.getType());
       boolean shouldReset = sameFiles(filesToUpload, fileSet);
       Set<FileInfo> finalFilesToUpload = new LinkedHashSet<FileInfo>();
 
@@ -135,27 +134,27 @@ public class CommandTask {
           finalFilesToUpload.addAll(findDependencies(file));
         }
       }
-      List<FileInfo> loadedfiles = fileLoader.loadFiles(finalFilesToUpload, shouldReset);
-
+      List<FileInfo> loadedfiles = fileLoader.loadFiles(filesToUpload, shouldReset);
       Map<String, String> uploadFileParams = new LinkedHashMap<String, String>();
+
       uploadFileParams.put("id", params.get("id"));
       uploadFileParams.put("data", gson.toJson(loadedfiles));
       server.post(baseUrl + "/fileSet", uploadFileParams);
-
       List<FileSource> filesSrc = new LinkedList<FileSource>(filterFilesToLoad(finalFilesToUpload));
       int numberOfFilesToLoad = filesSrc.size();
+
       for (int i = 0; i < numberOfFilesToLoad; i += CHUNK_SIZE) {
         int chunkEndIndex = Math.min(i + CHUNK_SIZE, numberOfFilesToLoad);
         List<String> loadParameters = new LinkedList<String>();
         List<FileSource> filesToLoad = filesSrc.subList(i, chunkEndIndex);
+
         loadParameters.add(gson.toJson(filesToLoad));
         loadParameters.add("false");
         JsonCommand cmd = new JsonCommand(CommandType.LOADTEST, loadParameters);
-
         Map<String, String> loadFileParams = new LinkedHashMap<String, String>();
+
         loadFileParams.put("id", params.get("id"));
         loadFileParams.put("data", gson.toJson(cmd));
-
         server.post(baseUrl + "/cmd", loadFileParams);
         String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
@@ -179,6 +178,7 @@ public class CommandTask {
 
   private Collection<FileInfo> findDependencies(FileInfo file) {
     List<FileInfo> deps = new LinkedList<FileInfo>();
+
     // TODO(jeremiele): replace filter with a plugin
     for (String fileName : filter.resolveFilesDeps(file.getFileName())) {
       deps.add(new FileInfo(fileName, new File(fileName).lastModified(), false, false, null));
