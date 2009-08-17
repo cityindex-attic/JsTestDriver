@@ -5,13 +5,15 @@
     <fileset dir="${basedir}/tmp/eclipse/plugins">
       <include name="*.jar"/>
     </fileset>
+    <fileset dir="../JsTestDriver/target/bin" includes="JsTestDriver.jar"/>
     <fileset dir="${env.ECLIPSE_BASE_DIR}/plugins">
       <include name="**/*.jar"/>
+      <!-- there can be a jetty instance hanging around in the eclipse plugins. -->
+    	<exclude name="**/*jetty*.jar"/>
     </fileset>
     <fileset dir="plugins/com.google.jstestdriver.eclipse.ui_test/lib">
       <include name="*.jar"/>
     </fileset>
-    <fileset dir="../JsTestDriver/target/bin" includes="JsTestDriver.jar"/>
  </path>
   <!-- Mac likes to be cute, and not have the default rt.jar like everyone else. Nooo. instead, it has two jars, classes and ui. So handle that case -->
   <!-- if Mac OS X -->

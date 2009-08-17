@@ -18,16 +18,21 @@ package com.google.jstestdriver.coverage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.PrintStream;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
+import com.google.jstestdriver.ActionListProvider;
 import com.google.jstestdriver.ResponseStreamFactory;
+import com.google.jstestdriver.hooks.FileLoadPostProcessor;
+import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 
 /**
- * @author corysmith
+ * Configure the code coverage plugin.
+ * @author corysmith@google.com (Cory Smith)
  *
  */
 public class CoverageModule extends AbstractModule {
@@ -35,25 +40,35 @@ public class CoverageModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(ResponseStreamFactory.class).to(CoverageResponseStreamFactory.class);
-    // add handling for when the testOuput directory is not defined.
-    bind(CoverageWriter.class).to(LcovWriter.class);
+    bind(ActionListProvider.class).to(CoverageActionDecorator.class);
+    Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class)
+        .addBinding().to(CoverageInstrumentingProcessor.class);
+    Multibinder.newSetBinder(binder(), FileLoadPreProcessor.class)
+        .addBinding().to(CoverageJsAdder.class);
   }
   
-  @Named("coverageFileWriter") @Provides @Inject
-  public Writer createCoverageFileWriter(@Named("testOutput") String testOut) {
-    try {
-      File testOutDir = new File(testOut);
-      if (!testOutDir.exists()) {
-        testOutDir.mkdirs();
+  // TODO(corysmith): figure out if there is a better way for plugins to configure themselves.
+  // no point in requiring bad practice to integrate. (unlike some frameworks...)
+  @Provides @Inject
+  public CoverageWriter createCoverageWriter(@Named("testOutput") String testOut,
+                                             @Named("outputStream") PrintStream out) {
+    if (testOut.length() > 0) {
+      try {
+        File testOutDir = new File(testOut);
+        if (!testOutDir.exists()) {
+          testOutDir.mkdirs();
+        }
+        // this should probably be configurable
+        File coverageFile = new File(testOutDir, "coverage.dat");
+        if (coverageFile.exists()) {
+          coverageFile.delete();
+        }
+        coverageFile.createNewFile();
+        return new LcovWriter(new FileWriter(coverageFile));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
-      File coverageFile = new File(testOutDir, "coverage.dat");
-      if (coverageFile.exists()) {
-        coverageFile.delete();
-      }
-      coverageFile.createNewFile();
-      return new FileWriter(coverageFile);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
     }
+    return new SummaryCoverageWriter(out);
   }
 }

@@ -45,7 +45,7 @@ public class CoverageTestResponseStreamTest extends TestCase {
     TestResult testResult = new TestResult(browser, "passed", "passed", "log",
         "test.Foo", "Foo", 1f);
     
-    List<CoveredLine> expectedLines = Arrays.asList(new CoveredLine("foo.js", 1, 1));
+    List<CoveredLine> expectedLines = Arrays.asList(new CoveredLine("foo.js", 1, 1, 1));
     CoverageAccumulator expected = new CoverageAccumulator();
     expected.add(browserId, expectedLines);
     testResult.getData().put(CoverageTestResponseStream.COVERAGE_DATA_KEY,

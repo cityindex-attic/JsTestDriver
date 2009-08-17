@@ -251,8 +251,8 @@ public class CodeCoverageDecoratorTest extends TestCase {
     String filePath = "filename.js";
     String hash = "ABCD";
     CodeCoverageDecorator decorator =
-        new CodeCoverageDecorator(new Code(filePath, hash, sourceCode));
-    String actual = decorator.decorate();
+        new CodeCoverageDecorator();
+    String actual = decorator.decorate(new Code(filePath, hash, sourceCode));
     expect = expect.replaceAll("LCOV_HASH", "LCOV_" + hash).replaceAll("FILE", filePath);
     assertEquals(expect, actual);
   }

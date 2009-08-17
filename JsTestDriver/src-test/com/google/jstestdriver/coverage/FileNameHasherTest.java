@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,15 +15,19 @@
  */
 package com.google.jstestdriver.coverage;
 
+import junit.framework.TestCase;
 
 /**
- * Defines an interface for writing a coverage file.
- * @author corysmith@google.com
+ * @author corysmith@google.com (Cory Smith)
  *
  */
-public interface CoverageWriter {
-  public void writeRecordStart(String qualifiedFile);
-  public void writeRecordEnd();
-  public void writeCoverage(int lineNumber, int executedNumber);
-  void flush();
+public class FileNameHasherTest extends TestCase {
+  public void testHash() throws Exception {
+    String hash = new FileNameHasher().hash("/zum/golly/golly\\zum.js");
+    assertFalse(hash.contains("/"));
+    assertFalse(hash.contains("."));
+    assertFalse(hash.contains("-"));
+    assertFalse(hash.contains("\\"));
+    assertFalse(hash.length() > 10);
+  }
 }

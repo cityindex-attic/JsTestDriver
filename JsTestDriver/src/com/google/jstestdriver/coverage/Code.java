@@ -57,4 +57,48 @@ public class Code {
     }
     return codeLines;
   }
+  
+  @Override
+  public String toString() {
+    return String.format("%s(%s, %s, %s)",
+        getClass().getSimpleName(), filePath, fileHash, sourceCode);
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((fileHash == null) ? 0 : fileHash.hashCode());
+    result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
+    result = prime * result
+      + ((sourceCode == null) ? 0 : sourceCode.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Code other = (Code) obj;
+    if (fileHash == null) {
+      if (other.fileHash != null)
+        return false;
+    } else if (!fileHash.equals(other.fileHash))
+      return false;
+    if (filePath == null) {
+      if (other.filePath != null)
+        return false;
+    } else if (!filePath.equals(other.filePath))
+      return false;
+    if (sourceCode == null) {
+      if (other.sourceCode != null)
+        return false;
+    } else if (!sourceCode.equals(other.sourceCode))
+      return false;
+    return true;
+  }
 }

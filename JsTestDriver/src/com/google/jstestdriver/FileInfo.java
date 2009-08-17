@@ -86,7 +86,7 @@ public class FileInfo {
     return isPatch;
   }
   
-  public boolean isRemote() {
+  public boolean canLoad() {
     return file.startsWith("http://") || file.startsWith("https://");
   }
 

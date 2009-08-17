@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,7 +15,8 @@
  */
 package com.google.jstestdriver.coverage;
 
-import java.io.StringWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
@@ -23,8 +24,8 @@ import junit.framework.TestCase;
  * @author corysmith@google.com (Cory Smith)
  *
  */
-public class LcovWriterTest extends TestCase {
-  public void testWriteCoverage() throws Exception {
+public class SummaryCoverageWriterTest extends TestCase {
+  public void testWriteSummary() throws Exception {
     final String a = "foo.js";
     final String b = "zar.js";
     final CoveredLine[] lines = new CoveredLine[] {
@@ -32,19 +33,13 @@ public class LcovWriterTest extends TestCase {
         new CoveredLine(a, 2, 0, 2),
         new CoveredLine(b, 1, 3, 1)
     };
-    final StringWriter out = new StringWriter();
-    
-    CoverageWriter writer = new LcovWriter(out);
+    final OutputStream out = new ByteArrayOutputStream();
+    SummaryCoverageWriter writer = new SummaryCoverageWriter(out);
     for (CoveredLine coveredLine : lines) {
       coveredLine.write(writer);
     }
-    writer.flush();
-    assertEquals("SF:" + a + "\n"
-               + "DA:" + 1 + "," + 3 + "\n"
-               + "DA:" + 2 + "," + 0 + "\n"
-               + "end_of_record\n"
-               + "SF:" + b + "\n" 
-               + "DA:" + 1 + "," + 3 + "\n"
-               + "end_of_record\n", out.toString());
+    assertEquals(String.format("%s: %s%% covered\n" +
+                               "%s: %s%% covered\n",
+                               a, "50.0", b, "100.0"), out.toString());
   }
 }

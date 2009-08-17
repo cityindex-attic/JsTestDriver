@@ -53,13 +53,13 @@ public class CoverageAccumulator {
     for (CoveredLine coveredLine : covered.subList(0, covered.size())) {
       CoveredLine aggregate = last.aggegrate(coveredLine);
       if (aggregate == null) {
-        coverageWriter.addLine(last);
+        last.write(coverageWriter);
         last = coveredLine;
       } else {
         last = aggregate;
       }
     }
-    coverageWriter.addLine(last);
+    last.write(coverageWriter);
   }
 
   @Override

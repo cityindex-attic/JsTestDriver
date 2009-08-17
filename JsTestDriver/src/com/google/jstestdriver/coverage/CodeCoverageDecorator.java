@@ -22,13 +22,7 @@ package com.google.jstestdriver.coverage;
  * @author misko@google.com (Misko Hevery)
  */
 public class CodeCoverageDecorator {
-  private final Code code;
-
-  public CodeCoverageDecorator(Code code) {
-    this.code = code;
-  }
-
-  public String decorate() {
+  public String decorate(Code code) {
     Statements statements = new StatementsBuilder(code).build();
     return statements.toSource(code);
   }

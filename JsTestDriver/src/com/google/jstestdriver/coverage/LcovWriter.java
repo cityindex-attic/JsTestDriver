@@ -26,47 +26,41 @@ import com.google.inject.name.Named;
  */
 public class LcovWriter implements CoverageWriter {
   private final Writer out;
-  private CoveredLine last;
 
   public LcovWriter(@Named("coverageFileWriter") Writer out) {
     this.out = out;
   }
 
-  public CoverageWriter addLine(CoveredLine line) {
+  public void writeRecordStart(String qualifiedFile){
     try {
-      if (last == null) {
-        writeRecordStart(line.getQualifiedFile());
-      } else if (line.getQualifiedFile() != last.getQualifiedFile()) {
-        writeEndOfRecord();
-        writeRecordStart(line.getQualifiedFile());
-      }
-      writeCoverageLine(line.getLineNumber(), line.getExecutedNumber());
-      last = line;
-      return this;
+      out.append("SF:").append(qualifiedFile).append("\n");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private void writeRecordStart(String qualifiedFile) throws IOException {
-    out.append("SF:").append(qualifiedFile).append("\n");
+  public void writeRecordEnd(){
+    try {
+      out.append("end_of_record\n");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
-  private Writer writeEndOfRecord() throws IOException {
-    return out.append("end_of_record\n");
-  }
-
-  private void writeCoverageLine(int lineNumber, int executedNumber) throws IOException {
-    out.append("DA:")
-       .append(String.valueOf(lineNumber))
-       .append(",")
-       .append(String.valueOf(executedNumber))
-       .append("\n");
+  public void writeCoverage(int lineNumber, int executedNumber){
+    try {
+      out.append("DA:")
+         .append(String.valueOf(lineNumber))
+         .append(",")
+         .append(String.valueOf(executedNumber))
+         .append("\n");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public void flush() {
     try {
-      writeEndOfRecord();
       out.flush();
     } catch (IOException e) {
       throw new RuntimeException(e);

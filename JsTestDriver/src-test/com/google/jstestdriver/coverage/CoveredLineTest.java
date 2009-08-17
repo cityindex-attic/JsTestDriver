@@ -26,14 +26,14 @@ import junit.framework.TestCase;
 public class CoveredLineTest extends TestCase {
   public void testSerializeToJson() throws Exception {
     Gson gson = new Gson();
-    final CoveredLine coveredLine = new CoveredLine("foo.js", 1, 1);
+    final CoveredLine coveredLine = new CoveredLine("foo.js", 1, 1, 1);
     assertEquals(coveredLine, gson.fromJson(gson.toJson(coveredLine), CoveredLine.class));
   }
   
   public void testCompareTo() throws Exception {
-    final CoveredLine a = new CoveredLine("foo.js", 1, 1);
-    final CoveredLine b = new CoveredLine("zoo.js", 1, 1);
-    final CoveredLine c = new CoveredLine("foo.js", 2, 1);
+    final CoveredLine a = new CoveredLine("foo.js", 1, 1, 2);
+    final CoveredLine b = new CoveredLine("zoo.js", 1, 1, 2);
+    final CoveredLine c = new CoveredLine("foo.js", 2, 1, 1);
     assertEquals(0, a.compareTo(a));
     assertEquals("foo.js".compareTo("zoo.js"), a.compareTo(b));
     assertEquals("foo.js".compareTo("zoo.js"), a.compareTo(b));
@@ -43,15 +43,15 @@ public class CoveredLineTest extends TestCase {
   }
   
   public void testAggregate() throws Exception {
-    final CoveredLine a = new CoveredLine("foo.js", 1, 1);
-    final CoveredLine b = new CoveredLine("foo.js", 1, 2);
-    final CoveredLine expected = new CoveredLine("foo.js", 1, 3);
+    final CoveredLine a = new CoveredLine("foo.js", 1, 1, 1);
+    final CoveredLine b = new CoveredLine("foo.js", 1, 2, 1);
+    final CoveredLine expected = new CoveredLine("foo.js", 1, 3, 1);
     assertEquals(expected, a.aggegrate(b));
   }
   
   public void testAggregateWrong() throws Exception {
-    final CoveredLine a = new CoveredLine("foo.js", 1, 1);
-    final CoveredLine b = new CoveredLine("zoo.js", 1, 1);
+    final CoveredLine a = new CoveredLine("foo.js", 1, 1, 1);
+    final CoveredLine b = new CoveredLine("zoo.js", 1, 1, 1);
     assertNull(a.aggegrate(b));
   }
 }

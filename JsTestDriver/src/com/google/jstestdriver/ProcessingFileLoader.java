@@ -51,7 +51,7 @@ public class ProcessingFileLoader implements FileLoader {
     for (FileInfo file : preProcessFiles(filesToLoad)) {
       StringBuilder fileContent = new StringBuilder();
       long timestamp = -1;
-      if (!file.isRemote()) {
+      if (!file.canLoad()) {
         timestamp = file.getTimestamp();
         fileContent.append(filter.filterFile(reader.readFile(file.getFileName()), !shouldReset));
         List<FileInfo> patches = file.getPatches();

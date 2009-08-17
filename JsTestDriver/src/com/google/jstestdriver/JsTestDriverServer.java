@@ -87,6 +87,8 @@ public class JsTestDriverServer extends Observable {
     SocketConnector connector = new SocketConnector();
 
     connector.setPort(port);
+    System.out.println(server.getClass());
+    System.out.println(server.getClass().getClassLoader());
     server.addConnector(connector);
     servletHandler = new ServletHandler();
     server.addHandler(servletHandler);

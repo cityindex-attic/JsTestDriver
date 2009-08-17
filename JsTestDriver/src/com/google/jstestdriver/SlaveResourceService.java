@@ -39,7 +39,7 @@ public class SlaveResourceService {
     Resource resource = newClassPathResource(baseResourceLocation + path);
 
     if (resource == null) {
-      throw new IllegalArgumentException(path + ": resource is null");
+      throw new IllegalArgumentException(baseResourceLocation + path + ": resource is null");
     }
     resource.writeTo(out, 0, resource.length());
   }

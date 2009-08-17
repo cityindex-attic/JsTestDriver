@@ -25,21 +25,24 @@ public class CoveredLine implements Comparable<CoveredLine>{
   private int executedNumber;
   private String qualifiedFile;
   private int lineNumber;
+  private int totalExecutableLines;
   
   public CoveredLine() {
     executedNumber = 0;
     qualifiedFile = "";
     lineNumber = 0;
+    totalExecutableLines = 0;
   }
   
   public String getQualifiedFile() {
     return qualifiedFile;
   }
 
-  public CoveredLine(String qualifiedFile, int lineNumber, int executedNumber) {
+  public CoveredLine(String qualifiedFile, int lineNumber, int executedNumber, int totalLines) {
     this.qualifiedFile = qualifiedFile;
     this.lineNumber = lineNumber;
     this.executedNumber = executedNumber;
+    this.totalExecutableLines = totalLines;
   }
 
   public int getExecutedNumber() {
@@ -55,7 +58,10 @@ public class CoveredLine implements Comparable<CoveredLine>{
     if (!line.qualifiedFile.equals(qualifiedFile) || lineNumber != line.lineNumber) {
       return null;
     }
-    return new CoveredLine(qualifiedFile, lineNumber, executedNumber + line.executedNumber);
+    return new CoveredLine(qualifiedFile,
+                           lineNumber,
+                           executedNumber + line.executedNumber,
+                           totalExecutableLines);
   }
 
   @Override
@@ -87,6 +93,7 @@ public class CoveredLine implements Comparable<CoveredLine>{
         return false;
     } else if (!qualifiedFile.equals(other.qualifiedFile))
       return false;
+    // don't care about total lines.
     return true;
   }
 
@@ -100,7 +107,22 @@ public class CoveredLine implements Comparable<CoveredLine>{
   
   @Override
   public String toString() {
-    return String.format("%s(%s, %s, %s)", getClass().getSimpleName(),
-      qualifiedFile, lineNumber, executedNumber);
+    return String.format("%s(%s, %s, %s, %s)", getClass().getSimpleName(),
+      qualifiedFile, lineNumber, executedNumber, totalExecutableLines);
+  }
+
+  /**
+   * Serializes this line to the coverage writer.
+   */
+  public void write(CoverageWriter writer) {
+    // conditionals are here because Gson won't recognize a specific type of file for creation.
+    // Should investigate a more robust method of deserialize.
+    if (lineNumber == 1) {
+      writer.writeRecordStart(qualifiedFile);
+    }
+    writer.writeCoverage(lineNumber, executedNumber);
+    if (lineNumber == totalExecutableLines) {
+      writer.writeRecordEnd();
+    }
   }
 }
