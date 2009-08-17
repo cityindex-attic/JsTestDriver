@@ -15,7 +15,15 @@
  */
 package com.google.jstestdriver.coverage;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Provides;
+import com.google.inject.name.Named;
 import com.google.jstestdriver.ResponseStreamFactory;
 
 /**
@@ -27,5 +35,25 @@ public class CoverageModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(ResponseStreamFactory.class).to(CoverageResponseStreamFactory.class);
+    // add handling for when the testOuput directory is not defined.
+    bind(CoverageWriter.class).to(LcovWriter.class);
+  }
+  
+  @Named("coverageFileWriter") @Provides @Inject
+  public Writer createCoverageFileWriter(@Named("testOutput") String testOut) {
+    try {
+      File testOutDir = new File(testOut);
+      if (!testOutDir.exists()) {
+        testOutDir.mkdirs();
+      }
+      File coverageFile = new File(testOutDir, "coverage.dat");
+      if (coverageFile.exists()) {
+        coverageFile.delete();
+      }
+      coverageFile.createNewFile();
+      return new FileWriter(coverageFile);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

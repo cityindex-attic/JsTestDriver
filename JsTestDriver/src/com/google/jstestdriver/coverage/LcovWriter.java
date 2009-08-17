@@ -18,6 +18,8 @@ package com.google.jstestdriver.coverage;
 import java.io.IOException;
 import java.io.Writer;
 
+import com.google.inject.name.Named;
+
 /**
  * Writes the code coverage in the LCOV format.
  * @author corysmith@google.com (Cory Smith)
@@ -26,7 +28,7 @@ public class LcovWriter implements CoverageWriter {
   private final Writer out;
   private CoveredLine last;
 
-  public LcovWriter(Writer out) {
+  public LcovWriter(@Named("coverageFileWriter") Writer out) {
     this.out = out;
   }
 
