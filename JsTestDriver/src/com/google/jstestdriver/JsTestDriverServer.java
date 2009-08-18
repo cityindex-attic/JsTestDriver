@@ -59,7 +59,7 @@ public class JsTestDriverServer extends Observable {
   }
 
   private void initServlets() {
-    URLTranslator urlTranslator = new URLTranslator(new UUIDIdGenerator());
+    URLTranslator urlTranslator = new URLTranslator();
     ForwardingMapper forwardingMapper = new ForwardingMapper();
 
     addServlet("/hello", new HelloServlet());
@@ -126,7 +126,7 @@ public class JsTestDriverServer extends Observable {
         if (!config.exists()) {
           throw new RuntimeException("Config file doesn't exist: " + flags.getConfig());
         }
-        Reader configReader = new java.io.FileReader(flags.getConfig());
+        Reader configReader = new java.io.FileReader(config);
         ConfigurationParser configParser = new ConfigurationParser(config.getParentFile(),
             configReader);
         PluginLoader pluginLoader = new PluginLoader();

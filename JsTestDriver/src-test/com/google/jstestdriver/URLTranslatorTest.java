@@ -22,34 +22,18 @@ import junit.framework.TestCase;
  */
 public class URLTranslatorTest extends TestCase {
 
-  private static final String ID = "123";
   private static final String ORIGINAL_URL = "http://www.google.com";
-  private static final String TRANSLATED_URL = "/?jstdid=123";
-
-  private class FakeIdGenerator implements IdGenerator {
-
-    private final String id;
-
-    public FakeIdGenerator(String id) {
-      this.id = id;
-    }
-
-    public String generate() {
-      return id;
-    }
-  }
+  private static final String TRANSLATED_URL = "/";
 
   public void testTranslateUrl() throws Exception {
-    IdGenerator idGenerator = new FakeIdGenerator(ID);
-    URLTranslator urlTranslator = new URLTranslator(idGenerator);
+    URLTranslator urlTranslator = new URLTranslator();
 
     urlTranslator.translate(ORIGINAL_URL);
     assertEquals(TRANSLATED_URL, urlTranslator.getTranslation(ORIGINAL_URL));
   }
 
   public void testRetrieveOriginal() throws Exception {
-    IdGenerator idGenerator = new FakeIdGenerator(ID);
-    URLTranslator urlTranslator = new URLTranslator(idGenerator);
+    URLTranslator urlTranslator = new URLTranslator();
     urlTranslator.translate(ORIGINAL_URL);
 
     assertEquals(ORIGINAL_URL, urlTranslator
@@ -57,8 +41,7 @@ public class URLTranslatorTest extends TestCase {
   }
 
   public void testClearUrlTranslatorCache() throws Exception {
-    IdGenerator idGenerator = new FakeIdGenerator(ID);
-    URLTranslator urlTranslator = new URLTranslator(idGenerator);
+    URLTranslator urlTranslator = new URLTranslator();
     urlTranslator.translate(ORIGINAL_URL);
 
     urlTranslator.clear();

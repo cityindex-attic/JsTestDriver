@@ -28,6 +28,8 @@ jstestdriver.TestRunner.prototype.runTests = function(testRunsConfiguration, onT
   this.captureConsole_ = captureConsole;
   if (this.testRunsConfiguration_.length > 0) {
     this.runTestConfiguration_(this.testRunsConfiguration_.shift());
+  } else {
+    this.finish_();
   }
 };
 
@@ -44,17 +46,22 @@ jstestdriver.TestRunner.prototype.runTestConfiguration_ = function(testRunConfig
 };
 
 
+jstestdriver.TestRunner.prototype.finish_ = function() {
+  var onComplete = this.onComplete_;
+  this.testRunsConfiguration_ = null;
+  this.onTestDone_ = null;
+  this.onComplete_ = null;
+  this.captureConsole_ = false;
+
+  onComplete();
+};
+
+
 jstestdriver.TestRunner.prototype.onTestRunConfigurationComplete_ = function() {
   if (this.testRunsConfiguration_.length > 0) {
     this.runTestConfiguration_(this.testRunsConfiguration_.shift());
   } else {
-    var onComplete = this.onComplete_;
-    this.testRunsConfiguration_ = null;
-    this.onTestDone_ = null;
-    this.onComplete_ = null;
-    this.captureConsole_ = false;
-
-    onComplete();
+    this.finish_();
   }
 }
 

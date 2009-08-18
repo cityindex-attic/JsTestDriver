@@ -83,6 +83,7 @@ public class DefaultActionListProvider implements ActionListProvider {
     this.threadedActionProvider = threadedActionProvider;
     this.clientProvider = clientProvider;
   }
+
   @Provides
   public List<Action> get() {
     ActionSequenceBuilder builder =

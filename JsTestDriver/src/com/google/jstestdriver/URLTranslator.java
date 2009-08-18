@@ -18,6 +18,9 @@ package com.google.jstestdriver;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  *
@@ -25,14 +28,15 @@ import com.google.common.collect.HashBiMap;
 public class URLTranslator {
 
   private final BiMap<String, String> cache = HashBiMap.create();
-  private final IdGenerator idGenerator;
 
-  public URLTranslator(IdGenerator idGenerator) {
-    this.idGenerator = idGenerator;
-  }
+  public void translate(String url) throws MalformedURLException {
+    URL netUrl = new URL(url);
+    String file = netUrl.getFile();
 
-  public void translate(String url) {
-    cache.put(url, "/?jstdid=" + idGenerator.generate());
+    if (file.length() == 0) {
+      file = "/";
+    }
+    cache.put(url, file);
   }
 
   public String getTranslation(String url) {

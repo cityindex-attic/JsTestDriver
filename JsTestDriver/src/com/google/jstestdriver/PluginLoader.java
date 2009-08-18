@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package com.google.jstestdriver;
 
 import java.net.MalformedURLException;
@@ -34,7 +33,8 @@ public class PluginLoader {
   /**
    * For each plugin, the specified jar is loaded, then the specified class is
    * extracted from the Jar.
-   * @return 
+   * 
+   * @return a list of {@code Module}
    */
   @SuppressWarnings("unchecked")
   public List<Module> load(List<Plugin> plugins) {

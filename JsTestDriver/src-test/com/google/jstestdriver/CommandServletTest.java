@@ -51,19 +51,12 @@ public class CommandServletTest extends TestCase {
 
     capturedBrowsers.addSlave(slave);
     CommandServlet servlet =
-        new CommandServlet(capturedBrowsers, new URLTranslator(new IdGenerator() {
-
-          private int i = 1;
-
-          public String generate() {
-            return Integer.toString(i++);
-          }
-        }), new ForwardingMapper());
+        new CommandServlet(capturedBrowsers, new URLTranslator(), new ForwardingMapper());
     List<String> parameters = Lists.newArrayList();
     List<FileSource> fileSources = Lists.newArrayList();
 
-    fileSources.add(new FileSource("http://helloworld", -1));
-    fileSources.add(new FileSource("http://mooh", -1));
+    fileSources.add(new FileSource("http://server/file1.js", -1));
+    fileSources.add(new FileSource("http://server/file2.js", -1));
     parameters.add(gson.toJson(fileSources));
     parameters.add("false");
     JsonCommand command = new JsonCommand(CommandType.LOADTEST, parameters);
@@ -78,9 +71,9 @@ public class CommandServletTest extends TestCase {
             .getType());
 
     assertEquals(2, changedFileSources.size());
-    assertEquals("/?jstdid=1", changedFileSources.get(0).getFileSrc());
-    assertEquals("http://helloworld", changedFileSources.get(0).getBasePath());
-    assertEquals("/?jstdid=2", changedFileSources.get(1).getFileSrc());
-    assertEquals("http://mooh", changedFileSources.get(1).getBasePath());
+    assertEquals("/file1.js", changedFileSources.get(0).getFileSrc());
+    assertEquals("http://server/file1.js", changedFileSources.get(0).getBasePath());
+    assertEquals("/file2.js", changedFileSources.get(1).getFileSrc());
+    assertEquals("http://server/file2.js", changedFileSources.get(1).getBasePath());
   }
 }

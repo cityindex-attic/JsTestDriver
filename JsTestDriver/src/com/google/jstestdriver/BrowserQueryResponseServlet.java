@@ -87,7 +87,6 @@ public class BrowserQueryResponseServlet extends HttpServlet {
               browser.removeFiles(errorFiles);
             }
           }
-          forwardingMapper.clear();
         }
         boolean isLast = done != null;
 
@@ -103,6 +102,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
       if (start != null) {
         browser.resetFileSet();
         urlTranslator.clear();
+        forwardingMapper.clear();
         Command commandRunning = browser.getCommandRunning();
 
         if (commandRunning != null) {

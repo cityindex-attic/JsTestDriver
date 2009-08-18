@@ -25,52 +25,49 @@ public class ForwardingServletTest extends TestCase {
   public void testUrlHasIdAndNoReferer() throws Exception {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
 
-    forwardingMapper.addForwardingMapping("123", "http://www.google.com");
+    forwardingMapper.addForwardingMapping("/", "http://www.google.com");
     ForwardingServlet servlet = new ForwardingServlet(forwardingMapper);
 
     assertEquals("http://www.google.com", servlet.getForwardingUrl("http", "server", 42,
-        "/?jstdid=123", "123", null).toString());
+        "/", null).toString());
   }
 
   public void testUrlHasIdOnReferer() throws Exception {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
 
-    forwardingMapper.addForwardingMapping("123", "http://www.google.com");
+    forwardingMapper.addForwardingMapping("/", "http://www.google.com");
     ForwardingServlet servlet = new ForwardingServlet(forwardingMapper);
 
     assertEquals("http://www.google.com/my/own/path/something.png", servlet.getForwardingUrl(
-        "http", "server", 42, "/my/own/path/something.png", null, "http://server:42/?jstdid=123")
-        .toString());
+        "http", "server", 42, "/my/own/path/something.png", "http://server:42/").toString());
   }
 
   public void testMultipleLevelUrlRequest() throws Exception {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
 
-    forwardingMapper.addForwardingMapping("123", "http://www.google.com");
+    forwardingMapper.addForwardingMapping("/", "http://www.google.com");
     ForwardingServlet servlet = new ForwardingServlet(forwardingMapper);
 
     assertEquals("http://www.google.com", servlet.getForwardingUrl("http", "server", 42,
-        "/?jstdid=123", "123", null).toString());
+        "/", null).toString());
     assertEquals("http://www.google.com/some/stuff.js", servlet.getForwardingUrl("http",
-        "server", 42, "/some/stuff.js", null, "http://server/?jstdid=123").toString());
+        "server", 42, "/some/stuff.js", "http://server/").toString());
     assertEquals("http://www.google.com/great/file.html", servlet.getForwardingUrl("http",
-        "server", 42, "/great/file.html", null, "http://server:42/some/stuff.js")
+        "server", 42, "/great/file.html", "http://server:42/some/stuff.js")
         .toString());
-    assertEquals("http://www.google.com/great/anotherfile.html", servlet.getForwardingUrl(
-        "http", "server", 42, "/great/anotherfile.html", null,
-        "http://server:42/great/file.html").toString());
-    assertEquals("http://www.google.com/mooh/meuh.png", servlet.getForwardingUrl(
-        "http", "server", 42, "/mooh/meuh.png", null, "http://server:42/great/anotherfile.html")
-        .toString());
+    assertEquals("http://www.google.com/great/anotherfile.html", servlet.getForwardingUrl("http",
+        "server", 42, "/great/anotherfile.html", "http://server:42/great/file.html").toString());
+    assertEquals("http://www.google.com/mooh/meuh.png", servlet.getForwardingUrl("http", "server",
+        42, "/mooh/meuh.png", "http://server:42/great/anotherfile.html").toString());
   }
 
   public void testUrlHasPort() throws Exception {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
 
-    forwardingMapper.addForwardingMapping("123", "http://mycool.server.com:873");
+    forwardingMapper.addForwardingMapping("/", "http://mycool.server.com:873");
     ForwardingServlet servlet = new ForwardingServlet(forwardingMapper);
 
     assertEquals("http://mycool.server.com:873", servlet.getForwardingUrl("http", "server", 42,
-        "/?jstdid=123", "123", null).toString());
+        "/", null).toString());
   }  
 }

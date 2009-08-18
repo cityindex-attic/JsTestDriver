@@ -19,8 +19,12 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.SlaveBrowser.CommandResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.util.List;
 
 import javax.servlet.http.HttpServlet;
@@ -33,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 public class CommandServlet extends HttpServlet {
 
   private static final long serialVersionUID = 7210927357890630427L;
+  private static final Log LOGGER = LogFactory.getLog(CommandServlet.class);
 
   private final Gson gson = new Gson();
 
@@ -67,7 +72,7 @@ public class CommandServlet extends HttpServlet {
   }
 
   @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
     service(req.getParameter("id"), req.getParameter("data"));
   }
 
@@ -98,12 +103,15 @@ public class CommandServlet extends HttpServlet {
           String translation = urlTranslator.getTranslation(url);
 
           if (translation == null) {
-            urlTranslator.translate(url);
-            translation = urlTranslator.getTranslation(url);
-            URLQueryParser parser = new URLQueryParser(translation);
-
-            parser.parse();
-            forwardingMapper.addForwardingMapping(parser.getParameter("jstdid"), url);
+            try {
+              urlTranslator.translate(url);
+              translation = urlTranslator.getTranslation(url);
+              forwardingMapper.addForwardingMapping(translation, url);
+            } catch (MalformedURLException e) {
+              LOGGER.warn("Could not translate URL: " + url
+                  + " fallback to default URL, things will probably start to act weird...", e);
+              translation = url;
+            }
           }
           fileSource.setBasePath(url);
           fileSource.setFileSource(translation);

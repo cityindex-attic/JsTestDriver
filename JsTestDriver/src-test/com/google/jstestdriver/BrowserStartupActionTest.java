@@ -38,7 +38,7 @@ public class BrowserStartupActionTest extends TestCase {
     final BrowserStartupAction action = new BrowserStartupAction(Arrays.asList(browserPath),
                                                            serverAddress,
                                                            new ProcessFactory(){
-      public Process start(String ... commands) throws IOException{
+      public Process start(String ... commands) {
         return new ProcessStub(commands);
       }
     }, latch);
@@ -111,7 +111,7 @@ public class BrowserStartupActionTest extends TestCase {
     }
 
     @Override
-    public int waitFor() throws InterruptedException {
+    public int waitFor() {
       return 0;
     }
     @Override
@@ -151,8 +151,7 @@ public class BrowserStartupActionTest extends TestCase {
     }
 
     @Override
-    public boolean await(long timeoutPassed, TimeUnit unit)
-        throws InterruptedException {
+    public boolean await(long timeoutPassed, TimeUnit unit) {
       return awaitResponse;
     }
 

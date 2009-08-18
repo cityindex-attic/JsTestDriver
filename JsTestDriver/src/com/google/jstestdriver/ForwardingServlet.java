@@ -56,29 +56,23 @@ public class ForwardingServlet extends ProxyServlet.Transparent {
   @Override
   protected URL proxyHttpURL(String scheme, String serverName, int serverPort, String uri)
       throws MalformedURLException {
-    if (!uri.equals("/favicon.ico")) {
-      HttpServletRequest request = threadLocal.get();
+    HttpServletRequest request = threadLocal.get();
 
-      return getForwardingUrl(scheme, serverName, serverPort, uri, request.getParameter("jstdid"),
-          request.getHeader("Referer"));
-    } else {
-      return super.proxyHttpURL(scheme, serverName, serverPort, uri);
-    }
+    return getForwardingUrl(scheme, serverName, serverPort, uri, request.getHeader("Referer"));
   }
 
   public URL getForwardingUrl(String scheme, String serverName, int serverPort, String uri,
-      String jstdid, String referer) throws MalformedURLException {
-    if (jstdid != null) {
-      return new URL(forwardingMapper.getForwardTo(jstdid));
+      String referer) throws MalformedURLException {
+    String forwardTo = forwardingMapper.getForwardTo(uri);
+
+    if (forwardTo != null) {
+      return new URL(forwardTo);
     }
     String incomingUrl = String.format("%s://%s:%d%s", scheme, serverName, serverPort, uri);
     URL refererUrl = new URL(referer);
-    URLQueryParser urlQueryParser = new URLQueryParser(refererUrl.getQuery());
 
-    urlQueryParser.parse();
-    jstdid = urlQueryParser.getParameter("jstdid");
-    if (jstdid != null) {
-      String forwardTo = forwardingMapper.getForwardTo(jstdid);
+    forwardTo = forwardingMapper.getForwardTo(refererUrl.getPath());
+    if (forwardTo != null) {
       URL forwardUrl = new URL(forwardTo);
       StringBuilder sb = new StringBuilder();
 
@@ -101,6 +95,6 @@ public class ForwardingServlet extends ProxyServlet.Transparent {
 
       forwardingMapper.addForwardingMapping(incomingUrl, baseUrl);
       return new URL(baseUrl + uri);
-    }    
+    }
   }
 }
