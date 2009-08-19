@@ -15,6 +15,18 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.jstestdriver.guice.PrintStreamClientModule;
+import com.google.jstestdriver.guice.XmlClientModule;
+
+import org.kohsuke.args4j.CmdLineException;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.servlet.ServletHandler;
+import org.mortbay.jetty.servlet.ServletHolder;
+
 import java.io.File;
 import java.io.Reader;
 import java.util.LinkedHashSet;
@@ -25,23 +37,11 @@ import java.util.Set;
 
 import javax.servlet.Servlet;
 
-import org.kohsuke.args4j.CmdLineException;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.jetty.servlet.ServletHolder;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.jstestdriver.guice.PrintStreamClientModule;
-import com.google.jstestdriver.guice.XmlClientModule;
-
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class JsTestDriverServer extends Observable {
-
+  
   private final Server server = new Server();
   private ServletHandler servletHandler;
 

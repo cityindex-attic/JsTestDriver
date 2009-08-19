@@ -39,7 +39,6 @@
   <path id="classpath">
     <pathelement location="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" />
     <pathelement location="${lib.dir}/args4j-2.0.12/args4j-2.0.12.jar" />
-    <pathelement location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
     <pathelement location="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
     <pathelement location="${lib.dir}/guice/guice-2.0-no_aop.jar" />
     <pathelement location="${lib.dir}/guice/guice-multibindings-2.0.jar" />
@@ -50,7 +49,7 @@
     <pathelement location="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
     <pathelement location="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
     <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
-    <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
+  	<pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
   	<pathelement location="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
   </path>
   
@@ -99,13 +98,15 @@
     <attribute name="debug" default="false" />
     <sequential>
       <javac srcdir="${src.dir}" destdir="@{destdir}" classpathref="classpath" debug="@{debug}">
-        <src path="${src.dir}"></src>
-        <src path="${src-gen.dir}"></src>
+        <src path="${src.dir}" />
+        <src path="${src-gen.dir}" />
+      	<exclude name="com/google/jstestdriver/ui/**" />
       </javac>
       <copy todir="@{destdir}">
         <fileset dir="${src.dir}">
           <exclude name="**/*.java" />
           <exclude name="${javascript-resources}/*.js"/>
+        	<exclude name="com/google/jstestdriver/ui/**"/>
         </fileset>
       </copy>
       <apply executable="java" dest="@{destdir}/${javascript-resources}">
@@ -265,10 +266,52 @@
       <zipfileset src="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
       <zipfileset src="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
       <zipfileset src="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
-      <zipfileset src="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
       <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
-      <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
+    	<zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
     	<zipfileset src="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
+      <fileset dir="${obj.dir}/">
+        <include name="${javascript-resources}/jstestdrivernamespace.js" />
+        <include name="${javascript-resources}/runner.js" />
+        <include name="${javascript-resources}/heartbeatclient.js" />
+        <include name="${javascript-resources}/lib/*.js" />
+      </fileset>
+      <exclude name="**/coverage/**"/>
+    </jar>
+  </target>
+
+  <target name="ui-jar" depends="compile">
+  	<javac srcdir="${src.dir}" destdir="${obj.dir}">
+  		<classpath>
+  			<path refid="classpath" />
+  			<path location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
+  		</classpath>
+  		<include name="com/google/jstestdriver/ui/**"/>
+  	</javac>
+  	<copy todir="${obj.dir}">
+  	  <fileset dir="${src.dir}">
+  	    <exclude name="**/*.java" />
+  	  	<include name="com/google/jstestdriver/ui/**"/>
+  	  </fileset>
+  	</copy>
+    <jar destfile="${bin.dir}/${ant.project.name}-ui.jar" basedir="${obj.dir}" excludes="**/*.js"
+      duplicate="preserve">
+      <manifest>
+        <attribute name="Main-Class" value="${main-class}" />
+      </manifest>
+      <zipfileset src="${lib.dir}/jetty/servlet-api-2.5-20081211.jar" />
+      <zipfileset src="${lib.dir}/jetty/jetty-6.1.19.jar" />
+      <zipfileset src="${lib.dir}/jetty/jetty-util-6.1.19.jar" />
+      <zipfileset src="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
+      <zipfileset src="${lib.dir}/guice/guice-2.0-no_aop.jar" />
+      <zipfileset src="${lib.dir}/guice/guice-multibindings-2.0.jar" />
+      <zipfileset src="${lib.dir}/args4j-2.0.12/args4j-2.0.12.jar" />
+      <zipfileset src="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
+      <zipfileset src="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
+      <zipfileset src="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
+      <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
+    	<zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
+    	<zipfileset src="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
+      <zipfileset src="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
       <fileset dir="${obj.dir}/">
         <include name="${javascript-resources}/jstestdrivernamespace.js" />
         <include name="${javascript-resources}/runner.js" />

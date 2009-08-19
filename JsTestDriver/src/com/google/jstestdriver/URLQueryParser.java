@@ -15,8 +15,8 @@
  */
 package com.google.jstestdriver;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class URLQueryParser {
 
-  private static final Log LOGGER = LogFactory.getLog(URLQueryParser.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(URLQueryParser.class);
 
   private final String query;
   private final Map<String, String> parameters = new HashMap<String, String>();

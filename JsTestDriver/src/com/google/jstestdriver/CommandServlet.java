@@ -19,8 +19,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.SlaveBrowser.CommandResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 public class CommandServlet extends HttpServlet {
 
   private static final long serialVersionUID = 7210927357890630427L;
-  private static final Log LOGGER = LogFactory.getLog(CommandServlet.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CommandServlet.class);
 
   private final Gson gson = new Gson();
 
