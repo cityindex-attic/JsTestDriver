@@ -136,7 +136,7 @@ public class CommandTask {
           finalFilesToUpload.addAll(findDependencies(file));
         }
       }
-      List<FileInfo> loadedfiles = fileLoader.loadFiles(filesToUpload, shouldReset);
+      List<FileInfo> loadedfiles = fileLoader.loadFiles(finalFilesToUpload, shouldReset);
       Map<String, String> uploadFileParams = new LinkedHashMap<String, String>();
 
       uploadFileParams.put("id", params.get("id"));
