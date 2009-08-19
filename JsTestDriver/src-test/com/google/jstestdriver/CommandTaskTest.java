@@ -53,7 +53,7 @@ public class CommandTaskTest extends TestCase {
     params.put("id", "1");
     FakeResponseStream stream = new FakeResponseStream();
     LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
-    CommandTask task = createCommandTask(server, files, files, params, stream, null);
+    CommandTask task = createCommandTask(server, files, files, params, stream, null, true);
 
     task.run();
     Response response = stream.getResponse();
@@ -83,7 +83,7 @@ public class CommandTaskTest extends TestCase {
     MockFileLoader fileReader = new MockFileLoader();
     fileReader.addExpectation(fileInfo, "foobar");
     CommandTask task = createCommandTask(server, new LinkedHashSet<FileInfo>(Arrays
-        .asList(fileInfo)), new LinkedHashSet<FileInfo>(), params, stream, fileReader);
+        .asList(fileInfo)), new LinkedHashSet<FileInfo>(), params, stream, fileReader, true);
 
     task.run();
     Response response = stream.getResponse();
@@ -144,7 +144,7 @@ public class CommandTaskTest extends TestCase {
     fileReader.addExpectation(loadInfo, loadInfoContents);
     fileReader.addExpectation(serveInfo, serveInfoContents);
     CommandTask task = createCommandTask(server, new LinkedHashSet<FileInfo>(fileSet),
-        new LinkedHashSet<FileInfo>(Arrays.asList(serveInfo)), params, stream, fileReader);
+        new LinkedHashSet<FileInfo>(Arrays.asList(serveInfo)), params, stream, fileReader, true);
 
     task.run();
     Response response = stream.getResponse();
@@ -176,9 +176,9 @@ public class CommandTaskTest extends TestCase {
 
   private CommandTask createCommandTask(MockServer server, LinkedHashSet<FileInfo> files,
       LinkedHashSet<FileInfo> serveFiles, Map<String, String> params, FakeResponseStream stream,
-      MockFileLoader fileLoader) {
+      MockFileLoader fileLoader, boolean upload) {
     CommandTask task = new CommandTask(new DefaultFileFilter(), stream, files,
-        "http://localhost", server, params, new HeartBeatManagerStub(), fileLoader);
+        "http://localhost", server, params, new HeartBeatManagerStub(), fileLoader, upload);
     return task;
   }
 

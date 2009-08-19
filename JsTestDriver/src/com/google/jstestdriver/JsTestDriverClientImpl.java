@@ -59,13 +59,13 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
         new TypeToken<Collection<BrowserInfo>>() {}.getType());
   }
 
-  private void sendCommand(String id, ResponseStream stream, String cmd) {
+  private void sendCommand(String id, ResponseStream stream, String cmd, boolean uploadFiles) {
     Map<String, String> params = new LinkedHashMap<String, String>();
 
     params.put("data", cmd);
     params.put("id", id);
     CommandTask task = commandTaskFactory.getCommandTask(stream, fileSet, baseUrl,
-        server, params);
+        server, params, uploadFiles);
 
     task.run();
   }
@@ -76,7 +76,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     parameters.add(cmd);
     JsonCommand jsonCmd = new JsonCommand(CommandType.EXECUTE, parameters);
 
-    sendCommand(id, responseStream, gson.toJson(jsonCmd));
+    sendCommand(id, responseStream, gson.toJson(jsonCmd), false);
   }
 
   public void runAllTests(String id, ResponseStream responseStream, boolean captureConsole) {
@@ -86,13 +86,13 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     parameters.add("false");
     JsonCommand cmd = new JsonCommand(CommandType.RUNALLTESTS, parameters);
 
-    sendCommand(id, responseStream, gson.toJson(cmd));
+    sendCommand(id, responseStream, gson.toJson(cmd), true);
   }
 
   public void reset(String id, ResponseStream responseStream) {
     JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
 
-    sendCommand(id, responseStream, gson.toJson(cmd));
+    sendCommand(id, responseStream, gson.toJson(cmd), false);
   }
 
   public void runTests(String id, ResponseStream responseStream, List<String> tests,
@@ -103,13 +103,13 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     parameters.add(String.valueOf(captureConsole));
     JsonCommand cmd = new JsonCommand(CommandType.RUNTESTS, parameters);
 
-    sendCommand(id, responseStream, gson.toJson(cmd));
+    sendCommand(id, responseStream, gson.toJson(cmd), true);
   }
 
   public void dryRun(String id, ResponseStream responseStream) {
     JsonCommand cmd = new JsonCommand(CommandType.DRYRUN, Collections.<String>emptyList());
 
-    sendCommand(id, responseStream, gson.toJson(cmd));
+    sendCommand(id, responseStream, gson.toJson(cmd), true);
   }
 
   public void dryRunFor(String id, ResponseStream responseStream, List<String> expressions) {
@@ -118,6 +118,6 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     parameters.add(gson.toJson(expressions));
     JsonCommand cmd = new JsonCommand(CommandType.DRYRUNFOR, parameters);
 
-    sendCommand(id, responseStream, gson.toJson(cmd));
+    sendCommand(id, responseStream, gson.toJson(cmd), true);
   }  
 }

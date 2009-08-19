@@ -51,10 +51,11 @@ public class CommandTask {
   private final Map<String, String> params;
   private final HeartBeatManager heartBeatManager;
   private final FileLoader fileLoader;
+  private final boolean upload;
 
   public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
       String baseUrl, Server server, Map<String, String> params, HeartBeatManager heartBeatManager,
-      FileLoader fileLoader) {
+      FileLoader fileLoader, boolean upload) {
     this.filter = filter;
     this.stream = stream;
     this.fileSet = fileSet;
@@ -63,6 +64,7 @@ public class CommandTask {
     this.params = params;
     this.heartBeatManager = heartBeatManager;
     this.fileLoader = fileLoader;
+    this.upload = upload;
   }
 
   private String startSession() {
@@ -211,7 +213,9 @@ public class CommandTask {
       if (!isBrowserAlive()) {
         return;
       }
-      uploadFileSet();
+      if (upload) {
+        uploadFileSet();
+      }
       server.post(baseUrl + "/cmd", params);
       StreamMessage streamMessage = null;
 
