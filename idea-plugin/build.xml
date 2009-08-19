@@ -4,7 +4,7 @@
   <property name="obj.dir" value="${target.dir}/obj" />
   <property name="src.dir" value="${basedir}/src"/>
   <property name="lib.dir" value="${basedir}/lib"/>
-  <property name="jstestdriver.lib" value="../JsTestDriver/target/bin/JsTestDriver.jar"/>
+  <property name="jstestdriver.lib" value="../JsTestDriver/target/bin/JsTestDriver-ui.jar"/>
 
   <path id="forms.classpath">
     <pathelement location="${lib.dir}/asm-3.0/asm-3.0.jar"/>
