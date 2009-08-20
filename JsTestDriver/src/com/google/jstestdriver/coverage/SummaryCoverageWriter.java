@@ -25,8 +25,7 @@ import java.io.OutputStream;
  *
  */
 public class SummaryCoverageWriter implements CoverageWriter {
-  
-  
+
   private String qualifiedFile;
   private float totalLines = 0f;
   private float executed = 0f;

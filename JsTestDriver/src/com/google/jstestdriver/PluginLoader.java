@@ -43,10 +43,10 @@ public class PluginLoader {
       // TODO(corysmith): figure out how to test this...
       try {
         URLClassLoader urlClassLoader = new URLClassLoader(
-            new URL[] { new URL("jar:" + plugin.getPathToJar() + "!/") },
+            new URL[] { new URL("jar:file:" + plugin.getPathToJar() + "!/") },
             getClass().getClassLoader());
         Class<?> module = Class.forName(plugin.getModuleName(), true, urlClassLoader);
-        modules.add(((Class<? extends Module>) Module.class.asSubclass(module)).newInstance());
+        modules.add(((Class<? extends Module>) module).newInstance());
       } catch (InstantiationException e) {
         throw new RuntimeException(e);
       } catch (IllegalAccessException e) {

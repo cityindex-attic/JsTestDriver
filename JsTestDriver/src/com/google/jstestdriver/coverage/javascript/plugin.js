@@ -18,7 +18,7 @@
   var reporter = new coverage.Reporter();
   jstestdriver.global.LCOV = reporter;
   plugin[jstestdriver.PluginRegistrar.PROCESS_TEST_RESULT] = function(testResult) {
-    testResult.data[coverage.COVERAGE_DATA_KEY] = reporter.sumarizeCoverage();
+    testResult.data[coverage.COVERAGE_DATA_KEY] = JSON.stringify(reporter.summarizeCoverage());
   }
   jstestdriver.pluginRegistrar.register(plugin);
 })();

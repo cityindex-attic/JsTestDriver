@@ -15,33 +15,35 @@
  */
 /**
  * The coverage plugin namespace.
+ * @author corysmith@google.com (Cory Smith)
  */
 var coverage = (function() {
-
   /**
    * Represents a collection object for recording the executed lines in a given file.
    * @class
    */
-  function FileCoverage(fileName, executablesLength, totalLines) {
+  function FileCoverageReport(fileName, executablesLength, totalLines) {
     this.length = totalLines;
     this.fileName_ = fileName;
     this.executablesLength_ = executablesLength;
   }
-  
+
   /**
    * Converts a coverage array into a list of covered lines.
    * @param {Array} coverage  post processing.
    * @return {Array}
    */
-  FileCoverage.prototype.toCoveredLines = function() {
+  FileCoverageReport.prototype.toCoveredLines = function() {
     var lines = [];
+    var first = true;
     for (var i = 0; i < this.length; i++) {
       if (this[i] != null) {
-        lines.push(new CoveredLine(this.fileName_, this[i], i, this.executablesLength_));
+        lines.push(new CoveredLine(this[i], i));
       }
     }
-    return lines;
+    return new CoveredLines(this.fileName_, lines);
   };
+
 
   /**
    * Represents a reporter for the executed lines.
@@ -50,22 +52,22 @@ var coverage = (function() {
   function Reporter() {
     this.coverages = [];
   };
+
   /**
-   * Initializes a FileCoverage.
+   * Initializes a FileCoverageReport.
    * @param {String} fileName The file name that coverages is being initialized for.
    * @param {Number} totalLines The total lines found in the file.
    * @param {Array.<Number>} An Array of all executable line numbers.
    * @return {Array.<Number>} An array for accumulating coverage information.
    */
   Reporter.prototype.initNoop = function(fileName, totalLines, executableLines){
-    var coverage = new  FileCoverage(fileName, executableLines.length, totalLines);
+    var coverage = new  FileCoverageReport(fileName, executableLines.length, totalLines);
     for (var i = 0; i < executableLines.length; i++) {
       coverage[executableLines[i]] = 0;
     }
     this.coverages.push(coverage);
     return coverage;
   };
-  
 
   /**
    * Initializes a coverage array and marks the first line as executed
@@ -79,29 +81,38 @@ var coverage = (function() {
     coverage[executableLines[0]]++;
     return coverage;
   };
+
+  Reporter.prototype.summarizeCoverage = function() {
+    var summary = [];
+    for (var i = 0; i < this.coverages.length; i++) {
+      summary.push(this.coverages[i].toCoveredLines());
+    }
+    return summary;
+  }
   
+  /**
+   * A serializable class that represents the current state of coverage for a file.
+   * @param {String} qualifiedFile The name of the file.
+   * @param {Array.<CoveredLine>} coveredLines The lines of the file.
+   */
+  function CoveredLines(qualifiedFile, lines) {
+    this.qualifiedFile = qualifiedFile;
+    this.lines = lines;
+  }
+
   /**
    * Represents a line that could have been executed during the test.
    * @class
    */
-  function CoveredLine(qualifiedFile, executedNumber, lineNumber, totalExecutableLines) {
+  function CoveredLine(executedNumber, lineNumber, totalExecutableLines) {
     this.executedNumber = executedNumber;
-    this.qualifiedFile = qualifiedFile;
     this.lineNumber = lineNumber;
-    this.totalExecutableLines = totalExecutableLines;
   }
-  
-  Reporter.prototype.summarizeCoverage = function() {
-    var allLines = [];
-    for (var i = 0; i < this.coverages.length; i++) {
-      allLines = allLines.concat(this.coverages[i].toCoveredLines());
-    }
-    return allLines;
-  }
+
 
   return {
     Reporter : Reporter,
-    FileCoverage : FileCoverage,
+    FileCoverageReport : FileCoverageReport,
     CoveredLine : CoveredLine,
     COVERAGE_DATA_KEY : 'linesCovered'
   };

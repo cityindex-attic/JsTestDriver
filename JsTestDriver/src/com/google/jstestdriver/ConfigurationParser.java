@@ -74,7 +74,6 @@ public class ConfigurationParser {
       Set<FileInfo> resolvedServeFiles = resolveFiles((List<String>) data.get("serve"), true);
       resolvedFilesLoad.addAll(resolvedServeFiles);
     }
-    
     filesList.addAll(consolidatePatches(resolvedFilesLoad));
     filesList.removeAll(resolvedFilesExclude);
   }

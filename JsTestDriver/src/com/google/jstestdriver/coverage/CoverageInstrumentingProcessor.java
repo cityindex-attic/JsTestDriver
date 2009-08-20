@@ -36,7 +36,7 @@ public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
   }
 
   public FileInfo process(FileInfo file) {
-    if (file.getFileName().contains("LCOV.js") || file.canLoad() || file.isServeOnly()) {
+    if (file.getFileName().contains("LCOV.js") || !file.canLoad() || file.isServeOnly()) {
       return file;
     }
     String instrumented = decorator.decorate(new Code(file.getFileName(),

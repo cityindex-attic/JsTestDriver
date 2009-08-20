@@ -34,5 +34,6 @@ public class CoverageReporterAction implements Action {
 
   public void run() {
     accumulator.write(writer);
+    writer.flush();
   }
 }

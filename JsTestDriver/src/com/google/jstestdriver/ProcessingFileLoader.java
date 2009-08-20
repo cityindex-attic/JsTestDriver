@@ -48,26 +48,37 @@ public class ProcessingFileLoader implements FileLoader {
 
   public List<FileInfo> loadFiles(Collection<FileInfo> filesToLoad, boolean shouldReset) {
     List<FileInfo> loadedFiles = new LinkedList<FileInfo>();
-    for (FileInfo file : preProcessFiles(filesToLoad)) {
-      StringBuilder fileContent = new StringBuilder();
-      long timestamp = -1;
-      if (!file.canLoad()) {
-        timestamp = file.getTimestamp();
-        fileContent.append(filter.filterFile(reader.readFile(file.getFileName()), !shouldReset));
-        List<FileInfo> patches = file.getPatches();
-
-        if (patches != null) {
-          for (FileInfo patch : patches) {
-            fileContent.append(reader.readFile(patch.getFileName()));
-          }
-        }
+    try {
+      for (FileInfo file : preProcessFiles(filesToLoad)) {
+        FileInfo processed = loadFile(shouldReset, file);
+        processed = postProcessFile(processed);
+        loadedFiles.add(processed);
       }
-      FileInfo processed = new FileInfo(file.getFileName(), timestamp, false, file
-          .isServeOnly(), fileContent.toString());
-      processed = postProcessFile(processed);
-      loadedFiles.add(processed);
+    } catch (RuntimeException e) {
+      e.printStackTrace();
+      throw e;
     }
     return loadedFiles;
+  }
+
+  private FileInfo loadFile(boolean shouldReset, FileInfo file) {
+    if (!file.canLoad()) {
+      return file;
+    }
+    StringBuilder fileContent = new StringBuilder();
+    long timestamp = file.getTimestamp();
+    fileContent.append(filter.filterFile(reader.readFile(file.getFileName()), !shouldReset));
+    List<FileInfo> patches = file.getPatches();
+    if (patches != null) {
+      for (FileInfo patch : patches) {
+        fileContent.append(reader.readFile(patch.getFileName()));
+      }
+    }
+    return new FileInfo(file.getFileName(),
+                        timestamp,
+                        false,
+                        file.isServeOnly(),
+                        fileContent.toString());
   }
 
   private FileInfo postProcessFile(FileInfo processed) {

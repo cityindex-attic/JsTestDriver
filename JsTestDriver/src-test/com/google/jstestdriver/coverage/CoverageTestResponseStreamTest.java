@@ -20,6 +20,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.Response;
@@ -45,11 +46,12 @@ public class CoverageTestResponseStreamTest extends TestCase {
     TestResult testResult = new TestResult(browser, "passed", "passed", "log",
         "test.Foo", "Foo", 1f);
     
-    List<CoveredLine> expectedLines = Arrays.asList(new CoveredLine("foo.js", 1, 1, 1));
+    List<FileCoverage> expectedFileCoverage =
+        Arrays.asList(new FileCoverage("foo.js", Lists.newArrayList(new CoveredLine(1, 1))));
     CoverageAccumulator expected = new CoverageAccumulator();
-    expected.add(browserId, expectedLines);
+    expected.add(browserId, expectedFileCoverage);
     testResult.getData().put(CoverageTestResponseStream.COVERAGE_DATA_KEY,
-        gson.toJson(expectedLines));
+        gson.toJson(expectedFileCoverage));
     response.setResponse(gson.toJson(Arrays.asList(testResult)));
 
     stream.stream(response);

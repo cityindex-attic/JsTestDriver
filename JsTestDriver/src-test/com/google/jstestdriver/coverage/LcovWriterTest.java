@@ -17,6 +17,8 @@ package com.google.jstestdriver.coverage;
 
 import java.io.StringWriter;
 
+import com.google.common.collect.Lists;
+
 import junit.framework.TestCase;
 
 /**
@@ -27,16 +29,16 @@ public class LcovWriterTest extends TestCase {
   public void testWriteCoverage() throws Exception {
     final String a = "foo.js";
     final String b = "zar.js";
-    final CoveredLine[] lines = new CoveredLine[] {
-        new CoveredLine(a, 1, 3, 2),
-        new CoveredLine(a, 2, 0, 2),
-        new CoveredLine(b, 1, 3, 1)
+    final FileCoverage[] coverages  = new FileCoverage[] {
+        new FileCoverage(a, Lists.newArrayList(new CoveredLine(1, 3),
+                                               new CoveredLine(2, 0))),
+        new FileCoverage(b, Lists.newArrayList(new CoveredLine(1, 3)))
     };
     final StringWriter out = new StringWriter();
     
     CoverageWriter writer = new LcovWriter(out);
-    for (CoveredLine coveredLine : lines) {
-      coveredLine.write(writer);
+    for (FileCoverage coverage : coverages) {
+      coverage.write(writer);
     }
     writer.flush();
     assertEquals("SF:" + a + "\n"

@@ -157,7 +157,7 @@ public class JsTestDriverServer extends Observable {
     } catch (CmdLineException e) {
       System.err.println(e.getMessage());
     } catch (Exception e) {
-      System.err.println(e);
+      e.printStackTrace(System.err);
       System.exit(1);
     }
   }

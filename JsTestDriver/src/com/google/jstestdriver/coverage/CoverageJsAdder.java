@@ -43,6 +43,7 @@ public class CoverageJsAdder implements FileLoadPreProcessor {
     LinkedList<FileInfo> processed = new LinkedList<FileInfo>();
     processed.add(0, new LoadedFileInfo(LCOV_JS, -1, false, false,
         fileLoader.load(LCOV_JS)));
+    processed.addAll(files);
     return processed;
   }
 }

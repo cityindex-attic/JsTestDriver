@@ -393,7 +393,7 @@
     </java>
   </target>
 
-  <target name="jstestdriver-coverage" depends="jar">
+  <target name="jstestdriver-coverage" depends="jar, coverage-plugin-jar">
     <java jar="${bin.dir}/${ant.project.name}.jar" fork="true" timeout="60000">
       <arg value="--port" />
       <arg value="4224" />

@@ -23,26 +23,16 @@ package com.google.jstestdriver.coverage;
 public class CoveredLine implements Comparable<CoveredLine>{
 
   private int executedNumber;
-  private String qualifiedFile;
   private int lineNumber;
-  private int totalExecutableLines;
-  
+
   public CoveredLine() {
     executedNumber = 0;
-    qualifiedFile = "";
     lineNumber = 0;
-    totalExecutableLines = 0;
-  }
-  
-  public String getQualifiedFile() {
-    return qualifiedFile;
   }
 
-  public CoveredLine(String qualifiedFile, int lineNumber, int executedNumber, int totalLines) {
-    this.qualifiedFile = qualifiedFile;
+  public CoveredLine(int lineNumber, int executedNumber) {
     this.lineNumber = lineNumber;
     this.executedNumber = executedNumber;
-    this.totalExecutableLines = totalLines;
   }
 
   public int getExecutedNumber() {
@@ -55,13 +45,11 @@ public class CoveredLine implements Comparable<CoveredLine>{
 
   /** Aggregates two lines of covered code together. */
   public CoveredLine aggegrate(CoveredLine line) {
-    if (!line.qualifiedFile.equals(qualifiedFile) || lineNumber != line.lineNumber) {
+    if (lineNumber != line.lineNumber) {
       return null;
     }
-    return new CoveredLine(qualifiedFile,
-                           lineNumber,
-                           executedNumber + line.executedNumber,
-                           totalExecutableLines);
+    return new CoveredLine(lineNumber,
+                           executedNumber + line.executedNumber);
   }
 
   @Override
@@ -70,8 +58,6 @@ public class CoveredLine implements Comparable<CoveredLine>{
     int result = 1;
     result = prime * result + executedNumber;
     result = prime * result + lineNumber;
-    result = prime * result
-      + ((qualifiedFile == null) ? 0 : qualifiedFile.hashCode());
     return result;
   }
 
@@ -88,41 +74,23 @@ public class CoveredLine implements Comparable<CoveredLine>{
       return false;
     if (lineNumber != other.lineNumber)
       return false;
-    if (qualifiedFile == null) {
-      if (other.qualifiedFile != null)
-        return false;
-    } else if (!qualifiedFile.equals(other.qualifiedFile))
-      return false;
-    // don't care about total lines.
     return true;
   }
 
   public int compareTo(CoveredLine o) {
-    final int fileCompare = qualifiedFile.compareTo(o.qualifiedFile);
-    if (fileCompare != 0) {
-      return fileCompare;
-    }
     return lineNumber - o.lineNumber;
   }
   
   @Override
   public String toString() {
-    return String.format("%s(%s, %s, %s, %s)", getClass().getSimpleName(),
-      qualifiedFile, lineNumber, executedNumber, totalExecutableLines);
+    return String.format("%s(%s, %s)",
+        getClass().getSimpleName(), lineNumber, executedNumber);
   }
 
   /**
    * Serializes this line to the coverage writer.
    */
   public void write(CoverageWriter writer) {
-    // conditionals are here because Gson won't recognize a specific type of file for creation.
-    // Should investigate a more robust method of deserialize.
-    if (lineNumber == 1) {
-      writer.writeRecordStart(qualifiedFile);
-    }
     writer.writeCoverage(lineNumber, executedNumber);
-    if (lineNumber == totalExecutableLines) {
-      writer.writeRecordEnd();
-    }
   }
 }

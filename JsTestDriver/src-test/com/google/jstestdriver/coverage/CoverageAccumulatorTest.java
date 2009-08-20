@@ -16,12 +16,14 @@
 package com.google.jstestdriver.coverage;
 
 
-import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import junit.framework.TestCase;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author corysmith@google.com (Cory Smith)
@@ -32,38 +34,39 @@ public class CoverageAccumulatorTest extends TestCase {
   public void testWrite() throws Exception {
     final String a = "foo.js";
     final String b = "zar.js";
-    final List<CoveredLine> expected = Arrays.asList(
-        new CoveredLine(a, 1, 3, 4),
-        new CoveredLine(a, 2, 2, 4),
-        new CoveredLine(a, 3, 3, 4),
-        new CoveredLine(a, 4, 0, 4),
-        new CoveredLine(b, 1, 3, 1));
+
+    final List<FileCoverage> expected = Arrays.asList(
+        new FileCoverage(a, Lists.newArrayList(new CoveredLine(1, 2),
+                                               new CoveredLine(2, 2),
+                                               new CoveredLine(3, 3),
+                                               new CoveredLine(4, 0))),
+        new FileCoverage(b, Lists.newArrayList(new CoveredLine(1, 3))));
 
     final CoverageAccumulator accumulator = new CoverageAccumulator();
     final CoverageWriterFake coverageWriter = new CoverageWriterFake();
 
     accumulator.add("ff", Arrays.asList(
-      new CoveredLine(b, 1, 1, 1),
-      new CoveredLine(a, 1, 1, 4),
-      new CoveredLine(a, 2, 1, 4),
-      new CoveredLine(a, 3, 1, 4),
-      new CoveredLine(a, 4, 0, 4)
-    ));
+      new FileCoverage(b, Lists.newArrayList(new CoveredLine(1, 1))),
+      new FileCoverage(a, Lists.newArrayList(new CoveredLine(1, 1),
+                                             new CoveredLine(2, 1),
+                                             new CoveredLine(3, 1),
+                                             new CoveredLine(4, 0))))
+    );
 
     accumulator.add("op", Arrays.asList(
-      new CoveredLine(b, 1, 1, 1),
-      new CoveredLine(a, 1, 0, 4),
-      new CoveredLine(a, 2, 0, 4),
-      new CoveredLine(a, 3, 1, 4),
-      new CoveredLine(a, 4, 0, 4)
+      new FileCoverage(b, Lists.newArrayList(new CoveredLine(1, 1))),
+      new FileCoverage(a, Lists.newArrayList(new CoveredLine(1, 0),
+                                             new CoveredLine(2, 0),
+                                             new CoveredLine(3, 1),
+                                             new CoveredLine(4, 0)))
     ));
 
     accumulator.add("ie", Arrays.asList(
-      new CoveredLine(a, 1, 1, 4),
-      new CoveredLine(a, 2, 1, 4),
-      new CoveredLine(a, 3, 1, 4),
-      new CoveredLine(a, 4, 0, 4),
-      new CoveredLine(b, 1, 1, 1)
+      new FileCoverage(a, Lists.newArrayList(new CoveredLine(1, 1),
+                                             new CoveredLine(2, 1),
+                                             new CoveredLine(3, 1),
+                                             new CoveredLine(4, 0))),
+      new FileCoverage(b, Lists.newArrayList(new CoveredLine(1, 1)))
     ));
 
     accumulator.write(coverageWriter);
@@ -73,24 +76,26 @@ public class CoverageAccumulatorTest extends TestCase {
 
   private final class CoverageWriterFake implements CoverageWriter {
     List<CoveredLine> lines = new LinkedList<CoveredLine>();
-    private String qualifiedFile;
+    List<FileCoverage> coveredLines = new ArrayList<FileCoverage>();
+    
 
-    public void assertLines(List<CoveredLine> expected) {
-      assertEquals(expected, lines);
+    public void assertLines(List<FileCoverage> expected) {
+      assertEquals(expected, coveredLines);
     }
 
     public void flush() {
     }
 
     public void writeCoverage(int lineNumber, int executedNumber) {
-      lines.add(new CoveredLine(qualifiedFile, lineNumber, executedNumber, 0));
+      lines.add(new CoveredLine(lineNumber, executedNumber));
     }
 
     public void writeRecordEnd() {
     }
 
     public void writeRecordStart(String qualifiedFile) {
-      this.qualifiedFile = qualifiedFile;
+      lines = new LinkedList<CoveredLine>();
+      this.coveredLines.add(new FileCoverage(qualifiedFile, lines));
     }
   }
 }

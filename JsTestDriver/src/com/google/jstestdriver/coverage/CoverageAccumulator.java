@@ -22,44 +22,51 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.google.inject.Singleton;
+
 /**
  * Accumulates all the lines recorded during a test run.
  * @author corysmith@google.com (Cory Smith)
  */
+@Singleton
 public class CoverageAccumulator {
-  private ConcurrentLinkedQueue<CoveredLine> lines = new ConcurrentLinkedQueue<CoveredLine>();
+  private ConcurrentLinkedQueue<FileCoverage> fileCoverages =
+      new ConcurrentLinkedQueue<FileCoverage>();
 
   // TODO(corysmith): Track which browsers cover what.
-  public void add(String browserId, Collection<CoveredLine> coveredLines) {
-    for (CoveredLine coveredLine : coveredLines) {
-      lines.offer(coveredLine);
+  public void add(String browserId, Collection<FileCoverage> rawCoverage) {
+    for (FileCoverage fileCoverage : rawCoverage) {
+      fileCoverages.offer(fileCoverage);
     }
   }
-  
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((lines == null) ? 0 : lines.hashCode());
+    result = prime * result + ((fileCoverages == null) ? 0 : fileCoverages.hashCode());
     return result;
   }
 
   /** Writes all non-duplicate accumulated data to the coverage writer in the natural order. */
   public void write(CoverageWriter coverageWriter) {
-    List<CoveredLine> covered = new LinkedList<CoveredLine>(lines);
-    Collections.sort(covered);
-    CoveredLine last = covered.get(0);
-    for (CoveredLine coveredLine : covered.subList(0, covered.size())) {
-      CoveredLine aggregate = last.aggegrate(coveredLine);
-      if (aggregate == null) {
-        last.write(coverageWriter);
-        last = coveredLine;
-      } else {
-        last = aggregate;
+    if (!fileCoverages.isEmpty()) {
+      List<FileCoverage> rawCoverage = new LinkedList<FileCoverage>(fileCoverages);
+      Collections.sort(rawCoverage);
+      FileCoverage last = rawCoverage.get(0);
+      for (FileCoverage fileCoverage : rawCoverage.subList(1, rawCoverage.size())) {
+        FileCoverage aggregate = last.aggegrate(fileCoverage);
+        if (aggregate == null) {
+          last.write(coverageWriter);
+          last = fileCoverage;
+        } else {
+          last = aggregate;
+        }
       }
+      last.write(coverageWriter);
+    } else {
+      System.out.println("No lines of coverage found.");
     }
-    last.write(coverageWriter);
   }
 
   @Override
@@ -71,13 +78,13 @@ public class CoverageAccumulator {
     if (getClass() != obj.getClass())
       return false;
     CoverageAccumulator other = (CoverageAccumulator) obj;
-    if (lines == null) {
-      if (other.lines != null)
+    if (fileCoverages == null) {
+      if (other.fileCoverages != null)
         return false;
     } else {
       synchronized (CoverageAccumulator.class) {
-        Iterator<CoveredLine> ours = lines.iterator();
-        Iterator<CoveredLine> theirs = other.lines.iterator();
+        Iterator<FileCoverage> ours = fileCoverages.iterator();
+        Iterator<FileCoverage> theirs = other.fileCoverages.iterator();
         while(ours.hasNext() && theirs.hasNext()) {
           if (!ours.next().equals(theirs.next())) {
             return false;
@@ -92,6 +99,6 @@ public class CoverageAccumulator {
   }
   @Override
   public String toString() {
-    return String.format("%s(%s)", getClass().getSimpleName(), lines);
+    return String.format("%s(%s)", getClass().getSimpleName(), fileCoverages);
   }
 }

@@ -29,5 +29,5 @@ jstestdriver.TestResult = function(testCaseName, testName, result, message, log,
   this.message = message;
   this.log = log;
   this.time = time;
-  this.data = data;
+  this.data = data || {};
 };

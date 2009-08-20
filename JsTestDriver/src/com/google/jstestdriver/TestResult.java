@@ -15,8 +15,9 @@
  */
 package com.google.jstestdriver;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -36,7 +37,7 @@ public class TestResult {
   private String testName;
   private float time;
   private BrowserInfo browserInfo;
-  private Map<String, String> data = new HashMap<String, String>();
+  private Map<String, String> data = Maps.newHashMap();
 
   public Map<String, String> getData() {
     return data;

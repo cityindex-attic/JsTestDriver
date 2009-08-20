@@ -168,7 +168,7 @@ public class ProcessingFileLoaderTest extends TestCase {
   }
 
   public void testRemoteLoadFiles() throws Exception {
-    final FileInfo info = new FileInfo("http://local/foo.js", -1, false, false, null);
+    final FileInfo info = new FileInfo("http://local/foo.js", -1, false, false, "");
     final boolean shouldReset = false;
     List<FileInfo> actual = new ProcessingFileLoader(null, null, Collections
         .<FileLoadPostProcessor> emptySet(), Collections.<FileLoadPreProcessor> emptySet())

@@ -37,7 +37,7 @@ public class FileInfo {
   private String data;
 
   public String getData() {
-    return data;
+    return data == null ? "" : data;
   }
 
   public void setData(String data) {
@@ -87,7 +87,7 @@ public class FileInfo {
   }
   
   public boolean canLoad() {
-    return file.startsWith("http://") || file.startsWith("https://");
+    return !(file.startsWith("http://") || file.startsWith("https://"));
   }
 
   @Override

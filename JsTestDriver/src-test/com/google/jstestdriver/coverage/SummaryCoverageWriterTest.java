@@ -16,9 +16,10 @@
 package com.google.jstestdriver.coverage;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 
 import junit.framework.TestCase;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author corysmith@google.com (Cory Smith)
@@ -28,16 +29,18 @@ public class SummaryCoverageWriterTest extends TestCase {
   public void testWriteSummary() throws Exception {
     final String a = "foo.js";
     final String b = "zar.js";
-    final CoveredLine[] lines = new CoveredLine[] {
-        new CoveredLine(a, 1, 3, 2),
-        new CoveredLine(a, 2, 0, 2),
-        new CoveredLine(b, 1, 3, 1)
+    final FileCoverage[] coverages  = new FileCoverage[] {
+        new FileCoverage(a, Lists.newArrayList(new CoveredLine(1, 3),
+                                               new CoveredLine(2, 0))),
+        new FileCoverage(b, Lists.newArrayList(new CoveredLine(1, 3)))
     };
-    final OutputStream out = new ByteArrayOutputStream();
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    
     SummaryCoverageWriter writer = new SummaryCoverageWriter(out);
-    for (CoveredLine coveredLine : lines) {
-      coveredLine.write(writer);
+    for (FileCoverage coverage : coverages) {
+      coverage.write(writer);
     }
+    writer.flush();
     assertEquals(String.format("%s: %s%% covered\n" +
                                "%s: %s%% covered\n",
                                a, "50.0", b, "100.0"), out.toString());

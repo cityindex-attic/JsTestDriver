@@ -15,10 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.jstestdriver.JsonCommand.CommandType;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +24,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.JsonCommand.CommandType;
 
 /**
  * Handles the communication of a command to the JsTestDriverServer from the
@@ -142,7 +142,7 @@ public class CommandTask {
       uploadFileParams.put("id", params.get("id"));
       uploadFileParams.put("data", gson.toJson(loadedfiles));
       server.post(baseUrl + "/fileSet", uploadFileParams);
-      List<FileSource> filesSrc = new LinkedList<FileSource>(filterFilesToLoad(finalFilesToUpload));
+      List<FileSource> filesSrc = new LinkedList<FileSource>(filterFilesToLoad(loadedfiles));
       int numberOfFilesToLoad = filesSrc.size();
 
       for (int i = 0; i < numberOfFilesToLoad; i += CHUNK_SIZE) {

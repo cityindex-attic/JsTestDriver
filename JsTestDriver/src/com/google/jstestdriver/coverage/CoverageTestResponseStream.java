@@ -49,14 +49,20 @@ public class CoverageTestResponseStream implements ResponseStream {
   }
 
   public void stream(Response response) {
-    for (TestResult testResult : generator.getTestResults(response)) {
-      final String coveredLines = testResult.getData().get(COVERAGE_DATA_KEY);
-      if (coveredLines != null) {
-        Collection<CoveredLine> lines = gson.fromJson(coveredLines,
-            new TypeToken<Collection<CoveredLine>>(){}.getType());
-        accumulator.add(browserId, lines);
+    try {
+      Collection<TestResult> testResults = generator.getTestResults(response);
+      for (TestResult testResult : testResults) {
+        final String coveredLines = testResult.getData().get(COVERAGE_DATA_KEY);
+        if (coveredLines != null) {
+          Collection<FileCoverage> lines = gson.fromJson(coveredLines,
+              new TypeToken<Collection<FileCoverage>>(){}.getType());
+          accumulator.add(browserId, lines);
+        }
       }
+      runTestsActionResponseStream.stream(response);
+    }catch (RuntimeException e) {
+      e.printStackTrace();
+      throw e;
     }
-    runTestsActionResponseStream.stream(response);
   }
 }

@@ -58,4 +58,9 @@ public class FileSource {
   public void setBasePath(String basePath) {
     this.basePath = basePath;
   }
+  
+  @Override
+  public String toString() {
+    return String.format("%s(%s, %s, %s)", getClass().getSimpleName(), fileSrc, basePath, timestamp);
+  }
 }

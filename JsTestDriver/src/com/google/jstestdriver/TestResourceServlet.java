@@ -41,6 +41,7 @@ public class TestResourceServlet extends HttpServlet {
     resp.setHeader("Pragma", "no-cache");
     resp.setHeader("Cache-Control", "private, no-cache, no-store, max-age=0, must-revalidate");
     resp.setHeader("Expires", TIME_IN_THE_PAST);
+    resp.setHeader("Content-Type", "text/plain");
     service(req.getPathInfo().substring(1) /* remove the first / */, resp.getWriter());
   }
 

@@ -42,6 +42,7 @@ public class HeartbeatServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     PrintWriter writer = resp.getWriter();
     String id = req.getParameter("id");
+    System.out.println("get heartbeat id:" + id);
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
 
     if ((time.now().getMillis() - browser.getLastHeartBeat().getMillis()) > TIMEOUT) {
@@ -55,7 +56,9 @@ public class HeartbeatServlet extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    SlaveBrowser browser = capturedBrowsers.getBrowser(req.getParameter("id"));
+    String id = req.getParameter("id");
+    SlaveBrowser browser = capturedBrowsers.getBrowser(id);
+    System.out.println("post heartbeat id:" + id);
 
     if (browser != null) {
       browser.heartBeat();

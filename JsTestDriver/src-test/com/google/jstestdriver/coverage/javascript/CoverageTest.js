@@ -1,6 +1,23 @@
-var CoverageTest  = TestCase('CoverageTest ');
+/*
+ * Copyright 2009 Google Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+/** @author corysmith@google.com (Cory Smith) */
+var CoverageTest = TestCase('CoverageTest');
 
 CoverageTest.prototype.testInit = function() {
+  console.debug("testInit");
   var executableLines = [1,2,5];
   var totalLines = 20;
   var fileName = 'FILE';
@@ -13,6 +30,7 @@ CoverageTest.prototype.testInit = function() {
 };
 
 CoverageTest.prototype.testInitNoop = function() {
+  console.debug("testInitNoop");
   var executableLines = [1,2,5];
   var totalLines = 20;
   var fileName = 'FILE';
@@ -31,13 +49,11 @@ CoverageTest.prototype.testToCoveredLines = function() {
   
   fileCoverage[executableLines[1]]++;
   
-  var lines = fileCoverage.toCoveredLines();
-  assertEquals(executableLines.length, lines.length);
-  for(var i = 0; i < lines.length; i++) {
-    assertEquals(fileName, lines[i].qualifiedFile);
-    assertEquals(executableLines[i], lines[i].lineNumber);
-    assertEquals(fileCoverage[executableLines[i]], lines[i].executedNumber);
-    assertEquals(lines.length, lines[i].totalExecutableLines);
+  var report = fileCoverage.toCoveredLines();
+  assertEquals(executableLines.length, report.lines.length);
+  for(var i = 0; i < report.lines.length; i++) {
+    assertEquals(executableLines[i], report.lines[i].lineNumber);
+    assertEquals(fileCoverage[executableLines[i]], report.lines[i].executedNumber);
   }
 }
 
@@ -48,6 +64,7 @@ CoverageTest.prototype.testSummarizeCoverage = function() {
   var fileTwo = reporter.init('foo.js', 5, [2,3,4]);
   fileTwo[3]++;
   fileTwo[4]++;
-  var coveredLines = reporter.summarizeCoverage();
-  assertEquals(6, coveredLines.length);
+  var reports = reporter.summarizeCoverage();
+  assertEquals(3, reports[0].lines.length);
+  assertEquals(3, reports[1].lines.length);
 };
