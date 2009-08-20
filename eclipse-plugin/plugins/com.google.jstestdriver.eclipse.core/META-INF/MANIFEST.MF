@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JS Test Driver Core
 Bundle-SymbolicName: com.google.jstestdriver.eclipse.core;singleton:=true
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.2
 Bundle-Activator: com.google.jstestdriver.eclipse.core.Activator
 Bundle-Vendor: GOOGLE
 Require-Bundle: org.eclipse.ui,
@@ -14,7 +14,6 @@ Export-Package: com.google.inject,
  com.google.jstestdriver,
  com.google.jstestdriver.eclipse.core,
  com.google.jstestdriver.eclipse.internal.core,
- com.google.jstestdriver.hooks,
- com.google.jstestdriver.ui
+ com.google.jstestdriver.hooks
 Bundle-ClassPath: lib/JsTestDriver.jar,
  .

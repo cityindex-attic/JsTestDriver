@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -104,23 +104,28 @@ public class TestResultsPanel extends Composite {
     testResultsTree.setContentProvider(new TestResultsTreeContentProvider());
     testResultsTree.setInput(testRunResult);
     
-    testResultsTree.addDoubleClickListener(new IDoubleClickListener() {
+    testResultsTree.addSelectionChangedListener(new ISelectionChangedListener() {
       
-      public void doubleClick(DoubleClickEvent event) {
+      public void selectionChanged(SelectionChangedEvent event) {
         TreeSelection selection = (TreeSelection) event.getSelection();
         if (selection.getFirstElement() instanceof EclipseJstdTestResult) {
           EclipseJstdTestResult result = (EclipseJstdTestResult) selection
           .getFirstElement();
           String detailsString = "";
-          if (!result.getResult().getMessage().trim().equals("")) {
-            detailsString = "Message : " + result.getResult().getMessage() + "\n";
+          if (!result.getResult().getParsedMessage().trim().equals("")) {
+            detailsString = "Message : " + result.getResult().getParsedMessage() + "\n";
+          }
+          if (!result.getResult().getStack().trim().equals("")) {
+            detailsString = "Stack Trace : " + result.getResult().getStack() + "\n";
           }
           detailsString += "Log : " + result.getResult().getLog();
           testDetailsText.setText(detailsString);
+        } else {
+          testDetailsText.setText("");
         }
       }
     });
-
+    
     GridData testDetailsData = new GridData();
     testDetailsData.horizontalSpan = 3;
     testDetailsData.grabExcessHorizontalSpace = true;
