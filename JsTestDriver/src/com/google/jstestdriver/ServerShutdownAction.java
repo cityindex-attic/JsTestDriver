@@ -28,6 +28,5 @@ public class ServerShutdownAction implements Action {
 
   public void run() {
     serverStartupAction.getServer().stop();
-    System.exit(0);
   }
 }

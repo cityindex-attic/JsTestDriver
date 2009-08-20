@@ -198,8 +198,6 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
     for (FileInfo f : filesData) {
       String path = f.getFileName();
-      System.out.println("Adding " + f + " length " + f.getData().length());
-
       filesCache.addFile(path, f);
     }
   }

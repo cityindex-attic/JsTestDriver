@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver.coverage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.jstestdriver.Action;
 
 /**
@@ -22,6 +25,7 @@ import com.google.jstestdriver.Action;
  * @author corysmith@google.com (Cory Smith)
  */
 public class CoverageReporterAction implements Action {
+  private static final Logger logger = LoggerFactory.getLogger(CoverageReporterAction.class);
 
   private final CoverageAccumulator accumulator;
   private final CoverageWriter writer;
@@ -33,6 +37,7 @@ public class CoverageReporterAction implements Action {
   }
 
   public void run() {
+    logger.debug("Writing coverage to {}", writer);
     accumulator.write(writer);
     writer.flush();
   }

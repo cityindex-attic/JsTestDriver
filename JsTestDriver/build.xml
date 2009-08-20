@@ -100,13 +100,12 @@
       <javac srcdir="${src.dir}" destdir="@{destdir}" classpathref="classpath" debug="@{debug}">
         <src path="${src.dir}" />
         <src path="${src-gen.dir}" />
-      	<exclude name="com/google/jstestdriver/ui/**" />
+        <exclude name="com/google/jstestdriver/ui/**" />
       </javac>
       <copy todir="@{destdir}">
         <fileset dir="${src.dir}">
           <exclude name="**/*.java" />
           <exclude name="${javascript-resources}/*.js"/>
-        	<exclude name="com/google/jstestdriver/ui/**"/>
         </fileset>
       </copy>
       <apply executable="java" dest="@{destdir}/${javascript-resources}">
@@ -123,8 +122,7 @@
         <mapper type="glob" from="*.js" to="*.js"></mapper>
       </apply>
       <concat destfile="@{destdir}/${javascript-resources}/jstestdrivernamespace.js">
-            <filelist dir="@{destdir}/${javascript-resources}"
-            files="Namespace.js" />
+            <filelist dir="@{destdir}/${javascript-resources}" files="Namespace.js" />
       </concat>
       <concat destfile="${obj.dir}/${javascript-resources}/runner.js">
         <filelist dir="${obj.dir}/${javascript-resources}"
@@ -174,10 +172,36 @@
 
   <target name="compile" depends="init, antlr">
     <macro-compile destdir="${obj.dir}" debug="false"/>
+    <javac srcdir="${src.dir}" destdir="${obj.dir}">
+      <classpath>
+        <path refid="classpath" />
+        <path location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
+      </classpath>
+      <include name="com/google/jstestdriver/ui/**"/>
+    </javac>
+    <copy todir="${obj.dir}">
+      <fileset dir="${src.dir}">
+        <exclude name="**/*.java" />
+        <include name="com/google/jstestdriver/ui/**"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="compile-debug" depends="init, antlr">
     <macro-compile destdir="${obj-debug.dir}" debug="true"/>
+    <javac srcdir="${src.dir}" destdir="${obj-debug.dir}" debug="true">
+      <classpath>
+        <path refid="classpath" />
+        <path location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
+      </classpath>
+      <include name="com/google/jstestdriver/ui/**"/>
+    </javac>
+    <copy todir="${obj-debug.dir}">
+      <fileset dir="${src.dir}">
+        <exclude name="**/*.java" />
+        <include name="com/google/jstestdriver/ui/**"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="compile-test" depends="compile-debug">
@@ -283,19 +307,6 @@
   </target>
 
   <target name="ui-jar" depends="compile">
-  	<javac srcdir="${src.dir}" destdir="${obj.dir}">
-  		<classpath>
-  			<path refid="classpath" />
-  			<path location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
-  		</classpath>
-  		<include name="com/google/jstestdriver/ui/**"/>
-  	</javac>
-  	<copy todir="${obj.dir}">
-  	  <fileset dir="${src.dir}">
-  	    <exclude name="**/*.java" />
-  	  	<include name="com/google/jstestdriver/ui/**"/>
-  	  </fileset>
-  	</copy>
     <jar destfile="${bin.dir}/${ant.project.name}-ui.jar" basedir="${obj.dir}" excludes="**/*.js"
       duplicate="preserve">
       <manifest>

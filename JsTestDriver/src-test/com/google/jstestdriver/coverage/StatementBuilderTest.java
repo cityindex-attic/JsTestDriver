@@ -344,7 +344,7 @@ public class StatementBuilderTest extends TestCase {
     expectations.verify(actualStatements);
   }
 
-  private static class StatementExpectations {
+  public static class StatementExpectations {
     public List<StatementExpectation> expectations = new LinkedList<StatementExpectation>();
     private int lineNumber = 0;
 
@@ -381,7 +381,7 @@ public class StatementBuilderTest extends TestCase {
     }
   }
 
-  private static class StatementExpectation {
+  public static class StatementExpectation {
     private final int lineNumber;
     private final String line;
     private final Class<?> expectedType;

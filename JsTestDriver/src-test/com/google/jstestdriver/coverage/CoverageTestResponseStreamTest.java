@@ -87,7 +87,7 @@ public class CoverageTestResponseStreamTest extends TestCase {
     assertTrue(responseStub.finished);
   }
 
-  private static class ResponseStreamStub implements ResponseStream {
+  public final static class ResponseStreamStub implements ResponseStream {
     public boolean finished = false;
     public Response response;
 
