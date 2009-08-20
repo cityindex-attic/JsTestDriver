@@ -13,11 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.TestResult = function(testCaseName, testName, result, message, log, time) {
+/**
+ * @param {String} testCaseName
+ * @param {String} testName
+ * @param {'passed', 'failed', 'error'} result
+ * @param {String} message
+ * @param {Array.<String>} log
+ * @param {Number} time
+ * @param {Object.<String, Object>} data A map of arbitrary value pairs representing test meta data.
+ */
+jstestdriver.TestResult = function(testCaseName, testName, result, message, log, time, data) {
   this.testCaseName = testCaseName;
   this.testName = testName;
   this.result = result;
   this.message = message;
   this.log = log;
   this.time = time;
+  this.data = data;
 };

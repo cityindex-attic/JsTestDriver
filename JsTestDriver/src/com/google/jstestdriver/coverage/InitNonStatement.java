@@ -16,6 +16,7 @@
 
 package com.google.jstestdriver.coverage;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -35,15 +36,27 @@ public class InitNonStatement implements Statement {
   }
 
   public String toSource(int totalLines, int executableLines) {
+    LinkedList<Integer> executableLineNumbers = new LinkedList<Integer>();
+    toListOfExecutableLines(executableLineNumbers);
     return String.format("%s_%s=%s.initNoop('%s',%s,%s); %s%s",
         PrefixBuilder.COVERAGE_PREFIX,
         fileHash,
         PrefixBuilder.COVERAGE_PREFIX,
         filePath,
         totalLines,
-        executableLines,
+        toJsArray(executableLineNumbers),
         lineSource,
         next.toSource(totalLines, executableLines));
+  }
+  //TODO(corysmith): Fix duplication.
+  private String toJsArray(LinkedList<Integer> executableLineNumbers) {
+    StringBuilder js = new StringBuilder("[");
+    String sep = "";
+    for (Integer number : executableLineNumbers) {
+      js.append(sep).append(number);
+      sep = ",";
+    }
+    return js.append("]").toString();
   }
 
   public Statement add(Statement statement, boolean notInOmittedBlock) {
@@ -66,5 +79,9 @@ public class InitNonStatement implements Statement {
   public void toList(List<Statement> statementList) {
     statementList.add(this);
     next.toList(statementList);
+  }
+  
+  public void toListOfExecutableLines(List<Integer> numbers) {
+    next.toListOfExecutableLines(numbers);
   }
 }

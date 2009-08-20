@@ -265,7 +265,7 @@ jstestdriver.CommandExecutor.prototype.onTestDoneRunnerMode_ = function(result) 
   var testRunner = parent.G_testRunner;
 
   testRunner.setIsSuccess(testRunner.isSuccess() & (result.result == 'passed'));
-  this.testsDone_.push(result);
+  this.addTestResult(result);
 };
 
 
@@ -328,10 +328,17 @@ jstestdriver.CommandExecutor.prototype.sendTestResults_ = function() {
 
 
 jstestdriver.CommandExecutor.prototype.onTestDone_ = function(result) {
-  this.testsDone_.push(result);
+  this.addTestResult(result);
   if ((result.result == 'error' || result.log != '') && this.sentOn_ == -1) {
     this.sendTestResults_();
   }
+};
+
+
+// TODO(corysmith): refactor the testsDone collection into a separate object.
+jstestdriver.CommandExecutor.prototype.addTestResult = function(testResult) {
+  this.__pluginRegistrar.processTestResult(testResult);
+  this.testsDone_.push(testResult);
 };
 
 

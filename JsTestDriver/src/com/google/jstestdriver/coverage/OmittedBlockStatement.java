@@ -69,7 +69,6 @@ public class OmittedBlockStatement extends ExecutableStatement{
     }
     next = statement;
     return statement;
-
   }
 
   public void toList(List<Statement> statementList) {
@@ -78,5 +77,13 @@ public class OmittedBlockStatement extends ExecutableStatement{
       child.toList(statementList);
     }
     next.toList(statementList);
+  }
+
+  public void toListOfExecutableLines(List<Integer> numbers) {
+    numbers.add(lineNumber);
+    for (Statement child : children) {
+      child.toListOfExecutableLines(numbers);
+    }
+    next.toListOfExecutableLines(numbers);
   }
 }

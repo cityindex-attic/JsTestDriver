@@ -173,7 +173,7 @@ commandExecutorTest.prototype.testEvaluateGoodAndBadCommand = function() {
 
 commandExecutorTest.prototype.testRemoveScriptTags = function() {
   var executor = new jstestdriver.CommandExecutor(1, "/Q1", function (_url, _data, _callback) {
-  }, null);
+  }, null, null, null);
   var files = [];
   var dom = new jstestdriver.MockDOM();
   var head = dom.createElement('head');
@@ -203,6 +203,38 @@ commandExecutorTest.prototype.testRegisterCommandAndUseIt = function() {
   assertTrue(called);
 };
 
+
+commandExecutorTest.prototype.testCallPluginOnTestResultAdded = function() {
+  var expected = new jstestdriver.TestResult("testsuite", "foo", "passed", "", [], 1, {
+    foo : 1
+  });
+
+  var tmpPlugin = {};
+  tmpPlugin[jstestdriver.PluginRegistrar.PROCESS_TEST_RESULT] = function(result) {
+    result.data = expected.data;
+  }
+  
+  var registrar = new jstestdriver.PluginRegistrar(tmpPlugin);
+  
+  var dataSent = null;
+  var executor = new jstestdriver.CommandExecutor(1, "/Q1", function (_url, _data, _callback) {
+    dataSent = _data;
+  }, null, null, registrar);
+  
+  var result = new jstestdriver.TestResult(expected.testCaseName,
+                                           expected.testName,
+                                           expected.result,
+                                           expected.message,
+                                           expected.log,
+                                           expected.time,
+                                           {});
+  executor.addTestResult(result);
+  executor.boundSendTestResults();
+  assertNotNull(dataSent);
+  jstestdriver.console.log(JSON.stringify([expected]));
+  jstestdriver.console.log(eval(dataSent.response).response);
+  assertEquals(JSON.stringify([expected]), eval(dataSent.response).response);
+};
 
 /*commandExecutorTest.prototype.testParseJsonAndRunTheRightMethod = function() {
   var data;

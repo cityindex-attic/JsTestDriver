@@ -24,15 +24,17 @@ import java.util.List;
  */
 public interface Statement {
 
-  public abstract String getSourceText();
+  public String getSourceText();
 
-  public abstract int getLineNumber();
+  public int getLineNumber();
 
-  public abstract String toSource(int totalLines, int executableLines);
+  public String toSource(int totalLines, int executableLines);
 
-  public abstract boolean isExecutable();
+  public boolean isExecutable();
 
-  public abstract Statement add(Statement statement, boolean notInOmittedBlock);
+  public Statement add(Statement statement, boolean notInOmittedBlock);
   
-  public abstract void toList(List<Statement> statementList);
+  public void toList(List<Statement> statementList);
+  
+  public void toListOfExecutableLines(List<Integer> numbers);
 }

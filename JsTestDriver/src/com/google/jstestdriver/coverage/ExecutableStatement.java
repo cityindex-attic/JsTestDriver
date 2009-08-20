@@ -69,4 +69,9 @@ public class ExecutableStatement implements Statement {
     statementList.add(this);
     next.toList(statementList);
   }
+  
+  public void toListOfExecutableLines(List<Integer> numbers) {
+    numbers.add(lineNumber);
+    next.toListOfExecutableLines(numbers);
+  }
 }

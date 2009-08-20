@@ -47,4 +47,7 @@ public class NullStatement implements Statement {
 
   public void toList(List<Statement> statementList) {
   }
+
+  public void toListOfExecutableLines(List<Integer> numbers) {
+  }
 }

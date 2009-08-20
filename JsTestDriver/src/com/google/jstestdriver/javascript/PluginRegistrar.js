@@ -59,6 +59,8 @@ jstestdriver.PluginRegistrar = function(defaultPlugin) {
 };
 
 
+jstestdriver.PluginRegistrar.PROCESS_TEST_RESULT = 'processTestResult';
+
 jstestdriver.PluginRegistrar.LOAD_SOURCE = 'loadSource';
 
 
@@ -188,4 +190,34 @@ jstestdriver.PluginRegistrar.prototype.loadSource = function(file, onSourceLoad)
 jstestdriver.PluginRegistrar.prototype.runTestConfiguration = function(testRunConfiguration,
     onTestDone, onTestRunConfigurationComplete) {
   this.dispatch_(jstestdriver.PluginRegistrar.RUN_TEST, arguments);
+};
+
+
+/**
+ * processTestResult
+ * 
+ * By defining the method processTestResult a plugin can pass extra meta data about a test back to
+ * the server.
+ * 
+ * processTestResult takes 1 parameter:
+ * - testResult: The TestResult of the most recently run test.
+ *              
+ *   
+ * processTestResult must return a boolean:
+ * - true to allow other plugins to process the test result
+ * - false if not further processing should be allowed.
+ * 
+ * A simple processTestResult plugin would look like:
+ * 
+ * var myPlugin = {
+ *   name: 'myPlugin',
+ *   processTestResult: function(testResult) {
+ *     testResult.data.foo = 'bar';
+ *     return true;
+ *   }
+ * }
+ * 
+ */
+jstestdriver.PluginRegistrar.prototype.processTestResult = function(testResult) {
+  this.dispatch_(jstestdriver.PluginRegistrar.PROCESS_TEST_RESULT, arguments);
 };

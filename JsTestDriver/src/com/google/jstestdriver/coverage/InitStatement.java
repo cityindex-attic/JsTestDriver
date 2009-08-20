@@ -16,6 +16,7 @@
 
 package com.google.jstestdriver.coverage;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,9 +28,10 @@ public class InitStatement implements Statement{
 
   private final String filePath;
   protected final String fileHash;
-  protected Statement next = new NullStatement();;
+  protected Statement next = new NullStatement();
   protected final int lineNumber;
   protected final String lineSource;
+  
 
   public InitStatement(int lineNumber, String lineSource, String fileHash, String filePath) {
     this.lineNumber = lineNumber;
@@ -39,17 +41,30 @@ public class InitStatement implements Statement{
   }
 
   public String toSource(int totalLines, int executableLines) {
+    LinkedList<Integer> executableLineNumbers = new LinkedList<Integer>();
+    toListOfExecutableLines(executableLineNumbers);
     return String.format("%s_%s=%s.init('%s',%s,%s); %s%s",
         PrefixBuilder.COVERAGE_PREFIX,
         fileHash,
         PrefixBuilder.COVERAGE_PREFIX,
         filePath,
         totalLines,
-        executableLines,
+        toJsArray(executableLineNumbers),
         lineSource,
         next.toSource(totalLines, executableLines));
   }
-  
+
+  //TODO(corysmith): Fix duplication.
+  private String toJsArray(LinkedList<Integer> executableLineNumbers) {
+    StringBuilder js = new StringBuilder("[");
+    String sep = "";
+    for (Integer number : executableLineNumbers) {
+      js.append(sep).append(number);
+      sep = ",";
+    }
+    return js.append("]").toString();
+  }
+
   public boolean isExecutable() {
     return true;
   }
@@ -75,5 +90,10 @@ public class InitStatement implements Statement{
   public void toList(List<Statement> statementList) {
     statementList.add(this);
     next.toList(statementList);
+  }
+  
+  public void toListOfExecutableLines(List<Integer> numbers) {
+    numbers.add(lineNumber);
+    next.toListOfExecutableLines(numbers);
   }
 }

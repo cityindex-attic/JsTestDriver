@@ -74,4 +74,8 @@ public class NonStatement implements Statement{
     statementList.add(this);
     next.toList(statementList);
   }
+  
+  public void toListOfExecutableLines(List<Integer> numbers) {
+    next.toListOfExecutableLines(numbers);
+  }
 }

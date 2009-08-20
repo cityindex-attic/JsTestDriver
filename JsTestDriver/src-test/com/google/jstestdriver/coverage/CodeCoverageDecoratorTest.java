@@ -23,7 +23,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
 
   public void testSourceFileLineCoverageDecoration() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',2,2); var a = 1;\n" +
+        "LCOV_HASH=LCOV.init('FILE',2,[1,2]); var a = 1;\n" +
         "LCOV_HASH[2]++; var b = 2;\n",
 
         "var a = 1;\n" +
@@ -36,7 +36,13 @@ public class CodeCoverageDecoratorTest extends TestCase {
     String line = "a = 1;\n";
     StringBuilder input = new StringBuilder(line);
     StringBuilder expect = new StringBuilder("LCOV_HASH=LCOV.init('FILE',");
-    expect.append(totalLines).append(",").append(totalLines).append("); ").append(line);
+    expect.append(totalLines).append(",[");
+    String sep = "";
+    for (int i = 0; i < totalLines; i++) {
+      expect.append(sep).append(i + 1);
+      sep = ",";
+    }
+    expect.append("]); ").append(line);
     for (int i = 2; i <= totalLines; i++) {
       String indent = i < 10 ? " " : "";
       expect.append("LCOV_HASH[").append(i).append(indent).append("]++; ").append(line);
@@ -51,7 +57,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
 
   public void testDoNotDecorateStatementsAcrossMultipleLines() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',5,3); var a = 0;\n" +
+        "LCOV_HASH=LCOV.init('FILE',5,[1,2,5]); var a = 0;\n" +
         "LCOV_HASH[2]++; a = true \n" +
         "                  ? 1 \n" +
         "                  : 2;\n" +
@@ -67,7 +73,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
 
   public void testDecorateIfStatement() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',7,5); var a = 0;\n" +
+        "LCOV_HASH=LCOV.init('FILE',7,[1,2,3,5,7]); var a = 0;\n" +
         "LCOV_HASH[2]++; if (a) {\n" +
         "LCOV_HASH[3]++;   a = 1;\n" +
         "                } else {\n" +
@@ -87,7 +93,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
   
   public void testDecorateNakedIfWithMultilineStatement() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',5,4); var a = 0;\n" +
+        "LCOV_HASH=LCOV.init('FILE',5,[1,2,3,5]); var a = 0;\n" +
         "LCOV_HASH[2]++; if (a)\n" +
         "{LCOV_HASH[3]++;   hello(\n" +
         "                        6);}\n" +
@@ -103,7 +109,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
   
   public void testDecorateFunctionStatement() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',5,4); var a = 0;\n" +
+        "LCOV_HASH=LCOV.init('FILE',5,[1,2,3,5]); var a = 0;\n" +
         "LCOV_HASH[2]++; function foo (a) {\n" +
         "LCOV_HASH[3]++;   a = 1;\n" +
         "                }\n" +
@@ -119,7 +125,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
   
   public void testDecorateWhileStatement() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',5,4); var a = 0;\n" +
+        "LCOV_HASH=LCOV.init('FILE',5,[1,2,3,5]); var a = 0;\n" +
         "LCOV_HASH[2]++; while (a) {\n" +
         "LCOV_HASH[3]++;   a = 1;\n" +
         "                }\n" +
@@ -135,7 +141,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
   
   public void testDecorateForStatement() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',7,5); var a = 0;\n" +
+        "LCOV_HASH=LCOV.init('FILE',7,[1,2,3,5,7]); var a = 0;\n" +
         "LCOV_HASH[2]++; for (\n" +
         "LCOV_HASH[3]++;      var a = 1;\n" +
         "                     a < 20; a++) {\n" +
@@ -155,7 +161,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
 
   public void testDecorateNakedIfStatement() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',6,5); var a = 0;\n" +
+        "LCOV_HASH=LCOV.init('FILE',6,[1,2,3,5,6]); var a = 0;\n" +
         "LCOV_HASH[2]++; if (a)\n" +
         "{LCOV_HASH[3]++;   a = 1;}\n" +
         "                else\n" +
@@ -173,7 +179,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
   
   public void testDecorateNakedNestedIfStatements() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',5,5); var a = 0;\n" +
+        "LCOV_HASH=LCOV.init('FILE',5,[1,2,3,4,5]); var a = 0;\n" +
         "LCOV_HASH[2]++; if (a)\n" +
         "{LCOV_HASH[3]++;   if (a)\n" +
         "{LCOV_HASH[4]++;     a = 1;}}\n" +
@@ -189,7 +195,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
   
   public void testDecorateNakedNestedIfElseStatements() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',7,6); var a = 0;\n" +
+        "LCOV_HASH=LCOV.init('FILE',7,[1,2,3,4,6,7]); var a = 0;\n" +
         "LCOV_HASH[2]++; if (a)\n" +
         "{LCOV_HASH[3]++;   if (a)\n" +
         "{LCOV_HASH[4]++;     a = 1;}\n" +
@@ -209,7 +215,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
   
   public void testDecorateNakedNestedIfElseStatementsWithMultiline() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',8,6); var a = 0;\n" +
+        "LCOV_HASH=LCOV.init('FILE',8,[1,2,3,4,7,8]); var a = 0;\n" +
         "LCOV_HASH[2]++; if (a)\n" +
         "{LCOV_HASH[3]++;   if (a)\n" +
         "{LCOV_HASH[4]++;     foo(\n" +
@@ -231,7 +237,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
   
   public void testDecorateCommentStartingStatement() throws Exception {
     assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.initNoop('FILE',6,4); // foo bar\n" +
+        "LCOV_HASH=LCOV.initNoop('FILE',6,[2,3,5,6]); // foo bar\n" +
         "LCOV_HASH[2]++; if (a)\n" +
         "{LCOV_HASH[3]++;   a = 1;}\n" +
         "                else\n" +
