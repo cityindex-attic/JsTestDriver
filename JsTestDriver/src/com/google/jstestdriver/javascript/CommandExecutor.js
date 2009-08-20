@@ -75,7 +75,6 @@ jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager, t
   this.testsDone_ = [];
   this.sentOn_ = -1;
   this.done_ = false;
-  jstestdriver.executor = this;
 };
 
 
@@ -280,7 +279,7 @@ jstestdriver.CommandExecutor.prototype.onCompleteRunnerMode_ = function() {
 
 
 jstestdriver.CommandExecutor.prototype.startTestInterval_ = function(interval) {
-  this.timeout_ = jstestdriver.setTimeout('jstestdriver.executor.boundSendTestResults()', interval);
+  this.timeout_ = jstestdriver.setTimeout(this.boundSendTestResults, interval);
 };
 
 
