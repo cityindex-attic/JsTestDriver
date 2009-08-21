@@ -29,7 +29,7 @@ import com.google.jstestdriver.TestResultPrinter;
  */
 public class CoverageResponseStreamFactoryTest extends TestCase {
 
-  private final class TestResultPrinterStub implements TestResultPrinter {
+  public final class TestResultPrinterStub implements TestResultPrinter {
     public TestResult testResult;
 
     public void close() {

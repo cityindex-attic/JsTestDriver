@@ -34,39 +34,60 @@ public class StatementBuilderTest extends TestCase {
       .expect("hello(0);", ExecutableStatement.class)
     );
   }
+
+  public void testArrayLiteral() throws Exception {
+    assertStatements(new StatementExpectations()
+      .expect("[1,2,4]", InitStatement.class)
+    );
+  }
+  
+  public void testTopLevelIncAndDec() throws Exception {
+    assertStatements(new StatementExpectations()
+      .expect("coverage[", InitStatement.class)
+      .expect("         foo]++;", NonStatement.class)
+      .expect("coverage[foo]--;", ExecutableStatement.class)
+    );
+  }
+  
+  public void testNestedLevelIncAndDec() throws Exception {
+    assertStatements(new StatementExpectations()
+      .expect("coverage[foo]++;", InitStatement.class)
+      .expect("coverage[foo]--;", ExecutableStatement.class)
+    );
+  }
   
   public void testFlattenWithNestedComment() throws Exception {
     assertStatements(new StatementExpectations()
-    .expect("var i=0;", InitStatement.class)
-    .expect("hello(0);", ExecutableStatement.class)
-    .expect("// doo be doo be doooooo.", NonStatement.class)
-    .expect("goodbye(i);", ExecutableStatement.class)
+      .expect("var i=0;", InitStatement.class)
+      .expect("hello(0);", ExecutableStatement.class)
+      .expect("// doo be doo be doooooo.", NonStatement.class)
+      .expect("goodbye(i);", ExecutableStatement.class)
     );
   }
   
   public void testFlattenWithMultilineComment() throws Exception {
     assertStatements(new StatementExpectations()
-    .expect("var i=0;", InitStatement.class)
-    .expect("hello(", ExecutableStatement.class)
-    .expect(");", NonStatement.class)
-    .expect("/* foooooo", NonStatement.class)
-    .expect(" */goodbye(i);", NonStatement.class)
+      .expect("var i=0;", InitStatement.class)
+      .expect("hello(", ExecutableStatement.class)
+      .expect(");", NonStatement.class)
+      .expect("/* foooooo", NonStatement.class)
+      .expect(" */goodbye(i);", NonStatement.class)
     );
   }
   
   public void testFlattenWithClassDefine() throws Exception {
     assertStatements(new StatementExpectations()
-    .expect("/**", InitNonStatement.class)
-    .expect(" * Fourscore and  seven foos ago...", NonStatement.class)
-    .expect(" */", NonStatement.class)
-    .expect("function Foo(){};", ExecutableStatement.class)
-    .expect("/**", NonStatement.class)
-    .expect(" * Wakka Wakka!", NonStatement.class)
-    .expect(" */", NonStatement.class)
-    .expect("Foo.prototype.bar = function() {;", ExecutableStatement.class)
-    .expect(" // doo be doo be doooooo.", NonStatement.class)
-    .expect(" return goodbye(i);", ExecutableStatement.class)
-    .expect("};", NonStatement.class)
+      .expect("/**", InitNonStatement.class)
+      .expect(" * Fourscore and  seven foos ago...", NonStatement.class)
+      .expect(" */", NonStatement.class)
+      .expect("function Foo(){};", ExecutableStatement.class)
+      .expect("/**", NonStatement.class)
+      .expect(" * Wakka Wakka!", NonStatement.class)
+      .expect(" */", NonStatement.class)
+      .expect("Foo.prototype.bar = function() {;", ExecutableStatement.class)
+      .expect(" // doo be doo be doooooo.", NonStatement.class)
+      .expect(" return goodbye(i);", ExecutableStatement.class)
+      .expect("};", NonStatement.class)
     );
   }
 
@@ -90,11 +111,11 @@ public class StatementBuilderTest extends TestCase {
   
   public void testFlattenWithNakedMultilineFor() throws Exception {
     assertStatements(new StatementExpectations()
-    .expect("for(var i=0;", InitStatement.class)
-    .expect("        i<0;", NonStatement.class)
-    .expect("        i++)", NonStatement.class)
-    .expect("  hello(i)", OmittedBlockStatement.class)
-    .expect("hello(0);", ExecutableStatement.class)
+      .expect("for(var i=0;", InitStatement.class)
+      .expect("        i<0;", NonStatement.class)
+      .expect("        i++)", NonStatement.class)
+      .expect("  hello(i)", OmittedBlockStatement.class)
+      .expect("hello(0);", ExecutableStatement.class)
     );
   }
 
@@ -109,13 +130,13 @@ public class StatementBuilderTest extends TestCase {
   
   public void testFlattenWithIfElse() throws Exception {
     assertStatements(new StatementExpectations()
-    .expect("if(i<0) {", InitStatement.class)
-    .expect("  hello(", ExecutableStatement.class)
-    .expect("        i);", NonStatement.class)
-    .expect("} else {", NonStatement.class)
-    .expect("  goodbye(i);", ExecutableStatement.class)
-    .expect("}", NonStatement.class)
-    .expect("hello(0);", ExecutableStatement.class)
+      .expect("if(i<0) {", InitStatement.class)
+      .expect("  hello(", ExecutableStatement.class)
+      .expect("        i);", NonStatement.class)
+      .expect("} else {", NonStatement.class)
+      .expect("  goodbye(i);", ExecutableStatement.class)
+      .expect("}", NonStatement.class)
+      .expect("hello(0);", ExecutableStatement.class)
     );
   }
 
@@ -256,50 +277,50 @@ public class StatementBuilderTest extends TestCase {
   
   public void testFlattenAssignmentInWhile() throws Exception {
     assertStatements(new StatementExpectations()
-    .expect("while(", InitStatement.class)
-    .expect("  a = 32) {", NonStatement.class)
-    .expect("  new TestRunner();", ExecutableStatement.class)
-    .expect("}", NonStatement.class)
+      .expect("while(", InitStatement.class)
+      .expect("  a = 32) {", NonStatement.class)
+      .expect("  new TestRunner();", ExecutableStatement.class)
+      .expect("}", NonStatement.class)
     );
   }
   
   public void testFlattenAssignmentInIf() throws Exception {
     assertStatements(new StatementExpectations()
-    .expect("if(", InitStatement.class)
-    .expect("  a = 32) {", NonStatement.class)
-    .expect("  new TestRunner();", ExecutableStatement.class)
-    .expect("}", NonStatement.class)
+      .expect("if(", InitStatement.class)
+      .expect("  a = 32) {", NonStatement.class)
+      .expect("  new TestRunner();", ExecutableStatement.class)
+      .expect("}", NonStatement.class)
     );
   }
   
   public void testFlattenAssignmentInWithAndParens() throws Exception {
     assertStatements(new StatementExpectations()
-    .expect("with(", InitStatement.class)
-    .expect("  (a = foo())) {", NonStatement.class)
-    .expect("  new TestRunner();", ExecutableStatement.class)
-    .expect("}", NonStatement.class)
+      .expect("with(", InitStatement.class)
+      .expect("  (a = foo())) {", NonStatement.class)
+      .expect("  new TestRunner();", ExecutableStatement.class)
+      .expect("}", NonStatement.class)
     );
   }
   
   public void testFlattenAssignmentInIfWithParens() throws Exception {
     assertStatements(new StatementExpectations()
-    .expect("if(", InitStatement.class)
-    .expect("   (", NonStatement.class)
-    .expect("   b + (", NonStatement.class)
-    .expect("     a = 32))) {", NonStatement.class)
-    .expect("  new TestRunner();", ExecutableStatement.class)
-    .expect("}", NonStatement.class)
+      .expect("if(", InitStatement.class)
+      .expect("   (", NonStatement.class)
+      .expect("   b + (", NonStatement.class)
+      .expect("     a = 32))) {", NonStatement.class)
+      .expect("  new TestRunner();", ExecutableStatement.class)
+      .expect("}", NonStatement.class)
     );
   }
   
   public void testFlattenAssignmentInFor() throws Exception {
     assertStatements(new StatementExpectations()
-    .expect("for(", InitStatement.class)
-    .expect("  a = 32;", NonStatement.class)
-    .expect("  a = b();", NonStatement.class)
-    .expect("  b = new zed()) {", NonStatement.class)
-    .expect("  new TestRunner();", ExecutableStatement.class)
-    .expect("}", NonStatement.class)
+      .expect("for(", InitStatement.class)
+      .expect("  a = 32;", NonStatement.class)
+      .expect("  a = b();", NonStatement.class)
+      .expect("  b = new zed()) {", NonStatement.class)
+      .expect("  new TestRunner();", ExecutableStatement.class)
+      .expect("}", NonStatement.class)
     );
   }
   
@@ -319,16 +340,19 @@ public class StatementBuilderTest extends TestCase {
   
   public void testFlattenTreeWithPrototype() throws Exception {
     assertStatements(new StatementExpectations()
-      .expect("jstestdriver.TestCaseManager.prototype.TestCase = function(testCaseName, proto) {", InitStatement.class)
+      .expect("jstestdriver.TestCaseManager.prototype.TestCase = function(testCaseName, proto) {",
+          InitStatement.class)
       .expect("  var testCaseClass = function() {};", ExecutableStatement.class)
       .expect("", NonStatement.class)
       .expect("  if (proto) {", ExecutableStatement.class)
       .expect("    testCaseClass.prototype = proto;", ExecutableStatement.class)
       .expect("  }", NonStatement.class)
-      .expect("  if (typeof testCaseClass.prototype.setUp == 'undefined') {", ExecutableStatement.class)
+      .expect("  if (typeof testCaseClass.prototype.setUp == 'undefined') {",
+          ExecutableStatement.class)
       .expect("    testCaseClass.prototype.setUp = function() {};", ExecutableStatement.class)
       .expect("  }", NonStatement.class)
-      .expect("  if (typeof testCaseClass.prototype.tearDown == 'undefined') {", ExecutableStatement.class)
+      .expect("  if (typeof testCaseClass.prototype.tearDown == 'undefined') {",
+          ExecutableStatement.class)
       .expect("    testCaseClass.prototype.tearDown = function() {};", ExecutableStatement.class)
       .expect("  }", NonStatement.class)
       .expect("  this.testCases_[testCaseName] = testCaseClass;", ExecutableStatement.class)
@@ -340,7 +364,8 @@ public class StatementBuilderTest extends TestCase {
 
 
   private void assertStatements(StatementExpectations expectations) throws Exception {
-    Statements actualStatements = new StatementsBuilder(new Code("foo.js", "HASH", expectations.source())).build();
+    Statements actualStatements = new StatementsBuilder(new Code("foo.js", "HASH",
+      expectations.source())).build();
     expectations.verify(actualStatements);
   }
 
@@ -393,7 +418,8 @@ public class StatementBuilderTest extends TestCase {
     }
 
     public void assertStatement(Statement actual) {
-      assertEquals(String.format("expected: \n%s actual: \n%s", this, actual), lineNumber, actual.getLineNumber());
+      assertEquals(String.format("expected: \n%s actual: \n%s", this, actual),
+          lineNumber, actual.getLineNumber());
       assertEquals(line, actual.getSourceText());
       assertEquals(actual.toString(), expectedType, actual.getClass());
     }

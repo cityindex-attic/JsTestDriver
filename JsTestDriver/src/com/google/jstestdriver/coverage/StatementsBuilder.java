@@ -57,6 +57,9 @@ public class StatementsBuilder {
     STATEMENT_TYPES.add(ES3Lexer.TRY);
     STATEMENT_TYPES.add(ES3Lexer.CATCH);
     STATEMENT_TYPES.add(ES3Lexer.THROW);
+    STATEMENT_TYPES.add(ES3Lexer.PINC);
+    STATEMENT_TYPES.add(ES3Lexer.PDEC);
+    STATEMENT_TYPES.add(ES3Lexer.ARRAY);
   }
 
   private static final Set<Integer> HAS_ARGS_TYPES = new HashSet<Integer>();
@@ -118,16 +121,23 @@ public class StatementsBuilder {
       if (isFirstInLine(cTree)) {
         if (isStatement(cTree)) {
           if (isNaked(cTree)) {
-            nodes.add(new NakedNode(cTree));
+            nodes.add(new NakedNode(getLine(cTree)));
           } else {
-            nodes.add(new StatementNode(cTree));
+            nodes.add(new StatementNode(getLine(cTree)));
           }
         } else if (isNakedContinuation(cTree)) {
-          nodes.add(new ContinuationNode(cTree));
+          nodes.add(new ContinuationNode(getLine(cTree)));
         }
       }
       flattenTree(nodes, cTree.getChildren());
     }
+  }
+
+  private int getLine(CommonTree tree) {
+    if (tree.getTokenStartIndex() >= 0) {
+      return tokenStream.get(tree.getTokenStartIndex()).getLine();
+    }
+    return tree.getLine();
   }
 
   private boolean isNakedContinuation(CommonTree tree) {
@@ -137,15 +147,15 @@ public class StatementsBuilder {
     return false;
   }
 
-  private boolean isNaked(CommonTree cTree) {
-    if (cTree.getType() == ES3Lexer.BLOCK) {
-      return tokenStream.get(cTree.getTokenStopIndex()).getLine() == cTree.getLine();
+  private boolean isNaked(CommonTree tree) {
+    if (tree.getType() == ES3Lexer.BLOCK) {
+      return tokenStream.get(tree.getTokenStopIndex()).getLine() == getLine(tree);
     }
-    return NAKED_TYPES.contains(cTree.getParent().getType());
+    return NAKED_TYPES.contains(tree.getParent().getType());
   }
 
-  private boolean isFirstInLine(CommonTree cTree) {
-    for (int index = cTree.getTokenStartIndex() - 1; index > 0; index--) {
+  private boolean isFirstInLine(CommonTree tree) {
+    for (int index = tree.getTokenStartIndex() - 1; index > 0; index--) {
       Token token = tokenStream.get(index);
       if (token.getChannel() == ES3Lexer.HIDDEN) {
         continue;
@@ -156,21 +166,21 @@ public class StatementsBuilder {
         while (matcher.find()) {
           lineBreaks++;
         }
-        return token.getLine() + lineBreaks < cTree.getLine();
+        return token.getLine() + lineBreaks < getLine(tree);
       }
-      return token.getLine() < cTree.getLine();
+      return token.getLine() < getLine(tree);
     }
     return true;
   }
 
   private boolean isStatement(CommonTree tree) {
     if (tree.getType() == ES3Lexer.BLOCK) {
-      boolean isSingleline = tokenStream.get(tree.getTokenStopIndex()).getLine() == tree.getLine();
+      boolean isSingleline = tokenStream.get(tree.getTokenStopIndex()).getLine() == getLine(tree);
       if (!isSingleline) {
         CommonTree child = (CommonTree) tree.getChild(0);
-        if (isStatement(child) && child.getLine() == tree.getLine()) {
+        if (isStatement(child) && getLine(child) == getLine(tree)) {
           System.err.printf("Warning: multiline block on line %s in %s has a statement"
-              + " that will not be instrumented.\n", tree.getLine(), code.getFilePath());
+              + " that will not be instrumented.\n", getLine(tree), code.getFilePath());
         }
       }
       return isSingleline;
@@ -181,12 +191,12 @@ public class StatementsBuilder {
     // if it's in an expression, we don't want it.
     if (EXPRESSION_TYPES.contains(tree.getParent().getType())) {
       System.err.printf("Warning: multiline expression on line %s in %s has a statement"
-          + " that will not be instrumented.\n", tree.getLine(), code.getFilePath());
+          + " that will not be instrumented.\n", getLine(tree), code.getFilePath());
       return false;
     }
     if (HAS_ARGS_TYPES.contains(tree.getParent().getType()) && tree.getParent().getChild(0) == tree) {
       System.err.printf("Warning: multiline expression in '%s' on line %s in %s has a statement"
-          + " that will not be instrumented.\n", tree.getParent().getText(), tree.getLine(), code
+          + " that will not be instrumented.\n", tree.getParent().getText(), getLine(tree), code
           .getFilePath());
       return false;
     }
@@ -255,10 +265,10 @@ public class StatementsBuilder {
    */
   private static class StatementNode extends Node {
 
-    protected final CommonTree tree;
+    private final int lineNumber;
 
-    public StatementNode(CommonTree tree) {
-      this.tree = tree;
+    public StatementNode(int lineNumber) {
+      this.lineNumber = lineNumber;
     }
 
     public Statement createStatementFor(CodeLine line, Code code) {
@@ -271,18 +281,13 @@ public class StatementsBuilder {
     }
 
     @Override
-    public String toString() {
-      return tree.getLine() + ":" + tree.toStringTree();
-    }
-
-    @Override
     public boolean isBefore(CodeLine line) {
-      return tree.getLine() < line.getLineNumber();
+      return lineNumber < line.getLineNumber();
     }
 
     @Override
     public boolean isAfter(CodeLine line) {
-      return tree.getLine() > line.getLineNumber();
+      return lineNumber > line.getLineNumber();
     }
   }
 
@@ -292,8 +297,8 @@ public class StatementsBuilder {
    * @author corysmith
    */
   private class NakedNode extends StatementNode {
-    public NakedNode(CommonTree tree) {
-      super(tree);
+    public NakedNode(int lineNumber) {
+      super(lineNumber);
     }
 
     public Statement createStatementFor(CodeLine line, Code code) {
@@ -308,8 +313,8 @@ public class StatementsBuilder {
    * @author corysmith
    */
   private class ContinuationNode extends StatementNode {
-    public ContinuationNode(CommonTree tree) {
-      super(tree);
+    public ContinuationNode(int lineNumber) {
+      super(lineNumber);
     }
 
     public Statement createStatementFor(CodeLine line, Code code) {

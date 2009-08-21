@@ -19,18 +19,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import com.google.inject.Guice;
 import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 import com.google.jstestdriver.Action;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.JsTestDriverModule;
 import com.google.jstestdriver.guice.PrintStreamClientModule;
-
-import junit.framework.TestCase;
 
 /**
  * Smoke test. If you see smoke, it failed.
