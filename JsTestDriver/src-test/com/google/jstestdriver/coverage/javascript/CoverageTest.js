@@ -17,7 +17,6 @@
 var CoverageTest = TestCase('CoverageTest');
 
 CoverageTest.prototype.testInit = function() {
-  console.debug("testInit");
   var executableLines = [1,2,5];
   var totalLines = 20;
   var fileName = 'FILE';
@@ -30,7 +29,6 @@ CoverageTest.prototype.testInit = function() {
 };
 
 CoverageTest.prototype.testInitNoop = function() {
-  console.debug("testInitNoop");
   var executableLines = [1,2,5];
   var totalLines = 20;
   var fileName = 'FILE';
@@ -43,17 +41,21 @@ CoverageTest.prototype.testInitNoop = function() {
 
 CoverageTest.prototype.testToCoveredLines = function() {
   var executableLines = [1,2,5];
+  var executed = [1, 0, 0];
   var totalLines = 20;
   var fileName = 'FILE';
   var fileCoverage = new coverage.Reporter().init(fileName, totalLines, executableLines);
   
-  fileCoverage[executableLines[1]]++;
+  for (var i = 0; i < executableLines.length; i++) {
+    fileCoverage[executableLines[i]] = executed[i];
+  }
   
   var report = fileCoverage.toCoveredLines();
   assertEquals(executableLines.length, report.lines.length);
   for(var i = 0; i < report.lines.length; i++) {
     assertEquals(executableLines[i], report.lines[i].lineNumber);
-    assertEquals(fileCoverage[executableLines[i]], report.lines[i].executedNumber);
+    assertEquals(executed[i], report.lines[i].executedNumber);
+    assertEquals(0, fileCoverage[executableLines[i]]);
   }
 }
 
@@ -67,4 +69,7 @@ CoverageTest.prototype.testSummarizeCoverage = function() {
   var reports = reporter.summarizeCoverage();
   assertEquals(3, reports[0].lines.length);
   assertEquals(3, reports[1].lines.length);
+  assertEquals(0, fileOne[5]);
+  assertEquals(0, fileTwo[3]);
+  assertEquals(0, fileTwo[4]);
 };

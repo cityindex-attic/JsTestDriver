@@ -39,6 +39,7 @@ var coverage = (function() {
     for (var i = 0; i < this.length; i++) {
       if (this[i] != null) {
         lines.push(new CoveredLine(this[i], i));
+        this[i] = 0;
       }
     }
     return new CoveredLines(this.fileName_, lines);
