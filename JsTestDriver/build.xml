@@ -306,6 +306,30 @@
     </jar>
   </target>
 
+  <target name="weird-jar" depends="compile">
+    <jar destfile="${bin.dir}/${ant.project.name}.jar" basedir="${obj.dir}" excludes="**/*.js"
+      duplicate="preserve">
+      <manifest>
+        <attribute name="Main-Class" value="${main-class}" />
+      </manifest>
+      <zipfileset src="${lib.dir}/jetty/servlet-api-2.5-20081211.jar" />
+      <zipfileset src="${lib.dir}/jetty/jetty-6.1.19.jar" />
+      <zipfileset src="${lib.dir}/jetty/jetty-util-6.1.19.jar" />
+      <zipfileset src="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
+      <zipfileset src="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
+      <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
+      <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
+      <zipfileset src="${lib.dir}/ant-1.7.1/directoryscanner.jar" />
+      <fileset dir="${obj.dir}/">
+        <include name="${javascript-resources}/jstestdrivernamespace.js" />
+        <include name="${javascript-resources}/runner.js" />
+        <include name="${javascript-resources}/heartbeatclient.js" />
+        <include name="${javascript-resources}/lib/*.js" />
+      </fileset>
+      <exclude name="**/coverage/**"/>
+    </jar>
+  </target>
+
   <target name="ui-jar" depends="compile">
     <jar destfile="${bin.dir}/${ant.project.name}-ui.jar" basedir="${obj.dir}" excludes="**/*.js"
       duplicate="preserve">
