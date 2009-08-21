@@ -111,15 +111,19 @@ public class TestResultsPanel extends Composite {
         if (selection.getFirstElement() instanceof EclipseJstdTestResult) {
           EclipseJstdTestResult result = (EclipseJstdTestResult) selection
           .getFirstElement();
-          String detailsString = "";
+          StringBuilder details = new StringBuilder();
           if (!result.getResult().getParsedMessage().trim().equals("")) {
-            detailsString = "Message : " + result.getResult().getParsedMessage() + "\n";
+            details.append("Message : ")
+                         .append(result.getResult().getParsedMessage())
+                         .append("\n");
           }
           if (!result.getResult().getStack().trim().equals("")) {
-            detailsString = "Stack Trace : " + result.getResult().getStack() + "\n";
+            details.append("Stack Trace : ")
+                         .append(result.getResult().getStack())
+                         .append("\n");
           }
-          detailsString += "Log : " + result.getResult().getLog();
-          testDetailsText.setText(detailsString);
+          details.append("Log : ").append(result.getResult().getLog());
+          testDetailsText.setText(details.toString());
         } else {
           testDetailsText.setText("");
         }
