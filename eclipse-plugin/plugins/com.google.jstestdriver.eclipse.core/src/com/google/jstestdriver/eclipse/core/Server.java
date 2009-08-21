@@ -18,6 +18,7 @@ package com.google.jstestdriver.eclipse.core;
 import java.util.HashMap;
 
 import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.DefaultURLTranslator;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ServerStartupAction;
@@ -31,14 +32,14 @@ public class Server {
   private final CapturedBrowsers capturedBrowsers;
   private final int port;
   private boolean started = false;
-  
+
   private static Server instance = null;
   
   private Server(int port) {
     this.port = port;
     capturedBrowsers = new CapturedBrowsers();
   }
-  
+
   public static Server getInstance() {
     return instance;
   }
@@ -58,7 +59,7 @@ public class Server {
   public void start() {
     // TODO(shyamseshadri): Get rid of this and use the builder when we have something substantial.
     startupAction = new ServerStartupAction(port, capturedBrowsers,
-        new FilesCache(new HashMap<String, FileInfo>()));
+        new FilesCache(new HashMap<String, FileInfo>()), new DefaultURLTranslator());
     startupAction.run();
     started = true;
   }
