@@ -51,6 +51,7 @@ public class CoverageModule extends AbstractModule {
   // no point in requiring bad practice to integrate. (unlike some frameworks...)
   @Provides @Inject
   public CoverageWriter createCoverageWriter(@Named("testOutput") String testOut,
+                                             @Named("config") String configFileName,
                                              @Named("outputStream") PrintStream out) {
     if (testOut.length() > 0) {
       try {
@@ -59,7 +60,7 @@ public class CoverageModule extends AbstractModule {
           testOutDir.mkdirs();
         }
         // this should probably be configurable
-        File coverageFile = new File(testOutDir, "coverage.dat");
+        File coverageFile = new File(testOutDir, String.format("%s-coverage.dat", configFileName));
         if (coverageFile.exists()) {
           coverageFile.delete();
         }

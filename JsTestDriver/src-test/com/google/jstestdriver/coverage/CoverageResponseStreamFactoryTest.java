@@ -51,7 +51,7 @@ public class CoverageResponseStreamFactoryTest extends TestCase {
         public TestResultPrinter getResponsePrinter(String xmlFile) {
           return printer;
         }
-      }), null);
+      }, "foo.conf"), null);
 
     ResponseStream responseStream = factory.getRunTestsActionResponseStream("browserId");
     assertNotNull(responseStream);

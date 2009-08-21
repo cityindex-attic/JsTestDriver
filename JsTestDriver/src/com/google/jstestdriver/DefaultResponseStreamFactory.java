@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.google.jstestdriver.DryRunAction.DryRunActionResponseStream;
 import com.google.jstestdriver.EvalAction.EvalActionResponseStream;
 import com.google.jstestdriver.ResetAction.ResetActionResponseStream;
@@ -27,16 +28,20 @@ import com.google.jstestdriver.ResetAction.ResetActionResponseStream;
 public class DefaultResponseStreamFactory implements ResponseStreamFactory {
 
   private final ResponsePrinterFactory responsePrinterFactory;
+  private final String configFileName;
 
   @Inject
-  public DefaultResponseStreamFactory(ResponsePrinterFactory responsePrinterFactory) {
+  public DefaultResponseStreamFactory(ResponsePrinterFactory responsePrinterFactory,
+                                      @Named("config") String configFileName) {
     this.responsePrinterFactory = responsePrinterFactory;
+    this.configFileName = configFileName;
   }
 
   public ResponseStream getRunTestsActionResponseStream(String browserId) {
     String testSuiteName = String.format("com.google.jstestdriver.%s", browserId);
     TestResultPrinter printer =
-        responsePrinterFactory.getResponsePrinter(String.format("TEST-%s.xml", testSuiteName));
+        responsePrinterFactory.getResponsePrinter(
+            String.format("TEST-%s-%s.xml", configFileName, testSuiteName));
 
     printer.open(testSuiteName);
     RunTestsActionResponseStream responseStream = new RunTestsActionResponseStream(
