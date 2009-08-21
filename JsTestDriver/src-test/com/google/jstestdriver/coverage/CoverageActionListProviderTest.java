@@ -40,7 +40,8 @@ public class CoverageActionListProviderTest extends TestCase {
     private final ActionStub action;
 
     public StubProvider(ActionStub action) {
-      super(null, null, null, null, null, false, null, false, -1, null, null, null, null, null);
+      super(null, null, null, null, null, false, null, false, -1, null, null, null, null, null,
+          null);
       this.action = action;
     }
 

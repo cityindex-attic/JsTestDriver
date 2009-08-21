@@ -45,9 +45,11 @@ public class ActionFactory {
 
 
   public ServerStartupAction getServerStartupAction(Integer port,
-      CapturedBrowsers capturedBrowsers, FilesCache preloadedFilesCache) {
+      CapturedBrowsers capturedBrowsers, FilesCache preloadedFilesCache,
+      URLTranslator urlTranslator) {
     ServerStartupAction serverStartupAction = new ServerStartupAction(port, capturedBrowsers,
-        preloadedFilesCache);
+        preloadedFilesCache, urlTranslator);
+
     if (observers.containsKey(CapturedBrowsers.class)) {
       for (Observer o : observers.get(CapturedBrowsers.class)) {
         capturedBrowsers.addObserver(o);

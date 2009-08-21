@@ -63,7 +63,8 @@ public class ActionListProviderTest extends TestCase {
         null,
         new DefaultThreadedActionProvider(actionFactory, null, reset, Collections
             .<String> emptyList(), false, tests, Collections.<String> emptyList()),
-        Providers.<JsTestDriverClient>of(null));
+        Providers.<JsTestDriverClient>of(null),
+        Providers.<URLTranslator>of(null));
   }
 
   public void testParseWithServerAndReset() throws Exception {

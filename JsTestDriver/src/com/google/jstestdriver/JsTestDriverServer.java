@@ -48,18 +48,19 @@ public class JsTestDriverServer extends Observable {
   private final int port;
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache filesCache;
+  private final URLTranslator urlTranslator;
 
   public JsTestDriverServer(int port, CapturedBrowsers capturedBrowsers,
-      FilesCache preloadedFilesCache) {
+      FilesCache preloadedFilesCache, URLTranslator urlTranslator) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = preloadedFilesCache;
+    this.urlTranslator = urlTranslator;
     initJetty(this.port);
     initServlets();
   }
 
   private void initServlets() {
-    URLTranslator urlTranslator = new URLTranslator();
     ForwardingMapper forwardingMapper = new ForwardingMapper();
 
     addServlet("/hello", new HelloServlet());

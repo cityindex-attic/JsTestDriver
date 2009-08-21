@@ -26,14 +26,14 @@ public class URLTranslatorTest extends TestCase {
   private static final String TRANSLATED_URL = "/";
 
   public void testTranslateUrl() throws Exception {
-    URLTranslator urlTranslator = new URLTranslator();
+    DefaultURLTranslator urlTranslator = new DefaultURLTranslator();
 
     urlTranslator.translate(ORIGINAL_URL);
     assertEquals(TRANSLATED_URL, urlTranslator.getTranslation(ORIGINAL_URL));
   }
 
   public void testRetrieveOriginal() throws Exception {
-    URLTranslator urlTranslator = new URLTranslator();
+    DefaultURLTranslator urlTranslator = new DefaultURLTranslator();
     urlTranslator.translate(ORIGINAL_URL);
 
     assertEquals(ORIGINAL_URL, urlTranslator
@@ -41,7 +41,7 @@ public class URLTranslatorTest extends TestCase {
   }
 
   public void testClearUrlTranslatorCache() throws Exception {
-    URLTranslator urlTranslator = new URLTranslator();
+    DefaultURLTranslator urlTranslator = new DefaultURLTranslator();
     urlTranslator.translate(ORIGINAL_URL);
 
     urlTranslator.clear();

@@ -36,6 +36,7 @@ public class ActionSequenceBuilder {
   private final FileLoader fileLoader;
   private final Provider<List<ThreadedAction>> threadedActionProvider;
   private final Provider<JsTestDriverClient> clientProvider;
+  private final Provider<URLTranslator> urlTranslatorProvider;
 
   private List<String> browsers = new LinkedList<String>();
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
@@ -49,6 +50,7 @@ public class ActionSequenceBuilder {
   private List<String> dryRunFor = new LinkedList<String>();
   private List<ThreadedAction> threadedActions;
   private List<String> commands = new LinkedList<String>();
+  
 
   /**
    * Begins the building of an action sequence.
@@ -62,11 +64,13 @@ public class ActionSequenceBuilder {
                                FileLoader fileLoader,
                                ResponseStreamFactory responseStreamFactory,
                                Provider<List<ThreadedAction>> threadedActionProvider,
-                               Provider<JsTestDriverClient> clientProvider) {
+                               Provider<JsTestDriverClient> clientProvider,
+                               Provider<URLTranslator> urlTranslatorProvider) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.threadedActionProvider = threadedActionProvider;
     this.clientProvider = clientProvider;
+    this.urlTranslatorProvider = urlTranslatorProvider;
   }
 
   /** Add the Browser startup and shutdown actions to the actions stack. */
@@ -91,7 +95,7 @@ public class ActionSequenceBuilder {
       }
     }
     ServerStartupAction serverStartupAction = actionFactory.getServerStartupAction(localServerPort,
-        capturedBrowsers, new FilesCache(files));
+        capturedBrowsers, new FilesCache(files), urlTranslatorProvider.get());
     actions.add(0, serverStartupAction);
     if (!leaveServerRunning) {
       actions.add(new ServerShutdownAction(serverStartupAction));

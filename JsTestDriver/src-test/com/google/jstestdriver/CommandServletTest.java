@@ -51,7 +51,7 @@ public class CommandServletTest extends TestCase {
 
     capturedBrowsers.addSlave(slave);
     CommandServlet servlet =
-        new CommandServlet(capturedBrowsers, new URLTranslator(), new ForwardingMapper());
+        new CommandServlet(capturedBrowsers, new DefaultURLTranslator(), new ForwardingMapper());
     List<String> parameters = Lists.newArrayList();
     List<FileSource> fileSources = Lists.newArrayList();
 
