@@ -16,14 +16,16 @@
 jstestdriver.HEARTBEAT_URL = "/heartbeat";
 
 
-jstestdriver.Heartbeat = function(id, url, sendRequest, interval) {
+jstestdriver.Heartbeat = function(id, url, sendRequest, interval, setTimeout) {
   this.id_ = id;
   this.url_ = url;
   this.sendRequest_ = sendRequest;
   this.interval_ = interval;
   this.boundHeartbeatCallback_ = jstestdriver.bind(this, this.heartbeatCallback);
+  this.boundSendHeartBeat_ = jstestdriver.bind(this, this.sendHeartbeat);
   this.sent_ = 0;
   this.timeoutId_ = -1;
+  this.setTimeout_ = setTimeout;
   jstestdriver.heartbeat = this;
 };
 
@@ -40,7 +42,7 @@ jstestdriver.Heartbeat.prototype.stop = function() {
 
 jstestdriver.Heartbeat.prototype.sendHeartbeat = function() {
   this.sent_ = new Date().getTime();
-  this.sendRequest_(this.url_, { id: this.id_ }, this.boundHeartbeatCallback_);
+  this.sendRequest_(this.url_, { id: this.id_ }, this.boundHeartbeatCallback_, 'text');
 };
 
 
@@ -49,7 +51,7 @@ jstestdriver.Heartbeat.prototype.heartbeatCallback = function() {
   this.sent_ = 0;
 
   if (elapsed < this.interval_) {
-    this.timeoutId_ = jstestdriver.setTimeout('jstestdriver.heartbeat.sendHeartbeat()',
+    this.timeoutId_ = jstestdriver.setTimeout(this.boundSendHeartBeat_,
         this.interval_ - elapsed);
   } else {
     this.sendHeartbeat();

@@ -17,17 +17,35 @@ var heartbeatTest = jstestdriver.testCaseManager.TestCase('heartbeatTest');
 
 heartbeatTest.prototype.testStartHeartbeat = function() {
   var callbackCalled = false;
-  var url;
-  var data;
+  var url = null;
+  var data = null;
   var called = false;
+  var timeoutDuration = 0;
+  var timeoutCallback = null;
   var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", function(_url, _data, _callback) {
     url = _url;
     data = _data;
     called = true;
-  }, 30);
+  },
+  30,
+  function(callback, duration){
+    timeoutDuration = duration;
+    timeoutCallback = callback;
+  });
 
   heartbeat.sendHeartbeat();
   assertEquals("/heartbeat", url);
   assertEquals("1", data.id);
   assertTrue(called);
+  assertEquals(30, timeoutDuration);
+  assertNotNull(timeoutCallback);
+  url = null;
+  data = null;
+  called = false;
+  timeoutDuration = 0;
+  timeoutCallback();
+  assertEquals("/heartbeat", url);
+  assertEquals("1", data.id);
+  assertTrue(called);
+  assertEquals(30, timeoutDuration);
 };
