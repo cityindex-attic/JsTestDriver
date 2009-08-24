@@ -32,7 +32,14 @@ public class BrowserShutdownAction implements Action {
     List<Process> processes = browserStartupAction.getProcesses();
 
     for (Process process : processes) {
+      try {
       process.destroy();
-    }
+      if (process.exitValue() != 0) {
+        System.out.println("Unexpected shutdown " + process + " " + process.exitValue());
+      }
+      } catch (IllegalThreadStateException e) {
+        System.out.println("Process refused to exit" + process);
+      }
+    } 
   }
 }

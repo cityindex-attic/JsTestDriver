@@ -231,8 +231,6 @@ commandExecutorTest.prototype.testCallPluginOnTestResultAdded = function() {
   executor.addTestResult(result);
   executor.boundSendTestResults();
   assertNotNull(dataSent);
-  jstestdriver.console.log(JSON.stringify([expected]));
-  jstestdriver.console.log(eval(dataSent.response).response);
   assertEquals(JSON.stringify([expected]), eval(dataSent.response).response);
 };
 

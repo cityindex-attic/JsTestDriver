@@ -18,7 +18,13 @@
         });
       },
       5000,
-      jstestdriver.setTimeout).start();
+      jstestdriver.setTimeout,
+      function() {
+        return new Date().getTime();
+      },
+      function(){
+        return document.getElementsByTagName('body')[0];
+      }).start();
 </script>
 <link rel="stylesheet" type="text/css" href="heartbeatclient.css" />
 </head>

@@ -19,33 +19,107 @@ heartbeatTest.prototype.testStartHeartbeat = function() {
   var callbackCalled = false;
   var url = null;
   var data = null;
-  var called = false;
+  var sendCallback = null;
   var timeoutDuration = 0;
   var timeoutCallback = null;
+  var time = 0;
   var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", function(_url, _data, _callback) {
     url = _url;
     data = _data;
-    called = true;
+    sendCallback = _callback;
   },
   30,
   function(callback, duration){
     timeoutDuration = duration;
     timeoutCallback = callback;
-  });
+  },
+  function() {
+    return time;
+  },
+  null);
 
+  heartbeat.start();
+  assertEquals("/heartbeat", url);
+  assertEquals("1", data.id);
+  assertNotNull(sendCallback);
+  
+  // test callback
+  time = 30;
+  url = null;
+  data = null;
+  sendCallback();
+  assertEquals("/heartbeat", url);
+  assertEquals("1", data.id);
+  assertNotNull(sendCallback);
+};
+
+heartbeatTest.prototype.testErrorCallback = function() {
+  var callbackCalled = false;
+  var errBack = null;
+  var ele = document.createElement('div');
+  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat",
+                                             function(_url, _data, _callback, _errback) {
+    errBack = _errback;
+  },
+  30,
+  function(callback, duration){
+    timeoutDuration = duration;
+    timeoutCallback = callback;
+  },
+  function() {
+    return 0;
+  }, function() {
+    return ele;
+  });
+  
+  heartbeat.start();
+  assertNotNull(errBack);
+  
+  errBack();
+  assertTrue(Boolean(ele.className));
+  assertEquals(jstestdriver.Heartbeat.ERROR_CLASS, ele.className);
+};
+
+heartbeatTest.prototype.testHeartbeatCallbackFast = function() {
+  var callbackCalled = false;
+  var url = null;
+  var data = null;
+  var sendCallback = null;
+  var timeoutDuration = 0;
+  var timeoutCallback = null;
+  var interval = 30;
+  var time = 0;
+  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", function(_url, _data, _callback) {
+    url = _url;
+    data = _data;
+    sendCallback = _callback;
+  },
+  interval,
+  function(callback, duration){
+    timeoutDuration = duration;
+    timeoutCallback = callback;
+  },
+  function() {
+    return time;
+  }, null);
+  
   heartbeat.sendHeartbeat();
   assertEquals("/heartbeat", url);
   assertEquals("1", data.id);
-  assertTrue(called);
-  assertEquals(30, timeoutDuration);
-  assertNotNull(timeoutCallback);
+  assertNotNull(sendCallback);
+  
+  // test callback
+  time = 10; //comes back fast
   url = null;
   data = null;
-  called = false;
-  timeoutDuration = 0;
+  sendCallback();
+  
+  assertEquals(interval - time, timeoutDuration);
+  assertNotNull(timeoutCallback);
+  
   timeoutCallback();
+  
   assertEquals("/heartbeat", url);
   assertEquals("1", data.id);
-  assertTrue(called);
-  assertEquals(30, timeoutDuration);
+  assertNotNull(sendCallback);
 };

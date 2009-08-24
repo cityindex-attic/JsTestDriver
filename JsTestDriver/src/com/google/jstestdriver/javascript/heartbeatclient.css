@@ -5,3 +5,7 @@ body {
 p {
   text-align: center;
 }
+
+body.error {
+  background-color: red;
+}

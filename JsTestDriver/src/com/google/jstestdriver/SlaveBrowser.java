@@ -186,4 +186,10 @@ public class SlaveBrowser {
       responses.clear();
     }
   }
+
+  @Override
+  public String toString() {
+    return "SlaveBrowser(browserInfo=" + browserInfo + ", id=" + id + ")";
+  }
+  
 }

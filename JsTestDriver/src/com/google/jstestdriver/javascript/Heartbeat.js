@@ -16,18 +16,23 @@
 jstestdriver.HEARTBEAT_URL = "/heartbeat";
 
 
-jstestdriver.Heartbeat = function(id, url, sendRequest, interval, setTimeout) {
+jstestdriver.Heartbeat = function(id, url, sendRequest, interval, setTimeout, getTime, getBody) {
   this.id_ = id;
   this.url_ = url;
   this.sendRequest_ = sendRequest;
   this.interval_ = interval;
   this.boundHeartbeatCallback_ = jstestdriver.bind(this, this.heartbeatCallback);
   this.boundSendHeartBeat_ = jstestdriver.bind(this, this.sendHeartbeat);
+  this.boundErrorCallback_ = jstestdriver.bind(this, this.errorCallback);
   this.sent_ = 0;
   this.timeoutId_ = -1;
   this.setTimeout_ = setTimeout;
-  jstestdriver.heartbeat = this;
+  this.getTime_ = getTime;
+  this.getBody_ = getBody;
 };
+
+
+jstestdriver.Heartbeat.ERROR_CLASS = 'error';
 
 
 jstestdriver.Heartbeat.prototype.start = function() {
@@ -41,17 +46,24 @@ jstestdriver.Heartbeat.prototype.stop = function() {
 
 
 jstestdriver.Heartbeat.prototype.sendHeartbeat = function() {
-  this.sent_ = new Date().getTime();
-  this.sendRequest_(this.url_, { id: this.id_ }, this.boundHeartbeatCallback_, 'text');
+  this.sent_ = this.getTime_();
+  this.sendRequest_(this.url_, { id: this.id_ },
+                    this.boundHeartbeatCallback_,
+                    this.boundErrorCallback_);
 };
 
 
+jstestdriver.Heartbeat.prototype.errorCallback = function() {
+  this.getBody_().className = jstestdriver.Heartbeat.ERROR_CLASS;
+}
+
+
 jstestdriver.Heartbeat.prototype.heartbeatCallback = function() {
-  var elapsed = new Date().getTime() - this.sent_;
+  var elapsed = this.getTime_() - this.sent_;
   this.sent_ = 0;
 
   if (elapsed < this.interval_) {
-    this.timeoutId_ = jstestdriver.setTimeout(this.boundSendHeartBeat_,
+    this.timeoutId_ = this.setTimeout_(this.boundSendHeartBeat_,
         this.interval_ - elapsed);
   } else {
     this.sendHeartbeat();

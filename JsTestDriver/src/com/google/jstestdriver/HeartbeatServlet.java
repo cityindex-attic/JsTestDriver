@@ -42,13 +42,20 @@ public class HeartbeatServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     PrintWriter writer = resp.getWriter();
     String id = req.getParameter("id");
-    SlaveBrowser browser = capturedBrowsers.getBrowser(id);
-
-    if ((time.now().getMillis() - browser.getLastHeartBeat().getMillis()) > TIMEOUT) {
-      capturedBrowsers.removeSlave(id);
-      writer.write("DEAD");
+    if (id != null) { 
+      SlaveBrowser browser = capturedBrowsers.getBrowser(id);
+      if (browser != null) {
+        if ((time.now().getMillis() - browser.getLastHeartBeat().getMillis()) > TIMEOUT) {
+          capturedBrowsers.removeSlave(id);
+          writer.write("DEAD");
+        } else {
+          writer.write("OK");
+        }
+      } else {
+        writer.write("UNKNOWN");
+      }
     } else {
-      writer.write("OK");
+      writer.write("UNKNOWN");
     }
     writer.flush();
   }

@@ -23,9 +23,12 @@ import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.google.inject.Singleton;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+@Singleton
 public class CapturedBrowsers extends Observable {
 
   private final AtomicLong nextId = new AtomicLong(0);
