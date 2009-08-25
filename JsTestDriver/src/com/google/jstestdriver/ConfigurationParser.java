@@ -15,19 +15,23 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.directoryscanner.DirectoryScanner;
+
+import org.jvyaml.YAML;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
+import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.oro.io.GlobFilenameFilter;
-import org.apache.oro.text.GlobCompiler;
-import org.jvyaml.YAML;
 
 /**
  * TODO: needs to give more feedback when something goes wrong...
@@ -36,14 +40,22 @@ import org.jvyaml.YAML;
  */
 public class ConfigurationParser {
 
+  private static final String LOAD = "load";
+  private static final String EXCLUDE = "exclude";
+  private static final String SERVER = "server";
+  private static final String PLUGIN = "plugin";
+  private static final String SERVE = "serve";
+
+  private static final String PATCH = "patch";
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationParser.class);
+
   private final Set<FileInfo> filesList = new LinkedHashSet<FileInfo>();
   private final File basePath;
   private final Reader configReader;
 
   private String server = "";
   private List<Plugin> plugins = new LinkedList<Plugin>();
-
-  private PathResolver pathResolver = new PathResolver();
 
   public ConfigurationParser(File basePath, Reader configReader) {
     this.basePath = basePath;
@@ -56,22 +68,22 @@ public class ConfigurationParser {
     Set<FileInfo> resolvedFilesLoad = new LinkedHashSet<FileInfo>();
     Set<FileInfo> resolvedFilesExclude = new LinkedHashSet<FileInfo>();
 
-    if (data.containsKey("load")) {
-      resolvedFilesLoad.addAll(resolveFiles((List<String>) data.get("load"), false));
+    if (data.containsKey(LOAD)) {
+      resolvedFilesLoad.addAll(resolveFiles((List<String>) data.get(LOAD), false));
     }
-    if (data.containsKey("exclude")) {
-      resolvedFilesExclude.addAll(resolveFiles((List<String>) data.get("exclude"), false));
+    if (data.containsKey(EXCLUDE)) {
+      resolvedFilesExclude.addAll(resolveFiles((List<String>) data.get(EXCLUDE), false));
     }
-    if (data.containsKey("server")) {
-      this.server = (String) data.get("server");
+    if (data.containsKey(SERVER)) {
+      this.server = (String) data.get(SERVER);
     }
-    if (data.containsKey("plugin")) {
-      for (Map<String, String> value: (List<Map<String, String>>) data.get("plugin")) {
+    if (data.containsKey(PLUGIN)) {
+      for (Map<String, String> value: (List<Map<String, String>>) data.get(PLUGIN)) {
         plugins.add(new Plugin(value.get("name"), value.get("jar"), value.get("module")));
       }
     }
-    if (data.containsKey("serve")) {
-      Set<FileInfo> resolvedServeFiles = resolveFiles((List<String>) data.get("serve"), true);
+    if (data.containsKey(SERVE)) {
+      Set<FileInfo> resolvedServeFiles = resolveFiles((List<String>) data.get(SERVE), true);
       resolvedFilesLoad.addAll(resolvedServeFiles);
     }
     filesList.addAll(consolidatePatches(resolvedFilesLoad));
@@ -95,48 +107,80 @@ public class ConfigurationParser {
     return consolidated;
   }
 
+  private List<FileInfo> getAbsoluteFileInfos(List<String> files) {
+    List<FileInfo> absolutePaths = Lists.newLinkedList();
+    PathResolver pathResolver = new PathResolver();
+
+    for (String f : files) {
+      boolean isPatch = f.startsWith(PATCH);
+
+      if (isPatch) {
+        String[] tokens = f.split(" ", 2);
+
+        f = tokens[1].trim();
+      }
+      if (f.startsWith("http://") || f.startsWith("https://")) {
+        absolutePaths.add(new FileInfo(f, -1, false, false, null));
+      } else {
+        File file = basePath != null ? new File(basePath, f) : new File(f);
+        String finalPath = getFinalPath(file);
+
+        absolutePaths.add(new FileInfo(finalPath, -1, isPatch, false, null));
+      }
+    }
+    return absolutePaths;
+  }
+
   private Set<FileInfo> resolveFiles(List<String> files, boolean serveOnly) {
-    if (files != null) {
-      Set<FileInfo> resolvedFiles = new LinkedHashSet<FileInfo>();
+    if (files == null) {
+      return Collections.emptySet();
+    }
+    List<FileInfo> absoluteFiles = getAbsoluteFileInfos(files);
+    CommonPathResolver commonPathResolver = new CommonPathResolver(absoluteFiles);
 
-      for (String f : files) {
-        boolean isPatch = f.startsWith("patch");
+    String baseDir = commonPathResolver.resolve();
+    RelativePathConverter relativePathConverter = new RelativePathConverter(baseDir, absoluteFiles);
 
-        if (isPatch) {
-          String[] tokens = f.split(" ", 2);
+    List<FileInfo> relativeFiles = relativePathConverter.convert();
+    DirectoryScanner directoryScanner = new DirectoryScanner();
 
-          f = tokens[1].trim();
-        }
-        if (f.startsWith("http://") || f.startsWith("https://")) {
-          resolvedFiles.add(new FileInfo(f, -1, false, false, null));
-        } else {
-          File file = basePath != null ? new File(basePath, f) : new File(f);
-          File testFile = file.getAbsoluteFile();
-          File dir = testFile.getParentFile().getAbsoluteFile();
-          final String pattern = file.getName();
-          String[] filteredFiles = dir.list(new GlobFilenameFilter(pattern,
-              GlobCompiler.DEFAULT_MASK | GlobCompiler.CASE_INSENSITIVE_MASK));
+    directoryScanner.setBasedir(new File(baseDir));
+    Set<FileInfo> resolvedFileInfos = Sets.newLinkedHashSet();
 
-          if (filteredFiles == null) {
-            System.err.println("No files to load. The patterns/paths used in the configuration"
-                + " file didn't match any file, the files patterns/paths need to be relative to"
-                + " the configuration file.");
-            System.exit(1);
-          }
-          Arrays.sort(filteredFiles, String.CASE_INSENSITIVE_ORDER);
+    for (FileInfo relativeFile : relativeFiles) {
 
-          for (String filteredFile : filteredFiles) {
-            String resolvedFilePath = pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\",
-                "/") + "/" + filteredFile.replaceAll("\\\\", "/"));
-            File resolvedFile = new File(resolvedFilePath);
-            resolvedFiles.add(new FileInfo(resolvedFilePath, resolvedFile.lastModified(), isPatch,
-                serveOnly, null));
-          }
+      /**
+       * We have to use the directory scanner this way because we want to preserve the order of the
+       * files as they appear in the configuration file.
+       */
+      if (relativeFile.canLoad()) {
+        directoryScanner.setIncludes(new String[] { relativeFile.getFileName() });
+        directoryScanner.scan();
+        String[] resolvedFiles = directoryScanner.getIncludedFiles();
+
+        for (String resolvedFile : resolvedFiles) {
+          File finalFile = new File(baseDir, resolvedFile);
+          String finalPath = getFinalPath(finalFile);
+
+          resolvedFileInfos.add(new FileInfo(finalPath, finalFile.lastModified(), relativeFile
+              .isPatch(), serveOnly, null));
         }
       }
-      return resolvedFiles;
     }
-    return Collections.emptySet();
+    return resolvedFileInfos;
+  }
+
+  private String getFinalPath(File file) {
+    PathResolver pathResolver = new PathResolver();
+    String finalPath = "";
+
+    try {
+      finalPath = file.getCanonicalPath();
+    } catch (IOException e) {
+      LOGGER.info("Could not get canonical path, trying with absolute path and PathResolver", e);
+      finalPath = pathResolver.resolvePath(file.getAbsolutePath());
+    }
+    return finalPath;
   }
 
   public Set<FileInfo> getFilesList() {
