@@ -148,23 +148,26 @@ public class ConfigurationParser {
     Set<FileInfo> resolvedFileInfos = Sets.newLinkedHashSet();
 
     for (FileInfo relativeFile : relativeFiles) {
-
-      /**
-       * We have to use the directory scanner this way because we want to preserve the order of the
-       * files as they appear in the configuration file.
-       */
       if (relativeFile.canLoad()) {
+
+        /**
+         * We have to use the directory scanner this way because we want to preserve the order of the
+         * files as they appear in the configuration file.
+         */
         directoryScanner.setIncludes(new String[] { relativeFile.getFileName() });
         directoryScanner.scan();
         String[] resolvedFiles = directoryScanner.getIncludedFiles();
 
         for (String resolvedFile : resolvedFiles) {
+          System.out.println("RESOLVED FILE: " + resolvedFile);
           File finalFile = new File(baseDir, resolvedFile);
           String finalPath = getFinalPath(finalFile);
 
           resolvedFileInfos.add(new FileInfo(finalPath.replaceAll("\\\\", "/"), finalFile
               .lastModified(), relativeFile.isPatch(), serveOnly, null));
         }
+      } else {
+        resolvedFileInfos.add(relativeFile);
       }
     }
     return resolvedFileInfos;
