@@ -180,7 +180,7 @@ public class ConfigurationParser {
       LOGGER.info("Could not get canonical path, trying with absolute path and PathResolver", e);
       finalPath = pathResolver.resolvePath(file.getAbsolutePath());
     }
-    finalPath = finalPath.replaceAll("\\", "/");
+    finalPath = finalPath.replaceAll("\\\\", "/");
     return finalPath;
   }
 
