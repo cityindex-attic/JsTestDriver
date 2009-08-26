@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class CommonPathResolver {
 
-  private static final char PATH_SEPARATOR = '/';
+  private static final char PATH_SEPARATOR = File.separatorChar;
 
   private final List<FileInfo> files;
 
@@ -37,8 +37,7 @@ public class CommonPathResolver {
       return "";
     }
     if (files.size() == 1) {
-      return new File(files.get(0).getFileName()).getParent().replaceAll("\\\\", "/")
-          + PATH_SEPARATOR;
+      return new File(files.get(0).getFileName()).getParent() + PATH_SEPARATOR;
     }
     Iterator<FileInfo> iterator = files.iterator();
     String longestPath = iterator.next().getFileName();

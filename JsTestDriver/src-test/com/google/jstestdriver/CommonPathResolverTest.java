@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 
 import junit.framework.TestCase;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -26,13 +27,17 @@ import java.util.List;
  */
 public class CommonPathResolverTest extends TestCase {
 
+  private static final char PATH_SEPARATOR = File.separatorChar;
+
   public void testFindLongestCommonPathForOneFile() throws Exception {
     List<FileInfo> files = Lists.newLinkedList();
 
-    files.add(new FileInfo("/home/jeremie/meh/mooh/hehe/myfile.js", -1, false, false, null));
+    files.add(new FileInfo(String.format("%1$shome%1$sjeremie%1$smeh%1$smooh%1$shehe%1$smyfile.js",
+        PATH_SEPARATOR), -1, false, false, null));
     CommonPathResolver commonPathResolver = new CommonPathResolver(files);
 
-    assertEquals("/home/jeremie/meh/mooh/hehe/", commonPathResolver.resolve());
+    assertEquals(String.format("%1$shome%1$sjeremie%1$smeh%1$smooh%1$shehe%1$s", PATH_SEPARATOR),
+        commonPathResolver.resolve());
   }
 
   public void testFindLongestCommonPathEmptyList() throws Exception {
@@ -44,22 +49,30 @@ public class CommonPathResolverTest extends TestCase {
   public void testFindLongestCommonPath() throws Exception {
     List<FileInfo> files = Lists.newLinkedList();
 
-    files.add(new FileInfo("/home/jeremie/meh/mooh/hehe/myfile.js", -1, false, false, null));
-    files.add(new FileInfo("/home/jeremie/meh/something/anotherfile.js", -1, false, false, null));
-    files.add(new FileInfo("/home/jeremie/meh/mooh/else/yaf.js", -1, false, false, null));
+    files.add(new FileInfo(String.format("%1$shome%1$sjeremie%1$smeh%1$smooh%1$shehe%1$smyfile.js",
+        PATH_SEPARATOR), -1, false, false, null));
+    files.add(new FileInfo(String.format(
+        "%1$shome%1$sjeremie%1$smeh%1$ssomething%1$sanotherfile.js", PATH_SEPARATOR), -1, false,
+        false, null));
+    files.add(new FileInfo(String.format("%1$shome%1$sjeremie%1$smeh%1$smooh%1$selse%1$syaf.js",
+        PATH_SEPARATOR), -1, false, false, null));
     CommonPathResolver commonPathResolver = new CommonPathResolver(files);
 
-    assertEquals("/home/jeremie/meh/", commonPathResolver.resolve());
+    assertEquals(String.format("%1$shome%1$sjeremie%1$smeh%1$s", PATH_SEPARATOR),
+        commonPathResolver.resolve());
   }
 
   public void testDirSubstringOfOtherDir() throws Exception {
     List<FileInfo> files = Lists.newLinkedList();
 
-    files.add(new FileInfo("/home/jeremie/meh/mooh/hehe/myfile.js", -1, false, false, null));
-    files
-        .add(new FileInfo("/home/jeremie/mehmeh/something/anotherfile.js", -1, false, false, null));
+    files.add(new FileInfo(String.format("%1$shome%1$sjeremie%1$smeh%1$smooh%1$shehe%1$smyfile.js",
+        PATH_SEPARATOR), -1, false, false, null));
+    files.add(new FileInfo(String.format(
+        "%1$shome%1$sjeremie%1$smehmeh%1$ssomething%1$sanotherfile.js", PATH_SEPARATOR), -1, false,
+        false, null));
     CommonPathResolver commonPathResolver = new CommonPathResolver(files);
 
-    assertEquals("/home/jeremie/", commonPathResolver.resolve());
+    assertEquals(String.format("%1$shome%1$sjeremie%1$s", PATH_SEPARATOR), commonPathResolver
+        .resolve());
   }
 }
