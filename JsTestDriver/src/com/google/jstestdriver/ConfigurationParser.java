@@ -154,6 +154,7 @@ public class ConfigurationParser {
          * We have to use the directory scanner this way because we want to preserve the order of the
          * files as they appear in the configuration file.
          */
+        System.out.println("FILENAME: " + relativeFile.getFileName());
         directoryScanner.setIncludes(new String[] { relativeFile.getFileName() });
         directoryScanner.scan();
         String[] resolvedFiles = directoryScanner.getIncludedFiles();
@@ -183,6 +184,7 @@ public class ConfigurationParser {
       LOGGER.info("Could not get canonical path, trying with absolute path and PathResolver", e);
       finalPath = pathResolver.resolvePath(file.getAbsolutePath());
     }
+    System.out.println("FILE: " + file.getName() + "FINALPATH: " + finalPath);
     return finalPath;
   }
 
