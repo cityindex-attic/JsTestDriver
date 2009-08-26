@@ -29,7 +29,12 @@ public class PathResolver {
 
   public String resolvePath(String path) {
     Stack<String> resolvedPath = new Stack<String>();
-    String[] tokenizedPath = path.split(PATH_SEPARATOR);
+    String pathSeparator = PATH_SEPARATOR;
+
+    if (!pathSeparator.equals("/")) {
+      pathSeparator = "\\\\";
+    }
+    String[] tokenizedPath = path.split(pathSeparator);
 
     for (String token : tokenizedPath) {
       if (token.equals("..")) {
@@ -44,6 +49,11 @@ public class PathResolver {
   }
 
   private String join(Collection<String> collection) {
+    String pathSeparator = PATH_SEPARATOR;
+
+    if (!pathSeparator.equals("/")) {
+      pathSeparator = "\\\\";
+    }
     StringBuilder sb = new StringBuilder();
     Iterator<String> iterator = collection.iterator();
 
@@ -51,7 +61,7 @@ public class PathResolver {
       sb.append(iterator.next());
 
       while (iterator.hasNext()) {
-        sb.append(PATH_SEPARATOR);
+        sb.append(pathSeparator);
         sb.append(iterator.next());
       }
     }
