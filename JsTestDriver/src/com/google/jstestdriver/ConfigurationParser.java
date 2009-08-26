@@ -125,7 +125,7 @@ public class ConfigurationParser {
         File file = basePath != null ? new File(basePath, f) : new File(f);
         String finalPath = getFinalPath(file);
 
-        absolutePaths.add(new FileInfo(finalPath.replaceAll("\\", "/"), -1, isPatch, false, null));
+        absolutePaths.add(new FileInfo(finalPath, -1, isPatch, false, null));
       }
     }
     return absolutePaths;
@@ -180,6 +180,7 @@ public class ConfigurationParser {
       LOGGER.info("Could not get canonical path, trying with absolute path and PathResolver", e);
       finalPath = pathResolver.resolvePath(file.getAbsolutePath());
     }
+    finalPath = finalPath.replaceAll("\\", "/");
     return finalPath;
   }
 
