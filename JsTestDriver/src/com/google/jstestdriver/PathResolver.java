@@ -49,11 +49,6 @@ public class PathResolver {
   }
 
   private String join(Collection<String> collection) {
-    String pathSeparator = PATH_SEPARATOR;
-
-    if (!pathSeparator.equals("/")) {
-      pathSeparator = "\\\\";
-    }
     StringBuilder sb = new StringBuilder();
     Iterator<String> iterator = collection.iterator();
 
@@ -61,7 +56,7 @@ public class PathResolver {
       sb.append(iterator.next());
 
       while (iterator.hasNext()) {
-        sb.append(pathSeparator);
+        sb.append(PATH_SEPARATOR);
         sb.append(iterator.next());
       }
     }
