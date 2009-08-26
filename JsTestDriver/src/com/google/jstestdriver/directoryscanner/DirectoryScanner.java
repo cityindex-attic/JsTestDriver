@@ -784,7 +784,7 @@ public class DirectoryScanner
                             illegal = new IllegalStateException(
                                 "basedir " + basedir + " does not exist");
                         } else {
-                          System.out.println("BASEDIR DOES NOT EXISTS" + basedir.getName());
+                          System.out.println("BASEDIR DOES NOT EXIST " + basedir.getName());
                             // Nothing to do - basedir does not exist
                             return;
                         }

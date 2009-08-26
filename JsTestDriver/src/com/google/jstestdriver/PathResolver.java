@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Stack;
@@ -24,9 +25,11 @@ import java.util.Stack;
  */
 public class PathResolver {
 
+  private static final String PATH_SEPARATOR = File.separator;
+
   public String resolvePath(String path) {
     Stack<String> resolvedPath = new Stack<String>();
-    String[] tokenizedPath = path.split("/");
+    String[] tokenizedPath = path.split(PATH_SEPARATOR);
 
     for (String token : tokenizedPath) {
       if (token.equals("..")) {
@@ -48,7 +51,7 @@ public class PathResolver {
       sb.append(iterator.next());
 
       while (iterator.hasNext()) {
-        sb.append("/");
+        sb.append(PATH_SEPARATOR);
         sb.append(iterator.next());
       }
     }
