@@ -37,7 +37,8 @@ public class CommonPathResolver {
       return "";
     }
     if (files.size() == 1) {
-      return new File(files.get(0).getFileName()).getParent() + PATH_SEPARATOR;
+      return new File(files.get(0).getFileName()).getParent().replaceAll("\\", "/")
+          + PATH_SEPARATOR;
     }
     Iterator<FileInfo> iterator = files.iterator();
     String longestPath = iterator.next().getFileName();
