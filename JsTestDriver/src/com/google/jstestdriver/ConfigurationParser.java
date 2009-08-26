@@ -156,7 +156,8 @@ public class ConfigurationParser {
          * the files as they appear in the configuration file.
          */
         System.out.println("FILENAME: " + relativeFile.getFileName());
-        directoryScanner.setIncludes(new String[] { relativeFile.getFileName() });
+        directoryScanner.setIncludes(new String[] {relativeFile.getFileName().replaceAll("\\\\",
+            "/")});
         directoryScanner.scan();
         String[] resolvedFiles = directoryScanner.getIncludedFiles();
 
