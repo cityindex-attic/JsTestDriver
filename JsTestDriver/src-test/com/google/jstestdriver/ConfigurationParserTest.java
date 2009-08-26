@@ -81,6 +81,7 @@ public class ConfigurationParserTest extends TestCase {
   }
 
   public void testParseConfigFileAndHaveListOfFilesWithPatches() throws Exception {
+    System.out.println("START testParseConfigFileAndHaveListOfFilesWithPatches");
     File codeDir = createTmpSubDir("code");
     File testDir = createTmpSubDir("test");
     createTmpFile(codeDir, "code.js");
@@ -104,6 +105,7 @@ public class ConfigurationParserTest extends TestCase {
 
     parser.parse();
     Set<FileInfo> files = parser.getFilesList();
+    System.out.println("FILES: " + files);
     List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
     
     assertEquals(3, files.size());
