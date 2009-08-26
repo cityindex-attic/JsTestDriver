@@ -139,6 +139,7 @@ public class ConfigurationParser {
     CommonPathResolver commonPathResolver = new CommonPathResolver(absoluteFiles);
 
     String baseDir = commonPathResolver.resolve();
+    System.out.println("BASEDIR: " + baseDir);
     RelativePathConverter relativePathConverter = new RelativePathConverter(baseDir, absoluteFiles);
 
     List<FileInfo> relativeFiles = relativePathConverter.convert();
@@ -151,8 +152,8 @@ public class ConfigurationParser {
       if (relativeFile.canLoad()) {
 
         /**
-         * We have to use the directory scanner this way because we want to preserve the order of the
-         * files as they appear in the configuration file.
+         * We have to use the directory scanner this way because we want to preserve the order of
+         * the files as they appear in the configuration file.
          */
         System.out.println("FILENAME: " + relativeFile.getFileName());
         directoryScanner.setIncludes(new String[] { relativeFile.getFileName() });
@@ -184,7 +185,7 @@ public class ConfigurationParser {
       LOGGER.info("Could not get canonical path, trying with absolute path and PathResolver", e);
       finalPath = pathResolver.resolvePath(file.getAbsolutePath());
     }
-    System.out.println("FILE: " + file.getName() + "FINALPATH: " + finalPath);
+    System.out.println("FILE: " + file.getName() + " FINALPATH: " + finalPath);
     return finalPath;
   }
 
