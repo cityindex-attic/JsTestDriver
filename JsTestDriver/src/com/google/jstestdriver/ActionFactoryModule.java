@@ -29,5 +29,6 @@ public class ActionFactoryModule extends AbstractModule {
   protected void configure() {
     Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class);
     Multibinder.newSetBinder(binder(), FileLoadPreProcessor.class);
+    Multibinder.newSetBinder(binder(), ResponseStreamFactory.class);
   }
 }

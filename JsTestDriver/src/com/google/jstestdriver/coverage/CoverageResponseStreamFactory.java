@@ -16,7 +16,7 @@
 package com.google.jstestdriver.coverage;
 
 import com.google.inject.Inject;
-import com.google.jstestdriver.DefaultResponseStreamFactory;
+import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.ResponseStreamFactory;
 
@@ -26,34 +26,39 @@ import com.google.jstestdriver.ResponseStreamFactory;
  *
  */
 public class CoverageResponseStreamFactory implements ResponseStreamFactory {
-
-  private final DefaultResponseStreamFactory defaultResponseStreamFactory;
-  private final CoverageAccumulator coverageaccumulator;
+  static final ResponseStream NULL_RESPONSE_STREAM = new NullResponseStream();
+  private final CoverageAccumulator coverageAccumulator;
 
   @Inject
-  public CoverageResponseStreamFactory(
-      DefaultResponseStreamFactory defaultResponseStreamFactory,
-      CoverageAccumulator coverageReporter) {
-        this.defaultResponseStreamFactory = defaultResponseStreamFactory;
-        this.coverageaccumulator = coverageReporter;
+  public CoverageResponseStreamFactory(CoverageAccumulator coverageAccumulator) {
+    this.coverageAccumulator = coverageAccumulator;
   }
 
   public ResponseStream getDryRunActionResponseStream() {
-    return defaultResponseStreamFactory.getDryRunActionResponseStream();
+    return NULL_RESPONSE_STREAM;
   }
 
   public ResponseStream getEvalActionResponseStream() {
-    return defaultResponseStreamFactory.getEvalActionResponseStream();
+    return NULL_RESPONSE_STREAM;
   }
 
   public ResponseStream getResetActionResponseStream() {
-    return defaultResponseStreamFactory.getResetActionResponseStream();
+    return NULL_RESPONSE_STREAM;
   }
 
   public ResponseStream getRunTestsActionResponseStream(String browserId) {
-    return new CoverageTestResponseStream(
-        browserId,
-        coverageaccumulator,
-        defaultResponseStreamFactory.getRunTestsActionResponseStream(browserId));
+    return new CoverageTestResponseStream(browserId, coverageAccumulator);
+  }
+
+  /**
+   * A response stream that does nothing.
+   * @author corysmith@google.com (Cory Smith)
+   */
+  public static class NullResponseStream implements ResponseStream {
+    public void finish() {
+    }
+
+    public void stream(Response response) {
+    }
   }
 }

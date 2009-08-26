@@ -39,12 +39,13 @@ public class CoverageModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    bind(ResponseStreamFactory.class).to(CoverageResponseStreamFactory.class);
     bind(ActionListProvider.class).to(CoverageActionDecorator.class);
     Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class)
         .addBinding().to(CoverageInstrumentingProcessor.class);
     Multibinder.newSetBinder(binder(), FileLoadPreProcessor.class)
         .addBinding().to(CoverageJsAdder.class);
+    Multibinder.newSetBinder(binder(), ResponseStreamFactory.class)
+        .addBinding().to(CoverageResponseStreamFactory.class);
   }
   
   // TODO(corysmith): figure out if there is a better way for plugins to configure themselves.

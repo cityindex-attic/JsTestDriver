@@ -16,8 +16,11 @@
 package com.google.jstestdriver.guice;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
+import com.google.jstestdriver.DefaultResponseStreamFactory;
 import com.google.jstestdriver.ResponsePrinterFactory;
+import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.output.PrintStreamResponsePrinterFactory;
 
 import java.io.PrintStream;
@@ -39,5 +42,7 @@ public class PrintStreamClientModule extends AbstractModule {
   protected void configure() {
     bind(PrintStream.class).annotatedWith(Names.named("outputStream")).toInstance(out);
     bind(ResponsePrinterFactory.class).to(PrintStreamResponsePrinterFactory.class);
+    Multibinder.newSetBinder(binder(),
+        ResponseStreamFactory.class).addBinding().to(DefaultResponseStreamFactory.class);
   }
 }

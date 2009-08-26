@@ -19,8 +19,11 @@ package com.google.jstestdriver.guice;
 import java.io.PrintStream;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
+import com.google.jstestdriver.DefaultResponseStreamFactory;
 import com.google.jstestdriver.ResponsePrinterFactory;
+import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.output.XmlResponsePrinterFactory;
 
 /**
@@ -40,5 +43,7 @@ public class XmlClientModule extends AbstractModule {
   protected void configure() {
     bind(PrintStream.class).annotatedWith(Names.named("outputStream")).toInstance(out);
     bind(ResponsePrinterFactory.class).to(XmlResponsePrinterFactory.class);
+    Multibinder.newSetBinder(binder(),
+        ResponseStreamFactory.class).addBinding().to(DefaultResponseStreamFactory.class);
   }
 }

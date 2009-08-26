@@ -20,7 +20,7 @@ import com.google.inject.ImplementedBy;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-@ImplementedBy(DefaultResponseStreamFactory.class)
+@ImplementedBy(AggregatingResponseStreamFactory.class)
 public interface ResponseStreamFactory {
 
   ResponseStream getRunTestsActionResponseStream(String browserId);

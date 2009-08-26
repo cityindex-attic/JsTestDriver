@@ -33,19 +33,15 @@ public class CoverageTestResponseStream implements ResponseStream {
   public static final String COVERAGE_DATA_KEY = "linesCovered";
   private final String browserId;
   private final CoverageAccumulator accumulator;
-  private final ResponseStream runTestsActionResponseStream;
   private final TestResultGenerator generator = new TestResultGenerator();
   private final Gson gson = new Gson();
   
-  public CoverageTestResponseStream(String browserId, CoverageAccumulator coverageReporter,
-      ResponseStream runTestsActionResponseStream) {
-        this.browserId = browserId;
-        this.accumulator = coverageReporter;
-        this.runTestsActionResponseStream = runTestsActionResponseStream;
+  public CoverageTestResponseStream(String browserId, CoverageAccumulator coverageReporter) {
+    this.browserId = browserId;
+    this.accumulator = coverageReporter;
   }
 
   public void finish() {
-    runTestsActionResponseStream.finish();
   }
 
   public void stream(Response response) {
@@ -59,7 +55,6 @@ public class CoverageTestResponseStream implements ResponseStream {
           accumulator.add(browserId, lines);
         }
       }
-      runTestsActionResponseStream.stream(response);
     }catch (RuntimeException e) {
       e.printStackTrace();
       throw e;

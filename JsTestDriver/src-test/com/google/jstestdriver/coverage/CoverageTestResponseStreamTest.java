@@ -35,9 +35,8 @@ public class CoverageTestResponseStreamTest extends TestCase {
   public void testStreamAndFinish() throws Exception {
     CoverageAccumulator accumulator = new CoverageAccumulator();
     String browserId = "firefox";
-    ResponseStreamStub responseStub = new ResponseStreamStub();
     CoverageTestResponseStream stream = new CoverageTestResponseStream(
-      browserId, accumulator, responseStub);
+      browserId, accumulator);
 
     Response response = new Response();
     Gson gson = new Gson();
@@ -56,18 +55,14 @@ public class CoverageTestResponseStreamTest extends TestCase {
 
     stream.stream(response);
     assertEquals(expected, accumulator);
-    assertSame(responseStub.response, response);
-    assertFalse(responseStub.finished);
     stream.finish();
-    assertTrue(responseStub.finished);
   }
   
   public void testStreamNoLinesReturned() throws Exception {
     CoverageAccumulator coverageReporter = new CoverageAccumulator();
     String browserId = "firefox";
-    ResponseStreamStub responseStub = new ResponseStreamStub();
     CoverageTestResponseStream stream = new CoverageTestResponseStream(
-      browserId, null, responseStub);
+      browserId, null);
     
     Response response = new Response();
     Gson gson = new Gson();
@@ -81,10 +76,7 @@ public class CoverageTestResponseStreamTest extends TestCase {
     
     stream.stream(response);
     assertEquals(expected, coverageReporter);
-    assertSame(responseStub.response, response);
-    assertFalse(responseStub.finished);
     stream.finish();
-    assertTrue(responseStub.finished);
   }
 
   public final static class ResponseStreamStub implements ResponseStream {

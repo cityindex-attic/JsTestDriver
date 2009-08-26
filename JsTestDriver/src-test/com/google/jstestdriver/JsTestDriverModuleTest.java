@@ -23,10 +23,10 @@ import junit.framework.TestCase;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 import com.google.jstestdriver.guice.PrintStreamClientModule;
+import com.google.jstestdriver.guice.XmlClientModule;
 
 /**
  * @author corysmith
- *
  */
 public class JsTestDriverModuleTest extends TestCase {
   public void testGetActionRunner() throws Exception {
@@ -34,6 +34,14 @@ public class JsTestDriverModuleTest extends TestCase {
     Guice.createInjector(new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
         Collections.<Module>singletonList(new PrintStreamClientModule(System.out)),
+        "http://foo")).getInstance(ActionRunner.class);
+  }
+
+  public void testGetActionRunnerXmlWriter() throws Exception {
+    FlagsImpl flags = new FlagsImpl();
+    Guice.createInjector(new JsTestDriverModule(flags,
+        Collections.<FileInfo>emptySet(),
+        Collections.<Module>singletonList(new XmlClientModule(System.out)),
         "http://foo")).getInstance(ActionRunner.class);
   }
 }

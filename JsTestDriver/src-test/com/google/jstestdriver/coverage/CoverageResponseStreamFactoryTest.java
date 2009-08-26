@@ -17,8 +17,6 @@ package com.google.jstestdriver.coverage;
 
 import junit.framework.TestCase;
 
-import com.google.jstestdriver.DefaultResponseStreamFactory;
-import com.google.jstestdriver.ResponsePrinterFactory;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultPrinter;
@@ -46,14 +44,16 @@ public class CoverageResponseStreamFactoryTest extends TestCase {
   final TestResultPrinter printer = new TestResultPrinterStub();
 
   public void testGetRunTestsActionResponseStream() throws Exception {
-    CoverageResponseStreamFactory factory = new CoverageResponseStreamFactory(
-      new DefaultResponseStreamFactory(new ResponsePrinterFactory() {
-        public TestResultPrinter getResponsePrinter(String xmlFile) {
-          return printer;
-        }
-      }, "foo.conf"), null);
+    CoverageResponseStreamFactory factory = new CoverageResponseStreamFactory(null);
 
     ResponseStream responseStream = factory.getRunTestsActionResponseStream("browserId");
     assertNotNull(responseStream);
+  }
+
+  public void testGetResetActionResponseStream() throws Exception {
+    CoverageResponseStreamFactory factory = new CoverageResponseStreamFactory(null);
+    
+    ResponseStream responseStream = factory.getResetActionResponseStream();
+    assertEquals(CoverageResponseStreamFactory.NULL_RESPONSE_STREAM, responseStream);
   }
 }
