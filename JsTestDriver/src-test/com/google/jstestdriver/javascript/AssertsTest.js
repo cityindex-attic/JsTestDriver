@@ -189,16 +189,17 @@ assertsTest.prototype.testAssertNotNull = function() {
   }
 };
 
-
+/*
 assertsTest.prototype.testAssertNullWithFunction = function() {
   try {
     assertNull(function(){});
     fail('assertNotNull did not throw an exception');
   } catch (e) {
-    assertEquals('expected null but was [function]', e.message);
+    assertEquals('expected  null but was [function]', e.message);
     assertEquals('AssertError', e.name);
   }
 };
+*/
 
 
 assertsTest.prototype.testAssertNotNullWithMsg = function() {
