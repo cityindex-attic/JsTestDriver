@@ -36,7 +36,7 @@ heartbeatTest.prototype.testStartHeartbeat = function() {
   function() {
     return time;
   },
-  null);
+  null, null);
 
   heartbeat.start();
   assertEquals("/heartbeat", url);
@@ -47,7 +47,7 @@ heartbeatTest.prototype.testStartHeartbeat = function() {
   time = 30;
   url = null;
   data = null;
-  sendCallback();
+  sendCallback('OK');
   assertEquals("/heartbeat", url);
   assertEquals("1", data.id);
   assertNotNull(sendCallback);
@@ -56,6 +56,30 @@ heartbeatTest.prototype.testStartHeartbeat = function() {
 heartbeatTest.prototype.testErrorCallback = function() {
   var callbackCalled = false;
   var errBack = null;
+  var ele = document.createElement('div');
+  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat",
+                                             function(_url, _data, _callback, _errback) {
+    errBack = _errback;
+  },
+  30,
+  function(callback, duration){},
+  function() {
+    return 0;
+  }, function() {
+    return ele;
+  });
+  
+  heartbeat.start();
+  assertNotNull(errBack);
+  
+  errBack();
+  assertTrue(!!ele.className);
+  assertEquals(jstestdriver.Heartbeat.ERROR_CLASS, ele.className);
+};
+
+heartbeatTest.prototype.testErrorStopRetryAfterLimit = function() {
+  var errBack = null;
+  var timeoutCallback = null
   var ele = document.createElement('div');
   var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat",
                                              function(_url, _data, _callback, _errback) {
@@ -74,10 +98,43 @@ heartbeatTest.prototype.testErrorCallback = function() {
   
   heartbeat.start();
   assertNotNull(errBack);
-  
   errBack();
-  assertTrue(Boolean(ele.className));
+  assertTrue(!!ele.className);
   assertEquals(jstestdriver.Heartbeat.ERROR_CLASS, ele.className);
+  for (var i = 0; i < jstestdriver.Heartbeat.RETRY_LIMIT; i++) {
+    errBack();
+    timeoutCallback();
+    assertNotNull(timeoutCallback);
+  }
+  timeoutCallback = null;
+  errBack();
+  assertNull(timeoutCallback);
+};
+
+heartbeatTest.prototype.testUnknownOnServer = function() {
+  var callbackCalled = false;
+  var sendCallback = null;
+  var navigatePath = null;
+  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat",
+                                             function(_url, _data, _callback, _errback) {
+    sendCallback = _callback;
+  },
+  30,
+  function(callback, duration){
+    timeoutDuration = duration;
+    timeoutCallback = callback;
+  },
+  function() {
+    return 0;
+  }, null,
+  function (path){
+    navigatePath = path;
+  });
+  
+  heartbeat.start();
+  assertNotNull(sendCallback);
+  sendCallback('UNKNOWN');
+  assertEquals(jstestdriver.Heartbeat.CAPTURE_PATH, navigatePath);
 };
 
 heartbeatTest.prototype.testHeartbeatCallbackFast = function() {
@@ -101,7 +158,7 @@ heartbeatTest.prototype.testHeartbeatCallbackFast = function() {
   },
   function() {
     return time;
-  }, null);
+  }, null, null);
   
   heartbeat.sendHeartbeat();
   assertEquals("/heartbeat", url);

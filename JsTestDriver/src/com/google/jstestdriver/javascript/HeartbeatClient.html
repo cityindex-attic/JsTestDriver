@@ -24,6 +24,10 @@
       },
       function(){
         return document.getElementsByTagName('body')[0];
+      },
+      function(path){
+        var location = top.location;
+        top.location = location.protocol + "//" + location.host + path;
       }).start();
 </script>
 <link rel="stylesheet" type="text/css" href="heartbeatclient.css" />

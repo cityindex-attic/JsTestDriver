@@ -17,10 +17,14 @@ package com.google.jstestdriver;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class BrowserShutdownAction implements Action {
+  private static final Logger LOGGER = LoggerFactory.getLogger(BrowserShutdownAction.class);
 
   private final BrowserStartupAction browserStartupAction;
 
@@ -35,10 +39,10 @@ public class BrowserShutdownAction implements Action {
       try {
       process.destroy();
       if (process.exitValue() != 0) {
-        System.out.println("Unexpected shutdown " + process + " " + process.exitValue());
+        LOGGER.warn("Unexpected shutdown " + process + " " + process.exitValue());
       }
       } catch (IllegalThreadStateException e) {
-        System.out.println("Process refused to exit" + process);
+        LOGGER.warn("Process refused to exit" + process);
       }
     } 
   }
