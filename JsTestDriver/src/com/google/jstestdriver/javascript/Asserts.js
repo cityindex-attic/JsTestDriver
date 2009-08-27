@@ -36,7 +36,7 @@ isBoolean_ = function(bool) {
 prettyPrintEntity_ = function(entity) {
   var str = JSON.stringify(entity);
   if (!str) {
-    if (entity instanceof Function) {
+    if (entity.toString().indexOf('function')) {
       return "[function]";
     }
     return "[" + typeof entity + "]";
