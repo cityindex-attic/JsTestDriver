@@ -120,7 +120,7 @@ public class ConfigurationParser {
           String[] filteredFiles = dir.list(new GlobFilenameFilter(pattern,
               GlobCompiler.DEFAULT_MASK | GlobCompiler.CASE_INSENSITIVE_MASK));
 
-          if (filteredFiles == null) {
+          if (filteredFiles == null || filteredFiles.length == 0) {
             String error = "The patterns/paths " + f  + " used in the configuration"
                 + " file didn't match any file, the files patterns/paths need to be relative to"
                 + " the configuration file.";
