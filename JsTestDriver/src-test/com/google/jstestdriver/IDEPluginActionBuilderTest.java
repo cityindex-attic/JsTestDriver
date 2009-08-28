@@ -50,7 +50,8 @@ public class IDEPluginActionBuilderTest extends TestCase {
 
   public void testExample() throws Exception {
     Reader configReader = new StringReader("load:\n- blash.js\nserver:\n -http://foo");
-    ConfigurationParser configParser = new ConfigurationParser(tmpDir, configReader);
+    ConfigurationParser configParser =
+        new ConfigurationParser(tmpDir, configReader, new DefaultPathRewriter());
 
     IDEPluginActionBuilder builder = new IDEPluginActionBuilder(configParser, "http://address",
         new ResponseStreamFactoryStub());
@@ -68,7 +69,8 @@ public class IDEPluginActionBuilderTest extends TestCase {
   
   public void testInstallModuleOverwritingResolvedJustInTimeInjection() throws Exception {
     Reader configReader = new StringReader("load:\n- blash.js\nserver:\n -http://foo");
-    ConfigurationParser configParser = new ConfigurationParser(tmpDir, configReader);
+    ConfigurationParser configParser =
+        new ConfigurationParser(tmpDir, configReader, new DefaultPathRewriter());
 
     IDEPluginActionBuilder builder = new IDEPluginActionBuilder(configParser, "http://address",
         new ResponseStreamFactoryStub());

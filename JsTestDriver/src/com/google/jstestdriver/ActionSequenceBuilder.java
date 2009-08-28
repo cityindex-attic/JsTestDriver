@@ -37,6 +37,7 @@ public class ActionSequenceBuilder {
   private final Provider<List<ThreadedAction>> threadedActionProvider;
   private final Provider<JsTestDriverClient> clientProvider;
   private final Provider<URLTranslator> urlTranslatorProvider;
+  private final Provider<URLRewriter> urlRewriterProvider;
 
   private List<String> browsers = new LinkedList<String>();
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
@@ -50,7 +51,6 @@ public class ActionSequenceBuilder {
   private List<String> dryRunFor = new LinkedList<String>();
   private List<ThreadedAction> threadedActions;
   private List<String> commands = new LinkedList<String>();
-  
 
   /**
    * Begins the building of an action sequence.
@@ -65,12 +65,14 @@ public class ActionSequenceBuilder {
                                ResponseStreamFactory responseStreamFactory,
                                Provider<List<ThreadedAction>> threadedActionProvider,
                                Provider<JsTestDriverClient> clientProvider,
-                               Provider<URLTranslator> urlTranslatorProvider) {
+                               Provider<URLTranslator> urlTranslatorProvider,
+                               Provider<URLRewriter> urlRewriterProvider) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.threadedActionProvider = threadedActionProvider;
     this.clientProvider = clientProvider;
     this.urlTranslatorProvider = urlTranslatorProvider;
+    this.urlRewriterProvider = urlRewriterProvider;
   }
 
   /** Add the Browser startup and shutdown actions to the actions stack. */
@@ -94,8 +96,9 @@ public class ActionSequenceBuilder {
         files.put(file.getFileName(), file);
       }
     }
-    ServerStartupAction serverStartupAction = actionFactory.getServerStartupAction(localServerPort,
-        capturedBrowsers, new FilesCache(files), urlTranslatorProvider.get());
+    ServerStartupAction serverStartupAction =
+        actionFactory.getServerStartupAction(localServerPort, capturedBrowsers, new FilesCache(
+            files), urlTranslatorProvider.get(), urlRewriterProvider.get());
     actions.add(0, serverStartupAction);
     if (!leaveServerRunning) {
       actions.add(new ServerShutdownAction(serverStartupAction));

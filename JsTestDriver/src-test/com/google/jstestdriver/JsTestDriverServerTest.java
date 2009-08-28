@@ -29,8 +29,9 @@ import junit.framework.TestCase;
  */
 public class JsTestDriverServerTest extends TestCase {
 
-  private JsTestDriverServer server = new JsTestDriverServer(4224, new CapturedBrowsers(),
-      new FilesCache(new HashMap<String, FileInfo>()), new DefaultURLTranslator());
+  private JsTestDriverServer server =
+      new JsTestDriverServer(4224, new CapturedBrowsers(), new FilesCache(
+          new HashMap<String, FileInfo>()), new DefaultURLTranslator(), new DefaultURLRewriter());
 
   @Override
   protected void tearDown() throws Exception {

@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import com.google.jstestdriver.ConfigurationParser;
+import com.google.jstestdriver.DefaultPathRewriter;
 
 /**
  * @author shyamseshadri@google.com (Shyam Seshadri)
@@ -51,7 +52,8 @@ public class ProjectHelper {
     File parentDir = configFile.getParentFile();
     ConfigurationParser configurationParser = null;
     try {
-      configurationParser = new ConfigurationParser(parentDir, new FileReader(configFile));
+      configurationParser = new ConfigurationParser(parentDir, new FileReader(configFile),
+          new DefaultPathRewriter());
     } catch (FileNotFoundException e) {
       logger.logException(e);
     }

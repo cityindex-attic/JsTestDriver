@@ -38,7 +38,7 @@ public class CommandServletTest extends TestCase {
     SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), "1", browserInfo);
 
     capturedBrowsers.addSlave(slave);
-    CommandServlet servlet = new CommandServlet(capturedBrowsers, null, null);
+    CommandServlet servlet = new CommandServlet(capturedBrowsers, null, null, null);
 
     assertEquals("[{\"id\":1}]", servlet.listBrowsers());
   }
@@ -51,7 +51,8 @@ public class CommandServletTest extends TestCase {
 
     capturedBrowsers.addSlave(slave);
     CommandServlet servlet =
-        new CommandServlet(capturedBrowsers, new DefaultURLTranslator(), new ForwardingMapper());
+        new CommandServlet(capturedBrowsers, new DefaultURLTranslator(), new DefaultURLRewriter(),
+            new ForwardingMapper());
     List<String> parameters = Lists.newArrayList();
     List<FileSource> fileSources = Lists.newArrayList();
 

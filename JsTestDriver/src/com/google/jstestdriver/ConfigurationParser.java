@@ -39,15 +39,17 @@ public class ConfigurationParser {
   private final Set<FileInfo> filesList = new LinkedHashSet<FileInfo>();
   private final File basePath;
   private final Reader configReader;
+  private final PathRewriter pathRewriter;
 
   private String server = "";
   private List<Plugin> plugins = new LinkedList<Plugin>();
 
   private PathResolver pathResolver = new PathResolver();
 
-  public ConfigurationParser(File basePath, Reader configReader) {
+  public ConfigurationParser(File basePath, Reader configReader, PathRewriter pathRewriter) {
     this.basePath = basePath;
     this.configReader = configReader;
+    this.pathRewriter = pathRewriter;
   }
 
   @SuppressWarnings("unchecked")
@@ -100,6 +102,7 @@ public class ConfigurationParser {
       Set<FileInfo> resolvedFiles = new LinkedHashSet<FileInfo>();
 
       for (String f : files) {
+        f = pathRewriter.rewrite(f);
         boolean isPatch = f.startsWith("patch");
 
         if (isPatch) {
@@ -129,6 +132,7 @@ public class ConfigurationParser {
             String resolvedFilePath = pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\",
                 "/") + "/" + filteredFile.replaceAll("\\\\", "/"));
             File resolvedFile = new File(resolvedFilePath);
+
             resolvedFiles.add(new FileInfo(resolvedFilePath, resolvedFile.lastModified(), isPatch,
                 serveOnly, null));
           }

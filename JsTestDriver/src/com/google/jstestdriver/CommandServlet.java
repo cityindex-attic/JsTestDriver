@@ -43,12 +43,14 @@ public class CommandServlet extends HttpServlet {
 
   private final CapturedBrowsers capturedBrowsers;
   private final URLTranslator urlTranslator;
+  private final URLRewriter urlRewriter;
   private final ForwardingMapper forwardingMapper;
 
   public CommandServlet(CapturedBrowsers browsers, URLTranslator urlTranslator,
-      ForwardingMapper forwardingMapper) {
+      URLRewriter urlRewriter, ForwardingMapper forwardingMapper) {
     this.capturedBrowsers = browsers;
     this.urlTranslator = urlTranslator;
+    this.urlRewriter = urlRewriter;
     this.forwardingMapper = forwardingMapper;
   }
 
@@ -97,7 +99,7 @@ public class CommandServlet extends HttpServlet {
           gson.fromJson(fileSourcesList, new TypeToken<List<FileSource>>() {}.getType());
 
       for (FileSource fileSource : fileSources) {
-        String url = fileSource.getFileSrc();
+        String url = urlRewriter.rewrite(fileSource.getFileSrc());
 
         if (url.startsWith("http://") || url.startsWith("https://")) {
           String translation = urlTranslator.getTranslation(url);

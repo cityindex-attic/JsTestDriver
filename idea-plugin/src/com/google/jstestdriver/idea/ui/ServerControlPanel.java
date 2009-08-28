@@ -16,6 +16,7 @@
 package com.google.jstestdriver.idea.ui;
 
 import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.DefaultURLRewriter;
 import com.google.jstestdriver.DefaultURLTranslator;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
@@ -84,7 +85,7 @@ public class ServerControlPanel extends JPanel {
       browsers.addObserver(capturedBrowsersPanel);
       browsers.addObserver(statusBar);
       serverStartupAction = new ServerStartupAction(serverPort, browsers, cache,
-          new DefaultURLTranslator());
+          new DefaultURLTranslator(), new DefaultURLRewriter());
       serverStartupAction.addObservers(Arrays.<Observer>asList(statusBar));
       serverStartupAction.run();
     }

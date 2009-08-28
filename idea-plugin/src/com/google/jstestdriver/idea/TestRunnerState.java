@@ -20,6 +20,7 @@ import com.google.jstestdriver.ActionFactory;
 import com.google.jstestdriver.ActionFactoryModule;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.ConfigurationParser;
+import com.google.jstestdriver.DefaultPathRewriter;
 import com.google.jstestdriver.IDEPluginActionBuilder;
 import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.idea.ui.ToolPanel;
@@ -102,7 +103,8 @@ public class TestRunnerState implements RunnableState {
       throws ExecutionException {
     try {
       FileReader fileReader = new FileReader(jsTestDriverConfiguration.getSettingsFile());
-      ConfigurationParser configurationParser = new ConfigurationParser(path, fileReader);
+      ConfigurationParser configurationParser = new ConfigurationParser(path, fileReader,
+          new DefaultPathRewriter());
       return new IDEPluginActionBuilder(configurationParser, serverURL, responseStreamFactory);
     } catch (FileNotFoundException e) {
       throw new ExecutionException("Failed to read settings file " +

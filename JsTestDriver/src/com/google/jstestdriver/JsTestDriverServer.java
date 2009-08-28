@@ -49,13 +49,15 @@ public class JsTestDriverServer extends Observable {
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache filesCache;
   private final URLTranslator urlTranslator;
+  private final URLRewriter urlRewriter;
 
   public JsTestDriverServer(int port, CapturedBrowsers capturedBrowsers,
-      FilesCache preloadedFilesCache, URLTranslator urlTranslator) {
+      FilesCache preloadedFilesCache, URLTranslator urlTranslator, URLRewriter urlRewriter) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = preloadedFilesCache;
     this.urlTranslator = urlTranslator;
+    this.urlRewriter = urlRewriter;
     initJetty(this.port);
     initServlets();
   }
@@ -63,6 +65,7 @@ public class JsTestDriverServer extends Observable {
   private void initServlets() {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
 
+    addServlet("/", new HomeServlet(capturedBrowsers));
     addServlet("/hello", new HelloServlet());
     addServlet("/heartbeat", new HeartbeatServlet(capturedBrowsers, new TimeImpl()));
     addServlet("/capture", new CaptureServlet(new BrowserHunter(capturedBrowsers)));
@@ -71,12 +74,12 @@ public class JsTestDriverServer extends Observable {
             SlaveResourceService.RESOURCE_LOCATION)));
     addServlet("/slave/*", new SlaveResourceServlet(new SlaveResourceService(
         SlaveResourceService.RESOURCE_LOCATION)));
-    addServlet("/cmd", new CommandServlet(capturedBrowsers, urlTranslator, forwardingMapper));
+    addServlet("/cmd", new CommandServlet(capturedBrowsers, urlTranslator, urlRewriter,
+        forwardingMapper));
     addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers, urlTranslator,
         forwardingMapper));
     addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesCache));
     addServlet("/test/*", new TestResourceServlet(filesCache));
-    addServlet("/", new HomeServlet(capturedBrowsers));
     addServlet("/*", new ForwardingServlet(forwardingMapper));
   }
 
@@ -127,7 +130,7 @@ public class JsTestDriverServer extends Observable {
         }
         Reader configReader = new java.io.FileReader(config);
         ConfigurationParser configParser = new ConfigurationParser(config.getParentFile(),
-            configReader);
+            configReader, new DefaultPathRewriter());
         PluginLoader pluginLoader = new PluginLoader();
         configParser.parse();
         fileSet = configParser.getFilesList();

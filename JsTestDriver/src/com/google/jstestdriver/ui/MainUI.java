@@ -45,6 +45,7 @@ import com.google.jstestdriver.ActionFactory;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.ConfigurationParser;
+import com.google.jstestdriver.DefaultPathRewriter;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.FlagsParser;
@@ -118,7 +119,7 @@ public class MainUI {
         }
         Reader configReader = new java.io.FileReader(flags.getConfig());
         ConfigurationParser configParser = new ConfigurationParser(config.getParentFile(),
-            configReader);
+            configReader, new DefaultPathRewriter());
 
         configParser.parse();
         fileSet = configParser.getFilesList();
