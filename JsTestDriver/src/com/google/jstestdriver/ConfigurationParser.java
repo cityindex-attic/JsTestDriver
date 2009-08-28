@@ -15,6 +15,10 @@
  */
 package com.google.jstestdriver;
 
+import org.apache.oro.io.GlobFilenameFilter;
+import org.apache.oro.text.GlobCompiler;
+import org.jvyaml.YAML;
+
 import java.io.File;
 import java.io.Reader;
 import java.util.Arrays;
@@ -24,10 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.oro.io.GlobFilenameFilter;
-import org.apache.oro.text.GlobCompiler;
-import org.jvyaml.YAML;
 
 /**
  * TODO: needs to give more feedback when something goes wrong...
@@ -121,16 +121,19 @@ public class ConfigurationParser {
               GlobCompiler.DEFAULT_MASK | GlobCompiler.CASE_INSENSITIVE_MASK));
 
           if (filteredFiles == null) {
-            System.err.println("No files to load. The patterns/paths used in the configuration"
+            String error = "The patterns/paths " + f  + " used in the configuration"
                 + " file didn't match any file, the files patterns/paths need to be relative to"
-                + " the configuration file.");
-            System.exit(1);
+                + " the configuration file.";
+
+            System.err.println(error);
+            throw new RuntimeException(error);
           }
           Arrays.sort(filteredFiles, String.CASE_INSENSITIVE_ORDER);
 
           for (String filteredFile : filteredFiles) {
-            String resolvedFilePath = pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\",
-                "/") + "/" + filteredFile.replaceAll("\\\\", "/"));
+            String resolvedFilePath =
+                pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\", "/") + "/"
+                    + filteredFile.replaceAll("\\\\", "/"));
             File resolvedFile = new File(resolvedFilePath);
 
             resolvedFiles.add(new FileInfo(resolvedFilePath, resolvedFile.lastModified(), isPatch,
