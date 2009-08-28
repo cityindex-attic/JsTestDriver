@@ -233,6 +233,7 @@
           <pathelement location="${obj-test.dir}"/>
         </instrpath>
         <filter excludes="com.google.jstestdriver.coverage.es3.*" />
+      	<filter excludes="com.google.jstestdriver.directoryscanner.*" />
       </instr>
     </emma>
   </target>
