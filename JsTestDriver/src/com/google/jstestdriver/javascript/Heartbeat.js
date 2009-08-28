@@ -78,6 +78,10 @@ jstestdriver.Heartbeat.prototype.errorCallback = function() {
 
 
 jstestdriver.Heartbeat.prototype.heartbeatCallback = function(response) {
+  if (response == 'UNKNOWN') {
+    this.navigateToPath_(jstestdriver.Heartbeat.CAPTURE_PATH);
+    return;
+  }
   var elapsed = this.getTime_() - this.sent_;
   this.sent_ = 0;
 

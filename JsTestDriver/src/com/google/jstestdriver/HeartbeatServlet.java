@@ -70,10 +70,13 @@ public class HeartbeatServlet extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     String id = req.getParameter("id");
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
+    PrintWriter writer = resp.getWriter();
 
     if (browser != null) {
       browser.heartBeat();
+    } else {
+      writer.write("UNKNOWN");
     }
-    resp.getWriter().flush();
+    writer.flush();
   }
 }
