@@ -38,6 +38,9 @@ public class HeartbeatServlet extends HttpServlet {
     this.time = time;
   }
 
+  /**
+   * Used by the client to know if the browser is alive.
+   */
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     PrintWriter writer = resp.getWriter();
@@ -52,14 +55,17 @@ public class HeartbeatServlet extends HttpServlet {
           writer.write("OK");
         }
       } else {
-        writer.write("UNKNOWN");
+        writer.write("DEAD");
       }
     } else {
-      writer.write("UNKNOWN");
+      writer.write("DEAD");
     }
     writer.flush();
   }
 
+  /**
+   * Used by the browser to report if it is still alive.
+   */
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     String id = req.getParameter("id");

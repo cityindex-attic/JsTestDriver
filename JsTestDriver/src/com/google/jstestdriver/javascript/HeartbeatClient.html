@@ -11,6 +11,7 @@
       jstestdriver.HEARTBEAT_URL,
       function(url, data, success, error) {
         jstestdriver.jQuery.ajax({
+          type : "POST",
           url : url,
           data : data,
           success : success,
