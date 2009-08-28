@@ -80,7 +80,7 @@ public class JsTestDriverServer extends Observable {
         forwardingMapper));
     addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesCache));
     addServlet("/test/*", new TestResourceServlet(filesCache));
-    addServlet("/*", new ForwardingServlet(forwardingMapper));
+    addServlet("/forward/*", new ForwardingServlet(forwardingMapper));
   }
 
   private void addServlet(String url, Servlet servlet) {

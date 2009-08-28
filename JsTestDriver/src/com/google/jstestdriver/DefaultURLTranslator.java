@@ -27,6 +27,8 @@ import java.net.URL;
  */
 public class DefaultURLTranslator implements URLTranslator {
 
+  private static final String FORWARD = "/forward";
+
   private final BiMap<String, String> cache = HashBiMap.create();
 
   public void translate(String url) throws MalformedURLException {
@@ -36,7 +38,7 @@ public class DefaultURLTranslator implements URLTranslator {
     if (file.length() == 0) {
       file = "/";
     }
-    cache.put(url, file);
+    cache.put(url, FORWARD + file);
   }
 
   public String getTranslation(String url) {

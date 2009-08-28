@@ -31,10 +31,11 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class ForwardingServlet extends ProxyServlet.Transparent {
 
-  private final ForwardingMapper forwardingMapper;
-
+  private static final int SKIP_FORWARD_INDEX = 8;
   private static final ThreadLocal<HttpServletRequest> threadLocal =
-      new ThreadLocal<HttpServletRequest>();
+    new ThreadLocal<HttpServletRequest>();
+
+  private final ForwardingMapper forwardingMapper;
 
   public ForwardingServlet(ForwardingMapper forwardingMapper) {
     this.forwardingMapper = forwardingMapper;
@@ -67,6 +68,11 @@ public class ForwardingServlet extends ProxyServlet.Transparent {
 
     if (forwardTo != null) {
       return new URL(forwardTo);
+    } else {
+      uri = uri.substring(SKIP_FORWARD_INDEX);
+      if (referer != null && referer.startsWith("/forward")) {
+        referer = referer.substring(SKIP_FORWARD_INDEX);
+      }
     }
     String incomingUrl = String.format("%s://%s:%d%s", scheme, serverName, serverPort, uri);
     URL refererUrl = new URL(referer);
