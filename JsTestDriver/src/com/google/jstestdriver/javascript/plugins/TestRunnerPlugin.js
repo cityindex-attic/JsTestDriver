@@ -72,11 +72,10 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest_ = function(testCaseName
       throw err;
     }
   } catch (e) {
-    if (e.name == 'AssertError') {
-      res = 'failed';
-    } else {
-      res = 'error';
-    }
+
+    // We use the global here because of a circular dependency. The isFailure plugin should be
+    // refactored.
+    res = jstestdriver.pluginRegistrar.isFailure(e) ? 'failed' : 'error';
     msg = JSON.stringify(e);
   } finally {
     try {

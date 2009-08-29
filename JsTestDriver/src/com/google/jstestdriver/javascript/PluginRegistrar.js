@@ -23,7 +23,9 @@ jstestdriver.initializePluginRegistrar = function() {
     jstestdriver.jQuery(document).unbind();
     jstestdriver.jQuery(document).die();
   });
-  var defaultPlugin = new jstestdriver.plugins.DefaultPlugin(fileLoaderPlugin, testRunnerPlugin);
+  var assertsPlugin = new jstestdriver.plugins.AssertsPlugin();
+  var defaultPlugin = new jstestdriver.plugins.DefaultPlugin(fileLoaderPlugin, testRunnerPlugin,
+      assertsPlugin);
   jstestdriver.pluginRegistrar = new jstestdriver.PluginRegistrar(defaultPlugin);
 };
 
@@ -61,10 +63,14 @@ jstestdriver.PluginRegistrar = function(defaultPlugin) {
 
 jstestdriver.PluginRegistrar.PROCESS_TEST_RESULT = 'processTestResult';
 
+
 jstestdriver.PluginRegistrar.LOAD_SOURCE = 'loadSource';
 
 
 jstestdriver.PluginRegistrar.RUN_TEST = 'runTestConfiguration';
+
+
+jstestdriver.PluginRegistrar.IS_FAILURE = 'isFailure';
 
 
 jstestdriver.PluginRegistrar.prototype.register = function(plugin) {
@@ -101,10 +107,11 @@ jstestdriver.PluginRegistrar.prototype.dispatch_ = function(method, parameters) 
 
     if (plugin[method]) {
       if (plugin[method].apply(plugin, parameters)) {
-        return;
+        return true;
       }
     }
   }
+  return false;
 };
 
 
@@ -220,4 +227,33 @@ jstestdriver.PluginRegistrar.prototype.runTestConfiguration = function(testRunCo
  */
 jstestdriver.PluginRegistrar.prototype.processTestResult = function(testResult) {
   this.dispatch_(jstestdriver.PluginRegistrar.PROCESS_TEST_RESULT, arguments);
+};
+
+
+/**
+ * isFailure
+ * 
+ * By defining the method isFailure a plugin will determine if an exception thrown by an assertion
+ * framework is considered a failure by the assertion framework.
+ * 
+ * isFailure takes 1 parameter:
+ * - exception: The exception thrown by the test
+ *              
+ *   
+ * processTestResult must return a boolean:
+ * - true if the exception is considered a failure
+ * - false if the exception is not considered a failure
+ * 
+ * A simple isFailure plugin would look like:
+ * 
+ * var myPlugin = {
+ *   name: 'myPlugin',
+ *   isFailure: function(exception) {
+ *     return exception.name == 'AssertError';
+ *   }
+ * }
+ * 
+ */
+jstestdriver.PluginRegistrar.prototype.isFailure = function(exception) {
+  return this.dispatch_(jstestdriver.PluginRegistrar.IS_FAILURE, arguments);
 };
