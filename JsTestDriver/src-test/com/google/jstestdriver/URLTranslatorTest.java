@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 public class URLTranslatorTest extends TestCase {
 
   private static final String ORIGINAL_URL = "http://www.google.com";
-  private static final String TRANSLATED_URL = "/";
+  private static final String TRANSLATED_URL = "/forward/";
 
   public void testTranslateUrl() throws Exception {
     DefaultURLTranslator urlTranslator = new DefaultURLTranslator();

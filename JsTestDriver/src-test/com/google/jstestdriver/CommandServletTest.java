@@ -72,9 +72,9 @@ public class CommandServletTest extends TestCase {
             .getType());
 
     assertEquals(2, changedFileSources.size());
-    assertEquals("/file1.js", changedFileSources.get(0).getFileSrc());
+    assertEquals("/forward/file1.js", changedFileSources.get(0).getFileSrc());
     assertEquals("http://server/file1.js", changedFileSources.get(0).getBasePath());
-    assertEquals("/file2.js", changedFileSources.get(1).getFileSrc());
+    assertEquals("/forward/file2.js", changedFileSources.get(1).getFileSrc());
     assertEquals("http://server/file2.js", changedFileSources.get(1).getBasePath());
   }
 }
