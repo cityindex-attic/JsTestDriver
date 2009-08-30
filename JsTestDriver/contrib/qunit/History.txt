@@ -1,3 +1,10 @@
+1.0.2
+-----
+
+Tests now run successfully when the lifecycle object exists but Setup and Teardown are undefined.
+Included a new test file, and JS Test Driver config (tests of fail and error behaviour currently commented out).
+New folder structure, with src and src-test directories.
+
 1.0.1
 -----
 
