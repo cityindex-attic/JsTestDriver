@@ -74,7 +74,14 @@ jstestdriver.PluginRegistrar.IS_FAILURE = 'isFailure';
 
 
 jstestdriver.PluginRegistrar.prototype.register = function(plugin) {
-  this.plugins_.splice(this.plugins_.length - 1, 0, plugin);
+  var index = this.getIndexOfPlugin_(plugin.name);
+  var howMany = 1;
+
+  if (index == -1) {
+    index = this.plugins_.length - 1;
+    howMany = 0;
+  }
+  this.plugins_.splice(index, howMany, plugin);
 };
 
 

@@ -86,3 +86,15 @@ PluginRegistrarTest.prototype.testHandleAction = function() {
   assertNull(myThirdPlugin.file);
   assertNull(myThirdPlugin.callback);
 };
+
+
+PluginRegistrarTest.prototype.testPluginIsReplaced = function() {
+  var pluginRegistrar = new jstestdriver.PluginRegistrar({ name: 'default' });
+  var myPlugin = new TestPlugin('myPlugin', false);
+  var myOtherPlugin = new TestPlugin('myPlugin', false);
+
+  pluginRegistrar.register(myPlugin);
+  pluginRegistrar.register(myOtherPlugin);
+  assertEquals(2, pluginRegistrar.getNumberOfRegisteredPlugins());
+  assertEquals(myOtherPlugin, pluginRegistrar.getPlugin(myOtherPlugin.name));
+};
