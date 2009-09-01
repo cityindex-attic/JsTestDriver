@@ -66,10 +66,21 @@ CoverageTest.prototype.testSummarizeCoverage = function() {
   var fileTwo = reporter.init('foo.js', 5, [2,3,4]);
   fileTwo[3]++;
   fileTwo[4]++;
-  var reports = reporter.summarizeCoverage();
+  var reports = reporter.summarizeCoverage().coveredLines;
   assertEquals(3, reports[0].lines.length);
   assertEquals(3, reports[1].lines.length);
   assertEquals(0, fileOne[5]);
   assertEquals(0, fileTwo[3]);
   assertEquals(0, fileTwo[4]);
+};
+
+CoverageTest.prototype.testCoveredLinesToJson = function() {
+  var reporter = new coverage.Reporter();
+  var fileOne = reporter.init('boo.js', 10, [1,3,5]);
+  fileOne[5]++;
+  var fileTwo = reporter.init('foo.js', 5, [2,3,4]);
+  fileTwo[3]++;
+  fileTwo[4]++;
+  var summary = reporter.summarizeCoverage();
+  assertEquals(JSON.stringify(summary.coveredLines), JSON.stringify(JSON.parse(summary.toJson())));
 };

@@ -83,13 +83,28 @@ var coverage = (function() {
     return coverage;
   };
 
+  /**
+   * @return {Summary} A summary object containing all the current coverage information.
+   */
   Reporter.prototype.summarizeCoverage = function() {
     var summary = [];
     for (var i = 0; i < this.coverages.length; i++) {
       summary.push(this.coverages[i].toCoveredLines());
     }
-    return summary;
+    return new Summary(summary);
   }
+
+  function Summary(coveredLines) {
+    this.coveredLines = coveredLines;
+  }
+  
+  Summary.prototype.toJson = function() {
+    var lines = [];
+    for (var i = 0; i < this.coveredLines.length; i++) {
+      lines.push(this.coveredLines[i].toJson());
+    }
+    return "[" + lines.join(",") + "]";
+  };
   
   /**
    * A serializable class that represents the current state of coverage for a file.
@@ -100,6 +115,20 @@ var coverage = (function() {
     this.qualifiedFile = qualifiedFile;
     this.lines = lines;
   }
+  
+  /**
+   * @return A Json representation of the CoveredLines.
+   */
+  CoveredLines.prototype.toJson = function() {
+    var json = ["{\"qualifiedFile\":\"" , this.qualifiedFile , "\",\"lines\":["];
+    var sep = "";
+    for (var i = 0; i < this.lines.length; i++) {
+      json.push(sep, this.lines[i].toJson());
+      sep = ",";
+    }
+    json.push("]}");
+    return json.join("");
+  };
 
   /**
    * Represents a line that could have been executed during the test.
@@ -109,6 +138,10 @@ var coverage = (function() {
     this.executedNumber = executedNumber;
     this.lineNumber = lineNumber;
   }
+  
+  CoveredLine.prototype.toJson = function() {
+    return "{\"executedNumber\":" + this.executedNumber + ",\"lineNumber\":" + this.lineNumber + "}";
+  };
 
 
   return {
