@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-var fileLoaderTest = jstestdriver.testCaseManager.TestCase('fileLoaderTest');
+var FileLoaderTest = jstestdriver.testCaseManager.TestCase('FileLoaderTest');
 
-fileLoaderTest.prototype.testNoFilesToLoad = function() {
+FileLoaderTest.prototype.testNoFilesToLoad = function() {
   var fileLoader = new jstestdriver.FileLoader({}, function(res) {
     assertNotNull(res.loadedFiles);
     assertEquals(0, res.loadedFiles.length);
@@ -25,11 +25,16 @@ fileLoaderTest.prototype.testNoFilesToLoad = function() {
 };
 
 
-fileLoaderTest.prototype.testFilesToLoad = function() {
+FileLoaderTest.prototype.testFilesToLoad = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
   var win = {};
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM);
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
+    testCaseAdded: function() {
+      return false
+    },
+    removeTestCaseForFilename: function() {}
+  });
   var stylesheetLoader = new jstestdriver.plugins.StylesheetLoader(win, mockDOM);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var defaultPlugin = new jstestdriver.plugins.DefaultPlugin(fileLoaderPlugin);

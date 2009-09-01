@@ -15,6 +15,8 @@
  */
 jstestdriver.TestCaseManager = function() {
   this.testCasesInfo_ = [];
+  this.fileToTestCaseMap_ = {};
+  this.latestTestCaseInfo_ = null;
 };
 
 
@@ -26,6 +28,43 @@ jstestdriver.TestCaseManager.prototype.add = function(testCaseInfo) {
   } else {
     this.testCasesInfo_.push(testCaseInfo);
   }
+  this.latestTestCaseInfo_ = testCaseInfo;
+};
+
+
+jstestdriver.TestCaseManager.prototype.testCaseAdded = function() {
+  return this.latestTestCaseInfo_ != null;
+};
+
+
+jstestdriver.TestCaseManager.prototype.updateLatestTestCase = function(filename) {
+  if (this.latestTestCaseInfo_ != null) {
+    var indexOfLatestTestCaseInfo = this.indexOf_(this.latestTestCaseInfo_);
+
+    if (indexOfLatestTestCaseInfo == this.testCasesInfo_.length - 1) {
+      var index = this.fileToTestCaseMap_[filename];
+
+      if (index != undefined && index != indexOfLatestTestCaseInfo) {
+        this.removeTestCase_(index);
+      }
+    }
+    this.fileToTestCaseMap_[filename] = indexOfLatestTestCaseInfo;
+    this.latestTestCaseInfo_ = null;
+  }
+};
+
+
+jstestdriver.TestCaseManager.prototype.removeTestCaseForFilename = function(filename) {
+  var index = this.fileToTestCaseMap_[filename];
+
+  if (index != undefined) {
+    this.removeTestCase_(index);
+  }
+};
+
+
+jstestdriver.TestCaseManager.prototype.removeTestCase_ = function(index) {
+  this.testCasesInfo_.splice(index, 1);
 };
 
 

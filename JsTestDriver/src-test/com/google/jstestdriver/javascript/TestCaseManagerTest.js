@@ -120,3 +120,80 @@ TestCaseManagerTest.prototype.testCurrentlyLoadedTestForExpressionsInfoAreCorrec
   assertEquals('testCase1.testFoo', testNames[0]);
   assertEquals('testCase2.testFu', testNames[1]);
 };
+
+
+TestCaseManagerTest.prototype.testSameFilenameTestCaseIsReplaced = function() {
+  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
+  var testCase1 = testCaseBuilder.TestCase('testCase1');
+
+  testCase1.prototype.testFoo = function() {};
+  testCase1.prototype.testBar = function() {};
+  assertEquals(1, testCaseManager.getTestCasesInfo().length);
+  testCaseManager.updateLatestTestCase("/test//home/foo/file.js");
+  var testCase2 = testCaseBuilder.TestCase('testCase2');
+
+  testCase2.prototype.testFu = function() {};
+  testCaseManager.updateLatestTestCase("/test//home/foo/file.js");
+  var testCaseInfos = testCaseManager.getTestCasesInfo();
+  var testCaseInfo = testCaseInfos[0];
+
+  assertEquals(1, testCaseInfos.length);
+  assertEquals('testCase2', testCaseInfo.getTestCaseName());
+  var testNames = testCaseInfo.getTestNames();
+
+  assertEquals(1, testNames.length);
+  assertEquals('testFu', testNames[0]);
+};
+
+
+TestCaseManagerTest.prototype.testTestCaseDifferentFilenameIsReplaced = function() {
+  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
+  var testCase1 = testCaseBuilder.TestCase('testCase1');
+
+  testCase1.prototype.testFoo = function() {};
+  testCase1.prototype.testBar = function() {};
+  assertEquals(1, testCaseManager.getTestCasesInfo().length);
+  testCaseManager.updateLatestTestCase("/test//home/foo/file1.js");
+  var testCase2 = testCaseBuilder.TestCase('testCase1');
+
+  testCase2.prototype.testFu = function() {};
+  testCaseManager.updateLatestTestCase("/test//home/foo/file2.js");
+  var testCaseInfos = testCaseManager.getTestCasesInfo();
+  var testCaseInfo = testCaseInfos[0];
+
+  assertEquals(1, testCaseInfos.length);
+  assertEquals('testCase1', testCaseInfo.getTestCaseName());
+  var testNames = testCaseInfo.getTestNames();
+
+  assertEquals(1, testNames.length);
+  assertEquals('testFu', testNames[0]);
+};
+
+
+TestCaseManagerTest.prototype.testRemoveTestCaseForFilename = function() {
+  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
+  var testCase1 = testCaseBuilder.TestCase('testCase1');
+
+  testCase1.prototype.testFoo = function() {};
+  testCase1.prototype.testBar = function() {};
+  assertEquals(1, testCaseManager.getTestCasesInfo().length);
+  testCaseManager.updateLatestTestCase("/test//home/foo/file1.js");
+  var testCase2 = testCaseBuilder.TestCase('testCase2');
+
+  testCase2.prototype.testFu = function() {};
+  testCaseManager.updateLatestTestCase("/test//home/foo/file2.js");
+
+  testCaseManager.removeTestCaseForFilename("/test//home/foo/file1.js");
+  var testCaseInfos = testCaseManager.getTestCasesInfo();
+  var testCaseInfo = testCaseInfos[0];
+
+  assertEquals(1, testCaseInfos.length);
+  assertEquals('testCase2', testCaseInfo.getTestCaseName());
+  var testNames = testCaseInfo.getTestNames();
+
+  assertEquals(1, testNames.length);
+  assertEquals('testFu', testNames[0]);
+};

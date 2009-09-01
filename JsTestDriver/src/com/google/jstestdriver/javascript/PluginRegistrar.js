@@ -14,7 +14,8 @@
  * the License.
  */
 jstestdriver.initializePluginRegistrar = function() {
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader(window, document);
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader(window, document,
+      jstestdriver.testCaseManager);
   var stylesheetLoader = new jstestdriver.plugins.StylesheetLoader(window, document,
           jstestdriver.jQuery.browser.mozilla || jstestdriver.jQuery.browser.safari);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);

@@ -20,8 +20,8 @@ jstestdriver.listen = function() {
   var id = jstestdriver.extractId(window.location.toString());
   var url = jstestdriver.SERVER_URL + id;
 
-  jstestdriver.initializePluginRegistrar();
   jstestdriver.testCaseManager = new jstestdriver.TestCaseManager();
+  jstestdriver.initializePluginRegistrar();
   var testRunner = new jstestdriver.TestRunner(jstestdriver.pluginRegistrar);
   jstestdriver.testCaseBuilder = new jstestdriver.TestCaseBuilder(jstestdriver.testCaseManager);
   jstestdriver.global.TestCase = jstestdriver.bind(jstestdriver.testCaseBuilder,

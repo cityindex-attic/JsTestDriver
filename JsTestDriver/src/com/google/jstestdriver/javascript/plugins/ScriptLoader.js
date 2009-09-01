@@ -13,9 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.plugins.ScriptLoader = function(win, dom) {
+jstestdriver.plugins.ScriptLoader = function(win, dom, testCaseManager) {
   this.win_ = win;
   this.dom_ = dom;
+  this.testCaseManager_ = testCaseManager;
   this.originalDocumentWrite_ = this.dom_.write;
 };
 
@@ -56,6 +57,9 @@ jstestdriver.plugins.ScriptLoader.prototype.load = function(file, callback) {
 
 
 jstestdriver.plugins.ScriptLoader.prototype.onLoad_ = function(file, callback) {
+  if (this.testCaseManager_.testCaseAdded()) {
+    this.testCaseManager_.updateLatestTestCase(file.fileSrc);
+  }
   this.updateResult_(new jstestdriver.FileResult(file, true, ''));
   this.win_.onerror = jstestdriver.EMPTY_FUNC;
   this.restoreDocumentWrite();
@@ -66,6 +70,8 @@ jstestdriver.plugins.ScriptLoader.prototype.onLoad_ = function(file, callback) {
 jstestdriver.plugins.ScriptLoader.prototype.updateResult_ = function(fileResult) {
   if (this.fileResult_ == null) {
     this.fileResult_ = fileResult;
+  } else {
+    this.testCaseManager_.removeTestCaseForFilename(fileResult.file.fileSrc);
   }
 };
 

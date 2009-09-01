@@ -22,7 +22,12 @@ if (!jstestdriver.jQuery.browser.opera) {
     var write = function() {};
 
     mockDOM.write = write;
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM);
+    var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
+      testCaseAdded: function() {
+        return false
+      },
+      removeTestCaseForFilename: function() {}
+    });
     var file = new jstestdriver.FileSource('file.js', 12);
     var callbackCalled = false;
     var callbackFileResult = null;
@@ -56,7 +61,12 @@ if (!jstestdriver.jQuery.browser.opera) {
     var write = function() {};
 
     mockDOM.write = write;
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM);
+    var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
+      testCaseAdded: function() {
+        return false
+      },
+      removeTestCaseForFilename: function() {}
+    });
     var file = new jstestdriver.FileSource('file.js', 42);
     var callbackCalled = false;
     var callbackFileResult = null;
@@ -93,7 +103,12 @@ if (!jstestdriver.jQuery.browser.opera) {
 
     mockDOM.write = write;
     var win = {};
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM);
+    var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
+      testCaseAdded: function() {
+        return false
+      },
+      removeTestCaseForFilename: function() {}
+    });
     var file = new jstestdriver.FileSource('file.js', 42);
     var callbackCalled = false;
     var callbackFileResult = null;
@@ -131,7 +146,12 @@ ScriptLoaderTest.prototype.testOnReadyStateChange = function() {
   var write = function() {};
 
   mockDOM.write = write;
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM);
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
+    testCaseAdded: function() {
+      return false
+    },
+    removeTestCaseForFilename: function() {}
+  });
   var file = new jstestdriver.FileSource('file.js', 12);
   var callbackCalled = false;
   var callbackFileResult = null;
@@ -167,7 +187,12 @@ ScriptLoaderTest.prototype.testOnReadyStateChangeError = function() {
   var write = function() {};
 
   mockDOM.write = write;
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM);
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
+    testCaseAdded: function() {
+      return false
+    },
+    removeTestCaseForFilename: function() {}
+  });
   var file = new jstestdriver.FileSource('file.js', 42);
   var callbackCalled = false;
   var callbackFileResult = null;
@@ -205,7 +230,12 @@ ScriptLoaderTest.prototype.testOnReadyStateChangeWindowError = function() {
 
   mockDOM.write = write;
   var win = {};
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM);
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
+    testCaseAdded: function() {
+      return false
+    },
+    removeTestCaseForFilename: function() {}
+  });
   var file = new jstestdriver.FileSource('file.js', 42);
   var callbackCalled = false;
   var callbackFileResult = null;
