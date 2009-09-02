@@ -15,10 +15,13 @@
  */
 package com.google.jstestdriver.eclipse.ui.views;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -31,6 +34,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
 
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.eclipse.ui.launch.model.EclipseJstdTestResult;
@@ -53,9 +59,13 @@ public class TestResultsPanel extends Composite {
   private Text testDetailsText;
   private int totalNumTests;
   private ILaunchConfiguration lastLaunchConfiguration;
+  private MessageConsoleStream messageConsoleStream;
 
   public TestResultsPanel(Composite parent, int style) {
     super(parent, style);
+    ConsolePlugin.getDefault().getConsoleManager();
+    MessageConsole messageConsole = new MessageConsole("JSTestDriver", null);
+    messageConsoleStream = new MessageConsoleStream(messageConsole);
     setLayout(new GridLayout(3, true));
     GridData layoutData = new GridData();
     layoutData.grabExcessHorizontalSpace = true;
@@ -107,25 +117,21 @@ public class TestResultsPanel extends Composite {
     testResultsTree.addSelectionChangedListener(new ISelectionChangedListener() {
       
       public void selectionChanged(SelectionChangedEvent event) {
+        testDetailsText.setText("");
         TreeSelection selection = (TreeSelection) event.getSelection();
         if (selection.getFirstElement() instanceof EclipseJstdTestResult) {
           EclipseJstdTestResult result = (EclipseJstdTestResult) selection
           .getFirstElement();
           StringBuilder details = new StringBuilder();
           if (!result.getResult().getParsedMessage().trim().equals("")) {
-            details.append("Message : ")
-                         .append(result.getResult().getParsedMessage())
-                         .append("\n");
+            details.append(result.getResult().getParsedMessage())
+                .append("\n\n");
           }
           if (!result.getResult().getStack().trim().equals("")) {
-            details.append("Stack Trace : ")
-                         .append(result.getResult().getStack())
-                         .append("\n");
+            details.append(result.getResult().getStack())
+                .append("\n\n");
           }
-          details.append("Log : ").append(result.getResult().getLog());
           testDetailsText.setText(details.toString());
-        } else {
-          testDetailsText.setText("");
         }
       }
     });
@@ -166,9 +172,14 @@ public class TestResultsPanel extends Composite {
     Collection<ResultModel> failedTests = new ArrayList<ResultModel>();
     for (TestResult result : testResults) {
       ResultModel addedResult = testRunResult.addTestResult(result);
+      messageConsoleStream.println(result.getLog());
       if (!addedResult.didPass()) {
         failedTests.add(addedResult);
       }
+    }
+    try {
+      messageConsoleStream.flush();
+    } catch (IOException e) {
     }
     testProgressIndicator.step(testResults.size(), failedTests.size() == 0);
     testResultsTree.refresh();

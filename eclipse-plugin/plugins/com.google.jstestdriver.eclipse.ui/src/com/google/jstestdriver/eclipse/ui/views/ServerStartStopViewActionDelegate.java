@@ -17,8 +17,12 @@ package com.google.jstestdriver.eclipse.ui.views;
 
 import static java.lang.String.format;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
@@ -64,9 +68,19 @@ public class ServerStartStopViewActionDelegate implements IViewActionDelegate {
   }
 
   public void run(IAction action) {
+    // TODO(shyamseshadri): The following is causing a bug, where changing the port in the 
+    // preferences does not reflect until the view is restarted. Need to change to create the
+    // server every time with the port gotten from the preference store. Yeesh
     if (!server.isStarted()) {
-      server.start();
-      setStopServerState(action);
+      try {
+        server.start();
+        setStopServerState(action);
+      } catch (RuntimeException e) {
+        IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+          e.getMessage());
+        ErrorDialog.openError(Display.getCurrent().getActiveShell(),
+            "JS Test Driver", "JS Test Driver Error", status);
+      }
     } else {
       server.stop();
       setStartServerState(action);

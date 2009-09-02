@@ -20,11 +20,14 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -32,6 +35,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
+import com.google.jstestdriver.eclipse.ui.Activator;
 import com.google.jstestdriver.eclipse.ui.views.JsTestDriverView;
 import com.google.jstestdriver.eclipse.ui.views.TestResultsPanel;
 
@@ -71,12 +75,19 @@ public class JsTestDriverLaunchConfigurationDelegate implements
       }
     });
 
-    if (testsToRun.isEmpty()) {
-      actionRunnerFactory.getDryActionRunner(configuration).runActions();
-      actionRunnerFactory.getAllTestsActionRunner(configuration).runActions();
-    } else {
-      actionRunnerFactory.getDryActionRunner(configuration, testsToRun).runActions();
-      actionRunnerFactory.getSpecificTestsActionRunner(configuration, testsToRun).runActions();
+    try {
+      if (testsToRun.isEmpty()) {
+        actionRunnerFactory.getDryActionRunner(configuration).runActions();
+        actionRunnerFactory.getAllTestsActionRunner(configuration).runActions();
+      } else {
+        actionRunnerFactory.getDryActionRunner(configuration, testsToRun).runActions();
+        actionRunnerFactory.getSpecificTestsActionRunner(configuration, testsToRun).runActions();
+      }
+    } catch (RuntimeException e) {
+      IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+          e.getMessage());
+      ErrorDialog.openError(Display.getCurrent().getActiveShell(),
+          "JS Test Driver", "JS Test Driver Error", status);
     }
   }
 
