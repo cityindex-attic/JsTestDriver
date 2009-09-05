@@ -21,6 +21,8 @@ import com.google.jstestdriver.DryRunAction.DryRunActionResponseStream;
 import com.google.jstestdriver.EvalAction.EvalActionResponseStream;
 import com.google.jstestdriver.ResetAction.ResetActionResponseStream;
 
+import java.io.File;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  * 
@@ -41,7 +43,7 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
     String testSuiteName = String.format("com.google.jstestdriver.%s", browserId);
     TestResultPrinter printer =
         responsePrinterFactory.getResponsePrinter(
-            String.format("TEST-%s-%s.xml", configFileName, testSuiteName));
+            String.format("TEST-%s-%s.xml", new File(configFileName).getName(), testSuiteName));
 
     printer.open(testSuiteName);
     RunTestsActionResponseStream responseStream = new RunTestsActionResponseStream(

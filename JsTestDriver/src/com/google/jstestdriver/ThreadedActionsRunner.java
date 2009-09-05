@@ -37,7 +37,6 @@ public class ThreadedActionsRunner implements Action {
   }
 
   public void run() {
-    
     Collection<BrowserInfo> browsers = client.listBrowsers();
     int browsersNumber = browsers.size();
 
@@ -54,8 +53,7 @@ public class ThreadedActionsRunner implements Action {
     try {
       latch.await();
     } catch (InterruptedException e) {
-      System.err.println(e);
-      System.exit(1);
+      throw new RuntimeException(e);
     }
   }
   
