@@ -343,6 +343,9 @@
       <fileset dir="${src.dir}">
         <include name="**/coverage/**"/>
       </fileset>
+      <fileset dir="${src-gen.dir}">
+        <include name="**/coverage/**"/>
+      </fileset>
       <manifest>
       </manifest>
     </jar>
