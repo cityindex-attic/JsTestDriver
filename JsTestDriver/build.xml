@@ -49,8 +49,8 @@
     <pathelement location="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
     <pathelement location="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
     <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
-  	<pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
-  	<pathelement location="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
+    <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
+    <pathelement location="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
   </path>
   
   <path id="emma">
@@ -80,7 +80,7 @@
 
   <taskdef resource="emma_ant.properties" classpathref="ant-tasks" />
   <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="ant-tasks"/>
-  
+
   <target name="init">
     <mkdir dir="${obj.dir}" />
     <mkdir dir="${obj-test.dir}" />
@@ -138,26 +138,6 @@
       </concat>
     </sequential>
   </macrodef>
-  
-  <target name="coverage-plugin-jar" depends="jar">
-    <mkdir dir="${bin.dir}/plugins/" />
-    <mkdir dir="${obj.dir}/com/google/jstestdriver/coverage/javascript/" />
-    <concat destfile="${obj.dir}/com/google/jstestdriver/coverage/javascript/LCOV.js">
-      <filelist dir="${src.dir}//com/google/jstestdriver/coverage/javascript"
-          files="coverage.js,plugin.js" />
-    </concat>
-    <jar destfile="${bin.dir}/plugins/coverage.jar"
-        duplicate="preserve">
-      <fileset dir="${obj.dir}">
-        <include name="**/coverage/**"/>
-      </fileset>
-      <zipfileset src="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" />
-      <manifest>
-        <!-- plugins will need to have a reference to the JsTestDriver jar they are working with.-->
-        <attribute name="Class-Path" value="../JsTestDriver.jar" />
-      </manifest>
-    </jar>
-  </target>
 
   <target name="antlr">
     <mkdir dir="${src-gen.dir}"/>
@@ -295,8 +275,8 @@
       <zipfileset src="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
       <zipfileset src="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
       <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
-    	<zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
-    	<zipfileset src="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
+      <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
+      <zipfileset src="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
       <fileset dir="${obj.dir}/">
         <include name="${javascript-resources}/jstestdrivernamespace.js" />
         <include name="${javascript-resources}/runner.js" />
@@ -323,6 +303,51 @@
     </jar>
   </target>
 
+  <target name="coverage-plugin-jar" depends="jar">
+    <mkdir dir="${bin.dir}/plugins/" />
+    <mkdir dir="${obj.dir}/com/google/jstestdriver/coverage/javascript/" />
+    <concat destfile="${obj.dir}/com/google/jstestdriver/coverage/javascript/LCOV.js">
+      <filelist dir="${src.dir}//com/google/jstestdriver/coverage/javascript"
+          files="coverage.js,plugin.js" />
+    </concat>
+    <jar destfile="${bin.dir}/plugins/coverage.jar"
+        duplicate="preserve">
+      <fileset dir="${obj.dir}">
+        <include name="**/coverage/**"/>
+      </fileset>
+      <zipfileset src="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" />
+      <manifest>
+        <!-- plugins will need to have a reference to the JsTestDriver jar they are working with.-->
+        <attribute name="Class-Path" value="../JsTestDriver.jar" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="coverage-plugin-jar-nodeps" depends="jar">
+    <mkdir dir="${bin.dir}/plugins/" />
+    <mkdir dir="${obj.dir}/com/google/jstestdriver/coverage/javascript/" />
+    <concat destfile="${obj.dir}/com/google/jstestdriver/coverage/javascript/LCOV.js">
+      <filelist dir="${src.dir}//com/google/jstestdriver/coverage/javascript"
+          files="coverage.js,plugin.js" />
+    </concat>
+    <jar destfile="${bin.dir}/plugins/coverage.jar"
+        duplicate="preserve">
+      <fileset dir="${obj.dir}">
+        <include name="**/coverage/**"/>
+      </fileset>
+      <manifest>
+      </manifest>
+    </jar>
+    <jar destfile="${bin.dir}/plugins/coverage-src.jar"
+        duplicate="preserve">
+      <fileset dir="${src.dir}">
+        <include name="**/coverage/**"/>
+      </fileset>
+      <manifest>
+      </manifest>
+    </jar>
+  </target>
+
   <target name="ui-jar" depends="compile">
     <jar destfile="${bin.dir}/${ant.project.name}-ui.jar" basedir="${obj.dir}" excludes="**/*.js"
       duplicate="preserve">
@@ -340,8 +365,8 @@
       <zipfileset src="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
       <zipfileset src="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
       <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
-    	<zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
-    	<zipfileset src="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
+      <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
+      <zipfileset src="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
       <zipfileset src="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
       <fileset dir="${obj.dir}/">
         <include name="${javascript-resources}/jstestdrivernamespace.js" />
@@ -376,7 +401,6 @@
     <svn>
       <revert dir="." recurse="true"/>
     </svn>
-    
   </target>
 
   <target name="release" depends="checkNoLocalChanges, test, jar, sign">
