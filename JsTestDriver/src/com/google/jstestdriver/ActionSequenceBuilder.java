@@ -38,6 +38,7 @@ public class ActionSequenceBuilder {
   private final Provider<JsTestDriverClient> clientProvider;
   private final Provider<URLTranslator> urlTranslatorProvider;
   private final Provider<URLRewriter> urlRewriterProvider;
+  private final FailureAccumulator accumulator;
 
   private List<String> browsers = new LinkedList<String>();
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
@@ -59,6 +60,7 @@ public class ActionSequenceBuilder {
    *          TODO
    * @param clientProvider
    *          TODO
+   * @param accumulator 
    */
   public ActionSequenceBuilder(ActionFactory actionFactory,
                                FileLoader fileLoader,
@@ -66,13 +68,15 @@ public class ActionSequenceBuilder {
                                Provider<List<ThreadedAction>> threadedActionProvider,
                                Provider<JsTestDriverClient> clientProvider,
                                Provider<URLTranslator> urlTranslatorProvider,
-                               Provider<URLRewriter> urlRewriterProvider) {
+                               Provider<URLRewriter> urlRewriterProvider,
+                               FailureAccumulator accumulator) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.threadedActionProvider = threadedActionProvider;
     this.clientProvider = clientProvider;
     this.urlTranslatorProvider = urlTranslatorProvider;
     this.urlRewriterProvider = urlRewriterProvider;
+    this.accumulator = accumulator;
   }
 
   /** Add the Browser startup and shutdown actions to the actions stack. */
@@ -141,6 +145,7 @@ public class ActionSequenceBuilder {
     if (needToStartServer()) {
       addServerActions(actions, leaveServerRunning());
     }
+    actions.add(new FailureCheckerAction(accumulator));
     return actions;
   }
 

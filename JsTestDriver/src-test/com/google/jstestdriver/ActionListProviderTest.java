@@ -64,7 +64,8 @@ public class ActionListProviderTest extends TestCase {
         new DefaultThreadedActionProvider(actionFactory, null, reset, Collections
             .<String> emptyList(), false, tests, Collections.<String> emptyList()),
         Providers.<JsTestDriverClient>of(null),
-        Providers.<URLTranslator>of(null), Providers.<URLRewriter>of(null));
+        Providers.<URLTranslator>of(null), Providers.<URLRewriter>of(null),
+        new FailureAccumulator());
   }
 
   public void testParseWithServerAndReset() throws Exception {
@@ -82,6 +83,7 @@ public class ActionListProviderTest extends TestCase {
     expectedActions.add(BrowserStartupAction.class);
     expectedActions.add(ThreadedActionsRunner.class);
     expectedActions.add(BrowserShutdownAction.class);
+    expectedActions.add(FailureCheckerAction.class);
 
     List<Action> actions = parser.get();
     assertSequence(expectedActions, actions);
@@ -118,6 +120,7 @@ public class ActionListProviderTest extends TestCase {
     expectedActions.add(ThreadedActionsRunner.class);
     expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
+    expectedActions.add(FailureCheckerAction.class);
 
     List<Action> actions = parser.get();
     assertSequence(expectedActions, actions);

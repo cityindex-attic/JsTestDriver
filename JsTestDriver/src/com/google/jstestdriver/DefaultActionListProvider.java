@@ -50,6 +50,7 @@ public class DefaultActionListProvider implements ActionListProvider {
   private final Provider<JsTestDriverClient> clientProvider;
   private final Provider<URLTranslator> urlTranslatorProvider;
   private final Provider<URLRewriter> urlRewriterProvider;
+  private final FailureAccumulator accumulator;
 
   // TODO(corysmith): Refactor this. Currently in a temporary,
   //  make dependencies visible to aid refactoring state.
@@ -70,7 +71,8 @@ public class DefaultActionListProvider implements ActionListProvider {
                       DefaultThreadedActionProvider threadedActionProvider,
                       Provider<JsTestDriverClient> clientProvider,
                       Provider<URLTranslator> urlTranslatorProvider,
-                      Provider<URLRewriter> urlRewriterProvider) {
+                      Provider<URLRewriter> urlRewriterProvider,
+                      FailureAccumulator accumulator) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.tests = tests;
@@ -87,6 +89,7 @@ public class DefaultActionListProvider implements ActionListProvider {
     this.clientProvider = clientProvider;
     this.urlTranslatorProvider = urlTranslatorProvider;
     this.urlRewriterProvider = urlRewriterProvider;
+    this.accumulator = accumulator;
   }
 
   @Provides
@@ -98,7 +101,7 @@ public class DefaultActionListProvider implements ActionListProvider {
                                   threadedActionProvider,
                                   clientProvider,
                                   urlTranslatorProvider,
-                                  urlRewriterProvider);
+                                  urlRewriterProvider, accumulator);
     builder.usingFiles(fileSet, preloadFiles)
            .addTests(tests)
            .addCommands(arguments)

@@ -23,18 +23,24 @@ import java.util.Collection;
 public class RunTestsActionResponseStream implements ResponseStream {
 
   private final TestResultGenerator testResultGenerator;
-
-  private TestResultPrinter printer;
+  private final TestResultPrinter printer;
+  private final FailureAccumulator accumulator;
 
   public RunTestsActionResponseStream(TestResultGenerator testResultGenerator,
-      TestResultPrinter printer) {
+      TestResultPrinter printer, FailureAccumulator accumulator) {
     this.testResultGenerator = testResultGenerator;
     this.printer = printer;
+    this.accumulator = accumulator;
   }
 
   public void stream(Response response) {
     Collection<TestResult> testResults = testResultGenerator.getTestResults(response);
+
     for (TestResult result : testResults) {
+      if (result.getResult() == TestResult.Result.failed
+          || result.getResult() == TestResult.Result.error) {
+        accumulator.add();
+      }
       printer.print(result);
     }
   }

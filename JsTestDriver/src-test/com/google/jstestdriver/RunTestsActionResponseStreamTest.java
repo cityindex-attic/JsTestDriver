@@ -47,7 +47,7 @@ public class RunTestsActionResponseStreamTest extends TestCase {
     Gson gson = new Gson();
     TestResultPrinterStub printer = new TestResultPrinterStub();
     RunTestsActionResponseStream stream = new RunTestsActionResponseStream(
-      new TestResultGenerator(), printer);
+      new TestResultGenerator(), printer, new FailureAccumulator());
     Response response = new Response();
     BrowserInfo browser = new BrowserInfo();
     browser.setId(null);

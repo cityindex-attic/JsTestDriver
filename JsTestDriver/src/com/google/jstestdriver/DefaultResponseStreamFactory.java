@@ -31,12 +31,15 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
 
   private final ResponsePrinterFactory responsePrinterFactory;
   private final String configFileName;
+  private final FailureAccumulator accumulator;
 
   @Inject
   public DefaultResponseStreamFactory(ResponsePrinterFactory responsePrinterFactory,
-                                      @Named("config") String configFileName) {
+                                      @Named("config") String configFileName,
+                                      FailureAccumulator accumulator) {
     this.responsePrinterFactory = responsePrinterFactory;
     this.configFileName = configFileName;
+    this.accumulator = accumulator;
   }
 
   public ResponseStream getRunTestsActionResponseStream(String browserId) {
@@ -47,7 +50,7 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
 
     printer.open(testSuiteName);
     RunTestsActionResponseStream responseStream = new RunTestsActionResponseStream(
-        new TestResultGenerator(), printer);
+        new TestResultGenerator(), printer, accumulator);
 
     return responseStream;
   }

@@ -39,13 +39,14 @@ public class ActionSequenceBuilderTest extends TestCase {
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(actionFactory, null, null, threadedActionProvider(tests,
             Collections.<String> emptyList(), false, Collections.<String> emptyList(),
-            captureConsole), Providers.<JsTestDriverClient> of(null),
-            Providers.<URLTranslator>of(null), Providers.<URLRewriter>of(null));
+            captureConsole), Providers.<JsTestDriverClient> of(null), Providers
+            .<URLTranslator> of(null), Providers.<URLRewriter> of(null), new FailureAccumulator());
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(BrowserStartupAction.class);
     expectedActions.add(ThreadedActionsRunner.class);
     expectedActions.add(BrowserShutdownAction.class);
+    expectedActions.add(FailureCheckerAction.class);
     builder.withRemoteServer("http://foo").usingFiles(files, false).onBrowsers(browsers);
 
     List<Action> sequence = builder.addTests(tests).build();
@@ -73,7 +74,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
             tests, Collections.<String> emptyList(), false, Collections.<String> emptyList(),
             captureConsole), Providers.<JsTestDriverClient> of(null), Providers
-            .<URLTranslator> of(null), Providers.<URLRewriter> of(null));
+            .<URLTranslator> of(null), Providers.<URLRewriter> of(null), new FailureAccumulator());
     List<String> browsers = browsers();
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
@@ -82,6 +83,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     expectedActions.add(ThreadedActionsRunner.class);
     expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
+    expectedActions.add(FailureCheckerAction.class);
     builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(browsers);
 
     List<Action> sequence = builder.addTests(tests).build();
@@ -104,7 +106,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
             tests, Collections.<String> emptyList(), false, dryRunFor, false), Providers
             .<JsTestDriverClient> of(null), Providers.<URLTranslator> of(null), Providers
-            .<URLRewriter> of(null));
+            .<URLRewriter> of(null), new FailureAccumulator());
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addTests(tests).asDryRunFor(dryRunFor).build();
 
@@ -124,7 +126,8 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionSequenceBuilder(new ActionFactory(null), null, null,
             threadedActionProvider(tests, Collections.<String> emptyList(), reset, Collections
                 .<String> emptyList(), false), Providers.<JsTestDriverClient> of(null), Providers
-                .<URLTranslator> of(null), Providers.<URLRewriter>of(null));
+                .<URLTranslator> of(null), Providers.<URLRewriter> of(null),
+            new FailureAccumulator());
 
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addTests(tests).reset(reset).build();
@@ -148,7 +151,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
             tests, Collections.<String> emptyList(), reset, dryRunFor, false), Providers
             .<JsTestDriverClient> of(null), Providers.<URLTranslator> of(null), Providers
-            .<URLRewriter> of(null));
+            .<URLRewriter> of(null), new FailureAccumulator());
 
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addTests(tests).asDryRunFor(dryRunFor).reset(reset).build();
@@ -169,7 +172,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionSequenceBuilder(new ActionFactory(null), null, null, threadedActionProvider(
             Collections.<String> emptyList(), commands, false, Collections.<String> emptyList(),
             false), Providers.<JsTestDriverClient> of(null), Providers.<URLTranslator> of(null),
-            Providers.<URLRewriter> of(null));
+            Providers.<URLRewriter> of(null), new FailureAccumulator());
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addCommands(commands).build();
 
@@ -192,7 +195,8 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionSequenceBuilder(new ActionFactory(null), null, null,
             threadedActionProvider(tests, Collections.<String> emptyList(), false, Collections
                 .<String> emptyList(), false), Providers.<JsTestDriverClient> of(null), Providers
-                .<URLTranslator> of(null), Providers.<URLRewriter> of(null));
+                .<URLTranslator> of(null), Providers.<URLRewriter> of(null),
+            new FailureAccumulator());
 
     List<Action> actions = builder.addTests(tests).withLocalServerPort(999)
         .usingFiles(files, false).build();
@@ -202,6 +206,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     expectedActions.add(ThreadedActionsRunner.class);
 //    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
+    expectedActions.add(FailureCheckerAction.class);
     this.<Action>assertSequence(expectedActions, actions);
   }
 

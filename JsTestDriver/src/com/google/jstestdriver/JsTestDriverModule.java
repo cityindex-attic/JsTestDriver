@@ -20,6 +20,7 @@ import java.util.Set;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.guice.FlagsModule;
@@ -55,8 +56,10 @@ public class JsTestDriverModule extends AbstractModule {
 
     bind(String.class)
          .annotatedWith(Names.named("server")).toInstance(serverAddress);
-    
+
     bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
+
+    bind(FailureAccumulator.class).in(Singleton.class);
 
     install(new FlagsModule(flags));
     install(new ActionFactoryModule());
