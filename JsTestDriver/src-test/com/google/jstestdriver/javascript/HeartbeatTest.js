@@ -23,11 +23,12 @@ heartbeatTest.prototype.testStartHeartbeat = function() {
   var timeoutDuration = 0;
   var timeoutCallback = null;
   var time = 0;
-  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", function(_url, _data, _callback) {
-    url = _url;
-    data = _data;
-    sendCallback = _callback;
-  },
+  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "quirks",
+    function(_url, _data, _callback) {
+      url = _url;
+      data = _data;
+      sendCallback = _callback;
+    },
   30,
   function(callback, duration){
     timeoutDuration = duration;
@@ -57,7 +58,7 @@ heartbeatTest.prototype.testErrorCallback = function() {
   var callbackCalled = false;
   var errBack = null;
   var ele = document.createElement('div');
-  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat",
+  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "quirks",
                                              function(_url, _data, _callback, _errback) {
     errBack = _errback;
   },
@@ -81,7 +82,7 @@ heartbeatTest.prototype.testErrorStopRetryAfterLimit = function() {
   var errBack = null;
   var timeoutCallback = null
   var ele = document.createElement('div');
-  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat",
+  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "quirks",
                                              function(_url, _data, _callback, _errback) {
     errBack = _errback;
   },
@@ -115,7 +116,7 @@ heartbeatTest.prototype.testUnknownOnServer = function() {
   var callbackCalled = false;
   var sendCallback = null;
   var navigatePath = null;
-  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat",
+  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "quirks", 
                                              function(_url, _data, _callback, _errback) {
     sendCallback = _callback;
   },
@@ -134,7 +135,33 @@ heartbeatTest.prototype.testUnknownOnServer = function() {
   heartbeat.start();
   assertNotNull(sendCallback);
   sendCallback('UNKNOWN');
-  assertEquals(jstestdriver.Heartbeat.CAPTURE_PATH, navigatePath);
+  assertEquals(jstestdriver.Heartbeat.CAPTURE_PATH + "?quirks", navigatePath);
+};
+
+heartbeatTest.prototype.testUnknownOnServerStrict = function() {
+  var callbackCalled = false;
+  var sendCallback = null;
+  var navigatePath = null;
+  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "strict", 
+                                             function(_url, _data, _callback, _errback) {
+    sendCallback = _callback;
+  },
+  30,
+  function(callback, duration){
+    timeoutDuration = duration;
+    timeoutCallback = callback;
+  },
+  function() {
+    return 0;
+  }, null,
+  function (path){
+    navigatePath = path;
+  });
+  
+  heartbeat.start();
+  assertNotNull(sendCallback);
+  sendCallback('UNKNOWN');
+  assertEquals(jstestdriver.Heartbeat.CAPTURE_PATH + "?strict", navigatePath);
 };
 
 heartbeatTest.prototype.testHeartbeatCallbackFast = function() {
@@ -146,11 +173,12 @@ heartbeatTest.prototype.testHeartbeatCallbackFast = function() {
   var timeoutCallback = null;
   var interval = 30;
   var time = 0;
-  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", function(_url, _data, _callback) {
-    url = _url;
-    data = _data;
-    sendCallback = _callback;
-  },
+  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "quirks",
+    function(_url, _data, _callback) {
+      url = _url;
+      data = _data;
+      sendCallback = _callback;
+    },
   interval,
   function(callback, duration){
     timeoutDuration = duration;

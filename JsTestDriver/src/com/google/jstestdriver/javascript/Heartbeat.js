@@ -18,6 +18,7 @@ jstestdriver.HEARTBEAT_URL = "/heartbeat";
 
 jstestdriver.Heartbeat = function(id,
                                   url,
+                                  mode,
                                   sendRequest,
                                   interval,
                                   setTimeout,
@@ -26,6 +27,7 @@ jstestdriver.Heartbeat = function(id,
                                   navigateToPath) {
   this.id_ = id;
   this.url_ = url;
+  this.mode_ = mode;
   this.retries_ = 0;
   this.sendRequest_ = sendRequest;
   this.interval_ = interval;
@@ -38,6 +40,7 @@ jstestdriver.Heartbeat = function(id,
   this.getTime_ = getTime;
   this.getBody_ = getBody;
   this.navigateToPath_ = navigateToPath;
+  this.capturePath_ = jstestdriver.Heartbeat.CAPTURE_PATH + "?" + mode;
 };
 
 
@@ -79,7 +82,7 @@ jstestdriver.Heartbeat.prototype.errorCallback = function() {
 
 jstestdriver.Heartbeat.prototype.heartbeatCallback = function(response) {
   if (response == 'UNKNOWN') {
-    this.navigateToPath_(jstestdriver.Heartbeat.CAPTURE_PATH);
+    this.navigateToPath_(this.capturePath_);
     return;
   }
   var elapsed = this.getTime_() - this.sent_;
