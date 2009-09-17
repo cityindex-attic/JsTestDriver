@@ -29,7 +29,7 @@ public class HeartbeatServlet extends HttpServlet {
 
   private static final long serialVersionUID = 5484417807218095115L;
 
-  private static final long TIMEOUT = 15000L; // 15 seconds
+  public static final long TIMEOUT = 5000; // 5 seconds
   private final CapturedBrowsers capturedBrowsers;
   private final Time time;
 

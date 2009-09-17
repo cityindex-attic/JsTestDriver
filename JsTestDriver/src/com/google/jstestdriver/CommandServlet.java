@@ -64,9 +64,29 @@ public class CommandServlet extends HttpServlet {
     resp.getWriter().flush();
   }
 
+  private CommandResponse getResponse(SlaveBrowser browser) {
+    CommandResponse cmdResponse = null;
+
+    while (cmdResponse == null) {
+      cmdResponse = browser.getResponse();
+      if (System.currentTimeMillis() - browser.getLastHeartBeat().getMillis() >=
+        HeartbeatServlet.TIMEOUT) {
+        capturedBrowsers.removeSlave(browser.getId());
+        Response response = new Response();
+
+        response.setBrowser(browser.getBrowserInfo());
+        response.setResponse("PANIC: browser " + browser.getId()
+                + " is not responding anymore, removing it from the list of captured browsers");
+
+        cmdResponse = new CommandResponse(gson.toJson(response), true);
+      }
+    }
+    return cmdResponse;
+  }
+  
   public void streamResponse(String id, PrintWriter writer) {
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
-    CommandResponse cmdResponse = browser.getResponse();
+    CommandResponse cmdResponse = getResponse(browser);
     String response = "{ 'last':" + cmdResponse.isLast() + ", 'response':" +
         cmdResponse.getResponse() + " }";
 

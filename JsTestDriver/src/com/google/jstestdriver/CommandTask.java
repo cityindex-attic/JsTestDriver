@@ -29,6 +29,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.JsonCommand.CommandType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Handles the communication of a command to the JsTestDriverServer from the
  * JsTestDriverClient.
@@ -36,6 +39,8 @@ import com.google.jstestdriver.JsonCommand.CommandType;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class CommandTask {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(CommandTask.class);
 
   private static final List<String> EMPTY_ARRAYLIST = new ArrayList<String>();
   private static final long WAIT_INTERVAL = 500L;
@@ -109,6 +114,13 @@ public class CommandTask {
     return new FileSource("/test/" + info.getFileName(), info.getTimestamp());
   }
 
+  private void shouldPanic(String msg) {
+    if (msg.startsWith("PANIC:")) {
+      LOGGER.error(msg);
+      throw new RuntimeException(msg);
+    }
+  }
+
   private void uploadFileSet() {
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
 
@@ -129,7 +141,12 @@ public class CommandTask {
         resetParams.put("id", params.get("id"));
         resetParams.put("data", gson.toJson(cmd));
         server.post(baseUrl + "/cmd", resetParams);
-        server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
+        String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
+
+        StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
+        Response response = message.getResponse();
+
+        shouldPanic(response.getResponse());
         finalFilesToUpload.addAll(filesToUpload);
       } else {
         for (FileInfo file : filesToUpload) {
@@ -161,6 +178,10 @@ public class CommandTask {
         String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
+
+        if (response.getResponse().startsWith("PANIC:")) {
+          throw new RuntimeException(response.getResponse());
+        }
         LoadedFiles loadedFiles = gson.fromJson(response.getResponse(), LoadedFiles.class);
 
         if (loadedFiles.getLoadedFiles().isEmpty()) {
@@ -223,7 +244,10 @@ public class CommandTask {
         String response = server.fetch(baseUrl + "/cmd?id=" + browserId);
 
         streamMessage = gson.fromJson(response, StreamMessage.class);
-        stream.stream(streamMessage.getResponse());
+        Response resObj = streamMessage.getResponse();
+
+        shouldPanic(resObj.getResponse());
+        stream.stream(resObj);
       } while (streamMessage != null && !streamMessage.isLast());
     } finally {
       stream.finish();

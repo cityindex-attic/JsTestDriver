@@ -29,6 +29,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class SlaveBrowser {
 
+  /**
+   * 
+   */
+  private static final int POLL_RESPONSE_TIMEOUT = 2;
   private final Time time;
   private final String id;
   private final BrowserInfo browserInfo;
@@ -136,7 +140,7 @@ public class SlaveBrowser {
 
   public CommandResponse getResponse() {
     try {
-      return responses.take();
+      return responses.poll(POLL_RESPONSE_TIMEOUT, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
       return null;
     }

@@ -116,7 +116,9 @@ public class CommandTaskTest extends TestCase {
     resetParams.put("data", gson.toJson(cmd));
 
     server.expect(baseUrl + "cmd?POST?" + resetParams, "");
-    server.expect(baseUrl + "cmd?id=1", "ignore");
+    server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
+        + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
+        + "\"last\":true}");
     server.expect(baseUrl
         + "fileSet?POST?{id=1, data="
         + gson.toJson(Arrays.asList(new FileInfo(loadInfo.getFileName(), loadInfo.getTimestamp(),
@@ -128,7 +130,9 @@ public class CommandTaskTest extends TestCase {
         + "cmd?POST?"
         + createLoadCommandString("1", CommandType.LOADTEST, Arrays.asList(CommandTask
             .fileInfoToFileSource(loadInfo)));
-    server.expect(url, "ignore");
+    server.expect(url, "{\"response\":{\"response\":\"response\","
+        + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
+        + "\"last\":true}");
     server.expect(baseUrl + "cmd?id=1", "{\"response\":" + createLoadedFilesResponseString()
         + ", \"last\":true}");
     server.expect(baseUrl + "cmd?POST?{data={mooh}, id=1}", "");
