@@ -22,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class BrowserHunterTest extends TestCase {
 
-  public void testCaptureAndGenerateUrl() throws Exception {
+  public void testCaptureAndGenerateUrlQuirks() throws Exception {
     BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers());
     SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version", "os");
     BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
@@ -30,7 +30,19 @@ public class BrowserHunterTest extends TestCase {
     assertEquals("name", browserInfo.getName());
     assertEquals("version", browserInfo.getVersion());
     assertEquals("os", browserInfo.getOs());
-    assertEquals("/slave/1/RemoteConsoleRunner.html", browserHunter.getCaptureUrl(
-        slaveBrowser.getId()));
+    assertEquals("/slave/1/RemoteConsoleRunnerquirks.html", browserHunter.getCaptureUrl(
+        slaveBrowser.getId(), CaptureServlet.QUIRKS));
+  }
+
+  public void testCaptureAndGenerateUrlStrict() throws Exception {
+    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers());
+    SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version", "os");
+    BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
+
+    assertEquals("name", browserInfo.getName());
+    assertEquals("version", browserInfo.getVersion());
+    assertEquals("os", browserInfo.getOs());
+    assertEquals("/slave/1/RemoteConsoleRunnerstrict.html", browserHunter.getCaptureUrl(
+        slaveBrowser.getId(), CaptureServlet.STRICT));
   }
 }

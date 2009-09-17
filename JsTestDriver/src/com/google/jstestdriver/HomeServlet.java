@@ -52,6 +52,7 @@ public class HomeServlet extends HttpServlet {
   public void service(PrintWriter writer) {
     writer.write("<html><head><title>JsTestDriver</title></head><body>");
     writer.write("<a href=\"/capture\">Capture This Browser</a><br/>");
+    writer.write("<a href=\"/capture?strict\">Capture This Browser in strict mode</a><br/>");
     writer.write("<p>Captured Browsers:<br/>");
     for (BrowserInfo info : capturedBrowsers.getBrowsers()) {
       writer.write("<p>");

@@ -28,6 +28,9 @@ public class CaptureServlet extends HttpServlet {
 
   private static final long serialVersionUID = -6565114508964010323L;
 
+  public static final String STRICT = "strict";
+  public static final String QUIRKS = "quirks";
+
   private final BrowserHunter browserHunter;
 
   public CaptureServlet(BrowserHunter browserHunter) {
@@ -36,16 +39,18 @@ public class CaptureServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    resp.sendRedirect(service(req.getHeader("User-Agent")));
+    String mode = req.getParameter(STRICT) != null ? STRICT : QUIRKS;
+
+    resp.sendRedirect(service(req.getHeader("User-Agent"), mode));
   }
 
-  public String service(String userAgent) {
+  public String service(String userAgent, String mode) {
     UserAgentParser parser = new UserAgentParser();
 
     parser.parse(userAgent);
     SlaveBrowser slaveBrowser =
       browserHunter.captureBrowser(parser.getName(), parser.getVersion(), parser.getOs());
 
-    return browserHunter.getCaptureUrl(slaveBrowser.getId());
+    return browserHunter.getCaptureUrl(slaveBrowser.getId(), mode);
   }
 }

@@ -25,6 +25,8 @@ public class BrowserHunter {
 
   private static final Logger logger = LoggerFactory.getLogger(BrowserHunter.class.getName());
 
+  private static final String REMOTE_CONSOLE_RUNNER = "/slave/%s/RemoteConsoleRunner%s.html";
+
   private final CapturedBrowsers capturedBrowsers;
 
   public BrowserHunter(CapturedBrowsers capturedBrowsers) {
@@ -35,8 +37,8 @@ public class BrowserHunter {
     return captureBrowser(capturedBrowsers.getUniqueId(), name, version, os);
   }
 
-  public String getCaptureUrl(String id) {
-    return String.format("/slave/%s/RemoteConsoleRunner.html", id);
+  public String getCaptureUrl(String id, String mode) {
+    return String.format(REMOTE_CONSOLE_RUNNER, id, mode);
   }
 
   public SlaveBrowser captureBrowser(String id, String name, String version, String os) {

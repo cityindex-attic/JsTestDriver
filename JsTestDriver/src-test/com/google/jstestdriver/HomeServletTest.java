@@ -43,6 +43,7 @@ public class HomeServletTest extends TestCase {
     servlet.service(writer);
     assertEquals("<html><head><title>JsTestDriver</title></head><body>" +
     		"<a href=\"/capture\">Capture This Browser</a><br/>" +
+    		"<a href=\"/capture?strict\">Capture This Browser in strict mode</a><br/>" +
     		"<p>Captured Browsers:<br/><p>Id: 1<br/>Name: browser<br/>Version: 1.0<br/>" +
     		"Operating System: OS<br/></p></p></body></html>", stream.toString());
   }

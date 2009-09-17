@@ -22,10 +22,19 @@ import junit.framework.TestCase;
  */
 public class CaptureServletTest extends TestCase {
 
-  public void testRedirectUrl() throws Exception {
+  public void testRedirectQuirksUrl() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers));
 
-    assertEquals("/slave/1/RemoteConsoleRunner.html", servlet.service("Chrome/2.0"));
+    assertEquals("/slave/1/RemoteConsoleRunnerquirks.html", servlet.service("Chrome/2.0",
+        CaptureServlet.QUIRKS));
+  }
+
+  public void testRedirectStrictUrl() throws Exception {
+    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
+    CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers));
+
+    assertEquals("/slave/1/RemoteConsoleRunnerstrict.html", servlet.service("Chrome/2.0",
+        CaptureServlet.STRICT));
   }
 }
