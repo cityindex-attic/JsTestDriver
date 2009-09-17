@@ -56,7 +56,7 @@ public class JsTestDriverServerTest extends TestCase {
 
   public void testStaticFiles() throws Exception {
     server.start();
-    URL url = new URL("http://localhost:4224/slave/XXX/HeartbeatClient.html");
+    URL url = new URL("http://localhost:4224/slave/XXX/HeartbeatClientquirks.html");
     assertTrue(read(url.openStream()).length() > 0);
   }
 
