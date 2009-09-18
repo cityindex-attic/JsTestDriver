@@ -84,10 +84,10 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest_ = function(testCaseName
       res = 'error';
       msg = JSON.stringify(e);
     }
+    this.clearBody_();
   }
   var end = new this.dateObj_().getTime();
 
-  this.clearBody_();
   return new jstestdriver.TestResult(testCaseName, testName, res, msg,
       jstestdriver.console.getLog(), end - start);  
 };
