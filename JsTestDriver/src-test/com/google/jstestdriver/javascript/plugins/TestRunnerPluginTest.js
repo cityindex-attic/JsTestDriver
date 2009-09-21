@@ -305,3 +305,30 @@ TestRunnerPluginTest.prototype.testTearDownCalledWhenTestFails = function() {
   assertEquals("failed", result.result);
   assertTrue(tearDownCalled);
 };
+
+
+TestRunnerPluginTest.prototype.testSetUpAndTearDownNotCalledWhenNotPresent = function() {
+  var fakeDate = function() {};
+
+  fakeDate.prototype.getTime = function() {
+    return 0;
+  };
+  var testRunnerPlugin = new jstestdriver.plugins.TestRunnerPlugin(fakeDate, function() {});
+  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
+  var testCaseClass = testCaseBuilder.TestCase('test');
+
+  testCaseClass.prototype = {
+      testFoo: function() {
+      }
+  };
+  var testRunConfiguration = new jstestdriver.TestRunConfiguration(
+          testCaseManager.getTestCasesInfo()[0], new Array('testFoo'));
+  var result;
+  var onTestDone = function(res) {
+    result = res;
+  };
+  testRunnerPlugin.runTestConfiguration(testRunConfiguration, onTestDone, function() {});
+
+  assertEquals("passed", result.result);
+};

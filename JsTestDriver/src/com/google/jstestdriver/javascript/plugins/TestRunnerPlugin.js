@@ -52,7 +52,9 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest_ = function(testCaseName
   var msg = '';
 
   try {
-    testCaseInstance.setUp();
+    if (testCaseInstance.setUp) {
+      testCaseInstance.setUp();
+    }
     if (!(testName in testCaseInstance)) {
       var err = new Error(testName + ' not found in ' + testCaseName);
 
@@ -79,7 +81,9 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest_ = function(testCaseName
     msg = JSON.stringify(e);
   } finally {
     try {
-      testCaseInstance.tearDown();
+      if (testCaseInstance.tearDown) {
+        testCaseInstance.tearDown();
+      }
     } catch (e) {
       res = 'error';
       msg = JSON.stringify(e);
