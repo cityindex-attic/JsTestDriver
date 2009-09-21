@@ -50,6 +50,7 @@ public class JsTestDriverLaunchConfigurationDelegate implements
   private final Logger logger = new Logger();
   private final ActionRunnerFactory actionRunnerFactory = new ActionRunnerFactory();
 
+  @SuppressWarnings("unchecked")
   public void launch(final ILaunchConfiguration configuration, String mode,
       final ILaunch launch, IProgressMonitor monitor) throws CoreException {
     if (!mode.equals(ILaunchManager.RUN_MODE)) {

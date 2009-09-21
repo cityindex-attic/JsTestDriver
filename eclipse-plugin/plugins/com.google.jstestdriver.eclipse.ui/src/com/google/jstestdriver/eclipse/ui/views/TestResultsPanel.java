@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -35,6 +33,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
@@ -63,9 +63,11 @@ public class TestResultsPanel extends Composite {
 
   public TestResultsPanel(Composite parent, int style) {
     super(parent, style);
-    ConsolePlugin.getDefault().getConsoleManager();
+    IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
     MessageConsole messageConsole = new MessageConsole("JSTestDriver", null);
+    messageConsole.activate();
     messageConsoleStream = new MessageConsoleStream(messageConsole);
+    consoleManager.addConsoles(new IConsole[] { messageConsole });
     setLayout(new GridLayout(3, true));
     GridData layoutData = new GridData();
     layoutData.grabExcessHorizontalSpace = true;

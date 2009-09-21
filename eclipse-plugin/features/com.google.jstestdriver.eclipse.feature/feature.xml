@@ -2,7 +2,7 @@
 <feature
       id="com.google.jstestdriver.eclipse.feature"
       label="JS Test Driver"
-      version="1.0.4"
+      version="1.0.5"
       provider-name="GOOGLE">
 
    <description url="http://code.google.com/p/js-test-driver">
@@ -129,14 +129,14 @@ END OF TERMS AND CONDITIONS
          id="com.google.jstestdriver.eclipse.core"
          download-size="0"
          install-size="0"
-         version="1.0.4"
+         version="1.0.5"
          unpack="false"/>
 
    <plugin
          id="com.google.jstestdriver.eclipse.ui"
          download-size="0"
          install-size="0"
-         version="1.0.4"
+         version="1.0.5"
          unpack="false"/>
 
 </feature>
