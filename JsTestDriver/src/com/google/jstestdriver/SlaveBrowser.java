@@ -29,10 +29,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class SlaveBrowser {
 
-  /**
-   * 
-   */
+  private static final long TIMEOUT = 5000; // 5 seconds
   private static final int POLL_RESPONSE_TIMEOUT = 2;
+
   private final Time time;
   private final String id;
   private final BrowserInfo browserInfo;
@@ -191,9 +190,12 @@ public class SlaveBrowser {
     }
   }
 
+  public boolean isAlive() {
+    return time.now().getMillis() - lastHeartBeat.getMillis() < TIMEOUT;
+  }
+
   @Override
   public String toString() {
     return "SlaveBrowser(browserInfo=" + browserInfo + ", id=" + id + ")";
-  }
-  
+  }  
 }

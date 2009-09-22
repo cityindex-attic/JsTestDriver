@@ -13,9 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.SERVER_URL = "/query/";
-
-
 jstestdriver.listen = function() {
   var id = jstestdriver.extractId(window.location.toString());
   var url = jstestdriver.SERVER_URL + id;
