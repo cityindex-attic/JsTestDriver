@@ -29,10 +29,13 @@ public class HeartbeatServlet extends HttpServlet {
 
   private static final long serialVersionUID = 5484417807218095115L;
 
+  public static final long TIMEOUT = 5000; // 5 seconds
   private final CapturedBrowsers capturedBrowsers;
+  private final Time time;
 
-  public HeartbeatServlet(CapturedBrowsers capturedBrowsers) {
+  public HeartbeatServlet(CapturedBrowsers capturedBrowsers, Time time) {
     this.capturedBrowsers = capturedBrowsers;
+    this.time = time;
   }
 
   /**
@@ -42,12 +45,10 @@ public class HeartbeatServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     PrintWriter writer = resp.getWriter();
     String id = req.getParameter("id");
-
     if (id != null) { 
       SlaveBrowser browser = capturedBrowsers.getBrowser(id);
-
       if (browser != null) {
-        if (!browser.isAlive()) {
+        if ((time.now().getMillis() - browser.getLastHeartBeat().getMillis()) > TIMEOUT) {
           capturedBrowsers.removeSlave(id);
           writer.write("DEAD");
         } else {
@@ -68,18 +69,10 @@ public class HeartbeatServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     String id = req.getParameter("id");
-    String alertMode = req.getParameter("alertMode");
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
     PrintWriter writer = resp.getWriter();
 
     if (browser != null) {
-      if (alertMode != null) {
-        if (alertMode.equals("true")) {
-          browser.keepAlive(true);
-        } else if (alertMode.equals("false")) {
-          browser.keepAlive(false);
-        }
-      }
       browser.heartBeat();
     } else {
       writer.write("UNKNOWN");

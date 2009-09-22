@@ -13,6 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+jstestdriver.HEARTBEAT_URL = "/heartbeat";
+
+
 jstestdriver.Heartbeat = function(id,
                                   url,
                                   mode,

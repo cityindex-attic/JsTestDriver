@@ -29,9 +29,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class SlaveBrowser {
 
-  private static final long TIMEOUT = 5000; // 5 seconds
+  /**
+   * 
+   */
   private static final int POLL_RESPONSE_TIMEOUT = 2;
-
   private final Time time;
   private final String id;
   private final BrowserInfo browserInfo;
@@ -44,7 +45,6 @@ public class SlaveBrowser {
     new LinkedBlockingQueue<CommandResponse>();
   private Command commandRunning = null;
   private Command lastCommandDequeued;
-  private boolean keepAlive = false;
 
   public SlaveBrowser(Time time, String id, BrowserInfo browserInfo) {
     this.time = time;
@@ -191,16 +191,9 @@ public class SlaveBrowser {
     }
   }
 
-  public boolean isAlive() {
-    return keepAlive ? true : time.now().getMillis() - lastHeartBeat.getMillis() < TIMEOUT;
-  }
-
-  public void keepAlive(boolean keepAlive) {
-    this.keepAlive = keepAlive;
-  }
-
   @Override
   public String toString() {
     return "SlaveBrowser(browserInfo=" + browserInfo + ", id=" + id + ")";
-  }  
+  }
+  
 }

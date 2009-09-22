@@ -13,26 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+jstestdriver.SERVER_URL = "/query/";
+
+
 jstestdriver.listen = function() {
   var id = jstestdriver.extractId(window.location.toString());
   var url = jstestdriver.SERVER_URL + id;
-
-  jstestdriver.globalAlert = alert;
-  alert = function() {
-    var args = arguments;
-    if (jstestdriver.globalAlert.apply) {
-      jstestdriver.jQuery.post(jstestdriver.HEARTBEAT_URL, { id: id, alertMode: true }, function() {
-        jstestdriver.globalAlert.apply(window, args);
-        jstestdriver.jQuery.post(jstestdriver.HEARTBEAT_URL, { id: id, alertMode: false },
-            function() {});
-      });
-    }
-    jstestdriver.jQuery.post(jstestdriver.HEARTBEAT_URL, { id: id, alertMode: true }, function() {
-      jstestdriver.globalAlert(args[0]);
-      jstestdriver.jQuery.post(jstestdriver.HEARTBEAT_URL, { id: id, alertMode: false },
-          function() {});
-    });
-  };
 
   jstestdriver.testCaseManager = new jstestdriver.TestCaseManager();
   jstestdriver.initializePluginRegistrar();
