@@ -69,8 +69,7 @@ public class CommandServlet extends HttpServlet {
 
     while (cmdResponse == null) {
       cmdResponse = browser.getResponse();
-      if (System.currentTimeMillis() - browser.getLastHeartBeat().getMillis() >=
-        HeartbeatServlet.TIMEOUT) {
+      if (!browser.isAlive()) {
         capturedBrowsers.removeSlave(browser.getId());
         Response response = new Response();
 

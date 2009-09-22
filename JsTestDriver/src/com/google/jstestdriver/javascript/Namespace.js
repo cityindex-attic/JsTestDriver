@@ -17,6 +17,10 @@ jstestdriver = {};
 jstestdriver.global = this;
 jstestdriver.plugins = {};
 
+jstestdriver.SERVER_URL = "/query/";
+
+jstestdriver.HEARTBEAT_URL = "/heartbeat";
+
 if (typeof console == 'undefined') console = {};
 if (typeof console.log == 'undefined') console.log = function() {};
 if (typeof console.debug == 'undefined') console.debug = function() {};
@@ -55,5 +59,6 @@ jstestdriver.clearInterval = function() {
   }
   return jstestdriver.globalClearInterval(arguments[0]);
 };
+
 
 jstestdriver.EMPTY_FUNC = function() {};
