@@ -111,3 +111,24 @@ jstestdriver.getBrowserFriendlyVersion = function() {
   }
   return jstestdriver.jQuery.browser.version;
 };
+
+
+/**
+ * Renders an html string as a dom nodes.
+ * @param {string} htmlString The string to be rendered as html.
+ * @param {Document} owningDocument The window that should own the html.
+ */
+jstestdriver.toHtml = function(htmlString, owningDocument) {
+  return jstestdriver.jQuery(htmlString, owningDocument)[0];
+};
+
+
+/**
+ * Appends html string to the body.
+ * @param {string} htmlString The string to be rendered as html.
+ * @param {Document} owningDocument The window that should own the html.
+ */
+jstestdriver.appendHtml = function(htmlString, owningDocument) {
+  var node = jstestdriver.toHtml(htmlString, owningDocument);
+  jstestdriver.jQuery(owningDocument.body).append(node);
+};

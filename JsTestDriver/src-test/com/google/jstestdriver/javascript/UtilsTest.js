@@ -28,3 +28,38 @@ utilsTest.prototype.testStringFormat = function() {
   assertEquals("Hello {\"property\":\"value\"}", jstestdriver.formatString("Hello", {property:
     'value'}));
 };
+
+
+utilsTest.prototype.testToHtml = function() {
+  var node = jstestdriver.toHtml('<div id="foo"></div>', window.document);
+  assertNotNull(node);
+  assertEquals('foo', node.id);
+  assertEquals('div', node.tagName.toLowerCase());
+};
+
+
+utilsTest.prototype.testToHtmlMultipleNodes = function() {
+  var node = jstestdriver.toHtml('<div id="foo"></div><div id="bar"></div>', window.document);
+  assertNotNull(node);
+  console.debug(node);
+  assertEquals('foo', node.id);
+  assertEquals('div', node.tagName.toLowerCase());
+};
+
+
+utilsTest.prototype.testAppendHtml = function() {
+  jstestdriver.appendHtml('<div id="foo"></div>', window.document);
+  var node = document.getElementById('foo');
+  assertNotNull(node);
+  assertEquals('foo', node.id);
+  assertEquals('div', node.tagName.toLowerCase());
+};
+
+
+utilsTest.prototype.testAppendHtmlMultipleNodes = function() {
+  jstestdriver.appendHtml('<div id="foo"></div><div class="bar"></div>', window.document);
+  var node = document.getElementById('foo');
+  assertNotNull(node);
+  assertEquals('foo', node.id);
+  assertEquals('div', node.tagName.toLowerCase());
+};

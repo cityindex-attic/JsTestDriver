@@ -13,22 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+package com.google.jstestdriver.html;
+
+import java.io.BufferedInputStream;
+import java.io.Writer;
+
+
+
 /**
- * Represents all of the necessary information to run a test case.
- * @param {jstestdriver.TestCaseInfo} testCaseInfo The test case information, containing
- * @param {Array.<String>} tests The names of all the tests to run.
+ * Represents an parsed token.
+ * @author corysmith@google.com (Cory Smith)
+ *
  */
-jstestdriver.TestRunConfiguration = function(testCaseInfo, tests) {
-  this.testCaseInfo_ = testCaseInfo;
-  this.tests_ = tests;
-};
+public interface Token {
+  //TODO(corysmith): extract the token matcher from the token.
+  public abstract Token create(BufferedInputStream stream);
 
+  public abstract void write(Writer out);
 
-jstestdriver.TestRunConfiguration.prototype.getTestCaseInfo = function() {
-  return this.testCaseInfo_;
-};
-
-
-jstestdriver.TestRunConfiguration.prototype.getTests = function() {
-  return this.tests_;
-};
+  public abstract boolean contains(char chr);
+}

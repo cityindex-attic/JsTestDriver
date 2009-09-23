@@ -13,22 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/**
- * Represents all of the necessary information to run a test case.
- * @param {jstestdriver.TestCaseInfo} testCaseInfo The test case information, containing
- * @param {Array.<String>} tests The names of all the tests to run.
- */
-jstestdriver.TestRunConfiguration = function(testCaseInfo, tests) {
-  this.testCaseInfo_ = testCaseInfo;
-  this.tests_ = tests;
-};
+package com.google.jstestdriver.html;
 
+import java.io.Writer;
 
-jstestdriver.TestRunConfiguration.prototype.getTestCaseInfo = function() {
-  return this.testCaseInfo_;
-};
-
-
-jstestdriver.TestRunConfiguration.prototype.getTests = function() {
-  return this.tests_;
-};
+public interface Node {
+  public void write(Writer writer);
+}

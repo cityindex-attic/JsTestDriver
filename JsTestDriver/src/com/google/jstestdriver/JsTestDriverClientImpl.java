@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -55,8 +56,14 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   }
 
   public Collection<BrowserInfo> listBrowsers() {
-    return gson.fromJson(server.fetch(baseUrl + "/cmd?listBrowsers"),
-        new TypeToken<Collection<BrowserInfo>>() {}.getType());
+    String browsers = server.fetch(baseUrl + "/cmd?listBrowsers");
+    try {
+      return gson.fromJson(browsers,
+          new TypeToken<Collection<BrowserInfo>>() {}.getType());
+    } catch (RuntimeException e ) {
+      System.out.println(browsers);
+      throw e;
+    }
   }
 
   private void sendCommand(String id, ResponseStream stream, String cmd, boolean uploadFiles) {

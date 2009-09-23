@@ -19,6 +19,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.jstestdriver.html.InlineHtmlProcessor;
 
 /**
  * Module for the action handler.
@@ -27,7 +28,8 @@ import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 public class ActionFactoryModule extends AbstractModule {
   @Override
   protected void configure() {
-    Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class);
+    Multibinder.newSetBinder(binder(),
+        FileLoadPostProcessor.class).addBinding().to(InlineHtmlProcessor.class);
     Multibinder.newSetBinder(binder(), FileLoadPreProcessor.class);
     Multibinder.newSetBinder(binder(), ResponseStreamFactory.class);
   }
