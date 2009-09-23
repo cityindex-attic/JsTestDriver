@@ -29,7 +29,7 @@ import com.google.jstestdriver.html.HtmlDocNodeFactory.CreateNodeStrategy;
  */
 public class HtmlDocGlobalNode extends HtmlDocNode {
 
-  private static final char[] JS_END_STATEMENT = "this);".toCharArray();
+  private static final char[] JS_END_STATEMENT = "this.document);".toCharArray();
   private static final char[] JS_ARG_SEP = "',".toCharArray();
   private static final char[] JS_ASSIGN_HTML = "jstestdriver.addHtmlDocAssign('".toCharArray();
   private static final char[] JS_APPEND_HTML = "jstestdriver.addHtmlDocAppend('".toCharArray();

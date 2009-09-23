@@ -29,7 +29,7 @@ public class InlineHtmlProcessorTest extends TestCase {
         .line("TestCase.prototype.setUp = function(){")
         .line("  this.foo = 1;")
         .test("  /*:DOC bar = <div></div>*/")
-        .expect("  this. bar  = jstestdriver.toHtml(' <div></div>',window);")
+        .expect("  this. bar  = jstestdriver.toHtml(' <div></div>',window.document);")
         .line("};");
     
     doScriptTest(script);
@@ -39,7 +39,7 @@ public class InlineHtmlProcessorTest extends TestCase {
     .line("TestCase.prototype.setUp = function(){")
     .line("  this.foo = 1;")
     .test("  /*:DOC += <div></div>*/")
-    .expect("  jstestdriver.appendHtml(' <div></div>',window);")
+    .expect("  jstestdriver.appendHtml(' <div></div>',window.document);")
     .line("};");
     
     doScriptTest(script);

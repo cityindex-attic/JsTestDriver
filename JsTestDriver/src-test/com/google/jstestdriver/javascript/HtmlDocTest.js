@@ -23,7 +23,9 @@ HtmlDocTest.prototype.testAssign = function() {
 
 
 HtmlDocTest.prototype.testAppend = function() {
-  assertEquals(0, document.body.childNodes.length);
-  /*:DOC += <div></div> */
-  assertEquals(1, document.body.childNodes.length);
+  /*:DOC += <div id="foo"></div> */
+  var children = document.body.childNodes;
+  var ids = [];
+  jstestdriver.console.debug("body" + document.body.innerHTML);
+    
 };

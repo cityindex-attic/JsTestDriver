@@ -34,7 +34,7 @@ public class HtmlDocNestedNodeTest extends TestCase {
 
     StringWriter writer = new StringWriter();
     node.write(writer);
-    assertEquals(String.format("this.%s = jstestdriver.toHtml('%s',window);",
+    assertEquals(String.format("this.%s = jstestdriver.toHtml('%s',window.document);",
       id, html.replace("\n", "\\n").replace("'", "\\'")), writer.toString());
   }
 
@@ -46,7 +46,7 @@ public class HtmlDocNestedNodeTest extends TestCase {
 
     StringWriter writer = new StringWriter();
     node.write(writer);
-    assertEquals(String.format("jstestdriver.appendHtml('%s',window);", html
+    assertEquals(String.format("jstestdriver.appendHtml('%s',window.document);", html
       .replace("\n", "\\n").replace("'", "\\'")), writer.toString());
   }
 }
