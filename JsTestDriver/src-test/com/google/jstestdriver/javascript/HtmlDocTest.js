@@ -24,8 +24,5 @@ HtmlDocTest.prototype.testAssign = function() {
 
 HtmlDocTest.prototype.testAppend = function() {
   /*:DOC += <div id="foo"></div> */
-  var children = document.body.childNodes;
-  var ids = [];
-  jstestdriver.console.debug("body" + document.body.innerHTML);
-    
+  assertNotNull(document.getElementById('foo'));
 };
