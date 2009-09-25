@@ -406,7 +406,7 @@
     </svn>
   </target>
 
-  <target name="release" depends="checkNoLocalChanges, test, jar, sign, coverage-jar">
+  <target name="release" depends="checkNoLocalChanges, test, jar, sign, coverage-plugin-jar">
     <input addproperty="release.id" message="Enter the release number (ie. 1.0.0-rc1):"/>
 
     <svn>
