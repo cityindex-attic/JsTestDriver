@@ -16,17 +16,15 @@
 package com.google.jstestdriver.idea;
 
 import com.google.jstestdriver.idea.ui.ConfigurationForm;
-
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
+import com.intellij.execution.Executor;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ModuleBasedConfiguration;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunConfigurationModule;
 import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
-import com.intellij.execution.runners.RunnerInfo;
-import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
@@ -34,8 +32,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
-
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,17 +46,17 @@ import java.util.List;
  * and save them all.
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class JSTestDriverConfiguration extends ModuleBasedConfiguration {
+public class JSTestDriverConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> {
 
-  private final JSTestDriverConfigurationFactory jsTestDriverConfigurationFactory;
+  private final ConfigurationFactory jsTestDriverConfigurationFactory;
 
   public String settingsFile;
   private String serverPort;
 
   public JSTestDriverConfiguration(Project project,
-                                   JSTestDriverConfigurationFactory jsTestDriverConfigurationFactory,
+                                   ConfigurationFactory jsTestDriverConfigurationFactory,
                                    String pluginName) {
-    super(pluginName, new RunConfigurationModule(project, true), jsTestDriverConfigurationFactory);
+    super(pluginName, new RunConfigurationModule(project), jsTestDriverConfigurationFactory);
     this.jsTestDriverConfigurationFactory = jsTestDriverConfigurationFactory;
   }
 
@@ -66,11 +64,9 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration {
     return new ConfigurationForm();
   }
 
-  public RunProfileState getState(DataContext context, RunnerInfo runnerInfo,
-                                  RunnerSettings runnerSettings,
-                                  ConfigurationPerRunnerSettings configurationSettings)
+  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env)
       throws ExecutionException {
-    return new TestRunnerState(this, getProject());
+    return new TestRunnerState(this, getProject(), env);
   }
 
   @Override

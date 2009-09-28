@@ -17,15 +17,14 @@
 <idea-plugin>
   <name>JSTestDriver Plugin</name>
   <description>Execute JavaScript unit tests using JSTestDriver</description>
-  <version>0.1</version>
+  <version>0.1.1</version>
   <vendor>Google</vendor>
-  <idea-version since-build="7973"/>
+  <idea-version since-build="9886"/>
   <depends>com.intellij.modules.lang</depends>
-  <application-components>
-    <component>
-      <implementation-class>com.google.jstestdriver.idea.JSTestDriverComponent</implementation-class>
-    </component>
-  </application-components>
+  <extensions defaultExtensionNs="com.intellij">
+    <configurationType implementation="com.google.jstestdriver.idea.JSTestDriverConfigurationType"/>
+    <!--configurationProducer implementation="com.google.jstestdriver.idea.JSTestDriverConfigurationProducer"/-->
+  </extensions>
   <project-components>
     <component>
       <implementation-class>com.google.jstestdriver.idea.JSTestDriverToolWindow</implementation-class>

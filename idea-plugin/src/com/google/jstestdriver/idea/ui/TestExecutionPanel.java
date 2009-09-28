@@ -22,23 +22,14 @@ import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultGenerator;
 import com.google.jstestdriver.idea.PluginResources;
 import com.google.jstestdriver.idea.TestRunnerState;
-
 import com.intellij.execution.ExecutionException;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.util.Collection;
-
-import javax.swing.AbstractAction;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JToggleButton;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.Collection;
 
 /**
  * The section of the Tool Window which shows the test results and controls test execution.
@@ -104,7 +95,7 @@ public class TestExecutionPanel extends JPanel implements ResponseStream {
     public void actionPerformed(ActionEvent e) {
       if (testRunner != null) {
         try {
-          testRunner.execute();
+          testRunner.execute(null, null);
         } catch (ExecutionException e1) {
           throw new RuntimeException(e1);
         }
@@ -138,6 +129,7 @@ public class TestExecutionPanel extends JPanel implements ResponseStream {
   }
 
   public void stream(Response response) {
+    // run these on the AWt event thread?
     Collection<TestResult> testResultCollection = new TestResultGenerator().getTestResults(response);
     for (TestResult result : testResultCollection) {
       progressBar.respondToTestResult(result.getResult());

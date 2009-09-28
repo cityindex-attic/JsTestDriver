@@ -17,11 +17,8 @@ package com.google.jstestdriver.idea.ui;
 
 import com.google.jstestdriver.TestResult.Result;
 
-import java.awt.Color;
-
-import javax.swing.DefaultBoundedRangeModel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -36,6 +33,10 @@ public class GreenRedProgressBar extends JProgressBar {
     reset();
   }
 
+  /**
+   * TODO This method should only be called on the event thread
+   * @param result
+   */
   public void respondToTestResult(final Result result) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -47,6 +48,10 @@ public class GreenRedProgressBar extends JProgressBar {
     });
   }
 
+  /**
+   * TODO This method should only be called on the event thread
+   * @param testsCount
+   */
   public void setTestsCount(final int testsCount) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {

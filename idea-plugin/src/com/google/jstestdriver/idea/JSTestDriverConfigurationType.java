@@ -17,29 +17,28 @@ package com.google.jstestdriver.idea;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
-
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 /**
  * Top-level of the plugin - this class is registered in the plugin XML.
  * Provides a new type of Run Configuration which launches the JSTestDriver server.
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class JSTestDriverComponent implements ConfigurationType {
+public class JSTestDriverConfigurationType implements ConfigurationType {
 
-  private ConfigurationFactory jsTestDriverConfigFactory = new JSTestDriverConfigurationFactory(this);
+  private final ConfigurationFactory jsTestDriverConfigFactory;
 
-  public void initComponent() {
-  }
-
-  public void disposeComponent() {
-  }
-
-  @NotNull
-  public String getComponentName() {
-    return PluginResources.getPluginName() + ":ConfigurationType";
+  public JSTestDriverConfigurationType() {
+    jsTestDriverConfigFactory = new ConfigurationFactory(this) {
+      @Override
+      public RunConfiguration createTemplateConfiguration(Project project) {
+        return new JSTestDriverConfiguration(project, this, "JSTestDriver");
+      }
+    };
   }
 
   public String getDisplayName() {
@@ -54,10 +53,9 @@ public class JSTestDriverComponent implements ConfigurationType {
     return PluginResources.getSmallIcon();
   }
 
-  // For IDEA 8
   @NotNull
   public String getId() {
-    return getComponentName();
+    return PluginResources.getPluginName() + ":ConfigurationType";
   }
 
   public ConfigurationFactory[] getConfigurationFactories() {

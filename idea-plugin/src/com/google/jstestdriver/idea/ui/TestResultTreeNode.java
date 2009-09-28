@@ -22,6 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 /**
  * @author alexeagle@google.com (Alex Eagle)
 */
+// TODO: should use SimpleNode
 public class TestResultTreeNode extends DefaultMutableTreeNode {
   private Result result;
   private final String outputLog;

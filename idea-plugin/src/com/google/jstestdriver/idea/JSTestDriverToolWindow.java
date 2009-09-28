@@ -68,7 +68,7 @@ public class JSTestDriverToolWindow implements ProjectComponent {
     ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
 
     ToolWindow myToolWindow =
-        toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.LEFT);
+        toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.RIGHT);
     ContentFactory contentFactory = PeerFactory.getInstance().getContentFactory();
     Content content = contentFactory.createContent(new ToolPanel(), "", false);
     myToolWindow.getContentManager().addContent(content);

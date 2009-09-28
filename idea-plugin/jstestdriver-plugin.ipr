@@ -7,6 +7,7 @@
       <antReference projectDefault="true" />
       <customJdkName value="" />
       <maximumHeapSize value="128" />
+      <maximumStackSize value="32" />
       <properties />
     </buildFile>
     <buildFile url="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/build.xml">
@@ -14,15 +15,21 @@
       <antReference projectDefault="true" />
       <customJdkName value="" />
       <maximumHeapSize value="128" />
+      <maximumStackSize value="32" />
       <properties />
     </buildFile>
   </component>
-  <component name="BlazePluginSettings" buildBeforeRefresh="true" blazeTestProducers="true" />
+  <component name="BlazePluginSettings" buildBeforeRefresh="true" blazeTestProducers="true" updater="default" />
   <component name="Build editor project-level loader">
     <settings>
       <class-settings class="com.google.devtools.intellig.configcheck.ClearOutputChecker" />
-      <class-settings class="com.google.devtools.intellig.configcheck.JavacHeapChecker" />
-      <class-settings class="com.google.devtools.intellig.configcheck.ProjectJdkChecker" />
+      <class-settings class="com.google.devtools.intellig.configcheck.JavacHeapChecker">
+        <setting name="getHeapSize" value="800" />
+      </class-settings>
+      <class-settings class="com.google.devtools.intellig.configcheck.ProjectJdkChecker">
+        <setting name="getModuleJdks" value="rO0ABXNyABFqYXZhLnV0aWwuSGFzaFNldLpEhZWWuLc0AwAAeHB3DAAAABA/QAAAAAAAAXQAGi91c3IvbGliL2ludGVsbGlqLWlkZWEtNy4weA==" />
+        <setting name="getProjectJdk" value="$APPLICATION_HOME_DIR$" />
+      </class-settings>
       <class-settings class="com.google.devtools.intellig.configcheck.ProjectPathChecker" />
       <class-settings class="com.google.devtools.intellig.configcheck.PythonSdkChecker" />
     </settings>
@@ -54,6 +61,9 @@
       <build intervalToCheckBuild="1" buildKey="" buildLabel="" enabled="false" />
     </builds>
   </component>
+  <component name="CopyrightManager" default="">
+    <module2copyright />
+  </component>
   <component name="DependenciesAnalyzeManager">
     <option name="myForwardDirection" value="false" />
   </component>
@@ -74,6 +84,7 @@
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
     <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
@@ -114,9 +125,7 @@
           </option>
           <option name="myCustomValuesEnabled" value="true" />
         </inspection_tool>
-        <inspection_tool class="MissingOverrideAnnotation" level="WARNING" enabled="true">
-          <option name="useJdk6Rules" value="false" />
-        </inspection_tool>
+        <inspection_tool class="MissingOverrideAnnotation" level="WARNING" enabled="true" />
         <inspection_tool class="RawUseOfParameterizedType" level="WARNING" enabled="true">
           <option name="ignoreObjectConstruction" value="true" />
           <option name="ignoreTypeCasts" value="false" />
@@ -130,7 +139,7 @@
     <option name="GENERATE_NO_WARNINGS" value="false" />
     <option name="DEPRECATION" value="true" />
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
+    <option name="MAXIMUM_HEAP_SIZE" value="800" />
   </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
@@ -281,14 +290,20 @@
       </item>
     </group>
   </component>
+  <component name="ProjectDetails">
+    <option name="projectName" value="jstestdriver-plugin" />
+  </component>
   <component name="ProjectFileVersion" converted="true" />
+  <component name="ProjectKey">
+    <option name="state" value="https://js-test-driver.googlecode.com/svn/trunk/idea-plugin/jstestdriver-plugin.ipr" />
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/JsTestDriver.iml" filepath="/usr/local/google/alexeagle/js-test-driver/JsTestDriver/JsTestDriver.iml" />
       <module fileurl="file://$PROJECT_DIR$/jstestdriver-plugin.iml" filepath="$PROJECT_DIR$/jstestdriver-plugin.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 7973" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 7973" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ResourceManagerContainer">
@@ -307,6 +322,7 @@
   </component>
   <component name="SvnBranchConfigurationManager">
     <option name="myVersion" value="123" />
+    <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="TestDoxConfiguration">
     <option name="createTestIfMissing" value="true" />

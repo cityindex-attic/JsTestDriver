@@ -1,4 +1,4 @@
-<project name="JsTestDriver-idea-plugin" default="jar">
+<project name="JsTestDriver-idea-plugin" default="zip">
   <property name="target.dir" value="${basedir}/target" />
   <property name="bin.dir" value="${target.dir}/bin" />
   <property name="obj.dir" value="${target.dir}/obj" />
@@ -58,5 +58,14 @@
       <zipfileset src="${jstestdriver.lib}"/>
     </jar>
     <chmod perm="644" file="${bin.dir}/${ant.project.name}.jar"/>
+  </target>
+
+  <target name="zip" depends="jar">
+    <mkdir dir="${target.dir}/idea-package/${ant.project.name}/lib"/>
+    <copy todir="${target.dir}/idea-package/${ant.project.name}/lib">
+      <fileset file="${jstestdriver.lib}"/>
+      <fileset file="${bin.dir}/${ant.project.name}.jar"/>
+    </copy>
+    <zip destfile="${bin.dir}/${ant.project.name}.zip" basedir="${target.dir}/idea-package"/>
   </target>
 </project>
