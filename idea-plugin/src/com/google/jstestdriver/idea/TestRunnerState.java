@@ -122,8 +122,8 @@ public class TestRunnerState implements RunnableState {
     File configFile = new File(jsTestDriverConfiguration.getSettingsFile());
     try {
       FileReader fileReader = new FileReader(jsTestDriverConfiguration.getSettingsFile());
-      ConfigurationParser configurationParser = new ConfigurationParser(path, fileReader,
-          new DefaultPathRewriter());
+      ConfigurationParser configurationParser = new ConfigurationParser(configFile.getParentFile(),
+          fileReader, new DefaultPathRewriter());
       return new IDEPluginActionBuilder(configurationParser, serverURL, responseStreamFactory);
     } catch (FileNotFoundException e) {
       throw new ExecutionException("Failed to read settings file " +
