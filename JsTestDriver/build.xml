@@ -383,7 +383,8 @@
 
   <!-- TODO: also have a JNLP launcher for the CBuild latest code - set deploy.codebase to
              http://build.hevery.com/job/JsTestDriver/lastSuccessfulBuild/artifact/target/bin -->
-  <property name="deploy.codebase" value="http://www.corp.google.com/~alexeagle/jstestdriver"/>
+  <property name="deploy.codebase" value="http://js-test-driver.googlecode.com/files"/>
+
   <target name="sign" depends="jar">
     <copy todir="${bin.dir}" file="src/com/google/jstestdriver/ui/JsTestDriver.jnlp">
       <filterset><filter token="{codebase}" value="${deploy.codebase}"/></filterset>
