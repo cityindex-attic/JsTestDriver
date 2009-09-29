@@ -43,7 +43,6 @@ public class ConfigurationForm extends SettingsEditor<JSTestDriverConfiguration>
   private JRadioButton runningInIDERadioButton;
   private JButton fileChooserButton;
 
-  @Override
   protected void resetEditorFrom(JSTestDriverConfiguration config) {
     settingsFile.setText(config.getSettingsFile());
     serverAddress.setText(config.getServerAddress());
@@ -54,7 +53,6 @@ public class ConfigurationForm extends SettingsEditor<JSTestDriverConfiguration>
     }
   }
 
-  @Override
   protected void applyEditorTo(JSTestDriverConfiguration config) throws ConfigurationException {
     config.setSettingsFile(settingsFile.getText());
     config.setServerAddress(serverAddress.getText());
@@ -65,7 +63,6 @@ public class ConfigurationForm extends SettingsEditor<JSTestDriverConfiguration>
     }
   }
 
-  @Override
   @NotNull
   protected JComponent createEditor() {
     fileChooserButton.addActionListener(new ActionListener() {
@@ -82,7 +79,6 @@ public class ConfigurationForm extends SettingsEditor<JSTestDriverConfiguration>
     return rootComponent;
   }
 
-  @Override
   protected void disposeEditor() {
   }
 

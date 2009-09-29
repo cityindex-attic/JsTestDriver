@@ -80,7 +80,6 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration<RunConfi
     }
   }
 
-  @Override
   public Collection<Module> getValidModules() {
     List<Module> modules = new ArrayList<Module>();
     Module[] allModules = ModuleManager.getInstance(getProject()).getModules();
@@ -88,7 +87,6 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration<RunConfi
     return modules;
   }
 
-  @Override
   protected ModuleBasedConfiguration createInstance() {
     return new JSTestDriverConfiguration(getConfigurationModule().getProject(),
         jsTestDriverConfigurationFactory, getName());
