@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea;
 
 import com.google.jstestdriver.ActionRunner;
+import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.DefaultPathRewriter;
 import com.google.jstestdriver.DryRunInfo;
@@ -18,6 +19,9 @@ import java.io.PrintStream;
 import java.util.Arrays;
 
 /**
+ * Run JSTD and print messages using the TeamCity stuff, see
+ * http://www.jetbrains.net/confluence/display/TCD4/Build+Script+Interaction+with+TeamCity
+ * 
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class TestRunner {
@@ -65,11 +69,10 @@ public class TestRunner {
                     .append("[testFailed ")
                     .append("name='").append(testName)
                     .append("' message='").append(escapeString(testResult.getParsedMessage()))
-                    .append("' details='").append(escapeString(testResult.getLog())).append("'");
-                if (testResult.getResult() == TestResult.Result.error) {
-                  res.append(" error = '").append(escapeString(testResult.getStack())).append("'");
-                }
-                res.append(" duration='").append(testResult.getTime()).append("']");
+                    .append("' details='")
+                    .append(escapeString(testResult.getLog() + "\n" + testResult.getStack()))
+                    .append("'")
+                    .append(" duration='").append(testResult.getTime()).append("']");
                 out.println(res.toString());
               }
             }
@@ -83,6 +86,7 @@ public class TestRunner {
       public ResponseStream getDryRunActionResponseStream() {
         return new ResponseStream() {
           public void stream(Response response) {
+            BrowserInfo browser = response.getBrowser();
             DryRunInfo dryRunInfo = DryRunInfo.fromJson(response);
             for (String testName : dryRunInfo.getTestNames()) {
               out.println(MAGIC_IDEA_PREFIX + "[testStarted name='" + escapeString(testName) +
