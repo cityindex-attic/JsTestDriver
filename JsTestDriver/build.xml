@@ -410,14 +410,15 @@
   <target name="release" depends="checkNoLocalChanges, test, jar, sign, coverage-plugin-jar">
     <input addproperty="release.id" message="Enter the release number (ie. 1.0.0-rc1):"/>
 
+    <input addproperty="googlecode.username" message="Your google account (don't include @gmail.com):"/>
+    <input addproperty="googlecode.password" message="Your googlecode password (http://code.google.com/hosting/settings):"/>
+
     <svn>
       <copy srcurl="${svn.trunkUrl}" desturl="${svn.tagsUrl}/${release.id}"
-            message="Performing release ${release.id}"/>
+            message="Performing release ${release.id}" username="${googlecode.username}" password="${googlecode.password}"  />
     </svn>
 
     <echo message="Uploading release to the GoogleCode site..."/>
-    <input addproperty="googlecode.username" message="Your google account (don't include @gmail.com):"/>
-    <input addproperty="googlecode.password" message="Your googlecode password (http://code.google.com/hosting/settings):"/>
 
     <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask"
              classpathref="ant-tasks" name="gcupload"/>
