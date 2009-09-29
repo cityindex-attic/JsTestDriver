@@ -17,11 +17,16 @@ package com.google.jstestdriver.idea.ui;
 
 import com.google.jstestdriver.idea.JSTestDriverConfiguration;
 import com.google.jstestdriver.idea.ServerType;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Configuration GUI
@@ -36,6 +41,7 @@ public class ConfigurationForm extends SettingsEditor<JSTestDriverConfiguration>
   private JTextField serverAddress;
   private JRadioButton atAddressRadioButton;
   private JRadioButton runningInIDERadioButton;
+  private JButton fileChooserButton;
 
   @Override
   protected void resetEditorFrom(JSTestDriverConfiguration config) {
@@ -62,6 +68,17 @@ public class ConfigurationForm extends SettingsEditor<JSTestDriverConfiguration>
   @Override
   @NotNull
   protected JComponent createEditor() {
+    fileChooserButton.addActionListener(new ActionListener() {
+      private final FileChooserDescriptor chooseFilesOnlyDescriptor =
+          new FileChooserDescriptor(true, false, false, false, false, false);
+      public void actionPerformed(ActionEvent e) {
+        final VirtualFile[] files = FileChooser.chooseFiles(rootComponent, chooseFilesOnlyDescriptor);
+        if (files != null && files.length == 1) {
+          String configFile = files[0].getPresentableUrl();
+          settingsFile.setText(configFile);
+        }
+      }
+    });
     return rootComponent;
   }
 
