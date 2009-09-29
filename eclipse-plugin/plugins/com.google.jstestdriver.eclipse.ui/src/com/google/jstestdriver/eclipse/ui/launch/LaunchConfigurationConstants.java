@@ -25,4 +25,6 @@ public class LaunchConfigurationConstants {
   public static final String PROJECT_NAME = "com.google.jstestdriver.eclipse.ui.projectName";
   public static final String CONF_FILENAME = "com.google.jstestdriver.eclipse.ui.confFileName";
   public static final String TESTS_TO_RUN = "com.google.jstestdriver.eclipse.ui.testsToRun";
+  public static final String RUN_ON_EVERY_SAVE =
+      "com.google.jstestdriver.eclipse.ui.runOnEverySave";
 }

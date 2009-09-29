@@ -65,8 +65,10 @@
     <fileset dir="." id="packageFiles" includes="package*"/>
     <fileset dir="." id="testFiles" includes="TEST*.xml"/>
     <fileset dir="plugins/com.google.jstestdriver.eclipse.core/@dot" id="coreDotFolder"/>
+    <fileset file="plugins/com.google.jstestdriver.eclipse.core/@dot.log" id="coreDotLogFile"/>
     <fileset dir="plugins/com.google.jstestdriver.eclipse.core/temp.folder" id="coreTmpFolder"/>
     <fileset dir="plugins/com.google.jstestdriver.eclipse.ui/@dot" id="uiDotFolder"/>
+    <fileset file="plugins/com.google.jstestdriver.eclipse.ui/@dot.log" id="uiDotLogFile"/>
     <fileset dir="plugins/com.google.jstestdriver.eclipse.ui/temp.folder" id="uiTmpFolder"/>
     <fileset dir="." id="compilerArgs" includes="**/javaCompiler...args"/>
     <fileset dir="plugins" id="genPluginsBuildXml" includes="**/build.xml"/>

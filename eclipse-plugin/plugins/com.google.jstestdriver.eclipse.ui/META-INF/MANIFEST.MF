@@ -5,15 +5,15 @@ Bundle-SymbolicName: com.google.jstestdriver.eclipse.ui;singleton:=true
 Bundle-Version: 1.0.5
 Bundle-Activator: com.google.jstestdriver.eclipse.ui.Activator
 Bundle-Vendor: GOOGLE
-Require-Bundle: com.google.jstestdriver.eclipse.core;bundle-version="1.0.4",
- org.eclipse.ui,
+Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.debug.core;bundle-version="3.4.0",
  org.eclipse.debug.ui;bundle-version="3.4.0",
  org.eclipse.jface.text;bundle-version="3.4.0",
  org.eclipse.ui.ide;bundle-version="3.4.0",
  org.eclipse.ui.editors;bundle-version="3.4.0",
- org.eclipse.ui.console;bundle-version="3.4.0"
+ org.eclipse.ui.console;bundle-version="3.4.0",
+ com.google.jstestdriver.eclipse.core;bundle-version="1.0.5"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: com.google.jstestdriver.eclipse.ui,

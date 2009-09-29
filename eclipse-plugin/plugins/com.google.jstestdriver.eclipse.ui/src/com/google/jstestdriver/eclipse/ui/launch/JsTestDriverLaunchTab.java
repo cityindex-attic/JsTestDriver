@@ -55,8 +55,11 @@ import com.google.jstestdriver.eclipse.ui.icon.Icons;
 public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
 
   private final Logger logger = new Logger();
+  private final JavascriptLaunchConfigurationHelper configurationHelper =
+      new JavascriptLaunchConfigurationHelper();
   private Text projectText;
   private Text confFileText;
+  private Button runOnEverySaveCheckbox;
 
   public void createControl(Composite parent) {
     Composite control = new Composite(parent, SWT.NONE);
@@ -129,6 +132,21 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
         setUpBrowseConfFileDialog();
       }
     });
+    
+    GridData runOnEverySaveButtonGridData = new GridData(GridData.FILL_HORIZONTAL);
+    runOnEverySaveButtonGridData.horizontalSpan = 3;
+    runOnEverySaveCheckbox = new Button(control, SWT.CHECK);
+    runOnEverySaveCheckbox.setLayoutData(runOnEverySaveButtonGridData);
+    runOnEverySaveCheckbox.setText("Run on Every Save");
+    runOnEverySaveCheckbox.addSelectionListener(new SelectionListener() {
+      
+      public void widgetSelected(SelectionEvent e) {
+        setTabDirty();
+      }
+      
+      public void widgetDefaultSelected(SelectionEvent e) {
+      }
+    });
   }
 
   private void setUpBrowseProjectDialog() {
@@ -185,8 +203,20 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
 
   @Override
   public boolean isValid(ILaunchConfiguration launchConfig) {
-    return !"".equals(projectText.getText().trim())
+    boolean isTextBoxFilled = !"".equals(projectText.getText().trim())
         && !"".equals(confFileText.getText().trim());
+    if (isTextBoxFilled) {
+      String projectName = projectText.getText();
+      if (configurationHelper.isExistingLaunchConfigWithRunOnSaveOtherThanCurrent(projectName,
+          launchConfig.getName()) && runOnEverySaveCheckbox.getSelection()) {
+        setErrorMessage(MessageFormat.format("Project named {0} already has another active"
+            + " configuration with Run on every save set.", projectName));
+        return false;
+      }
+      setErrorMessage(null);
+      return true;
+    }
+    return false;
   }
 
   public void initializeFrom(ILaunchConfiguration configuration) {
@@ -213,6 +243,10 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
       } else {
         confFileText.setText("");
       }
+      
+      boolean initRunOnEveryBuild = configuration.getAttribute(
+          LaunchConfigurationConstants.RUN_ON_EVERY_SAVE, false);
+      runOnEverySaveCheckbox.setSelection(initRunOnEveryBuild);
     } catch (CoreException e) {
       logger.logException(e);
     }
@@ -224,12 +258,15 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
           projectText.getText());
       configuration.setAttribute(LaunchConfigurationConstants.CONF_FILENAME,
           confFileText.getText());
+      configuration.setAttribute(LaunchConfigurationConstants.RUN_ON_EVERY_SAVE,
+          runOnEverySaveCheckbox.getSelection());
     }
   }
 
   public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
     configuration.setAttribute(LaunchConfigurationConstants.PROJECT_NAME, "");
     configuration.setAttribute(LaunchConfigurationConstants.CONF_FILENAME, "");
+    configuration.setAttribute(LaunchConfigurationConstants.RUN_ON_EVERY_SAVE, false);
   }
 
   private class BrowseConfFileLabelProvider extends LabelProvider {

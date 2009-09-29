@@ -20,9 +20,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import com.google.jstestdriver.eclipse.ui.launch.save.JavascriptOnSaveTestRunner;
 
 public class Activator extends AbstractUIPlugin {
 
@@ -32,6 +36,8 @@ public class Activator extends AbstractUIPlugin {
 
   public void start(BundleContext context) throws Exception {
     super.start(context);
+    ResourcesPlugin.getWorkspace().addResourceChangeListener(new JavascriptOnSaveTestRunner(),
+        IResourceChangeEvent.POST_BUILD);
     plugin = this;
   }
 

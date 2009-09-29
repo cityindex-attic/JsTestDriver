@@ -78,19 +78,24 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
     if (selection instanceof IStructuredSelection) {
       try {
         IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-        ILaunchConfiguration[] launchConfigurations = getJstdLaunchConfigurations();
-        if (launchConfigurations.length < 1) {
-          // Error out.
-          return;
-        }
         List<String> testCases = new ArrayList<String>();
+        String projectName = "";
         for (Object object : structuredSelection.toArray()) {
           if (object instanceof IFile) {
             IFile file = (IFile) object;
+            projectName = file.getProject().getName();
             testCases.addAll(finder.getTestCases(file.getLocation().toFile()));
           }
         }
-        runTests(launchConfigurations[0], testCases);
+        ILaunchConfiguration launchConfiguration = getJstdLaunchConfigurations(projectName);
+        if (launchConfiguration == null) {
+          IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+              "No Launch Configurations found for selection");
+          ErrorDialog.openError(Display.getCurrent().getActiveShell(),
+              "JS Test Driver", "JS Test Driver Error", status);
+          return;
+        }
+        runTests(launchConfiguration, testCases);
       } catch (CoreException e) {
         logger.logException(e);
       } catch (IOException e) {
@@ -115,14 +120,11 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
     }
     List<String> testCases = new ArrayList<String>();
     try {
-      ILaunchConfiguration[] launchConfigurations = getJstdLaunchConfigurations();
-      if (launchConfigurations.length < 1) {
-        // Error out.
-        return;
-      }
+      String projectName = "";
       if (editor instanceof AbstractTextEditor) {
         AbstractTextEditor textEditor = (AbstractTextEditor) editor;
         //org.eclipse.wst.jsdt.internal.ui.javaeditor.CompilationUnitEditor
+        // If we can find some particular tests selected in the file
         if (textEditor.getSelectionProvider().getSelection() instanceof ITextSelection) {
           int startLine = updateTestCasesFromSelection(testCases, textEditor);
           if (testCases.isEmpty()) {
@@ -130,12 +132,23 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
           }
         }
       }
+      
+      // Else lets add the entire file
       if (editor.getEditorInput() instanceof IFileEditorInput) {
+        projectName = ((IFileEditorInput) editor.getEditorInput()).getFile().getProject().getName();
         if (testCases.isEmpty()) {
           updateTestCasesFromFile(editor, testCases);
         }
       }
-      runTests(launchConfigurations[0], testCases);
+      ILaunchConfiguration launchConfiguration = getJstdLaunchConfigurations(projectName);
+      if (launchConfiguration == null) {
+        IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+            "No Launch Configurations found for current file");
+        ErrorDialog.openError(Display.getCurrent().getActiveShell(),
+            "JS Test Driver", "JS Test Driver Error", status);
+        return;
+      }
+      runTests(launchConfiguration, testCases);
     } catch (CoreException e) {
       logger.logException(e);
     } catch (IOException e) {
@@ -201,14 +214,19 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
     actionRunnerFactory.getSpecificTestsActionRunner(workingCopy, testCases).runActions();
   }
 
-  private ILaunchConfiguration[] getJstdLaunchConfigurations()
+  private ILaunchConfiguration getJstdLaunchConfigurations(String projectName)
       throws CoreException {
     ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
     ILaunchConfigurationType type = launchManager.getLaunchConfigurationType(
         "com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration");
     ILaunchConfiguration[] launchConfigurations = launchManager
         .getLaunchConfigurations(type);
-    return launchConfigurations;
+    for (ILaunchConfiguration configuration : launchConfigurations) {
+      if (configuration.getAttribute(LaunchConfigurationConstants.PROJECT_NAME, "").equals(projectName)) {
+        return configuration;
+      }
+    }
+    return null;
   }
 
 }

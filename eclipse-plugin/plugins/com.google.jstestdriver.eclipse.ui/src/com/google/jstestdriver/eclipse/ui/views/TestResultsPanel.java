@@ -22,6 +22,7 @@ import java.util.Collection;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -186,7 +187,12 @@ public class TestResultsPanel extends Composite {
     testProgressIndicator.step(testResults.size(), failedTests.size() == 0);
     testResultsTree.refresh();
     
+    boolean first = true;
     for (ResultModel resultModel : failedTests) {
+      if (first) {
+        first = false;
+        testResultsTree.setSelection(new StructuredSelection(resultModel));
+      }
       testResultsTree.expandToLevel(resultModel, TreeViewer.ALL_LEVELS);
     }
     errorsLabel.setText("Errors : " + testRunResult.getNumberOfErrors());
