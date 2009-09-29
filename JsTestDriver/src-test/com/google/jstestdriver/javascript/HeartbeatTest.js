@@ -69,7 +69,7 @@ heartbeatTest.prototype.testErrorCallback = function() {
   }, function() {
     return ele;
   });
-  
+
   heartbeat.start();
   assertNotNull(errBack);
   

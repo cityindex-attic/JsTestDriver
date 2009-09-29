@@ -15,98 +15,90 @@
  */
 package com.google.jstestdriver.idea.ui;
 
-import com.google.jstestdriver.ActionRunner;
-import com.google.jstestdriver.DryRunInfo;
-import com.google.jstestdriver.Response;
-import com.google.jstestdriver.ResponseStream;
-import com.google.jstestdriver.ResponseStreamFactory;
-import com.google.jstestdriver.TestResultPrinter;
-import com.google.jstestdriver.idea.TestRunnerState;
-
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.DefaultURLRewriter;
+import com.google.jstestdriver.DefaultURLTranslator;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.FilesCache;
+import com.google.jstestdriver.ServerShutdownAction;
+import com.google.jstestdriver.ServerStartupAction;
+import com.google.jstestdriver.idea.MessageBundle;
+import com.google.jstestdriver.idea.PluginResources;
+import com.google.jstestdriver.ui.CapturedBrowsersPanel;
+import com.google.jstestdriver.ui.StatusBar;
 import com.intellij.util.ui.UIUtil;
 
-import java.awt.BorderLayout;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static javax.swing.BorderFactory.createTitledBorder;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Observer;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class ToolPanel extends JPanel {
 
-  private TestExecutionPanel testExecutionPanel = new TestExecutionPanel();
-  private final AtomicInteger totalTests = new AtomicInteger(0);
+  private StatusBar statusBar;
+  private CapturedBrowsersPanel capturedBrowsersPanel;
+  private ServerStartupAction serverStartupAction;
+  // TODO - make configurable
+  public static int serverPort = 9876;
+  private FilesCache cache = new FilesCache(new HashMap<String, FileInfo>());
+  private JTextField captureUrl;
 
   public ToolPanel() {
-    setLayout(new BorderLayout());
+    statusBar = new StatusBar(StatusBar.Status.NOT_RUNNING, MessageBundle.getBundle());
+    capturedBrowsersPanel = new CapturedBrowsersPanel();
+    captureUrl = new JTextField() {{
+      setEditable(false);
+    }};
+    
     setBackground(UIUtil.getTreeTextBackground());
-    add(new ServerControlPanel() {{
-      setBorder(createTitledBorder("Server"));
+    setLayout(new BorderLayout());
+    add(new JPanel() {{
+      setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+      add(new JPanel() {{
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(statusBar);
+        add(new JButton(new ServerStartAction()));
+        add(new JButton(new ServerStopAction()));
+      }});
+      add(new JPanel() {{
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(new JLabel(PluginResources.getCaptureUrlMessage()));
+        add(captureUrl);
+      }});
+      add(capturedBrowsersPanel);
     }}, BorderLayout.NORTH);
-    add(testExecutionPanel, BorderLayout.CENTER);
   }
 
-  public static void main(String[] args) {
-    JFrame frame = new JFrame();
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.add(new ToolPanel());
-    frame.pack();
-    frame.setVisible(true);
+  private class ServerStartAction extends AbstractAction {
+    ServerStartAction() {
+      super("", PluginResources.getServerStartIcon());
+      putValue(SHORT_DESCRIPTION, "Start a local server");
+    }
+    public void actionPerformed(ActionEvent e) {
+      CapturedBrowsers browsers = new CapturedBrowsers();
+      browsers.addObserver(capturedBrowsersPanel);
+      browsers.addObserver(statusBar);
+      serverStartupAction = new ServerStartupAction(serverPort, browsers, cache,
+          new DefaultURLTranslator(), new DefaultURLRewriter());
+      serverStartupAction.addObservers(Arrays.<Observer>asList(statusBar));
+      serverStartupAction.run();
+    }
   }
 
-  public ResponseStream getTestResultStream() {
-    return testExecutionPanel;
-  }
-
-  public void clearTestResults() {
-    testExecutionPanel.clearTestResults();
-    totalTests.set(0);
-  }
-
-  public void setTestsCount(int i) {
-    testExecutionPanel.setTestsCount(i);
-  }
-
-  public ResponseStreamFactory createResponseStreamFactory() {
-    return new ResponseStreamFactory() {
-      public ResponseStream getRunTestsActionResponseStream(String browserId) {
-        return getTestResultStream();
+  private class ServerStopAction extends AbstractAction {
+    ServerStopAction() {
+      super("", PluginResources.getServerStopIcon());
+      putValue(SHORT_DESCRIPTION, "Stop the local server");
+    }
+    public void actionPerformed(ActionEvent e) {
+      if (serverStartupAction != null) {
+        new ServerShutdownAction(serverStartupAction).run();
       }
-
-      public ResponseStream getDryRunActionResponseStream() {
-        return new ResponseStream() {
-          public void stream(Response response) {
-            DryRunInfo info = DryRunInfo.fromJson(response);
-            totalTests.addAndGet(info.getNumTests());
-          }
-
-          public void finish() {
-          }
-        };
-      }
-
-      public ResponseStream getEvalActionResponseStream() {
-        return null;
-      }
-
-      public ResponseStream getResetActionResponseStream() {
-        return null;
-      }
-    };
-  }
-
-  public void dryRunComplete() {
-    setTestsCount(totalTests.get());
-  }
-
-  public void setTestRunner(TestRunnerState testRunnerState) {
-    testExecutionPanel.setTestRunner(testRunnerState);
-  }
-
-  public void setResetRunner(ActionRunner resetRunner) {
-    testExecutionPanel.setResetRunner(resetRunner);
+    }
   }
 }

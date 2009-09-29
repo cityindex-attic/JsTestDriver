@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 public class JSTestDriverToolWindow implements ProjectComponent {
   private Project project;
 
-  public static final String TOOL_WINDOW_ID = "JSTestDriver";
+  public static final String TOOL_WINDOW_ID = "JSTestDriver Server";
 
   public JSTestDriverToolWindow(Project project) {
     this.project = project;

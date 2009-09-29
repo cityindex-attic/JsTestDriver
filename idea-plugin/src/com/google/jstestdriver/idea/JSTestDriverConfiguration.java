@@ -51,7 +51,8 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration<RunConfi
   private final ConfigurationFactory jsTestDriverConfigurationFactory;
 
   public String settingsFile;
-  private String serverPort;
+  private String serverAddress;
+  private ServerType serverType;
 
   public JSTestDriverConfiguration(Project project,
                                    ConfigurationFactory jsTestDriverConfigurationFactory,
@@ -66,7 +67,7 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration<RunConfi
 
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env)
       throws ExecutionException {
-    return new TestRunnerState(this, getProject(), env);
+    return new TestRunnerState(this, getProject(), env, getConfigurationModule());
   }
 
   @Override
@@ -98,7 +99,11 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration<RunConfi
     super.readExternal(element);
     readModule(element);
     settingsFile = JDOMExternalizer.readString(element, "settingsFile");
-    serverPort = JDOMExternalizer.readString(element, "serverPort");
+    serverAddress = JDOMExternalizer.readString(element, "serverAddress");
+    String serverTypeStr = JDOMExternalizer.readString(element, "serverType");
+    if (serverTypeStr != null) {
+      serverType = ServerType.valueOf(serverTypeStr);
+    }
   }
 
   @Override
@@ -106,7 +111,10 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration<RunConfi
     super.writeExternal(element);
     writeModule(element);
     JDOMExternalizer.write(element, "settingsFile", settingsFile);
-    JDOMExternalizer.write(element, "serverPort", serverPort);
+    JDOMExternalizer.write(element, "serverAddress", serverAddress);
+    if (serverType != null) {
+      JDOMExternalizer.write(element, "serverType", serverType.name());
+    }
   }
 
   public String getSettingsFile() {
@@ -117,11 +125,19 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration<RunConfi
     this.settingsFile = settingsFile;
   }
 
-  public String getServerPort() {
-    return serverPort;
+  public String getServerAddress() {
+    return serverAddress;
   }
 
-  public void setServerPort(String serverPort) {
-    this.serverPort = serverPort;
+  public void setServerAddress(String serverAddress) {
+    this.serverAddress = serverAddress;
+  }
+
+  public void setServerType(ServerType serverType) {
+    this.serverType = serverType;
+  }
+
+  public ServerType getServerType() {
+    return serverType;
   }
 }

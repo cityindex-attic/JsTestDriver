@@ -16,16 +16,12 @@
 package com.google.jstestdriver.idea.ui;
 
 import com.google.jstestdriver.idea.JSTestDriverConfiguration;
-
+import com.google.jstestdriver.idea.ServerType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
-
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 /**
  * Configuration GUI
@@ -37,18 +33,30 @@ public class ConfigurationForm extends SettingsEditor<JSTestDriverConfiguration>
   private JLabel settingsFileLabel;
   private JTextField settingsFile;
   private JLabel serverPortLabel;
-  private JTextField serverPort;
+  private JTextField serverAddress;
+  private JRadioButton atAddressRadioButton;
+  private JRadioButton runningInIDERadioButton;
 
   @Override
   protected void resetEditorFrom(JSTestDriverConfiguration config) {
     settingsFile.setText(config.getSettingsFile());
-    serverPort.setText(config.getServerPort());
+    serverAddress.setText(config.getServerAddress());
+    if (config.getServerType() == ServerType.EXTERNAL) {
+      atAddressRadioButton.setSelected(true);
+    } else {
+      runningInIDERadioButton.setSelected(true);
+    }
   }
 
   @Override
   protected void applyEditorTo(JSTestDriverConfiguration config) throws ConfigurationException {
     config.setSettingsFile(settingsFile.getText());
-    config.setServerPort(serverPort.getText());
+    config.setServerAddress(serverAddress.getText());
+    if (atAddressRadioButton.isSelected()) {
+      config.setServerType(ServerType.EXTERNAL);
+    } else {
+      config.setServerType(ServerType.INTERNAL);
+    }
   }
 
   @Override
@@ -63,6 +71,6 @@ public class ConfigurationForm extends SettingsEditor<JSTestDriverConfiguration>
 
   public ConfigurationForm() {
     settingsFileLabel.setLabelFor(settingsFile);
-    serverPortLabel.setLabelFor(serverPort);
+    serverPortLabel.setLabelFor(serverAddress);
   }
 }
