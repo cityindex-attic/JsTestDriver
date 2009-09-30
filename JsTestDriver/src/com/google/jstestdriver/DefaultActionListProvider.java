@@ -51,6 +51,7 @@ public class DefaultActionListProvider implements ActionListProvider {
   private final Provider<URLTranslator> urlTranslatorProvider;
   private final Provider<URLRewriter> urlRewriterProvider;
   private final FailureAccumulator accumulator;
+  private final Set<ActionListProcessor> processors;
 
   // TODO(corysmith): Refactor this. Currently in a temporary,
   //  make dependencies visible to aid refactoring state.
@@ -72,7 +73,8 @@ public class DefaultActionListProvider implements ActionListProvider {
                       Provider<JsTestDriverClient> clientProvider,
                       Provider<URLTranslator> urlTranslatorProvider,
                       Provider<URLRewriter> urlRewriterProvider,
-                      FailureAccumulator accumulator) {
+                      FailureAccumulator accumulator,
+                      Set<ActionListProcessor> processors) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.tests = tests;
@@ -90,6 +92,7 @@ public class DefaultActionListProvider implements ActionListProvider {
     this.urlTranslatorProvider = urlTranslatorProvider;
     this.urlRewriterProvider = urlRewriterProvider;
     this.accumulator = accumulator;
+    this.processors = processors;
   }
 
   @Provides
@@ -101,7 +104,8 @@ public class DefaultActionListProvider implements ActionListProvider {
                                   threadedActionProvider,
                                   clientProvider,
                                   urlTranslatorProvider,
-                                  urlRewriterProvider, accumulator);
+                                  urlRewriterProvider,
+                                  accumulator);
     builder.usingFiles(fileSet, preloadFiles)
            .addTests(tests)
            .addCommands(arguments)
@@ -110,6 +114,10 @@ public class DefaultActionListProvider implements ActionListProvider {
            .asDryRunFor(dryRunFor)
            .withLocalServerPort(port)
            .withRemoteServer(server);
-    return builder.build();
+    List<Action> actions = builder.build();
+    for (ActionListProcessor processor : processors) {
+      actions = processor.process(actions);
+    }
+    return actions;
   }
 }

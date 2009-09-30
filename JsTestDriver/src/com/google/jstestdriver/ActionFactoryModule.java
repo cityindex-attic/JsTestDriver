@@ -32,5 +32,6 @@ public class ActionFactoryModule extends AbstractModule {
         FileLoadPostProcessor.class).addBinding().to(InlineHtmlProcessor.class);
     Multibinder.newSetBinder(binder(), FileLoadPreProcessor.class);
     Multibinder.newSetBinder(binder(), ResponseStreamFactory.class);
+    Multibinder.newSetBinder(binder(), ActionListProcessor.class);
   }
 }

@@ -26,6 +26,7 @@ import com.google.jstestdriver.DefaultActionListProvider;
  * @author corysmith@google.com (Cory Smith)
  *
  */
+// TODO(corysmith): replace with a ActionListProcessor.
 public class CoverageActionListProvider implements ActionListProvider {
 
   private final DefaultActionListProvider defaultProvider;
