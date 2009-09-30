@@ -426,7 +426,7 @@
               targetfilename="${ant.project.name}-${release.id}.jar"
               username="${googlecode.username}" password="${googlecode.password}"
               projectname="js-test-driver" summary="Self-contained executable jar"/>
-    <gcupload labels="Featured, Type-Executable" filename="${bin.dir}/coverage.jar"
+    <gcupload labels="Featured, Type-Executable" filename="${bin.dir}/plugins/coverage.jar"
               targetfilename="coverage-${release.id}.jar"
               username="${googlecode.username}" password="${googlecode.password}"
               projectname="js-test-driver" summary="Coverage Plugin"/>
