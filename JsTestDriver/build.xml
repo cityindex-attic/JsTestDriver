@@ -413,9 +413,9 @@
     <input addproperty="googlecode.username" message="Your google account (don't include @gmail.com):"/>
     <input addproperty="googlecode.password" message="Your googlecode password (http://code.google.com/hosting/settings):"/>
 
-    <svn>
+    <svn username="${googlecode.username}" password="${googlecode.password}">
       <copy srcurl="${svn.trunkUrl}" desturl="${svn.tagsUrl}/${release.id}"
-            message="Performing release ${release.id}" username="${googlecode.username}" password="${googlecode.password}"  />
+            message="Performing release ${release.id}"  />
     </svn>
 
     <echo message="Uploading release to the GoogleCode site..."/>
