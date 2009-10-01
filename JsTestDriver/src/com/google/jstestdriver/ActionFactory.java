@@ -25,6 +25,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import com.google.jstestdriver.hooks.TestsPreProcessor;
 
 /**
  * Produces instances of Actions, so they can have observers, and other stuff.
@@ -37,10 +38,13 @@ public class ActionFactory {
 
   Map<Class<?>, List<Observer>> observers = new HashMap<Class<?>, List<Observer>>();
   private final Provider<JsTestDriverClient> clientProvider;
+  private final Set<TestsPreProcessor> testPreProcessors;
 
   @Inject
-  public ActionFactory(Provider<JsTestDriverClient> clientProvider) {
+  public ActionFactory(Provider<JsTestDriverClient> clientProvider,
+                       Set<TestsPreProcessor> testPreProcessors) {
     this.clientProvider = clientProvider;
+    this.testPreProcessors = testPreProcessors;
   }
 
 
@@ -79,8 +83,7 @@ public class ActionFactory {
 
   public RunTestsAction createRunTestsAction(ResponseStreamFactory responseStreamFactory,
       List<String> tests, boolean captureConsole) {
-    
-    return new RunTestsAction(responseStreamFactory, tests, captureConsole);
+    return new RunTestsAction(responseStreamFactory, tests, captureConsole, testPreProcessors);
   }
 
   public EvalAction createEvalAction(ResponseStreamFactory responseStreamFactory, String cmd) {

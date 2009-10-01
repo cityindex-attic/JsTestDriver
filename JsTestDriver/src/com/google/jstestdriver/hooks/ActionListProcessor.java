@@ -1,6 +1,8 @@
 // Copyright 2009 Google Inc. All Rights Reserved.
 
-package com.google.jstestdriver;
+package com.google.jstestdriver.hooks;
+
+import com.google.jstestdriver.Action;
 
 import java.util.List;
 

@@ -15,7 +15,10 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.hooks.TestsPreProcessor;
+
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -24,23 +27,31 @@ public class RunTestsAction extends ThreadedAction {
 
   private final List<String> tests;
   private final boolean captureConsole;
+  private final Set<TestsPreProcessor> preProcessors;
 
   public RunTestsAction(ResponseStreamFactory responseStreamFactory,
-      List<String> tests, boolean captureConsole) {
+      List<String> tests, boolean captureConsole, Set<TestsPreProcessor> preProcessors) {
     super(responseStreamFactory);
     this.tests = tests;
     this.captureConsole = captureConsole;
+    this.preProcessors = preProcessors;
   }
 
   @Override
   public void run(String id, JsTestDriverClient client) {
+    List<String> testsToRun = tests;
+    for (TestsPreProcessor preProcessor : preProcessors) {
+      // makes sure that the preProcessor doesn't modify the base test list
+      // by providing an Iterator
+      testsToRun = preProcessor.process(testsToRun.iterator());
+    }
     ResponseStream runTestsActionResponseStream =
           responseStreamFactory.getRunTestsActionResponseStream(id);
 
-    if (tests.size() == 1 && tests.get(0).equals("all")) {
+    if (testsToRun.size() == 1 && testsToRun.get(0).equals("all")) {
       client.runAllTests(id, runTestsActionResponseStream, captureConsole);
-    } else if (tests.size() > 0) {
-      client.runTests(id, runTestsActionResponseStream, tests, captureConsole);
+    } else if (testsToRun.size() > 0) {
+      client.runTests(id, runTestsActionResponseStream, testsToRun, captureConsole);
     }
   }
 
