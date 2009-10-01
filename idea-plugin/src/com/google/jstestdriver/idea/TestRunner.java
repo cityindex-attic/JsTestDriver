@@ -1,3 +1,18 @@
+/*
+ * Copyright 2009 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.google.jstestdriver.idea;
 
 import com.google.jstestdriver.ActionRunner;
@@ -15,24 +30,25 @@ import com.google.jstestdriver.TestResultGenerator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.PrintStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.Arrays;
 
 /**
- * Run JSTD and print messages using the TeamCity stuff, see
- * http://www.jetbrains.net/confluence/display/TCD4/Build+Script+Interaction+with+TeamCity
+ * Run JSTD in its own process, and stream messages to a server that lives in the IDEA process,
+ * which will update the UI with our results.
  * 
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class TestRunner {
-  // The scala plugin does this...
-  // http://svn.jetbrains.org/idea/BRANCHES/scala/diana/scala/Runners/src/org/jetbrains/plugins/scala/testingSupport/scalaTest/ScalaTestReporter.scala
-  public static final String MAGIC_IDEA_PREFIX = "\n##teamcity";
   private final String serverURL;
   private final String settingsFile;
-  private final PrintStream out;
+  private final ObjectOutputStream out;
 
-  public TestRunner(String serverURL, String settingsFile, PrintStream out) {
+  public TestRunner(String serverURL, String settingsFile, ObjectOutputStream out) {
     this.serverURL = serverURL;
     this.settingsFile = settingsFile;
     this.out = out;
@@ -46,6 +62,7 @@ public class TestRunner {
     final ActionRunner testRunner =
         makeActionBuilder(responseStreamFactory)
             .addAllTests().build();
+    //TODO(alexeagle): support client-side reset action
     final ActionRunner resetRunner =
         makeActionBuilder(responseStreamFactory)
             .resetBrowsers().build();
@@ -60,20 +77,10 @@ public class TestRunner {
         return new ResponseStream() {
           public void stream(Response response) {
             for (TestResult testResult : new TestResultGenerator().getTestResults(response)) {
-              String testName = escapeString(testResult.getTestCaseName() + "." + testResult.getTestName());
-              if (testResult.getResult() == TestResult.Result.passed) {
-                out.println(MAGIC_IDEA_PREFIX + "[testFinished name='" + escapeString(testName)
-                    + "' duration='" + testResult.getTime() +"']");
-              } else {
-                StringBuilder res = new StringBuilder(MAGIC_IDEA_PREFIX)
-                    .append("[testFailed ")
-                    .append("name='").append(testName)
-                    .append("' message='").append(escapeString(testResult.getParsedMessage()))
-                    .append("' details='")
-                    .append(escapeString(testResult.getLog() + "\n" + testResult.getStack()))
-                    .append("'")
-                    .append(" duration='").append(testResult.getTime()).append("']");
-                out.println(res.toString());
+              try {
+                out.writeObject(TestResultProtocolMessage.fromTestResult(testResult));
+              } catch (IOException e) {
+                throw new RuntimeException(e);
               }
             }
           }
@@ -89,8 +96,11 @@ public class TestRunner {
             BrowserInfo browser = response.getBrowser();
             DryRunInfo dryRunInfo = DryRunInfo.fromJson(response);
             for (String testName : dryRunInfo.getTestNames()) {
-              out.println(MAGIC_IDEA_PREFIX + "[testStarted name='" + escapeString(testName) +
-                  "' captureStandardOutput='true']");
+              try {
+                out.writeObject(TestResultProtocolMessage.fromDryRun(testName, browser));
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
             }
           }
 
@@ -121,17 +131,12 @@ public class TestRunner {
     }
   }
 
-  private String escapeString(String s) {
-    return s.replaceAll("[|]", "||")
-        .replaceAll("[']", "|'")
-        .replaceAll("[\n]", "|n")
-        .replaceAll("[\r]", "|r")
-        .replaceAll("]","|]");
-  }
-
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     String serverURL = args[0];
     String settingsFile = args[1];
-    new TestRunner(serverURL, settingsFile, System.out).execute();
+    int port = Integer.parseInt(args[2]);
+    Socket socket = new Socket();
+    socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), port));
+    new TestRunner(serverURL, settingsFile, new ObjectOutputStream(socket.getOutputStream())).execute();
   }
 }

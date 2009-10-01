@@ -24,16 +24,22 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.RunConfigurationModule;
+import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
-import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
+import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
+import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Key;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +56,9 @@ public class TestRunnerState extends JavaCommandLineState {
   private final JSTestDriverConfiguration jsTestDriverConfiguration;
   private final Project project;
   private final RunConfigurationModule configurationModule;
+
+  // TODO(alexeagle): needs to be configurable?
+  private static final int testResultPort = 10998;
 
   public TestRunnerState(JSTestDriverConfiguration jsTestDriverConfiguration, Project project,
                          ExecutionEnvironment env, RunConfigurationModule configurationModule) {
@@ -76,14 +85,35 @@ public class TestRunnerState extends JavaCommandLineState {
     File configFile = new File(jsTestDriverConfiguration.getSettingsFile());
     javaParameters.setWorkingDirectory(configFile.getParentFile());
     javaParameters.getProgramParametersList().add(jsTestDriverConfiguration.getSettingsFile());
+    javaParameters.getProgramParametersList().add(String.valueOf(testResultPort));
     return javaParameters;
   }
 
   @Nullable
   public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
-    ProcessHandler processHandler = startProcess();
-    ConsoleView consoleView = SMTestRunnerConnectionUtil.attachRunner(project, processHandler, this, jsTestDriverConfiguration, "JSTestDriver");
+    TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(jsTestDriverConfiguration);
+    final SMTestRunnerResultsForm testRunnerResultsForm =
+        new SMTestRunnerResultsForm(jsTestDriverConfiguration, testConsoleProperties,
+            getRunnerSettings(), getConfigurationSettings());
 
+    ProcessHandler processHandler = startProcess();
+    processHandler.addProcessListener(new ProcessListener() {
+      RemoteTestListener listener;
+      public void startNotified(ProcessEvent event) {
+        listener = new RemoteTestListener(testRunnerResultsForm);
+        listener.listen(testResultPort);
+      }
+
+      public void processTerminated(ProcessEvent event) {
+        listener.shutdown();
+      }
+
+      public void processWillTerminate(ProcessEvent event, boolean willBeDestroyed) {}
+      public void onTextAvailable(ProcessEvent event, Key outputType) {}
+    });
+
+    BaseTestsOutputConsoleView consoleView =
+        SMTestRunnerConnectionUtil.attachRunner(project, processHandler, testConsoleProperties, testRunnerResultsForm);
     return new DefaultExecutionResult(consoleView, processHandler, createActions(consoleView, processHandler));
   }
 }
