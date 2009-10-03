@@ -25,6 +25,7 @@ import com.google.jstestdriver.ServerStartupAction;
 import com.google.jstestdriver.idea.MessageBundle;
 import com.google.jstestdriver.idea.PluginResources;
 import com.google.jstestdriver.ui.CapturedBrowsersPanel;
+import com.google.jstestdriver.ui.InfoPanel;
 import com.google.jstestdriver.ui.StatusBar;
 import com.intellij.util.ui.UIUtil;
 
@@ -34,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Observer;
+import static java.text.MessageFormat.format;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -87,6 +89,8 @@ public class ToolPanel extends JPanel {
           new DefaultURLTranslator(), new DefaultURLRewriter());
       serverStartupAction.addObservers(Arrays.<Observer>asList(statusBar));
       serverStartupAction.run();
+      final String serverUrl = format("http://{0}:{1,number,###}/capture", InfoPanel.getHostName(), serverPort);
+      captureUrl.setText(serverUrl);
     }
   }
 
