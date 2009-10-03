@@ -17,7 +17,7 @@
 <idea-plugin>
   <name>JSTestDriver Plugin</name>
   <description>Execute JavaScript unit tests using JSTestDriver</description>
-  <version>0.1.1</version>
+  <version>1.1</version>
   <vendor>Google</vendor>
   <idea-version since-build="9886"/>
   <depends>com.intellij.modules.lang</depends>
