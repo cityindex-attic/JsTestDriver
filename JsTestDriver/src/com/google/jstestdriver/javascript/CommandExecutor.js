@@ -221,7 +221,7 @@ jstestdriver.CommandExecutor.prototype.onFileLoadedRunnerMode = function(status)
   }
   var testRunner = parent.G_testRunner;
 
-  testRunner.setNumFilesLoaded(status.successFiles.length);
+  testRunner.setNumFilesLoaded(status.loadedFiles.length);
   this.__sendRequest(this.__url, null, this.__boundExecuteCommand);
 };
 
