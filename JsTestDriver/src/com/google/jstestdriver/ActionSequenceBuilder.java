@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 import com.google.inject.Provider;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class ActionSequenceBuilder {
 
   private List<String> browsers = new LinkedList<String>();
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-  private HashMap<String, FileInfo> files = new HashMap<String, FileInfo>();
+  private HashMap<String, FileInfo> files = new LinkedHashMap<String, FileInfo>();
   private Set<FileInfo> fileSet;
   private int localServerPort = -1;
   private boolean preloadFiles = false;
