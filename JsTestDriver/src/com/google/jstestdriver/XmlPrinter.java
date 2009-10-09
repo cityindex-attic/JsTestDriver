@@ -64,11 +64,54 @@ public class XmlPrinter implements TestResultPrinter {
     return max;
   }
 
+  private int getTotalRan() {
+    int totalRan = 0;
+
+    for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
+      RunData data = entry.getValue();
+
+      totalRan += data.getPassed() + data.getFailed() + data.getErrors();
+    }
+    return totalRan;
+  }
+
+  private int getTotalPassed() {
+    int totalPassed = 0;
+
+    for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
+      RunData data = entry.getValue();
+
+      totalPassed += data.getPassed();
+    }
+    return totalPassed;    
+  }
+
+  private int getTotalFailed() {
+    int totalFailed = 0;
+
+    for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
+      RunData data = entry.getValue();
+
+      totalFailed += data.getFailed();
+    }
+    return totalFailed;    
+  }
+
+  private int getTotalErrors() {
+    int totalErrors = 0;
+
+    for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
+      RunData data = entry.getValue();
+
+      totalErrors += data.getErrors();
+    }
+    return totalErrors;
+  }
+
   public void close() {
     if (browsers.decrementAndGet() == 0) {
       out.println(String.format("Total %d tests (Passed: %d; Fails: %d; Errors: %d) (%.2f ms)",
-          (totalPasses.get() + totalFails.get() + totalErrors.get()), totalPasses.get(),
-          totalFails.get(), totalErrors.get(), findMaxTime()));
+          getTotalRan(), getTotalPassed(), getTotalFailed(), getTotalErrors(), findMaxTime()));
       StringBuilder output = new StringBuilder();
 
       for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
