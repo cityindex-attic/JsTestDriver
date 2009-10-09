@@ -15,251 +15,217 @@
  */
 package com.google.jstestdriver.coverage;
 
+import java.util.Iterator;
+import java.util.List;
+
 import junit.framework.TestCase;
 
-import org.antlr.runtime.RecognitionException;
+import com.google.common.collect.Lists;
 
 public class CodeCoverageDecoratorTest extends TestCase {
 
   public void testSourceFileLineCoverageDecoration() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',2,[1,2]); var a = 1;\n" +
-        "LCOV_HASH[2]++; var b = 2;\n",
-
-        "var a = 1;\n" +
-        "var b = 2;\n"
-    );
+    new CoverageAsserter()
+      .instrument("LCOV_HASH=LCOV.initNoop('FILE',0,[1, 2]);LCOV_HASH[1]++;").code(" var a = 1;")
+      .instrument("LCOV_HASH[2]++;").code(" var b = 2;")
+      .assertCoverage();
   }
-  
-  public void testSourceFileLineCoverageDecorationOverTenLines() throws Exception {
-    int totalLines = 10;
-    String line = "a = 1;\n";
-    StringBuilder input = new StringBuilder(line);
-    StringBuilder expect = new StringBuilder("LCOV_HASH=LCOV.init('FILE',");
-    expect.append(totalLines).append(",[");
-    String sep = "";
-    for (int i = 0; i < totalLines; i++) {
-      expect.append(sep).append(i + 1);
-      sep = ",";
-    }
-    expect.append("]); ").append(line);
-    for (int i = 2; i <= totalLines; i++) {
-      String indent = i < 10 ? " " : "";
-      expect.append("LCOV_HASH[").append(i).append(indent).append("]++; ").append(line);
-      input.append(line);
-    }
 
-    assertCodeCoverageDecorator(
-        expect.toString(),
-        input.toString()
-    );
-  }
 
   public void testDoNotDecorateStatementsAcrossMultipleLines() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',5,[1,2,5]); var a = 0;\n" +
-        "LCOV_HASH[2]++; a = true \n" +
-        "                  ? 1 \n" +
-        "                  : 2;\n" +
-        "LCOV_HASH[5]++; a = 3;\n",
-
-        "var a = 0;\n" +
-        "a = true \n" +
-        "  ? 1 \n" +
-        "  : 2;\n" +
-        "a = 3;\n"
-    );
+    new CoverageAsserter()
+       .instrument("LCOV_HASH=LCOV.initNoop('FILE',0,[1, 2, 5]);LCOV_HASH[1]++;").code("var a = 0;")
+       .instrument("LCOV_HASH[2]++;").code("a = true")
+       .noInstrument().code("? 1")
+       .noInstrument().code(": 2;")
+       .instrument("LCOV_HASH[5]++;").code(" a = 3;")
+       .assertCoverage();
   }
 
   public void testDecorateIfStatement() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',7,[1,2,3,5,7]); var a = 0;\n" +
-        "LCOV_HASH[2]++; if (a) {\n" +
-        "LCOV_HASH[3]++;   a = 1;\n" +
-        "                } else {\n" +
-        "LCOV_HASH[5]++;   a = 2;\n" +
-        "                }\n" +
-        "LCOV_HASH[7]++; a = 3;\n",
-        
-        "var a = 0;\n" +
-        "if (a) {\n" +
-        "  a = 1;\n" +
-        "} else {\n" +
-        "  a = 2;\n" +
-        "}\n" +
-        "a = 3;\n"
-    );
+    new CoverageAsserter()
+        .instrument("LCOV_HASH=LCOV.initNoop('FILE',0,[1, 2, 3, 5, 7]);LCOV_HASH[1]++;")
+                                      .code("var a = 0;")
+        .instrument("LCOV_HASH[2]++;").code("if (a) {")
+        .instrument("LCOV_HASH[3]++;").code("  a = 1;")
+        .noInstrument().code(               "}else{")
+        .instrument("LCOV_HASH[5]++;").code("  a = 2;")
+        .noInstrument().code(               "}")
+        .instrument("LCOV_HASH[7]++;").code("a = 3;")
+        .assertCoverage();
+      
   }
   
   public void testDecorateNakedIfWithMultilineStatement() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',5,[1,2,3,5]); var a = 0;\n" +
-        "LCOV_HASH[2]++; if (a)\n" +
-        "{LCOV_HASH[3]++;   hello(\n" +
-        "                        6);}\n" +
-        "LCOV_HASH[5]++; a = 3;\n",
-
-        "var a = 0;\n" +
-        "if (a)\n" +
-        "  hello(\n" +
-        "        6);\n" +
-        "a = 3;\n"
-    );
+    new CoverageAsserter()
+         .instrument("LCOV_HASH=LCOV.initNoop('FILE',0,[1, 2, 3, 5]);LCOV_HASH[1]++;")
+                                        .code("var a = 0;")
+         .instrument("LCOV_HASH[2]++;") .code("if (a)")
+         .instrument("{LCOV_HASH[3]++;").code("hello(")
+         .noInstrument()                .code("6);", "6);}")
+         .instrument("LCOV_HASH[5]++;") .code("a = 3;")
+         .assertCoverage();
   }
   
   public void testDecorateFunctionStatement() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',5,[1,2,3,5]); var a = 0;\n" +
-        "LCOV_HASH[2]++; function foo (a) {\n" +
-        "LCOV_HASH[3]++;   a = 1;\n" +
-        "                }\n" +
-        "LCOV_HASH[5]++; a = 3;\n",
-        
-        "var a = 0;\n" +
-        "function foo (a) {\n" +
-        "  a = 1;\n" +
-        "}\n" +
-        "a = 3;\n"
-    );
+    new CoverageAsserter()
+      .instrument("LCOV_HASH=LCOV.initNoop('FILE',0,[1, 2, 3, 5]);LCOV_HASH[1]++;")
+                                    .code(" var a = 0;")
+      .instrument("LCOV_HASH[2]++;").code("function foo (a) {")
+      .instrument("LCOV_HASH[3]++;").code("  a = 1;")
+      .noInstrument()               .code("}")
+      .instrument("LCOV_HASH[5]++;").code(" a = 3;")
+      .assertCoverage();
   }
   
   public void testDecorateWhileStatement() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',5,[1,2,3,5]); var a = 0;\n" +
-        "LCOV_HASH[2]++; while (a) {\n" +
-        "LCOV_HASH[3]++;   a = 1;\n" +
-        "                }\n" +
-        "LCOV_HASH[5]++; a = 3;\n",
-        
-        "var a = 0;\n" +
-        "while (a) {\n" +
-        "  a = 1;\n" +
-        "}\n" +
-        "a = 3;\n"
-    );
+    new CoverageAsserter()
+        .instrument("LCOV_HASH=LCOV.initNoop('FILE',0,[1, 2, 3, 5]);LCOV_HASH[1]++;")
+        .code(" var a = 0;")
+        .instrument("LCOV_HASH[2]++;").code("while (a) {")
+        .instrument("LCOV_HASH[3]++;").code("  a = 1;")
+        .noInstrument()               .code("}")
+        .instrument("LCOV_HASH[5]++;").code("a = 3;")
+        .assertCoverage();
   }
   
   public void testDecorateForStatement() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',7,[1,2,3,5,7]); var a = 0;\n" +
-        "LCOV_HASH[2]++; for (\n" +
-        "LCOV_HASH[3]++;      var a = 1;\n" +
-        "                     a < 20; a++) {\n" +
-        "LCOV_HASH[5]++;   a = 1;\n" +
-        "                }\n" +
-        "LCOV_HASH[7]++; a = 3;\n",
-        
-        "var a = 0;\n" +
-        "for (\n" +
-        "     var a = 1;\n" +
-        "     a < 20; a++) {\n" +
-        "  a = 1;\n" +
-        "}\n" +
-        "a = 3;\n"
-    );
+    new CoverageAsserter()
+        .instrument("LCOV_HASH=LCOV.initNoop('FILE',0,[1, 2, 5, 7]);LCOV_HASH[1]++;")
+                                      .code("var a = 0;")
+        .instrument("LCOV_HASH[2]++;").code("for (")
+        .noInstrument()               .code("     var a = 1;")
+        .noInstrument()               .code("     a < 20; a++){")
+        .instrument("LCOV_HASH[5]++;").code("  a = 1;")
+        .noInstrument()               .code("}")
+        .instrument("LCOV_HASH[7]++;").code("a = 3;")
+        .assertCoverage();
+  }
+  
+  public void testDecorateNakedForStatement() throws Exception {
+    new CoverageAsserter()
+    .instrument("LCOV_HASH=LCOV.initNoop('FILE',0,[1, 2, 5, 6]);LCOV_HASH[1]++;")
+    .code("var a = 0;")
+    .instrument("LCOV_HASH[2]++;").code("for (")
+    .noInstrument()               .code("     var a = 1;")
+    .noInstrument()               .code("     a < 20; a++)")
+    .instrument("{LCOV_HASH[5]++;").code("a = 1;", "a = 1;}")
+    .instrument("LCOV_HASH[6]++;").code("a = 3;")
+    .assertCoverage();
   }
 
   public void testDecorateNakedIfStatement() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',6,[1,2,3,5,6]); var a = 0;\n" +
-        "LCOV_HASH[2]++; if (a)\n" +
-        "{LCOV_HASH[3]++;   a = 1;}\n" +
-        "                else\n" +
-        "{LCOV_HASH[5]++;   a = 2;}\n" +
-        "LCOV_HASH[6]++; a = 3;\n",
-
-        "var a = 0;\n" +
-        "if (a)\n" +
-        "  a = 1;\n" +
-        "else\n" +
-        "  a = 2;\n" +
-        "a = 3;\n"
-    );
+    new CoverageAsserter()
+         .instrument("LCOV_HASH=LCOV.initNoop('FILE',0,[1, 2, 3, 5, 6]);LCOV_HASH[1]++;")
+                                        .code("var a = 0;")
+         .instrument("LCOV_HASH[2]++;") .code("if (a)")
+         .instrument("{LCOV_HASH[3]++;").code("  a = 1;",  "  a = 1;}")
+         .noInstrument()                .code("else")
+         .instrument("{LCOV_HASH[5]++;").code("  a = 2;", "  a = 2;}")
+         .instrument("LCOV_HASH[6]++;") .code("a = 3;")
+         .assertCoverage();
   }
   
   public void testDecorateNakedNestedIfStatements() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',5,[1,2,3,4,5]); var a = 0;\n" +
-        "LCOV_HASH[2]++; if (a)\n" +
-        "{LCOV_HASH[3]++;   if (a)\n" +
-        "{LCOV_HASH[4]++;     a = 1;}}\n" +
-        "LCOV_HASH[5]++; a = 3;\n",
-   
-        "var a = 0;\n" +
-        "if (a)\n" +
-        "  if (a)\n" +
-        "    a = 1;\n" +
-        "a = 3;\n"
-    );
-  }
-  
-  public void testDecorateNakedNestedIfElseStatements() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',7,[1,2,3,4,6,7]); var a = 0;\n" +
-        "LCOV_HASH[2]++; if (a)\n" +
-        "{LCOV_HASH[3]++;   if (a)\n" +
-        "{LCOV_HASH[4]++;     a = 1;}\n" +
-        "                else\n" +
-        "{LCOV_HASH[6]++;   a = 2;}}\n" +
-        "LCOV_HASH[7]++; a = 3;\n",
-        
-        "var a = 0;\n" +
-        "if (a)\n" +
-        "  if (a)\n" +
-        "    a = 1;\n" +
-        "else\n" +
-        "  a = 2;\n" +
-        "a = 3;\n"
-    );
-  }
-  
-  public void testDecorateNakedNestedIfElseStatementsWithMultiline() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.init('FILE',8,[1,2,3,4,7,8]); var a = 0;\n" +
-        "LCOV_HASH[2]++; if (a)\n" +
-        "{LCOV_HASH[3]++;   if (a)\n" +
-        "{LCOV_HASH[4]++;     foo(\n" +
-        "                        34);}\n" +
-        "                else\n" +
-        "{LCOV_HASH[7]++;   a = 2;}}\n" +
-        "LCOV_HASH[8]++; a = 3;\n",
-        
-        "var a = 0;\n" +
-        "if (a)\n" +
-        "  if (a)\n" +
-        "    foo(\n" +
-        "        34);\n" +
-        "else\n" +
-        "  a = 2;\n" +
-        "a = 3;\n"
-    );
-  }
-  
-  public void testDecorateCommentStartingStatement() throws Exception {
-    assertCodeCoverageDecorator(
-        "LCOV_HASH=LCOV.initNoop('FILE',6,[2,3,5,6]); // foo bar\n" +
-        "LCOV_HASH[2]++; if (a)\n" +
-        "{LCOV_HASH[3]++;   a = 1;}\n" +
-        "                else\n" +
-        "{LCOV_HASH[5]++;   a = 2;}\n" +
-        "LCOV_HASH[6]++; a = 3;\n",
-        
-        "// foo bar\n" +
-        "if (a)\n" +
-        "  a = 1;\n" +
-        "else\n" +
-        "  a = 2;\n" +
-        "a = 3;\n"
-    );
+    new CoverageAsserter()
+    .instrument("LCOV_HASH=LCOV.initNoop('FILE',0,[1, 2, 3, 4, 5]);LCOV_HASH[1]++;")
+                                   .code("var a = 0;")
+    .instrument("LCOV_HASH[2]++;") .code("if (a)")
+    .instrument("{LCOV_HASH[3]++;").code("  if(a)")
+    .instrument("{LCOV_HASH[4]++;").code("      a = 2;", "      a = 2;}}")
+    .instrument("LCOV_HASH[5]++;") .code("a = 3;")
+    .assertCoverage();
   }
 
-  private void assertCodeCoverageDecorator(String expect, String sourceCode) throws RecognitionException {
+  private static class CoverageAsserter {
+    List<Instrumentation> instruments = Lists.newLinkedList();
+    List<CodeLine> source = Lists.newLinkedList();
     String filePath = "filename.js";
-    String hash = "ABCD";
-    CodeCoverageDecorator decorator =
-        new CodeCoverageDecorator();
-    String actual = decorator.decorate(new Code(filePath, hash, sourceCode));
-    expect = expect.replaceAll("LCOV_HASH", "LCOV_" + hash).replaceAll("FILE", filePath);
-    assertEquals(expect, actual);
+    String hash = Integer.toString(Math.abs(filePath.hashCode()), Character.MAX_RADIX);
+
+    public CoverageAsserter instrument(String instrument) {
+      instruments.add(new LcovInstrumentation(instrument.replaceAll("LCOV_HASH",
+        "LCOV_" + hash).replaceAll("FILE", filePath)));
+      return this;
+    }
+    public CoverageAsserter noInstrument() {
+      instruments.add(new NoInstrumentation());
+      return this;
+    }
+    public CoverageAsserter code(String code) {
+      source.add(new CodeLine(code));
+      return this;
+    }
+    public CoverageAsserter code(String original, String expected) {
+      source.add(new CodeLine(original, expected));
+      return this;
+    }
+    
+    public void assertCoverage() {
+      StringBuilder sourceCode = new StringBuilder();
+      for (CodeLine line : source) {
+        sourceCode.append(line.getSource());
+      }
+      
+      CodeCoverageDecorator decorator = new CodeCoverageDecorator();
+      Iterator<Instrumentation> instrumentsIterator = instruments.iterator();
+      Iterator<CodeLine> sourceIterator = source.iterator();
+      String instrumented = decorator.decorate(
+          new Code(filePath, sourceCode.toString()));
+      //System.out.println(instrumented);
+      for(String actual : instrumented.split("\n")) {
+        instrumentsIterator.next().assertLine(actual);
+        sourceIterator.next().assertLine(actual);
+      }
+    }
+  }
+  
+  private static class CodeLine {
+    private final String original;
+    private final String expected;
+
+    public CodeLine(String code) {
+      expected = code;
+      this.original = code;
+    }
+
+    public CodeLine(String original, String expected) {
+      this.original = original;
+      this.expected = expected;
+    }
+
+    public void assertLine(String actual) {
+      assertTrue("[" + actual + "] does not contain [" + expected +"]",
+        actual.contains(expected.trim()));
+    }
+
+    public String getSource() {
+      return original + "\n";
+    }
+  }
+
+  private static interface Instrumentation {
+    public void assertLine(String actual);
+  }
+
+  private static class LcovInstrumentation implements Instrumentation{
+
+    private final String instrument;
+
+    public LcovInstrumentation(String instrument) {
+      this.instrument = instrument;
+    }
+
+    public void assertLine(String actual) {
+      assertTrue("["+actual + "] does not contain [" + instrument + "]",
+        actual.contains(instrument));
+    }
+  }
+
+  private static class NoInstrumentation implements Instrumentation {
+
+      public void assertLine(String actual) {
+        assertFalse(actual + " does contain LCOV_", actual.contains("LCOV_"));
+      }
   }
 }

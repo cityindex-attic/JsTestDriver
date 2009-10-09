@@ -17,33 +17,30 @@ package com.google.jstestdriver.coverage;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.jstestdriver.Action;
-import com.google.jstestdriver.ActionListProvider;
-import com.google.jstestdriver.DefaultActionListProvider;
+import com.google.jstestdriver.hooks.ActionListProcessor;
 
 /**
  * Adds the coverage reporting action to the default list of actions.
  * @author corysmith@google.com (Cory Smith)
  *
  */
-public class CoverageActionDecorator implements ActionListProvider {
+public class CoverageActionDecorator implements ActionListProcessor {
   
-  private final DefaultActionListProvider defaultProvider;
   private final CoverageWriter writer;
   private final CoverageAccumulator accumulator;
 
   @Inject
-  public CoverageActionDecorator(DefaultActionListProvider defaultProvider,
-      CoverageAccumulator accumulator, CoverageWriter writer) {
-    this.defaultProvider = defaultProvider;
+  public CoverageActionDecorator(CoverageAccumulator accumulator, CoverageWriter writer) {
     this.accumulator = accumulator;
     this.writer = writer;
   }
-  
-  public List<Action> get() {
-    List<Action> actions = defaultProvider.get();
-    actions.add(new CoverageReporterAction(accumulator, writer));
-    return actions;
+
+  public List<Action> process(List<Action> actions) {
+    List<Action> processed = Lists.newLinkedList(actions);
+    processed.add(new CoverageReporterAction(accumulator, writer));
+    return processed;
   }
 }

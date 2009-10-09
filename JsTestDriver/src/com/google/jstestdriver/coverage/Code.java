@@ -27,22 +27,15 @@ public class Code {
 
   private final String filePath;
 
-  private final String fileHash;
-
   private final String sourceCode;
 
-  public Code(String filePath, String fileHash, String sourceCode) {
+  public Code(String filePath,String sourceCode) {
     this.filePath = filePath;
-    this.fileHash = fileHash;
     this.sourceCode = sourceCode;
   }
 
   public String getSourceCode() {
     return sourceCode;
-  }
-
-  public String getFileHash() {
-    return fileHash;
   }
 
   public String getFilePath() {
@@ -60,15 +53,14 @@ public class Code {
   
   @Override
   public String toString() {
-    return String.format("%s(%s, %s, %s)",
-        getClass().getSimpleName(), filePath, fileHash, sourceCode);
+    return String.format("%s(%s, %s)",
+        getClass().getSimpleName(), filePath, sourceCode);
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((fileHash == null) ? 0 : fileHash.hashCode());
     result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
     result = prime * result
       + ((sourceCode == null) ? 0 : sourceCode.hashCode());
@@ -84,11 +76,6 @@ public class Code {
     if (getClass() != obj.getClass())
       return false;
     Code other = (Code) obj;
-    if (fileHash == null) {
-      if (other.fileHash != null)
-        return false;
-    } else if (!fileHash.equals(other.fileHash))
-      return false;
     if (filePath == null) {
       if (other.filePath != null)
         return false;

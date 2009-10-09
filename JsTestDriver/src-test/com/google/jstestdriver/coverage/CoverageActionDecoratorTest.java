@@ -15,19 +15,24 @@
  */
 package com.google.jstestdriver.coverage;
 
+import java.util.List;
+
 import junit.framework.TestCase;
+
+import com.google.common.collect.Lists;
+import com.google.jstestdriver.Action;
+import com.google.jstestdriver.ServerStartupAction;
 
 /**
  * @author corysmith@google.com (Cory Smith)
- *
  */
-public class FileNameHasherTest extends TestCase {
-  public void testHash() throws Exception {
-    String hash = new FileNameHasher().hash("/zum/golly/golly\\zum.js");
-    assertFalse(hash.contains("/"));
-    assertFalse(hash.contains("."));
-    assertFalse(hash.contains("-"));
-    assertFalse(hash.contains("\\"));
-    assertFalse(hash.length() > 10);
+public class CoverageActionDecoratorTest extends TestCase {
+  public void testDecorate() throws Exception {
+    List<Action> actions =
+      Lists.<Action>newArrayList(new ServerStartupAction(0, null, null, null, null));
+    List<Action> actual = new CoverageActionDecorator(null, null).process(actions);
+    assertEquals(2, actual.size());
+    assertTrue(actual.get(0) instanceof ServerStartupAction);
+    assertTrue(actual.get(1) instanceof CoverageReporterAction);
   }
 }

@@ -34,7 +34,7 @@ public class CodeTest extends TestCase {
     for (CodeLine codeLine : expected) {
       sourceCode.append(codeLine.getSource()).append("\n");
     }
-    Code code = new Code("foo.js", "hash", sourceCode.toString());
+    Code code = new Code("foo.js", sourceCode.toString());
     Iterator<CodeLine> expIterator = expected.iterator();
     Iterator<CodeLine> actIterator = code.getLines().iterator();
     while(expIterator.hasNext() && actIterator.hasNext()) {

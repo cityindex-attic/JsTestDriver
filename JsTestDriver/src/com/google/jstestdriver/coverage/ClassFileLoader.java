@@ -18,6 +18,8 @@ package com.google.jstestdriver.coverage;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * Loads files off the classpath.
@@ -39,5 +41,11 @@ public class ClassFileLoader {
       throw new RuntimeException(e);
     }
     return sb.toString();
+  }
+  
+  public Reader loadToReader(String path) {
+    InputStream resourceStream =
+      new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(path));
+    return new InputStreamReader(resourceStream);
   }
 }

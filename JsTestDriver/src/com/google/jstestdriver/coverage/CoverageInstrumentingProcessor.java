@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver.coverage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
@@ -26,21 +29,21 @@ import com.google.jstestdriver.hooks.FileLoadPostProcessor;
  * 
  */
 public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(CoverageInstrumentingProcessor.class);
   private final CodeCoverageDecorator decorator;
-  private final FileNameHasher hasher;
 
   @Inject
-  public CoverageInstrumentingProcessor(CodeCoverageDecorator decorator, FileNameHasher hasher) {
+  public CoverageInstrumentingProcessor(CodeCoverageDecorator decorator) {
     this.decorator = decorator;
-    this.hasher = hasher;
   }
 
   public FileInfo process(FileInfo file) {
     if (file.getFileName().contains("LCOV.js") || !file.canLoad() || file.isServeOnly()) {
       return file;
     }
+    LOGGER.info("Generating coverage for " + file.getFileName());
     String instrumented = decorator.decorate(new Code(file.getFileName(),
-                                                      hasher.hash(file.getFileName()),
                                                       file.getData()));
     return new FileInfo(file.getFileName(),
                         file.getTimestamp(),

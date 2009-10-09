@@ -28,12 +28,10 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
   public void testInstrument() throws Exception {
     FileInfo fileInfo = new FileInfo("foo.js", 0, true, false, "var a = 1;");
     String expected = "decorated";
-    FileNameHasher hasher = new FileNameHasher();
     Code code = new Code(fileInfo.getFileName(),
-                         hasher.hash(fileInfo.getFileName()),
                          fileInfo.getData());
     FileInfo decorated =
-      new CoverageInstrumentingProcessor(new DecoratorStub(expected, code), hasher).process(fileInfo);
+      new CoverageInstrumentingProcessor(new DecoratorStub(expected, code)).process(fileInfo);
     assertEquals(expected, decorated.getData());
     assertEquals(fileInfo.getFileName(), decorated.getFileName());
     assertEquals(fileInfo.getTimestamp(), decorated.getTimestamp());
@@ -44,7 +42,7 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
     FileInfo lcov = new FileInfo("LCOV.js", 0, true, false, "var a = 1;");
     FileInfo serveOnly = new FileInfo("someData.dat", 0, true, true, "scally{wag}");
     FileInfo remote = new FileInfo("https://foobar", 0, true, false, null);
-    CoverageInstrumentingProcessor processor = new CoverageInstrumentingProcessor(null, null);
+    CoverageInstrumentingProcessor processor = new CoverageInstrumentingProcessor(null);
     assertSame(lcov, processor.process(lcov));
     assertSame(serveOnly, processor.process(serveOnly));
     assertSame(remote, processor.process(remote));

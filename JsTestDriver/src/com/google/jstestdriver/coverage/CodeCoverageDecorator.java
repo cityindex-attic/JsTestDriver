@@ -16,14 +16,42 @@
 
 package com.google.jstestdriver.coverage;
 
+import java.io.CharArrayReader;
+
+import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.TokenRewriteStream;
+import org.antlr.stringtemplate.StringTemplateGroup;
+
+import com.google.jstestdriver.coverage.es3.ES3InstrumentLexer;
+import com.google.jstestdriver.coverage.es3.ES3InstrumentParser;
 
 /**
+ * Decorates the source code with coverage instrumentation.
  * @author corysmith@google.com (Cory Smith)
  * @author misko@google.com (Misko Hevery)
  */
 public class CodeCoverageDecorator {
+  private static final char[] TEMPLATE =
+    ("group TestRewrite;\n" +
+     "init_instrument(stmt, hash, name, lines) ::= \"LCOV_<hash>=" +
+        "LCOV.initNoop('<name>',0,<lines>);<stmt>\"" +
+     "instrument(stmt, hash, ln) ::= \"LCOV_<hash>[<ln>]++; <stmt>\"" +
+     "pass(stmt) ::= \"<stmt>\"").toCharArray();
+
   public String decorate(Code code) {
-    Statements statements = new StatementsBuilder(code).build();
-    return statements.toSource(code);
+    StringTemplateGroup templates = new StringTemplateGroup(new CharArrayReader(TEMPLATE));
+    ANTLRStringStream stream = new ANTLRStringStream(code.getSourceCode());
+    stream.name = code.getFilePath();
+    ES3InstrumentLexer lexer = new ES3InstrumentLexer(stream);
+    TokenRewriteStream tokens = new TokenRewriteStream(lexer);
+    ES3InstrumentParser parser = new ES3InstrumentParser(tokens);
+    parser.setTemplateLib(templates);
+    try {
+      parser.program();
+    } catch (RecognitionException e) {
+      throw new RuntimeException(e);
+    }
+    return tokens.toString();
   }
 }

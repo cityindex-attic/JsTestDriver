@@ -145,8 +145,7 @@
       <arg value="-make"/>
       <arg value="-o"/>
       <arg value="../src-generated"/>
-      <arg value="com/google/jstestdriver/coverage/es3/ES3.g"/>
-      <arg value="com/google/jstestdriver/coverage/es3/ES3Walker.g"/>
+      <arg value="com/google/jstestdriver/coverage/es3/ES3Instrument.g"/>
     </java>
   </target>
 

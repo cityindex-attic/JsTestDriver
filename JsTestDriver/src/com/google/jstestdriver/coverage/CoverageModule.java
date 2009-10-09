@@ -25,8 +25,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
-import com.google.jstestdriver.ActionListProvider;
 import com.google.jstestdriver.ResponseStreamFactory;
+import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 
@@ -39,13 +39,14 @@ public class CoverageModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    bind(ActionListProvider.class).to(CoverageActionDecorator.class);
     Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class)
         .addBinding().to(CoverageInstrumentingProcessor.class);
     Multibinder.newSetBinder(binder(), FileLoadPreProcessor.class)
         .addBinding().to(CoverageJsAdder.class);
     Multibinder.newSetBinder(binder(), ResponseStreamFactory.class)
         .addBinding().to(CoverageResponseStreamFactory.class);
+    Multibinder.newSetBinder(binder(), ActionListProcessor.class)
+        .addBinding().to(CoverageActionDecorator.class);
   }
   
   // TODO(corysmith): figure out if there is a better way for plugins to configure themselves.

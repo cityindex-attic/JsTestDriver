@@ -62,7 +62,9 @@ var coverage = (function() {
    * @return {Array.<Number>} An array for accumulating coverage information.
    */
   Reporter.prototype.initNoop = function(fileName, totalLines, executableLines){
-    var coverage = new  FileCoverageReport(fileName, executableLines.length, totalLines);
+    var coverage = new  FileCoverageReport(fileName,
+                                           executableLines.length,
+                                           executableLines[executableLines.length-1] + 1);
     for (var i = 0; i < executableLines.length; i++) {
       coverage[executableLines[i]] = 0;
     }

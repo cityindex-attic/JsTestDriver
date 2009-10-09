@@ -18,7 +18,7 @@ var CoverageTest = TestCase('CoverageTest');
 
 CoverageTest.prototype.testInit = function() {
   var executableLines = [1,2,5];
-  var totalLines = 20;
+  var totalLines = 6;
   var fileName = 'FILE';
   var fileCoverage = new coverage.Reporter().init(fileName, totalLines, executableLines);
   assertEquals('The length of fileCoverage is invalid.',totalLines, fileCoverage.length);
@@ -30,7 +30,7 @@ CoverageTest.prototype.testInit = function() {
 
 CoverageTest.prototype.testInitNoop = function() {
   var executableLines = [1,2,5];
-  var totalLines = 20;
+  var totalLines = 6;
   var fileName = 'FILE';
   var fileCoverage = new coverage.Reporter().initNoop(fileName, totalLines, executableLines);
   assertEquals('The length of fileCoverage is invalid.',totalLines, fileCoverage.length);
@@ -42,7 +42,7 @@ CoverageTest.prototype.testInitNoop = function() {
 CoverageTest.prototype.testToCoveredLines = function() {
   var executableLines = [1,2,5];
   var executed = [1, 0, 0];
-  var totalLines = 20;
+  var totalLines = 6;
   var fileName = 'FILE';
   var fileCoverage = new coverage.Reporter().init(fileName, totalLines, executableLines);
   
