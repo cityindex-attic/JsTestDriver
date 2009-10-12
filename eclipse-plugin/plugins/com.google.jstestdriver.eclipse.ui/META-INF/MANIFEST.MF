@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JS Test Driver UI
 Bundle-SymbolicName: com.google.jstestdriver.eclipse.ui;singleton:=true
-Bundle-Version: 1.0.6
+Bundle-Version: 1.0.7
 Bundle-Activator: com.google.jstestdriver.eclipse.ui.Activator
 Bundle-Vendor: GOOGLE
 Require-Bundle: org.eclipse.ui,

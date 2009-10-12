@@ -22,7 +22,9 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -48,6 +50,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 import com.google.jstestdriver.eclipse.core.Server;
 import com.google.jstestdriver.eclipse.internal.core.Logger;
 import com.google.jstestdriver.eclipse.ui.Activator;
+import com.google.jstestdriver.eclipse.ui.LaunchConfigCreator;
 import com.google.jstestdriver.eclipse.ui.views.JsTestDriverView;
 import com.google.jstestdriver.eclipse.ui.views.TestResultsPanel;
 
@@ -60,6 +63,8 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
   private final TestCaseNameFinder finder = new TestCaseNameFinder();
   private final ActionRunnerFactory actionRunnerFactory = new ActionRunnerFactory();
   private final Logger logger = new Logger();
+  public static final String LAUNCH_CONFIG_CREATORS =
+      "com.google.jstestdrvier.eclipse.ui.launchConfigCreator";
 
   public void launch(ISelection selection, String mode) {
     if (Server.getInstance() == null || !Server.getInstance().isStarted()) {
@@ -80,14 +85,20 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
         IStructuredSelection structuredSelection = (IStructuredSelection) selection;
         List<String> testCases = new ArrayList<String>();
         String projectName = "";
+        List<IFile> files = new ArrayList<IFile>();
         for (Object object : structuredSelection.toArray()) {
           if (object instanceof IFile) {
             IFile file = (IFile) object;
+            files.add(file);
             projectName = file.getProject().getName();
             testCases.addAll(finder.getTestCases(file.getLocation().toFile()));
           }
         }
-        ILaunchConfiguration launchConfiguration = getJstdLaunchConfigurations(projectName);
+        ILaunchConfiguration launchConfiguration = null;
+        launchConfiguration = getLaunchConfigFromExtensions(projectName, files);
+        if (launchConfiguration == null) {
+          launchConfiguration = getJstdLaunchConfigurations(projectName);
+        }
         if (launchConfiguration == null) {
           IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
               "No Launch Configurations found for selection");
@@ -121,6 +132,7 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
     List<String> testCases = new ArrayList<String>();
     try {
       String projectName = "";
+      List<IFile> files = new ArrayList<IFile>();
       if (editor instanceof AbstractTextEditor) {
         AbstractTextEditor textEditor = (AbstractTextEditor) editor;
         //org.eclipse.wst.jsdt.internal.ui.javaeditor.CompilationUnitEditor
@@ -135,12 +147,18 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
       
       // Else lets add the entire file
       if (editor.getEditorInput() instanceof IFileEditorInput) {
-        projectName = ((IFileEditorInput) editor.getEditorInput()).getFile().getProject().getName();
+        IFile file = ((IFileEditorInput) editor.getEditorInput()).getFile();
+        files.add(file);
+        projectName = file.getProject().getName();
         if (testCases.isEmpty()) {
           updateTestCasesFromFile(editor, testCases);
         }
       }
-      ILaunchConfiguration launchConfiguration = getJstdLaunchConfigurations(projectName);
+      ILaunchConfiguration launchConfiguration = null;
+      launchConfiguration = getLaunchConfigFromExtensions(projectName, files);
+      if (launchConfiguration == null) {
+        launchConfiguration = getJstdLaunchConfigurations(projectName);
+      }
       if (launchConfiguration == null) {
         IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
             "No Launch Configurations found for current file");
@@ -154,6 +172,24 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
     } catch (IOException e) {
       logger.logException(e);
     }
+  }
+
+  private ILaunchConfiguration getLaunchConfigFromExtensions(
+      String projectName, List<IFile> files) throws CoreException {
+    IConfigurationElement[] configs =
+        Platform.getExtensionRegistry().getConfigurationElementsFor(LAUNCH_CONFIG_CREATORS);
+    for (IConfigurationElement config : configs) {
+      final Object o = config.createExecutableExtension("class");
+      if (o instanceof LaunchConfigCreator) {
+        LaunchConfigCreator creator = (LaunchConfigCreator) o;
+        ILaunchConfiguration launchConfiguration =
+            creator.getLaunchConfiguration(projectName, files);
+        if (launchConfiguration != null) {
+          return launchConfiguration;
+        }
+      }
+    }
+    return null;
   }
 
   private void updateTestCasesFromFile(IEditorPart editor,
@@ -190,7 +226,7 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
 
   private void runTests(ILaunchConfiguration launchConfiguration,
       final List<String> testCases) throws CoreException {
-    ILaunchConfigurationWorkingCopy workingCopy = launchConfiguration.copy(
+    final ILaunchConfigurationWorkingCopy workingCopy = launchConfiguration.copy(
         "new run").getWorkingCopy();
     workingCopy.setAttribute(LaunchConfigurationConstants.TESTS_TO_RUN,
         testCases);
@@ -205,13 +241,13 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
               .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
           TestResultsPanel panel = view.getTestResultsPanel();
           panel.setupForNextTestRun(configuration);
+          actionRunnerFactory.getDryActionRunner(configuration, testCases).runActions();
+          actionRunnerFactory.getSpecificTestsActionRunner(workingCopy, testCases).runActions();
         } catch (PartInitException e) {
           logger.logException(e);
         }
       }
     });
-    actionRunnerFactory.getDryActionRunner(configuration, testCases).runActions();
-    actionRunnerFactory.getSpecificTestsActionRunner(workingCopy, testCases).runActions();
   }
 
   private ILaunchConfiguration getJstdLaunchConfigurations(String projectName)

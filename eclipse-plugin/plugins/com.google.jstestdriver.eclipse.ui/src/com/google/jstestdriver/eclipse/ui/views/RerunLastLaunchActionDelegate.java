@@ -63,13 +63,13 @@ public class RerunLastLaunchActionDelegate implements IViewActionDelegate {
       Display.getDefault().asyncExec(new Runnable() {
         public void run() {
           view.setupForNextTestRun(view.getLastLaunchConfiguration());
+          try {
+            view.getLastLaunchConfiguration().launch(ILaunchManager.RUN_MODE, null);
+          } catch (CoreException e) {
+            logger.logException(e);
+          }
         }
       });
-      try {
-        view.getLastLaunchConfiguration().launch(ILaunchManager.RUN_MODE, null);
-      } catch (CoreException e) {
-        logger.logException(e);
-      }
     }
   }
 

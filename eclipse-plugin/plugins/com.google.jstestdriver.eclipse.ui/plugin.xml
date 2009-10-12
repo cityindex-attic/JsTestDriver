@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="com.google.jstestdrvier.eclipse.ui.launchConfigCreator" name="JSTD Launch Config Creator" schema="schema/com.google.jstestdrvier.eclipse.ui.launchConfigCreator.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
