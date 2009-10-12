@@ -4,7 +4,7 @@
   <property name="obj.dir" value="${target.dir}/obj" />
   <property name="src.dir" value="${basedir}/src"/>
   <property name="lib.dir" value="${basedir}/lib"/>
-  <property name="jstestdriver.lib" value="../JsTestDriver/target/bin/JsTestDriver-ui.jar"/>
+  <property name="jstestdriver.lib" value="../JsTestDriver/target/bin/JsTestDriver.jar"/>
   <property name="idea.version" value="8.1.4-9939"/>
   <property name="IDEA_JAR_PATH" value=""/>
 
@@ -24,6 +24,7 @@
     <pathelement location="${IDEA_JAR_PATH}" />
     <pathelement location="${lib.dir}/com.intellij/annotations-${idea.version}/annotations.jar"/>
     <pathelement location="${lib.dir}/jdom-1.1/jdom-1.1.jar"/>
+    <pathelement location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
   </path>
 
   <taskdef name="idea-form-compiler" classname="com.intellij.uiDesigner.ant.Javac2"

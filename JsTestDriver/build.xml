@@ -52,12 +52,12 @@
     <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
     <pathelement location="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
   </path>
-  
+
   <path id="emma">
     <pathelement location="${lib.dir}/emma-2.0.5312-lib/emma.jar" />
     <pathelement location="${lib.dir}/emma-2.0.5312-lib/emma_ant.jar" />
   </path>
-  
+
   <path id="all-source">
     <pathelement location="${src.dir}"/>
     <pathelement location="${src-test.dir}"/>
@@ -122,16 +122,16 @@
         <mapper type="glob" from="*.js" to="*.js"></mapper>
       </apply>
       <concat destfile="@{destdir}/${javascript-resources}/jstestdrivernamespace.js">
-            <filelist dir="@{destdir}/${javascript-resources}" files="Namespace.js" />
+        <filelist dir="@{destdir}/${javascript-resources}" files="Namespace.js" />
       </concat>
       <concat destfile="${obj.dir}/${javascript-resources}/runner.js">
         <filelist dir="${obj.dir}/${javascript-resources}"
-         files="Asserts.js,FileSource.js,FileResult.js,Utils.js,Console.js,PluginRegistrar.js,
-         LibLoader.js,FileLoader.js,TestCaseInfo.js,TestResult.js,TestRunConfiguration.js,
-         TestCaseManager.js,TestCaseBuilder.js,TestRunner.js,CommandExecutor.js" />
+          files="Asserts.js,FileSource.js,FileResult.js,Utils.js,Console.js,PluginRegistrar.js,
+          LibLoader.js,FileLoader.js,TestCaseInfo.js,TestResult.js,TestRunConfiguration.js,
+          TestCaseManager.js,TestCaseBuilder.js,TestRunner.js,CommandExecutor.js" />
         <filelist dir="${obj.dir}/${javascript-resources}/plugins"
-         files="ScriptLoader.js,StylesheetLoader.js,FileLoaderPlugin.js,TestRunnerPlugin.js,
-         DefaultPlugin.js,AssertsPlugin.js" />
+          files="ScriptLoader.js,StylesheetLoader.js,FileLoaderPlugin.js,TestRunnerPlugin.js,
+          DefaultPlugin.js,AssertsPlugin.js" />
       </concat>
       <concat destfile="${obj.dir}/${javascript-resources}/heartbeatclient.js">
         <filelist dir="${obj.dir}/${javascript-resources}" files="Utils.js,Heartbeat.js" />
@@ -205,14 +205,14 @@
   <target name="instrument" depends="compile-test">
     <emma>
       <instr destdir="${emma-bin.dir}"
-             metadatafile="${emma.dir}/metadata.emma"
-             merge="true">
+        metadatafile="${emma.dir}/metadata.emma"
+        merge="true">
         <instrpath>
           <pathelement location="${obj-debug.dir}"/>
           <pathelement location="${obj-test.dir}"/>
         </instrpath>
         <filter excludes="com.google.jstestdriver.coverage.es3.*" />
-      	<filter excludes="com.google.jstestdriver.directoryscanner.*" />
+        <filter excludes="com.google.jstestdriver.directoryscanner.*" />
       </instr>
     </emma>
   </target>
@@ -307,10 +307,10 @@
     <mkdir dir="${obj.dir}/com/google/jstestdriver/coverage/javascript/" />
     <concat destfile="${obj.dir}/com/google/jstestdriver/coverage/javascript/LCOV.js">
       <filelist dir="${src.dir}//com/google/jstestdriver/coverage/javascript"
-          files="coverage.js,plugin.js" />
+        files="coverage.js,plugin.js" />
     </concat>
     <jar destfile="${bin.dir}/plugins/coverage.jar"
-        duplicate="preserve">
+      duplicate="preserve">
       <fileset dir="${obj.dir}">
         <include name="**/coverage/**"/>
       </fileset>
@@ -327,10 +327,10 @@
     <mkdir dir="${obj.dir}/com/google/jstestdriver/coverage/javascript/" />
     <concat destfile="${obj.dir}/com/google/jstestdriver/coverage/javascript/LCOV.js">
       <filelist dir="${src.dir}//com/google/jstestdriver/coverage/javascript"
-          files="coverage.js,plugin.js" />
+        files="coverage.js,plugin.js" />
     </concat>
     <jar destfile="${bin.dir}/plugins/coverage.jar"
-        duplicate="preserve">
+      duplicate="preserve">
       <fileset dir="${obj.dir}">
         <include name="**/coverage/**"/>
       </fileset>
@@ -338,7 +338,7 @@
       </manifest>
     </jar>
     <jar destfile="${bin.dir}/plugins/coverage-src.jar"
-        duplicate="preserve">
+      duplicate="preserve">
       <fileset dir="${src.dir}">
         <include name="**/coverage/**"/>
       </fileset>
@@ -348,51 +348,6 @@
       <manifest>
       </manifest>
     </jar>
-  </target>
-
-  <target name="ui-jar" depends="compile">
-    <jar destfile="${bin.dir}/${ant.project.name}-ui.jar" basedir="${obj.dir}" excludes="**/*.js"
-      duplicate="preserve">
-      <manifest>
-        <attribute name="Main-Class" value="${main-class}" />
-      </manifest>
-      <zipfileset src="${lib.dir}/jetty/servlet-api-2.5-20081211.jar" />
-      <zipfileset src="${lib.dir}/jetty/jetty-6.1.19.jar" />
-      <zipfileset src="${lib.dir}/jetty/jetty-util-6.1.19.jar" />
-      <zipfileset src="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
-      <zipfileset src="${lib.dir}/guice/guice-2.0-no_aop.jar" />
-      <zipfileset src="${lib.dir}/guice/guice-multibindings-2.0.jar" />
-      <zipfileset src="${lib.dir}/args4j-2.0.12/args4j-2.0.12.jar" />
-      <zipfileset src="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
-      <zipfileset src="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
-      <zipfileset src="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
-      <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
-      <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jcl-1.5.6.jar" />
-      <zipfileset src="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
-      <zipfileset src="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
-      <fileset dir="${obj.dir}/">
-        <include name="${javascript-resources}/jstestdrivernamespace.js" />
-        <include name="${javascript-resources}/runner.js" />
-        <include name="${javascript-resources}/heartbeatclient.js" />
-        <include name="${javascript-resources}/lib/*.js" />
-      </fileset>
-      <exclude name="**/coverage/**"/>
-    </jar>
-  </target>
-
-  <!-- TODO: also have a JNLP launcher for the CBuild latest code - set deploy.codebase to
-             http://build.hevery.com/job/JsTestDriver/lastSuccessfulBuild/artifact/target/bin -->
-  <property name="deploy.codebase" value="http://js-test-driver.googlecode.com/files"/>
-
-  <target name="sign" depends="ui-jar">
-    <copy todir="${bin.dir}" file="src/com/google/jstestdriver/ui/JsTestDriver.jnlp">
-      <filterset><filter token="{codebase}" value="${deploy.codebase}"/></filterset>
-    </copy>
-    <!-- to generate a self-signed key, do this:
-    $ keytool -genkey -alias $USERNAME-key -keypass google
-    $ keytool -selfcert -alias ${USERNAME}-key
-    -->
-    <signjar jar="${bin.dir}/${ant.project.name}-ui.jar" alias="${user.name}-key" storepass="google"/>
   </target>
 
   <target name="checkNoLocalChanges">
@@ -406,7 +361,7 @@
     </svn>
   </target>
 
-  <target name="release" depends="checkNoLocalChanges, test, jar, sign, coverage-plugin-jar">
+  <target name="release" depends="checkNoLocalChanges, test, jar, coverage-plugin-jar">
     <input addproperty="release.id" message="Enter the release number (ie. 1.0.0-rc1):"/>
 
     <input addproperty="googlecode.username" message="Your google account (don't include @gmail.com):"/>
@@ -429,10 +384,6 @@
               targetfilename="coverage-${release.id}.jar"
               username="${googlecode.username}" password="${googlecode.password}"
               projectname="js-test-driver" summary="Coverage Plugin"/>
-    <gcupload labels="Featured, Type-Executable" filename="${bin.dir}/JsTestDriver.jnlp"
-              targetfilename="JsTestDriver-${release.id}.jnlp"
-              username="${googlecode.username}" password="${googlecode.password}"
-              projectname="js-test-driver" summary="Java WebStart link for the GUI application"/>
     <echo message="Release has been deployed. You should now remove the 'featured' label from the previous release on the googlecode site."/>
   </target>
 
@@ -475,7 +426,7 @@
     </java>
   </target>
 
-  <target name="idea-plugin" depends="ui-jar">
+  <target name="idea-plugin" depends="jar">
     <ant antfile="../idea-plugin/build.xml" dir="../idea-plugin"/>
   </target>
 
