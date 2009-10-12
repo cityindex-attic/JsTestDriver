@@ -13,16 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.ui;
+package com.google.jstestdriver.idea.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)

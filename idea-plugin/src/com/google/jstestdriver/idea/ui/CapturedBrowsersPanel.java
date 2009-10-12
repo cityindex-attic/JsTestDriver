@@ -13,24 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.ui;
+package com.google.jstestdriver.idea.ui;
 
 import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.idea.PluginResources.BrowserIcon;
 
-import java.awt.Dimension;
-import java.awt.color.ColorSpace;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
-
-import javax.imageio.ImageIO;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -92,26 +84,5 @@ public class CapturedBrowsersPanel extends JPanel implements Observer {
     }
   }
 
-  private static class BrowserIcon {
-    private final BufferedImage color;
-    private final BufferedImage greyscale;
-    private ColorConvertOp op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
 
-    public BrowserIcon(BufferedImage color) {
-      this.color = color;
-      greyscale = op.filter(color, null);
-    }
-
-    public static BrowserIcon buildFromResource(String resourceName) throws IOException {
-      return new BrowserIcon(ImageIO.read(BrowserIcon.class.getResourceAsStream(resourceName)));
-    }
-
-    public Icon getColorIcon() {
-      return new ImageIcon(color);
-    }
-
-    public Icon getGreyscaleIcon() {
-      return new ImageIcon(greyscale);
-    }
-  }
 }

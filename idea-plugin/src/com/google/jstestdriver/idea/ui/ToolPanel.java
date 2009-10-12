@@ -15,27 +15,18 @@
  */
 package com.google.jstestdriver.idea.ui;
 
-import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.DefaultURLRewriter;
-import com.google.jstestdriver.DefaultURLTranslator;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.FilesCache;
-import com.google.jstestdriver.ServerShutdownAction;
-import com.google.jstestdriver.ServerStartupAction;
+import com.google.jstestdriver.*;
 import com.google.jstestdriver.idea.MessageBundle;
 import com.google.jstestdriver.idea.PluginResources;
-import com.google.jstestdriver.ui.CapturedBrowsersPanel;
-import com.google.jstestdriver.ui.InfoPanel;
-import com.google.jstestdriver.ui.StatusBar;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import static java.text.MessageFormat.format;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Observer;
-import static java.text.MessageFormat.format;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -56,7 +47,7 @@ public class ToolPanel extends JPanel {
     captureUrl = new JTextField() {{
       setEditable(false);
     }};
-    
+
     setBackground(UIUtil.getTreeTextBackground());
     setLayout(new BorderLayout());
     add(new JPanel() {{

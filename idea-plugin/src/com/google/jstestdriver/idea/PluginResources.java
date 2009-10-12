@@ -16,10 +16,14 @@
 package com.google.jstestdriver.idea;
 
 import com.google.jstestdriver.idea.ui.ToolPanel;
-
 import static com.intellij.openapi.util.IconLoader.findIcon;
 
-import javax.swing.Icon;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
+import java.io.IOException;
 
 /**
  * Access to all the text and image resources for the plugin.
@@ -75,5 +79,28 @@ public class PluginResources {
 
   public static String getCaptureUrlMessage() {
     return MessageBundle.message("captureLabel");
+  }
+
+  public static class BrowserIcon {
+    private final BufferedImage color;
+    private final BufferedImage greyscale;
+    private ColorConvertOp op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
+
+    public BrowserIcon(BufferedImage color) {
+      this.color = color;
+      greyscale = op.filter(color, null);
+    }
+
+    public static BrowserIcon buildFromResource(String resourceName) throws IOException {
+      return new BrowserIcon(ImageIO.read(ToolPanel.class.getResourceAsStream(resourceName)));
+    }
+
+    public Icon getColorIcon() {
+      return new ImageIcon(color);
+    }
+
+    public Icon getGreyscaleIcon() {
+      return new ImageIcon(greyscale);
+    }
   }
 }

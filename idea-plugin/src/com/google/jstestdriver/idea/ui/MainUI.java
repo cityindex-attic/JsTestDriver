@@ -13,46 +13,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.ui;
-
-import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.NORTH;
-import static java.awt.BorderLayout.SOUTH;
-
-import java.awt.BorderLayout;
-import java.io.File;
-import java.io.Reader;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-
-import org.apache.commons.logging.LogFactory;
-import org.kohsuke.args4j.CmdLineException;
-import org.mortbay.log.Slf4jLog;
+package com.google.jstestdriver.idea.ui;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.jstestdriver.ActionFactory;
-import com.google.jstestdriver.ActionRunner;
-import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.ConfigurationParser;
-import com.google.jstestdriver.DefaultPathRewriter;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.Flags;
-import com.google.jstestdriver.FlagsParser;
-import com.google.jstestdriver.JsTestDriverModule;
-import com.google.jstestdriver.ServerStartupAction;
+import com.google.jstestdriver.*;
 import com.google.jstestdriver.guice.PrintStreamClientModule;
 import com.google.jstestdriver.guice.XmlClientModule;
+import org.apache.commons.logging.LogFactory;
+import org.kohsuke.args4j.CmdLineException;
+import org.mortbay.log.Slf4jLog;
+
+import javax.swing.*;
+import java.awt.*;
+import static java.awt.BorderLayout.*;
+import java.io.File;
+import java.io.Reader;
+import java.util.*;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Entry point for the Swing GUI of JSTestDriver.
@@ -110,7 +91,7 @@ public class MainUI {
     try {
       File config = new File(flags.getConfig());
       Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
-      // TODO(corysmith): move the handling of the serverAddress into a configuration class that 
+      // TODO(corysmith): move the handling of the serverAddress into a configuration class that
       // returns an appropriate module configuration.
       String serverAddress = null;
       if (flags.hasWork()) {
@@ -172,6 +153,6 @@ public class MainUI {
         }});
         setBottomComponent(logPanel);
       }});
-    }};  
+    }};
   }
 }
