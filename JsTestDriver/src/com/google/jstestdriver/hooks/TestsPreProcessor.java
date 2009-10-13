@@ -11,5 +11,5 @@ import java.util.List;
  * @author corysmith@google.com (Cory Smith)
  */
 public interface TestsPreProcessor {
-  public List<String> process(Iterator<String> tests);
+  public List<String> process(String browserId, Iterator<String> tests);
 }

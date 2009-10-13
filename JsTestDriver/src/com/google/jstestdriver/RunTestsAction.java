@@ -43,7 +43,7 @@ public class RunTestsAction extends ThreadedAction {
     for (TestsPreProcessor preProcessor : preProcessors) {
       // makes sure that the preProcessor doesn't modify the base test list
       // by providing an Iterator
-      testsToRun = preProcessor.process(testsToRun.iterator());
+      testsToRun = preProcessor.process(id, testsToRun.iterator());
     }
     ResponseStream runTestsActionResponseStream =
           responseStreamFactory.getRunTestsActionResponseStream(id);

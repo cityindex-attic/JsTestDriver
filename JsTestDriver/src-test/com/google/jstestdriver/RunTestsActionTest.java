@@ -46,8 +46,9 @@ public class RunTestsActionTest extends TestCase {
         new MockJsTestDriverClient.TestRun(browserId, stream, expectedTests, captureConsole);
     final Set<TestsPreProcessor> preProcessors =
         Sets.<TestsPreProcessor> newHashSet(new TestsPreProcessor() {
-          public List<String> process(Iterator<String> actualTests) {
+          public List<String> process(String actualBrowserId, Iterator<String> actualTests) {
             assertEquals(tests, Lists.newArrayList(tests));
+            assertEquals(browserId, actualBrowserId);
             return expectedTests;
           }
         });
