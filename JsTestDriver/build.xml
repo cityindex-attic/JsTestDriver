@@ -284,7 +284,7 @@
     </jar>
   </target>
 
-  <target name="weird-jar" depends="compile">
+  <target name="jar-nodeps" depends="compile">
     <jar destfile="${bin.dir}/${ant.project.name}.jar" basedir="${obj.dir}" excludes="**/*.js"
       duplicate="preserve">
       <manifest>
@@ -320,7 +320,7 @@
     </jar>
   </target>
 
-  <target name="coverage-plugin-jar-nodeps" depends="jar">
+  <target name="coverage-plugin-jar-nodeps" depends="jar-nodeps">
     <mkdir dir="${bin.dir}/plugins/" />
     <mkdir dir="${obj.dir}/com/google/jstestdriver/coverage/javascript/" />
     <concat destfile="${obj.dir}/com/google/jstestdriver/coverage/javascript/LCOV.js">
@@ -346,6 +346,9 @@
       <manifest>
       </manifest>
     </jar>
+  </target>
+
+  <target name="jar-all-src-nodeps" depends="coverage-plugin-jar-nodeps, jar-nodeps, src-jar">
   </target>
 
   <target name="checkNoLocalChanges">
