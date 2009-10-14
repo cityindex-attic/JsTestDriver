@@ -15,13 +15,15 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Module;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.google.inject.Module;
 
 /**
  * Handles the loading of Plugins from the filesystem.
@@ -40,17 +42,15 @@ public class PluginLoader {
   public List<Module> load(List<Plugin> plugins) {
     List<Module> modules = new LinkedList<Module>();
     for (Plugin plugin : plugins) {
+
       // TODO(corysmith): figure out how to test this...
       try {
         URLClassLoader urlClassLoader = new URLClassLoader(
             new URL[] { new URL("jar:file:" + plugin.getPathToJar() + "!/") },
             getClass().getClassLoader());
         Class<?> module = Class.forName(plugin.getModuleName(), true, urlClassLoader);
-        modules.add(((Class<? extends Module>) module).newInstance());
-      } catch (InstantiationException e) {
-        throw new RuntimeException(e);
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException(e);
+
+        modules.add(getModuleInstance(plugin, (Class<Module>) module));
       } catch (MalformedURLException e) {
         throw new RuntimeException(e);
       } catch (ClassNotFoundException e) {
@@ -58,5 +58,32 @@ public class PluginLoader {
       }
     }
     return modules;
+  }
+
+  @SuppressWarnings("unchecked")
+  private Module getModuleInstance(Plugin plugin, Class<Module> module) {
+    try {
+      Constructor<Module> argsConstructor = module.getConstructor(List.class);
+
+      return argsConstructor.newInstance(plugin.getArgs());
+    } catch (SecurityException e) {
+      throw new RuntimeException(e);
+    } catch (NoSuchMethodException e) {
+      try {
+        return ((Class<? extends Module>) module).newInstance();
+      } catch (InstantiationException e1) {
+        throw new RuntimeException(e1);
+      } catch (IllegalAccessException e1) {
+        throw new RuntimeException(e1);
+      }
+    } catch (IllegalArgumentException e) {
+      throw new RuntimeException(e);
+    } catch (InstantiationException e) {
+      throw new RuntimeException(e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    } catch (InvocationTargetException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

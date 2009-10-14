@@ -1,5 +1,7 @@
 package com.google.jstestdriver;
 
+import java.util.List;
+
 /**
  * A representation of a parsed plugin.
  * @author corysmith
@@ -9,11 +11,13 @@ public class Plugin {
   private final String pathToJar;
   private final String moduleName;
   private final String name;
+  private final List<String> args;
 
-  public Plugin(String name, String pathToJar, String moduleName) {
+  public Plugin(String name, String pathToJar, String moduleName, List<String> args) {
     this.name = name;
     this.pathToJar = pathToJar;
     this.moduleName = moduleName;
+    this.args = args;
   }
 
   public String getName() {
@@ -26,6 +30,10 @@ public class Plugin {
 
   public String getModuleName() {
     return moduleName;
+  }
+
+  public List<String> getArgs() {
+    return args;
   }
 
   @Override
@@ -67,6 +75,7 @@ public class Plugin {
 
   @Override
   public String toString() {
-    return "Plugin [moduleName=" + moduleName + ", name=" + name + ", pathToJar=" + pathToJar + "]";
+    return "Plugin [moduleName=" + moduleName + ", name=" + name + ", pathToJar=" + pathToJar
+        + ", args=" + args + "]";
   }
 }

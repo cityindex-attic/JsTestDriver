@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Lists;
+
 import org.apache.oro.io.GlobFilenameFilter;
 import org.apache.oro.text.GlobCompiler;
 import org.jvyaml.YAML;
@@ -35,6 +37,8 @@ import java.util.Set;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class ConfigurationParser {
+
+  private static final List<String> EMPTY_LIST = Lists.newArrayList();
 
   private final Set<FileInfo> filesList = new LinkedHashSet<FileInfo>();
   private final File basePath;
@@ -69,7 +73,8 @@ public class ConfigurationParser {
     }
     if (data.containsKey("plugin")) {
       for (Map<String, String> value: (List<Map<String, String>>) data.get("plugin")) {
-        plugins.add(new Plugin(value.get("name"), value.get("jar"), value.get("module")));
+        plugins.add(new Plugin(value.get("name"), value.get("jar"), value.get("module"),
+            createArgsList(value.get("args"))));
       }
     }
     if (data.containsKey("serve")) {
@@ -78,6 +83,19 @@ public class ConfigurationParser {
     }
     filesList.addAll(consolidatePatches(resolvedFilesLoad));
     filesList.removeAll(resolvedFilesExclude);
+  }
+
+  private List<String> createArgsList(String args) {
+    if (args == null) {
+      return EMPTY_LIST;
+    }
+    List<String> argsList = Lists.newLinkedList();
+    String[] splittedArgs = args.split(",");
+
+    for (String arg : splittedArgs) {
+      argsList.add(arg.trim());
+    }
+    return argsList;
   }
 
   private Set<FileInfo> consolidatePatches(Set<FileInfo> resolvedFilesLoad) {

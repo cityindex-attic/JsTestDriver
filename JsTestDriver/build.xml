@@ -154,7 +154,6 @@
     <javac srcdir="${src.dir}" destdir="${obj.dir}">
       <classpath>
         <path refid="classpath" />
-        <path location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
       </classpath>
       <include name="com/google/jstestdriver/ui/**"/>
     </javac>
@@ -171,7 +170,6 @@
     <javac srcdir="${src.dir}" destdir="${obj-debug.dir}" debug="true">
       <classpath>
         <path refid="classpath" />
-        <path location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
       </classpath>
       <include name="com/google/jstestdriver/ui/**"/>
     </javac>

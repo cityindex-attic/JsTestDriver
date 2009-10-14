@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Lists;
+
 import junit.framework.TestCase;
 
 import java.io.ByteArrayInputStream;
@@ -31,8 +33,9 @@ import java.util.Set;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class ConfigurationParserTest extends TestCase {
+
   File tmpDir;
-  
+
   @Override
   protected void setUp() throws Exception {
     tmpDir = File.createTempFile("test", "JsTestDriver", new File(System
@@ -41,21 +44,21 @@ public class ConfigurationParserTest extends TestCase {
     tmpDir.mkdir();
     tmpDir.deleteOnExit();
   }
-  
+
   private File createTmpSubDir(String dirName) {
     File codeDir = new File(tmpDir, dirName);
     codeDir.mkdir();
     codeDir.deleteOnExit();
     return codeDir;
   }
-  
+
   private File createTmpFile(File codeDir, String fileName) throws IOException {
     File code = new File(codeDir, fileName);
     code.createNewFile();
     code.deleteOnExit();
     return code;
   }
-  
+
   public void testParseConfigFileAndHaveListOfFiles() throws Exception {
     File codeDir = createTmpSubDir("code");
     File testDir = createTmpSubDir("test");
@@ -148,7 +151,8 @@ public class ConfigurationParserTest extends TestCase {
   }
 
   public void testParsePlugin() {
-    Plugin expected = new Plugin("test", "pathtojar", "com.test.PluginModule");
+    Plugin expected =
+        new Plugin("test", "pathtojar", "com.test.PluginModule", Lists.<String>newArrayList());
     String configFile = "plugin:\n" + "  - name: test\n" + "    jar: \"pathtojar\"\n"
         + "    module: \"com.test.PluginModule\"\n";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
@@ -161,18 +165,63 @@ public class ConfigurationParserTest extends TestCase {
   }
 
   public void testParsePlugins() {
-    List<Plugin> expected = new LinkedList<Plugin>(Arrays.asList(new Plugin("test", "pathtojar",
-        "com.test.PluginModule"), new Plugin("test2", "pathtojar2", "com.test.PluginModule2")));
+    List<Plugin> expected =
+        new LinkedList<Plugin>(Arrays.asList(new Plugin("test", "pathtojar",
+            "com.test.PluginModule", Lists.<String> newArrayList()), new Plugin("test2",
+            "pathtojar2", "com.test.PluginModule2", Lists.<String> newArrayList("hello", "world",
+                "some/file.js"))));
     String configFile = "plugin:\n" + "  - name: test\n" + "    jar: \"pathtojar\"\n"
         + "    module: \"com.test.PluginModule\"\n" + "  - name: test2\n"
-        + "    jar: \"pathtojar2\"\n" + "    module: \"com.test.PluginModule2\"\n";
+        + "    jar: \"pathtojar2\"\n" + "    module: \"com.test.PluginModule2\"\n" +
+        "    args: hello, world, some/file.js\n";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
     ConfigurationParser parser =
         new ConfigurationParser(null, new InputStreamReader(bais), new DefaultPathRewriter());
 
     parser.parse();
     List<Plugin> plugins = parser.getPlugins();
+
+    assertEquals(2, plugins.size());
     assertEquals(expected, plugins);
+    assertEquals(0, plugins.get(0).getArgs().size());
+    assertEquals(3, plugins.get(1).getArgs().size());
+  }
+
+  public void testParsePluginArgs() throws Exception {
+    String configFile =
+        "plugin:\n" + "  - name: test\n" + "    jar: \"pathtojar\"\n"
+            + "    module: \"com.test.PluginModule\"\n"
+            + "    args: hello, mooh, some/file.js, another/file.js";
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    ConfigurationParser parser =
+        new ConfigurationParser(null, new InputStreamReader(bais), new DefaultPathRewriter());
+
+    parser.parse();
+    List<Plugin> plugins = parser.getPlugins();
+    Plugin plugin = plugins.get(0);
+    List<String> args = plugin.getArgs();
+
+    assertEquals(4, args.size());
+    assertEquals("hello", args.get(0));
+    assertEquals("mooh", args.get(1));
+    assertEquals("some/file.js", args.get(2));
+    assertEquals("another/file.js", args.get(3));
+  }
+
+  public void testParsePluginNoArgs() throws Exception {
+    String configFile =
+        "plugin:\n" + "  - name: test\n" + "    jar: \"pathtojar\"\n"
+            + "    module: \"com.test.PluginModule\"\n";
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    ConfigurationParser parser =
+        new ConfigurationParser(null, new InputStreamReader(bais), new DefaultPathRewriter());
+
+    parser.parse();
+    List<Plugin> plugins = parser.getPlugins();
+    Plugin plugin = plugins.get(0);
+    List<String> args = plugin.getArgs();
+
+    assertEquals(0, args.size());
   }
 
   public void testServeFile() throws Exception {
