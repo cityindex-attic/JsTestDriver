@@ -36,5 +36,6 @@ public class ActionFactoryModule extends AbstractModule {
     Multibinder.newSetBinder(binder(), ResponseStreamFactory.class);
     Multibinder.newSetBinder(binder(), ActionListProcessor.class);
     Multibinder.newSetBinder(binder(), TestsPreProcessor.class);
+    Multibinder.newSetBinder(binder(), FileSetPreProcessor.class);
   }
 }
