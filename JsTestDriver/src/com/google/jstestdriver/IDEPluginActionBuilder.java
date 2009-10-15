@@ -19,6 +19,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.guice.FlagsModule;
@@ -123,12 +124,10 @@ public class IDEPluginActionBuilder {
       flags.setReset(reset);
       flags.setDryRunFor(dryRunFor);
       install(new FlagsModule(flags));
+      bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("originalFileSet"))
+          .toInstance(fileSet);
       bind(String.class).annotatedWith(Names.named("server")).toInstance(serverAddress);
 
-      // TODO(corysmith): Change this to an actual class, so that we can JITI it.
-      bind(new TypeLiteral<Set<FileInfo>>(){})
-          .annotatedWith(Names.named("fileSet"))
-          .toInstance(fileSet != null ? fileSet : Collections.<FileInfo>emptySet());
       bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
 
       // TODO(corysmith): Change this to an actual class, so that we can JITI it.
@@ -137,6 +136,8 @@ public class IDEPluginActionBuilder {
       for (Module module : modules) {
         install(module);
       }
+      bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet")).toProvider(
+          FileSetProvider.class).in(Singleton.class);
     }
   }
 }

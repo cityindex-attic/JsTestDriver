@@ -17,10 +17,8 @@ package com.google.jstestdriver;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.guice.FlagsModule;
 
@@ -55,6 +53,9 @@ public class JsTestDriverModule extends AbstractModule {
     bind(String.class)
          .annotatedWith(Names.named("server")).toInstance(serverAddress);
 
+    bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("originalFileSet"))
+        .toInstance(fileSet);
+
     bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
 
     bind(FailureAccumulator.class).in(Singleton.class);
@@ -66,15 +67,7 @@ public class JsTestDriverModule extends AbstractModule {
     for (Module module : plugins) {
       install(module);
     }
-  }
-
-  @Singleton @Provides @Named("fileSet")
-  public Set<FileInfo> getFileSet(Set<FileSetPreProcessor> preProcessors) {
-    Set<FileInfo> currentFileSet = fileSet;
-
-    for (FileSetPreProcessor preProcessor : preProcessors) {
-      currentFileSet = preProcessor.process(currentFileSet);
-    }
-    return currentFileSet;
+    bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet")).toProvider(
+        FileSetProvider.class).in(Singleton.class);
   }
 }
