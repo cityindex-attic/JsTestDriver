@@ -136,7 +136,7 @@ public class IDEPluginActionBuilder {
         install(module);
       }
       bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet")).toProvider(
-          FileSetProvider.class);
+          FileSetProvider.class).in(Singleton.class);
     }
   }
 }

@@ -17,7 +17,6 @@ package com.google.jstestdriver;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
 import java.util.Set;
@@ -37,7 +36,6 @@ public class FileSetProvider implements Provider<Set<FileInfo>> {
     this.fileSet = fileSet;
   }
 
-  @Singleton
   public Set<FileInfo> get() {
     Set<FileInfo> currentFileSet = fileSet;
 
