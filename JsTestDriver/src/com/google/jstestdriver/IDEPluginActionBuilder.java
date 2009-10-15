@@ -24,7 +24,6 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.guice.FlagsModule;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -137,7 +136,7 @@ public class IDEPluginActionBuilder {
         install(module);
       }
       bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet")).toProvider(
-          FileSetProvider.class).in(Singleton.class);
+          FileSetProvider.class);
     }
   }
 }
