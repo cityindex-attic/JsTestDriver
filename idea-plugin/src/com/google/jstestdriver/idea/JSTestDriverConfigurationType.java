@@ -30,17 +30,6 @@ import javax.swing.*;
  */
 public class JSTestDriverConfigurationType implements ConfigurationType {
 
-  private final ConfigurationFactory jsTestDriverConfigFactory;
-
-  public JSTestDriverConfigurationType() {
-    jsTestDriverConfigFactory = new ConfigurationFactory(this) {
-      @Override
-      public RunConfiguration createTemplateConfiguration(Project project) {
-        return new JSTestDriverConfiguration(project, this, "JSTestDriver");
-      }
-    };
-  }
-
   public String getDisplayName() {
     return PluginResources.getPluginName();
   }
@@ -59,6 +48,13 @@ public class JSTestDriverConfigurationType implements ConfigurationType {
   }
 
   public ConfigurationFactory[] getConfigurationFactories() {
+    ConfigurationFactory jsTestDriverConfigFactory = new ConfigurationFactory(this) {
+      @Override
+      public RunConfiguration createTemplateConfiguration(Project project) {
+        return new JSTestDriverConfiguration(project, this, "JSTestDriver");
+      }
+    };
+
     return new ConfigurationFactory[]{ jsTestDriverConfigFactory };
   }
 }
