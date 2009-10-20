@@ -39,7 +39,6 @@ public class IDEPluginActionBuilder {
   private final ConfigurationParser configParser;
   private final String serverAddress;
   private final ResponseStreamFactory responseStreamFactory;
-  private final Injector baseInjector = Guice.createInjector(new ActionFactoryModule());
 
   private List<String> tests = new LinkedList<String>();
   private final LinkedList<Module> modules = new LinkedList<Module>();
@@ -58,7 +57,7 @@ public class IDEPluginActionBuilder {
     tests.add("all");
     return this;
   }
-  
+
   public IDEPluginActionBuilder addTests(List<String> testCases) {
     tests.addAll(testCases);
     return this;
@@ -73,7 +72,7 @@ public class IDEPluginActionBuilder {
     reset = true;
     return this;
   }
-  
+
   public IDEPluginActionBuilder install(Module module) {
     modules.add(module);
     return this;
@@ -82,7 +81,8 @@ public class IDEPluginActionBuilder {
   public ActionRunner build() {
     configParser.parse();
 
-    Injector injector = baseInjector.createChildInjector(new ConfigurationModule(
+    Injector injector = Guice.createInjector(new ActionFactoryModule(),
+        new ConfigurationModule(
       modules,
       tests,
       reset,
@@ -131,7 +131,7 @@ public class IDEPluginActionBuilder {
 
       // TODO(corysmith): Change this to an actual class, so that we can JITI it.
       bind(ResponseStreamFactory.class).toInstance(responseStreamFactory);
-      
+
       for (Module module : modules) {
         install(module);
       }
