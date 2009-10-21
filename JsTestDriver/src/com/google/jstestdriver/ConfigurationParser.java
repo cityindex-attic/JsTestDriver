@@ -131,7 +131,7 @@ public class ConfigurationParser {
         if (f.startsWith("http://") || f.startsWith("https://")) {
           resolvedFiles.add(new FileInfo(f, -1, false, false, null));
         } else {
-          File file = basePath != null ? new File(basePath, f) : new File(f);
+          File file = basePath != null ? new File(basePath.getAbsoluteFile(), f) : new File(f);
           File testFile = file.getAbsoluteFile();
           File dir = testFile.getParentFile().getAbsoluteFile();
           final String pattern = file.getName();
