@@ -54,7 +54,7 @@ import java.io.File;
 public class TestRunnerState extends JavaCommandLineState {
 
   private final JSTestDriverConfiguration jsTestDriverConfiguration;
-  private final Project project;
+  protected final Project project;
   private final RunConfigurationModule configurationModule;
 
   // TODO(alexeagle): needs to be configurable?

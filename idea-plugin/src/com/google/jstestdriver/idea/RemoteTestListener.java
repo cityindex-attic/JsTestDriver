@@ -17,6 +17,8 @@ package com.google.jstestdriver.idea;
 
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
+import com.intellij.util.concurrency.SwingWorker;
+
 import com.google.jstestdriver.TestResult;
 import static com.google.jstestdriver.TestResult.Result;
 
@@ -64,7 +66,6 @@ public class RemoteTestListener {
     testCase.testProxyMap.put(message.testName, testNode);
     testCase.node.addChild(testNode);
     testRunnerResultsForm.onTestStarted(testNode);
-    
   }
 
   public void onTestFinished(TestResultProtocolMessage message) {
@@ -102,28 +103,42 @@ public class RemoteTestListener {
     testRunnerResultsForm.onSuiteStarted(node);
   }
 
-  public void listen(int port) {
-    try {
-      socket = new ServerSocket(port);
-      client = socket.accept();
-      in = new ObjectInputStream(client.getInputStream());
-      while (true) {
+  public void listen(final int port) {
+    SwingWorker worker = new SwingWorker() {
+      public Object construct() {
         try {
-          TestResultProtocolMessage message = (TestResultProtocolMessage) in.readObject();
-          if (message.isDryRun()) {
-            onTestStarted(message);
-          } else {
-            onTestFinished(message);
-          }
-        } catch (EOFException e) {
-          break;
+          socket = new ServerSocket(port);
+          return socket.accept();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
         }
       }
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } catch (ClassNotFoundException e) {
-      throw new RuntimeException(e);
-    }
+
+      @Override
+      public void finished() {
+        client = (Socket) getValue();
+        try {
+          in = new ObjectInputStream(client.getInputStream());
+          while (true) {
+            try {
+              TestResultProtocolMessage message = (TestResultProtocolMessage) in.readObject();
+              if (message.isDryRun()) {
+                onTestStarted(message);
+              } else {
+                onTestFinished(message);
+              }
+            } catch (EOFException e) {
+              break;
+            } catch (ClassNotFoundException e) {
+              throw new RuntimeException(e);
+            }
+          }
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    };
+    worker.start();
   }
 
   public void shutdown() {

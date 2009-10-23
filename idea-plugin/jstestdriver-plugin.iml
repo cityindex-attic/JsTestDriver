@@ -27,6 +27,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../JsTestDriver/lib/guice/guice-2.0-no_aop.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
   <component name="RSpecModuleSettingsStorage">
     <RSPEC_MODULE_SETTINGS_STORAGE_ID NAME="RSPEC_SUPPORT_TYPE" VALUE="NONE" />

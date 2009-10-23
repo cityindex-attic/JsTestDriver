@@ -48,7 +48,7 @@ import java.util.List;
  */
 public class JSTestDriverConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> {
 
-  private final ConfigurationFactory jsTestDriverConfigurationFactory;
+  protected final ConfigurationFactory jsTestDriverConfigurationFactory;
 
   public String settingsFile;
   private String serverAddress;

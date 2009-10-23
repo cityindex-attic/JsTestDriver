@@ -26,6 +26,11 @@ import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultGenerator;
+import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.PluginLoader;
+import com.google.inject.Module;
+import com.google.inject.AbstractModule;
+import com.google.inject.name.Names;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,7 +40,9 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.ConnectException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Run JSTD in its own process, and stream messages to a server that lives in the IDEA process,
@@ -46,11 +53,16 @@ import java.util.Arrays;
 public class TestRunner {
   private final String serverURL;
   private final String settingsFile;
+  private final File baseDirectory;
   private final ObjectOutputStream out;
+  private static final int TIMEOUT_MILLIS = 2 * 1000; // 2 seconds
+  public static final int RETRIES = 5;
 
-  public TestRunner(String serverURL, String settingsFile, ObjectOutputStream out) {
+  public TestRunner(String serverURL, String settingsFile, File baseDirectory,
+                    ObjectOutputStream out) {
     this.serverURL = serverURL;
     this.settingsFile = settingsFile;
+    this.baseDirectory = baseDirectory;
     this.out = out;
   }
 
@@ -120,15 +132,33 @@ public class TestRunner {
   }
 
   private IDEPluginActionBuilder makeActionBuilder(ResponseStreamFactory responseStreamFactory) {
-    File configFile = new File(settingsFile);
     try {
       FileReader fileReader = new FileReader(settingsFile);
-      ConfigurationParser configurationParser = new ConfigurationParser(configFile.getParentFile(),
-          fileReader, new DefaultPathRewriter());
-      return new IDEPluginActionBuilder(configurationParser, serverURL, responseStreamFactory);
+      ConfigurationParser configurationParser = new ConfigurationParser(baseDirectory, fileReader,
+          new DefaultPathRewriter());
+      IDEPluginActionBuilder builder =
+          new IDEPluginActionBuilder(configurationParser, serverURL, responseStreamFactory);
+      builder.install(new AbstractModule() {
+        @Override
+        protected void configure() {
+          bind(File.class).annotatedWith(Names.named("basePath")).toInstance(baseDirectory);
+        }
+      });
+      for (Module module : new PluginLoader().load(parsePluginsFromConfFile())) {
+        builder.install(module);
+      }
+      return builder;
     } catch (FileNotFoundException e) {
       throw new RuntimeException("Failed to read settings file " + settingsFile, e);
     }
+  }
+
+  private List<Plugin> parsePluginsFromConfFile() throws FileNotFoundException {
+    ConfigurationParser parser =
+        new ConfigurationParser(baseDirectory, new FileReader(settingsFile),
+            new DefaultPathRewriter());
+    parser.parse();
+    return parser.getPlugins();
   }
 
   public static void main(String[] args) throws IOException {
@@ -136,7 +166,17 @@ public class TestRunner {
     String settingsFile = args[1];
     int port = Integer.parseInt(args[2]);
     Socket socket = new Socket();
-    socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), port));
-    new TestRunner(serverURL, settingsFile, new ObjectOutputStream(socket.getOutputStream())).execute();
+    int retries = RETRIES;
+    do {
+      try {
+        socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), port), TIMEOUT_MILLIS);
+        break;
+      } catch (ConnectException e) {
+        retries--;
+      }
+    } while (retries > 0);
+
+    new TestRunner(serverURL, settingsFile, new File(""),
+        new ObjectOutputStream(socket.getOutputStream())).execute();
   }
 }

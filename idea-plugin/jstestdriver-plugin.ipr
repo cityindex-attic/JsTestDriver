@@ -321,6 +321,191 @@
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="/usr/local/google/alexeagle/js-test-driver">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchMap">
+                <map>
+                  <entry key="https://js-test-driver.googlecode.com/svn/branches">
+                    <value>
+                      <list>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1253746378765" />
+                          <option name="revision" value="355" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/branches/idea7" />
+                        </SvnBranchItem>
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="https://js-test-driver.googlecode.com/svn/com.google.jstestdriver.eclipse.ui_test">
+                    <value>
+                      <list />
+                    </value>
+                  </entry>
+                  <entry key="https://js-test-driver.googlecode.com/svn/samples">
+                    <value>
+                      <list>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1242968024395" />
+                          <option name="revision" value="45" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/samples/hello-world" />
+                        </SvnBranchItem>
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="https://js-test-driver.googlecode.com/svn/tags">
+                    <value>
+                      <list>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1255444862007" />
+                          <option name="revision" value="413" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/tags/1.1a" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1254270267444" />
+                          <option name="revision" value="394" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/tags/1.1" />
+                        </SvnBranchItem>
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="https://js-test-driver.googlecode.com/svn/update">
+                    <value>
+                      <list>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1254751903054" />
+                          <option name="revision" value="403" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/update/artifacts.jar" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1254751903054" />
+                          <option name="revision" value="403" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/update/content.jar" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1254751900245" />
+                          <option name="revision" value="402" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/update/features" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1254751900245" />
+                          <option name="revision" value="402" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/update/plugins" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1254751900245" />
+                          <option name="revision" value="402" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/update/site.xml" />
+                        </SvnBranchItem>
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="https://js-test-driver.googlecode.com/svn/wiki">
+                    <value>
+                      <list>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1255384117615" />
+                          <option name="revision" value="410" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/ForDevelopers.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1253891281740" />
+                          <option name="revision" value="373" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/HtmlDoc.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1253891150629" />
+                          <option name="revision" value="369" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/CodeCoverage.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1253891133086" />
+                          <option name="revision" value="368" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/Navigation.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1253824191064" />
+                          <option name="revision" value="360" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/XUnitCompatibility.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1253744283562" />
+                          <option name="revision" value="354" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/GettingStarted.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1251912243143" />
+                          <option name="revision" value="333" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/UsingTheEclipsePlugin.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1251663546686" />
+                          <option name="revision" value="328" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/QUnitAdapter.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1243355219192" />
+                          <option name="revision" value="47" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/DesignPrinciples.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1242967843772" />
+                          <option name="revision" value="44" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/DebuggingWithJsTestDriver.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1242967335584" />
+                          <option name="revision" value="41" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/ContinuousBuild.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1242958533239" />
+                          <option name="revision" value="39" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/CommandLineFlags.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1242958301248" />
+                          <option name="revision" value="37" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/ConfigurationFile.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1242957802148" />
+                          <option name="revision" value="32" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/TestCase.wiki" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1242840916049" />
+                          <option name="revision" value="8" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/Diagrams.graffle" />
+                        </SvnBranchItem>
+                        <SvnBranchItem>
+                          <option name="creationDateMillis" value="1242840916049" />
+                          <option name="revision" value="8" />
+                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/Overview.png" />
+                        </SvnBranchItem>
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://js-test-driver.googlecode.com/svn/branches" />
+                  <option value="https://js-test-driver.googlecode.com/svn/com.google.jstestdriver.eclipse.ui_test" />
+                  <option value="https://js-test-driver.googlecode.com/svn/samples" />
+                  <option value="https://js-test-driver.googlecode.com/svn/tags" />
+                  <option value="https://js-test-driver.googlecode.com/svn/update" />
+                  <option value="https://js-test-driver.googlecode.com/svn/wiki" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://js-test-driver.googlecode.com/svn/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="myVersion" value="123" />
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
