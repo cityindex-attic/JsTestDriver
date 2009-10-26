@@ -79,6 +79,7 @@ public class JsTestDriverServer extends Observable {
     addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers, urlTranslator,
         forwardingMapper));
     addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesCache));
+    addServlet("/cache", new FileCacheServlet());
     addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/forward/*", new ForwardingServlet(forwardingMapper));
   }

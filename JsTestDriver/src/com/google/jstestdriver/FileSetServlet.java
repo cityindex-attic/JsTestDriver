@@ -46,6 +46,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
   private final Map<String, Lock> locks = new ConcurrentHashMap<String, Lock>();
 
   private final CapturedBrowsers capturedBrowsers;
+  private final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
 
   // Shared with the TestResourceServlet
   private final FilesCache filesCache;
@@ -132,29 +133,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
       gson.fromJson(fileSet, new TypeToken<Collection<FileInfo>>() {}.getType());
     SlaveBrowser browser = capturedBrowsers.getBrowser(browserId);
     Set<FileInfo> browserFileSet = browser.getFileSet();
-    Set<FileInfo> filesToRequest = new LinkedHashSet<FileInfo>();
-
-    if (browserFileSet.isEmpty() || !clientFileSet.containsAll(browserFileSet)) {
-      for (FileInfo info : clientFileSet) {
-        filesToRequest.add(info);
-      }
-    } else {
-      Set<FileInfo> diff = new LinkedHashSet<FileInfo>(clientFileSet);
-
-      diff.removeAll(browserFileSet);
-      for (FileInfo info : diff) {
-        filesToRequest.add(info);
-      }
-      for (FileInfo browserFileInfo : browserFileSet) {
-        for (FileInfo clientFileInfo : clientFileSet) {
-          if (clientFileInfo.equals(browserFileInfo) &&
-              clientFileInfo.getTimestamp() > browserFileInfo.getTimestamp()) {
-            filesToRequest.add(clientFileInfo);
-            break;
-          }
-        }
-      }
-    }
+    Set<FileInfo> filesToRequest = strategy.createExpiredFileSet(clientFileSet, browserFileSet);
     if (!filesToRequest.isEmpty()) {
       if (browser.getBrowserInfo().getName().contains("Safari")
           || browser.getBrowserInfo().getName().contains("Opera")
@@ -169,6 +148,37 @@ public class FileSetServlet extends HttpServlet implements Observer {
       writer.write(gson.toJson(filteredFilesToRequest));
     }
     writer.flush();
+  }
+
+  public static class FileSetCacheStrategy {
+    /** Creates a fileSet from out of date and absent files. */
+    public Set<FileInfo> createExpiredFileSet(Collection<FileInfo> newFileSet,
+                                              Set<FileInfo> currentFileSet) {
+      Set<FileInfo> expiredFileSet = new LinkedHashSet<FileInfo>();
+    
+      if (currentFileSet.isEmpty() || !newFileSet.containsAll(currentFileSet)) {
+        for (FileInfo info : newFileSet) {
+          expiredFileSet.add(info);
+        }
+      } else {
+        Set<FileInfo> diff = new LinkedHashSet<FileInfo>(newFileSet);
+    
+        diff.removeAll(currentFileSet);
+        for (FileInfo info : diff) {
+          expiredFileSet.add(info);
+        }
+        for (FileInfo browserFileInfo : currentFileSet) {
+          for (FileInfo clientFileInfo : newFileSet) {
+            if (clientFileInfo.equals(browserFileInfo) &&
+                clientFileInfo.getTimestamp() > browserFileInfo.getTimestamp()) {
+              expiredFileSet.add(clientFileInfo);
+              break;
+            }
+          }
+        }
+      }
+      return expiredFileSet;
+    }
   }
 
   private Set<FileInfo> filterServeOnlyFiles(Set<FileInfo> filesToRequest) {
