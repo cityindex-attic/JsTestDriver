@@ -150,37 +150,6 @@ public class FileSetServlet extends HttpServlet implements Observer {
     writer.flush();
   }
 
-  public static class FileSetCacheStrategy {
-    /** Creates a fileSet from out of date and absent files. */
-    public Set<FileInfo> createExpiredFileSet(Collection<FileInfo> newFileSet,
-                                              Set<FileInfo> currentFileSet) {
-      Set<FileInfo> expiredFileSet = new LinkedHashSet<FileInfo>();
-    
-      if (currentFileSet.isEmpty() || !newFileSet.containsAll(currentFileSet)) {
-        for (FileInfo info : newFileSet) {
-          expiredFileSet.add(info);
-        }
-      } else {
-        Set<FileInfo> diff = new LinkedHashSet<FileInfo>(newFileSet);
-    
-        diff.removeAll(currentFileSet);
-        for (FileInfo info : diff) {
-          expiredFileSet.add(info);
-        }
-        for (FileInfo browserFileInfo : currentFileSet) {
-          for (FileInfo clientFileInfo : newFileSet) {
-            if (clientFileInfo.equals(browserFileInfo) &&
-                clientFileInfo.getTimestamp() > browserFileInfo.getTimestamp()) {
-              expiredFileSet.add(clientFileInfo);
-              break;
-            }
-          }
-        }
-      }
-      return expiredFileSet;
-    }
-  }
-
   private Set<FileInfo> filterServeOnlyFiles(Set<FileInfo> filesToRequest) {
     Set<FileInfo> filteredFilesToRequest = new LinkedHashSet<FileInfo>();
     Set<String> cachedFiles = filesCache.getAllFileNames();

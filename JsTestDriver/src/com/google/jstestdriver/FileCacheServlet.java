@@ -2,10 +2,6 @@
 
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.jstestdriver.FileSetServlet.FileSetCacheStrategy;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,17 +12,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 /**
  * Provides a filecache for clients to determine if a file has changed since they last ran.
  * @author corysmith@google.com (Cory Smith)
  */
 public class FileCacheServlet extends HttpServlet {
-  
-  private static final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
+
+  private static final long serialVersionUID = -285793401666562019L;
+  private final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
   Set<FileInfo> currentFiles = new HashSet<FileInfo>();
   private Gson gson = new Gson();
 
-  @SuppressWarnings("unused") //@#$@% Checked exceptions.
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
       IOException {
