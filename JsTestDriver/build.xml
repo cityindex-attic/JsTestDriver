@@ -30,6 +30,8 @@
   <property name="svn.trunkUrl" value="https://js-test-driver.googlecode.com/svn/trunk"/>
   <property name="svn.tagsUrl" value="https://js-test-driver.googlecode.com/svn/tags"/>
 
+  <property name="javac.target" value="1.5"/>
+
   <target name="clean">
     <delete dir="target" />
     <ant antfile="../idea-plugin/build.xml" dir="../idea-plugin" target="clean"/>
@@ -97,7 +99,8 @@
     <attribute name="destdir"/>
     <attribute name="debug" default="false" />
     <sequential>
-      <javac srcdir="${src.dir}" destdir="@{destdir}" classpathref="classpath" debug="@{debug}">
+      <javac srcdir="${src.dir}" destdir="@{destdir}" classpathref="classpath"
+        debug="@{debug}" target="${javac.target}">
         <src path="${src.dir}" />
         <src path="${src-gen.dir}" />
         <exclude name="com/google/jstestdriver/ui/**" />
@@ -151,7 +154,7 @@
 
   <target name="compile" depends="init, antlr">
     <macro-compile destdir="${obj.dir}" debug="false"/>
-    <javac srcdir="${src.dir}" destdir="${obj.dir}">
+    <javac srcdir="${src.dir}" destdir="${obj.dir}" target="${javac.target}">
       <classpath>
         <path refid="classpath" />
       </classpath>
@@ -167,7 +170,8 @@
 
   <target name="compile-debug" depends="init, antlr">
     <macro-compile destdir="${obj-debug.dir}" debug="true"/>
-    <javac srcdir="${src.dir}" destdir="${obj-debug.dir}" debug="true">
+    <javac srcdir="${src.dir}" destdir="${obj-debug.dir}" debug="true"
+        target="${javac.target}">
       <classpath>
         <path refid="classpath" />
       </classpath>
@@ -182,7 +186,8 @@
   </target>
 
   <target name="compile-test" depends="compile-debug">
-    <javac srcdir="${src-test.dir}" destdir="${obj-test.dir}" classpathref="classpath" debug="true">
+    <javac srcdir="${src-test.dir}" destdir="${obj-test.dir}"
+        classpathref="classpath" debug="true" target="${javac.target}">
       <classpath refid="classpath-test" />
       <classpath>
         <pathelement path="${obj-debug.dir}" />
