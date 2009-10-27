@@ -101,7 +101,7 @@ public class JsTestDriverServer extends Observable {
     try {
       server.start();
       setChanged();
-      notifyObservers();
+      notifyObservers(Event.STARTED);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -110,9 +110,15 @@ public class JsTestDriverServer extends Observable {
   public void stop() {
     try {
       server.stop();
+      setChanged();
+      notifyObservers(Event.STOPPED);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public enum Event {
+    STARTED, STOPPED
   }
 
   public static void main(String[] args) {

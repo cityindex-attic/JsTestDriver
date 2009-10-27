@@ -72,9 +72,16 @@ public class StatusBar extends JPanel implements Observer {
     label.setText(messageBundle.getString(status.name()));
   }
 
-  public void update(Observable observable, Object o) {
+  public void update(Observable observable, Object event) {
     if (observable instanceof JsTestDriverServer) {
-      setStatus(Status.NO_BROWSERS);
+      switch ((JsTestDriverServer.Event) event) {
+        case STARTED:
+          setStatus(Status.NO_BROWSERS);
+          break;
+        case STOPPED:
+          setStatus(Status.NOT_RUNNING);
+          break;
+      }
     } else if (observable instanceof CapturedBrowsers) {
       setStatus(Status.READY);
     }

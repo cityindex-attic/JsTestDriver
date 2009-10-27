@@ -21,6 +21,8 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Observer;
+import java.util.Observable;
 
 import junit.framework.TestCase;
 
@@ -68,5 +70,33 @@ public class JsTestDriverServerTest extends TestCase {
     server.start();
     Collection<BrowserInfo> browsers = client.listBrowsers();
     assertEquals(0, browsers.size());
+  }
+
+  public void testShouldNotifyObserversOnServerStart() throws Exception {
+    MockObserver o = new MockObserver();
+    server.addObserver(o);
+    server.start();
+    assertSame(o.event, JsTestDriverServer.Event.STARTED);
+    assertEquals(1, o.numCalls);
+  }
+
+  public void testShouldNotifyObserversOnServerStop() throws Exception {
+    MockObserver o = new MockObserver();
+    server.addObserver(o);
+    server.start();
+    server.stop();
+    assertSame(o.event, JsTestDriverServer.Event.STOPPED);
+    assertEquals(2, o.numCalls);
+  }
+
+  private static class MockObserver implements Observer {
+    Observable target;
+    Object event;
+    int numCalls = 0;
+    public void update(Observable o, Object arg) {
+      target = o;
+      event = arg;
+      numCalls++;
+    }
   }
 }
