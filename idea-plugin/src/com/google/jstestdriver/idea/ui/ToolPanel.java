@@ -27,11 +27,12 @@ import static java.text.MessageFormat.format;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Observer;
+import java.util.Observable;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class ToolPanel extends JPanel {
+public class ToolPanel extends JPanel implements Observer {
 
   private StatusBar statusBar;
   private CapturedBrowsersPanel capturedBrowsersPanel;
@@ -40,6 +41,8 @@ public class ToolPanel extends JPanel {
   public static int serverPort = 9876;
   private FilesCache cache = new FilesCache(new HashMap<String, FileInfo>());
   private JTextField captureUrl;
+  private JButton startServerButton;
+  private JButton stopServerButton;
 
   public ToolPanel() {
     statusBar = new StatusBar(StatusBar.Status.NOT_RUNNING, MessageBundle.getBundle());
@@ -55,8 +58,11 @@ public class ToolPanel extends JPanel {
       add(new JPanel() {{
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(statusBar);
-        add(new JButton(new ServerStartAction()));
-        add(new JButton(new ServerStopAction()));
+        startServerButton = new JButton(new ServerStartAction());
+        add(startServerButton);
+        stopServerButton = new JButton(new ServerStopAction());
+        add(stopServerButton);
+        stopServerButton.setEnabled(false);
       }});
       add(new JPanel() {{
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -65,6 +71,21 @@ public class ToolPanel extends JPanel {
       }});
       add(capturedBrowsersPanel);
     }}, BorderLayout.NORTH);
+  }
+
+  public void update(Observable observable, Object event) {
+    if (observable instanceof JsTestDriverServer) {
+      switch ((JsTestDriverServer.Event) event) {
+        case STARTED:
+          stopServerButton.setEnabled(true);
+          startServerButton.setEnabled(false);
+          break;
+        case STOPPED:
+          startServerButton.setEnabled(true);
+          stopServerButton.setEnabled(false);
+          break;
+      }
+    }
   }
 
   private class ServerStartAction extends AbstractAction {
@@ -78,7 +99,7 @@ public class ToolPanel extends JPanel {
       browsers.addObserver(statusBar);
       serverStartupAction = new ServerStartupAction(serverPort, browsers, cache,
           new DefaultURLTranslator(), new DefaultURLRewriter());
-      serverStartupAction.addObservers(Arrays.<Observer>asList(statusBar));
+      serverStartupAction.addObservers(Arrays.<Observer>asList(statusBar, ToolPanel.this));
       serverStartupAction.run();
       final String serverUrl = format("http://{0}:{1,number,###}/capture", InfoPanel.getHostName(), serverPort);
       captureUrl.setText(serverUrl);
