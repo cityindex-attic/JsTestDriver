@@ -15,20 +15,21 @@
  */
 package com.google.jstestdriver.idea;
 
+import com.google.jstestdriver.TestResult;
+import static com.google.jstestdriver.TestResult.Result;
+
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
 import com.intellij.util.concurrency.SwingWorker;
-
-import com.google.jstestdriver.TestResult;
-import static com.google.jstestdriver.TestResult.Result;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Sits on the IDE side of the socket communication of test results from the test runner.
@@ -38,10 +39,9 @@ import java.util.HashMap;
  */
 public class RemoteTestListener {
   private final SMTestRunnerResultsForm testRunnerResultsForm;
-  private ServerSocket socket;
-  private Socket client;
-  private ObjectInputStream in;
-  private Map<String, BrowserNode> browserMap = new HashMap<String, BrowserNode>();
+  private volatile ServerSocket socket;
+  private final Map<String, BrowserNode> browserMap = new HashMap<String, BrowserNode>();
+  private final CountDownLatch resultsLatch = new CountDownLatch(1);
 
   public RemoteTestListener(SMTestRunnerResultsForm testRunnerResultsForm) {
     this.testRunnerResultsForm = testRunnerResultsForm;
@@ -116,7 +116,8 @@ public class RemoteTestListener {
 
       @Override
       public void finished() {
-        client = (Socket) getValue();
+        final Socket client = (Socket) getValue();
+        ObjectInputStream in = null;
         try {
           in = new ObjectInputStream(client.getInputStream());
           while (true) {
@@ -135,6 +136,18 @@ public class RemoteTestListener {
           }
         } catch (IOException e) {
           throw new RuntimeException(e);
+        } finally {
+          resultsLatch.countDown();
+          try {
+            if (client != null) {
+              client.close();
+            }
+            if (in != null) {
+              in.close();
+            }
+          } catch (IOException e) {
+            // oh well
+          }
         }
       }
     };
@@ -143,17 +156,16 @@ public class RemoteTestListener {
 
   public void shutdown() {
     try {
-      if (socket != null) {
-        socket.close();
-      }
-      if (client != null) {
-        client.close();
-      }
-      if (in != null) {
-        in.close();
-      }
-    } catch (IOException e) {
+      resultsLatch.await();
+    } catch (InterruptedException e) {
       throw new RuntimeException(e);
+    }
+    if (socket != null) {
+      try {
+        socket.close();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
