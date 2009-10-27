@@ -18,7 +18,7 @@
   <name>JSTestDriver Plugin</name>
   <description>Execute JavaScript unit tests using JSTestDriver</description>
   <version>1.1</version>
-  <vendor>Google</vendor>
+  <vendor url="http://code.google.com/p/js-test-driver/">Google</vendor>
   <idea-version since-build="9886"/>
   <depends>com.intellij.modules.lang</depends>
   <extensions defaultExtensionNs="com.intellij">
@@ -30,4 +30,26 @@
       <implementation-class>com.google.jstestdriver.idea.JSTestDriverToolWindow</implementation-class>
     </component>
   </project-components>
+  <change-notes>
+    <![CDATA[
+Version 1.2:
+- Enable plugins when running tests, such as the coverage plugin
+- Bug fix: when browser disconnects, icon goes grey. When all browsers
+disconnect, status bar goes yellow and message is updated
+- Bug fix: don't make a socket connection on the UI event thread, as it may
+hang.
+- Bug fix: when server shuts down, status bar goes red. Start and stop buttons
+only enabled as appropriate.
+- Move Server control tool panel to the bottom by default.
+
+Version 0.1.1:
+- Support IDEA version 8
+- Use built-in IDEA Run UI for showing test results
+
+Version 0.1:
+- Initial release
+- Start server within IDE, run tests
+
+  ]]>
+  </change-notes>
 </idea-plugin>
