@@ -15,7 +15,7 @@
  */
 package com.google.jstestdriver.idea;
 
-import com.google.jstestdriver.CapturedBrowsers.BrowserCaptureEvent.Event;
+import com.google.jstestdriver.BrowserCaptureEvent.Event;
 import com.google.jstestdriver.idea.ui.ToolPanel;
 
 import static com.intellij.openapi.util.IconLoader.findIcon;
