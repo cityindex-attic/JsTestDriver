@@ -41,6 +41,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.ConnectException;
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -171,7 +172,7 @@ public class TestRunner {
       try {
         socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), port), TIMEOUT_MILLIS);
         break;
-      } catch (ConnectException e) {
+      } catch (SocketException e) {
         retries--;
       }
     } while (retries > 0);

@@ -15,14 +15,18 @@
  */
 package com.google.jstestdriver.idea.ui;
 
+import com.google.jstestdriver.CapturedBrowsers.BrowserCaptureEvent;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.idea.PluginResources.BrowserIcon;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -70,17 +74,18 @@ public class CapturedBrowsersPanel extends JPanel implements Observer {
   }
 
   public void update(Observable observable, Object o) {
-    SlaveBrowser slave = (SlaveBrowser) o;
+    BrowserCaptureEvent captureEvent = (BrowserCaptureEvent) o;
+    SlaveBrowser slave = captureEvent.getBrowser();
     if (slave.getBrowserInfo().getName().contains("Firefox")) {
-      firefoxLabel.setIcon(firefox.getColorIcon());
+      firefoxLabel.setIcon(firefox.getIconForEvent(captureEvent.event));
     } else if (slave.getBrowserInfo().getName().contains("Chrome")) {
-      chromeLabel.setIcon(chrome.getColorIcon());
+      chromeLabel.setIcon(chrome.getIconForEvent(captureEvent.event));
     } else if (slave.getBrowserInfo().getName().contains("Opera")) {
-      operaLabel.setIcon(opera.getColorIcon());
+      operaLabel.setIcon(opera.getIconForEvent(captureEvent.event));
     } else if (slave.getBrowserInfo().getName().contains("Safari")) {
-      safariLabel.setIcon(safari.getColorIcon());
+      safariLabel.setIcon(safari.getIconForEvent(captureEvent.event));
     } else if (slave.getBrowserInfo().getName().contains("Microsoft Internet Explorer")) {
-      ieLabel.setIcon(ie.getColorIcon());
+      ieLabel.setIcon(ie.getIconForEvent(captureEvent.event));
     }
   }
 

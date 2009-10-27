@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Singleton;
+import com.google.jstestdriver.BrowserCaptureEvent.Event;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,8 +25,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.google.inject.Singleton;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -45,7 +46,7 @@ public class CapturedBrowsers extends Observable {
   public void addSlave(SlaveBrowser slave) {
     slaves.put(slave.getId(), slave);
     setChanged();
-    notifyObservers(slave);
+    notifyObservers(new BrowserCaptureEvent(Event.CONNECTED, slave));
   }
 
   public Collection<SlaveBrowser> getSlaveBrowsers() {
@@ -62,7 +63,9 @@ public class CapturedBrowsers extends Observable {
   }
 
   public void removeSlave(String id) {
-    slaves.remove(id);
+    SlaveBrowser slave = slaves.remove(id);
+    setChanged();
+    notifyObservers(new BrowserCaptureEvent(Event.DISCONNECTED, slave));
   }
   
   @Override

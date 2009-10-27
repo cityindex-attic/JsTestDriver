@@ -17,6 +17,7 @@ package com.google.jstestdriver;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.BrowserCaptureEvent.Event;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -166,9 +167,10 @@ public class FileSetServlet extends HttpServlet implements Observer {
   }
 
   public void update(Observable o, Object arg) {
-    SlaveBrowser browser = (SlaveBrowser) arg;
-
-    locks.put(browser.getId(), new Lock());
+    BrowserCaptureEvent captureEvent = (BrowserCaptureEvent) arg;
+    if (captureEvent.event == Event.CONNECTED) {
+      locks.put(captureEvent.getBrowser().getId(), new Lock());
+    }
   }
 
   public void uploadFiles(String id, String data) {

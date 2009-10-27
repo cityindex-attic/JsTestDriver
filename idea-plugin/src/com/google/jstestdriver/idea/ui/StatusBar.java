@@ -18,11 +18,13 @@ package com.google.jstestdriver.idea.ui;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.JsTestDriverServer;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -83,7 +85,11 @@ public class StatusBar extends JPanel implements Observer {
           break;
       }
     } else if (observable instanceof CapturedBrowsers) {
-      setStatus(Status.READY);
+      if (((CapturedBrowsers)observable).getBrowsers().isEmpty()) {
+        setStatus(Status.NO_BROWSERS);
+      } else {
+        setStatus(Status.READY);
+      }
     }
   }
 }

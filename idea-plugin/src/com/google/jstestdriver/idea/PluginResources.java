@@ -15,15 +15,19 @@
  */
 package com.google.jstestdriver.idea;
 
+import com.google.jstestdriver.CapturedBrowsers.BrowserCaptureEvent.Event;
 import com.google.jstestdriver.idea.ui.ToolPanel;
+
 import static com.intellij.openapi.util.IconLoader.findIcon;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  * Access to all the text and image resources for the plugin.
@@ -101,6 +105,17 @@ public class PluginResources {
 
     public Icon getGreyscaleIcon() {
       return new ImageIcon(greyscale);
+    }
+
+    public Icon getIconForEvent(Event event) {
+      switch (event) {
+        case CONNECTED:
+          return getColorIcon();
+        case DISCONNECTED:
+          return getGreyscaleIcon();
+        default:
+          throw new IllegalStateException("Unknown event " + event);
+      }
     }
   }
 }
