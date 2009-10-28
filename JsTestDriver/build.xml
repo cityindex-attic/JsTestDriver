@@ -376,7 +376,8 @@
     </input>
   </target>
 
-  <target name="release" depends="checkNoLocalChanges, getReleaseInfo, test, jar, coverage-plugin-jar">
+  <target name="release" depends="checkNoLocalChanges, getReleaseInfo, test,
+      jar, coverage-plugin-jar, src-jar">
     <echo message="Tagging the release in Subversion..."/>
     <svn username="${googlecode.username}" password="${googlecode.password}">
       <copy srcurl="${svn.trunkUrl}" desturl="${svn.tagsUrl}/${release.id}"
