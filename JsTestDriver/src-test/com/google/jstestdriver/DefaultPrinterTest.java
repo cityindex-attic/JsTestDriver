@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.jstestdriver.output.DefaultPrinter;
 
 import junit.framework.TestCase;
 

@@ -13,11 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.output;
 
 import com.google.gson.Gson;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.JsException;
+import com.google.jstestdriver.RunData;
+import com.google.jstestdriver.TestResult;
 
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,19 +35,14 @@ public class XmlPrinter implements TestResultPrinter {
   private static final String NEW_LINE = System.getProperty("line.separator");
 
   private final Gson gson = new Gson();
-  private final AtomicInteger totalPasses = new AtomicInteger(0);
-  private final AtomicInteger totalFails = new AtomicInteger(0);
-  private final AtomicInteger totalErrors = new AtomicInteger(0);
 
-  private final PrintStream out;
   private final TestXmlSerializer serializer;
   private final AtomicInteger browsers;
   private final ConcurrentHashMap<String, RunData> browsersRunData;
   private final RunData runData = new RunData();
 
-  public XmlPrinter(PrintStream out, TestXmlSerializer serializer, AtomicInteger browsers,
+  public XmlPrinter(TestXmlSerializer serializer, AtomicInteger browsers,
       ConcurrentHashMap<String, RunData> browsersRunData) {
-    this.out = out;
     this.serializer = serializer;
     this.browsers = browsers;
     this.browsersRunData = browsersRunData;
@@ -54,72 +52,12 @@ public class XmlPrinter implements TestResultPrinter {
     serializer.startTestSuite(name);
   }
 
-  // TODO(jeremiele): I know what you think, I think it too...
-  private float findMaxTime() {
-    float max = 0f;
-
-    for (RunData data : browsersRunData.values()) {
-      max = Math.max(data.getTotalTime(), max);
-    }
-    return max;
-  }
-
-  private int getTotalRan() {
-    int totalRan = 0;
-
-    for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
-      RunData data = entry.getValue();
-
-      totalRan += data.getPassed() + data.getFailed() + data.getErrors();
-    }
-    return totalRan;
-  }
-
-  private int getTotalPassed() {
-    int totalPassed = 0;
-
-    for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
-      RunData data = entry.getValue();
-
-      totalPassed += data.getPassed();
-    }
-    return totalPassed;    
-  }
-
-  private int getTotalFailed() {
-    int totalFailed = 0;
-
-    for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
-      RunData data = entry.getValue();
-
-      totalFailed += data.getFailed();
-    }
-    return totalFailed;    
-  }
-
-  private int getTotalErrors() {
-    int totalErrors = 0;
-
-    for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
-      RunData data = entry.getValue();
-
-      totalErrors += data.getErrors();
-    }
-    return totalErrors;
-  }
-
   public void close() {
     if (browsers.decrementAndGet() == 0) {
-      out.println(String.format("Total %d tests (Passed: %d; Fails: %d; Errors: %d) (%.2f ms)",
-          getTotalRan(), getTotalPassed(), getTotalFailed(), getTotalErrors(), findMaxTime()));
       StringBuilder output = new StringBuilder();
 
       for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
         RunData data = entry.getValue();
-
-        out.println(String.format("  %s: Run %d tests (Passed: %d; Fails: %d; Errors %d) (%.2f ms)",
-            entry.getKey(), (data.getPassed() + data.getFailed() + data.getErrors()),
-            data.getPassed(), data.getFailed(), data.getErrors(), data.getTotalTime()));
         List<TestResult> problems = data.getProblems();
 
         for (TestResult testResult : problems) {
@@ -149,13 +87,10 @@ public class XmlPrinter implements TestResultPrinter {
     }
     if (result == TestResult.Result.passed) {
       runData.addPass();
-      totalPasses.incrementAndGet();
     } else if (result == TestResult.Result.failed) {
       runData.addFail();
-      totalFails.incrementAndGet();
     } else if (result == TestResult.Result.error) {
       runData.addError();
-      totalErrors.incrementAndGet();
     }
   }
 

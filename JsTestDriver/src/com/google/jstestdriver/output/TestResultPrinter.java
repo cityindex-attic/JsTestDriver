@@ -13,7 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.output;
+
+import com.google.jstestdriver.TestResult;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

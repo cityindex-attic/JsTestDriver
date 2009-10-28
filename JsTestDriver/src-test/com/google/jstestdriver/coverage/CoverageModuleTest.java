@@ -15,12 +15,6 @@
  */
 package com.google.jstestdriver.coverage;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import junit.framework.TestCase;
-
 import com.google.inject.Guice;
 import com.google.inject.Key;
 import com.google.inject.Module;
@@ -29,7 +23,13 @@ import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.JsTestDriverModule;
-import com.google.jstestdriver.guice.PrintStreamClientModule;
+import com.google.jstestdriver.guice.TestResultPrintingModule;
+
+import junit.framework.TestCase;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Smoke test. If you see smoke, it failed.
@@ -39,7 +39,7 @@ import com.google.jstestdriver.guice.PrintStreamClientModule;
 public class CoverageModuleTest extends TestCase {
   public void testGetActionRunner() throws Exception {
     CoverageModule coverage = new CoverageModule();
-    PrintStreamClientModule printStream = new PrintStreamClientModule(System.out);
+    TestResultPrintingModule printStream = new TestResultPrintingModule(System.out, "");
     FlagsImpl flags = new FlagsImpl();
     flags.setTests(Arrays.asList("test"));
     flags.setBrowser(Arrays.asList("ff"));

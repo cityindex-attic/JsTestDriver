@@ -20,6 +20,8 @@ import com.google.inject.name.Named;
 import com.google.jstestdriver.DryRunAction.DryRunActionResponseStream;
 import com.google.jstestdriver.EvalAction.EvalActionResponseStream;
 import com.google.jstestdriver.ResetAction.ResetActionResponseStream;
+import com.google.jstestdriver.output.ResponsePrinterFactory;
+import com.google.jstestdriver.output.TestResultPrinter;
 
 import java.io.File;
 

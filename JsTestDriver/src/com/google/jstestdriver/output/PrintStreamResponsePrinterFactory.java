@@ -15,14 +15,11 @@
  */
 package com.google.jstestdriver.output;
 
-import java.io.PrintStream;
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.google.jstestdriver.DefaultPrinter;
 import com.google.jstestdriver.JsTestDriverClient;
-import com.google.jstestdriver.ResponsePrinterFactory;
-import com.google.jstestdriver.TestResultPrinter;
+
+import java.io.PrintStream;
 
 /**
  * Provides a printer that prints the responses to the provided PrintStream.

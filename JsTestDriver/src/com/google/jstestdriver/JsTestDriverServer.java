@@ -18,8 +18,7 @@ package com.google.jstestdriver;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.jstestdriver.guice.PrintStreamClientModule;
-import com.google.jstestdriver.guice.XmlClientModule;
+import com.google.jstestdriver.guice.TestResultPrintingModule;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.mortbay.jetty.Server;
@@ -153,14 +152,9 @@ public class JsTestDriverServer extends Observable {
         serverAddress = String.format("http://%s:%d", "127.0.0.1", flags.getPort());
       }
 
-      // TODO(corysmith): move this to the same configuration class as the serverAddress
-      if (flags.getTestOutput().length() > 0) {
-        modules.add(new XmlClientModule(System.out));
-      } else {
-        modules.add(new PrintStreamClientModule(System.out));
-      }
       Injector injector =
-          Guice.createInjector(new JsTestDriverModule(flags, fileSet, modules, serverAddress));
+          Guice.createInjector(new JsTestDriverModule(flags, fileSet, modules, serverAddress),
+             new TestResultPrintingModule(System.out, flags.getTestOutput()));
 
       injector.getInstance(ActionRunner.class).runActions();
     } catch (CmdLineException e) {

@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.output.TestResultPrinter;
+
 import java.util.Collection;
 
 /**

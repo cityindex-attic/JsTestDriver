@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver.coverage;
 
-import junit.framework.TestCase;
-
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.TestResult;
-import com.google.jstestdriver.TestResultPrinter;
+import com.google.jstestdriver.output.TestResultPrinter;
+
+import junit.framework.TestCase;
 
 /**
  * @author corysmith

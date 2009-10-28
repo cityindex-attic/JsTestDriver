@@ -16,32 +16,31 @@
 
 package com.google.jstestdriver;
 
-import java.util.Collections;
+import com.google.inject.Guice;
+import com.google.inject.Module;
+import com.google.jstestdriver.guice.TestResultPrintingModule;
 
 import junit.framework.TestCase;
 
-import com.google.inject.Guice;
-import com.google.inject.Module;
-import com.google.jstestdriver.guice.PrintStreamClientModule;
-import com.google.jstestdriver.guice.XmlClientModule;
+import java.util.Collections;
 
 /**
  * @author corysmith
  */
 public class JsTestDriverModuleTest extends TestCase {
-  public void testGetActionRunner() throws Exception {
+  public void testGetActionRunnerWithoutXmlPrinter() throws Exception {
     FlagsImpl flags = new FlagsImpl();
     Guice.createInjector(new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
-        Collections.<Module>singletonList(new PrintStreamClientModule(System.out)),
+        Collections.<Module>singletonList(new TestResultPrintingModule(System.out, "")),
         "http://foo")).getInstance(ActionRunner.class);
   }
 
-  public void testGetActionRunnerXmlWriter() throws Exception {
+  public void testGetActionRunnerWithXmlWriter() throws Exception {
     FlagsImpl flags = new FlagsImpl();
     Guice.createInjector(new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
-        Collections.<Module>singletonList(new XmlClientModule(System.out)),
+        Collections.<Module>singletonList(new TestResultPrintingModule(System.out, ".")),
         "http://foo")).getInstance(ActionRunner.class);
   }
 }

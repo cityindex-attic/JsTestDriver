@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.output.TestXmlSerializer;
+
 import junit.framework.TestCase;
 
 import org.w3c.dom.Document;

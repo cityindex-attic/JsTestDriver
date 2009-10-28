@@ -15,20 +15,15 @@
  */
 package com.google.jstestdriver.output;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.JsTestDriverClient;
-import com.google.jstestdriver.ResponsePrinterFactory;
 import com.google.jstestdriver.RunData;
-import com.google.jstestdriver.TestResultPrinter;
-import com.google.jstestdriver.TestXmlSerializer;
-import com.google.jstestdriver.XmlPrinter;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Provides a printer that prints the responses to an xml file that JUnit understands.
@@ -40,7 +35,6 @@ public class XmlResponsePrinterFactory implements ResponsePrinterFactory {
 
   private final String xmlDir;
 
-  private final PrintStream out;
   private final JsTestDriverClient client;
 
   private final AtomicInteger numberOfBrowsers = new AtomicInteger(-1);
@@ -49,10 +43,8 @@ public class XmlResponsePrinterFactory implements ResponsePrinterFactory {
 
   @Inject
   public XmlResponsePrinterFactory(@Named("testOutput") String xmlDir,
-                                   @Named("outputStream") PrintStream out,
                                    JsTestDriverClient client) {
     this.xmlDir = xmlDir;
-    this.out = out;
     this.client = client;
   }
 
@@ -61,7 +53,7 @@ public class XmlResponsePrinterFactory implements ResponsePrinterFactory {
       numberOfBrowsers.set(client.listBrowsers().size());
     }
     try {
-      return new XmlPrinter(out, new TestXmlSerializer(new FileOutputStream(
+      return new XmlPrinter(new TestXmlSerializer(new FileOutputStream(
           String.format("%s/%s", xmlDir, xmlFile))), numberOfBrowsers, browsersRunData);
     } catch (FileNotFoundException e) {
       throw new RuntimeException(e);

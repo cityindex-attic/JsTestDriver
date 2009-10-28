@@ -13,7 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.output;
+
+import com.google.jstestdriver.FailureParser;
+import com.google.jstestdriver.RunData;
+import com.google.jstestdriver.TestResult;
 
 import java.io.PrintStream;
 import java.util.List;
