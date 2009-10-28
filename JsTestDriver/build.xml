@@ -290,7 +290,7 @@
   </target>
 
   <target name="jar-nodeps" depends="compile">
-    <jar destfile="${bin.dir}/${ant.project.name}.jar" basedir="${obj.dir}" excludes="**/*.js"
+    <jar destfile="${bin.dir}/${ant.project.name}-nodeps.jar" basedir="${obj.dir}" excludes="**/*.js"
       duplicate="preserve">
       <manifest>
         <attribute name="Main-Class" value="${main-class}" />
@@ -332,7 +332,7 @@
       <filelist dir="${src.dir}//com/google/jstestdriver/coverage/javascript"
         files="coverage.js,plugin.js" />
     </concat>
-    <jar destfile="${bin.dir}/plugins/coverage.jar"
+    <jar destfile="${bin.dir}/plugins/coverage-nodeps.jar"
       duplicate="preserve">
       <fileset dir="${obj.dir}">
         <include name="**/coverage/**"/>
@@ -369,7 +369,6 @@
 
   <target name="getReleaseInfo">
     <input addproperty="release.id" message="Enter the release number (ie. 1.0.0-rc1):"/>
-
     <input addproperty="googlecode.username" message="Your google account (don't include @gmail.com):"/>
     <input addproperty="googlecode.password" message="Your googlecode password (http://code.google.com/hosting/settings):">
       <handler classname="org.apache.tools.ant.input.SecureInputHandler" />
@@ -377,7 +376,7 @@
   </target>
 
   <target name="release" depends="checkNoLocalChanges, getReleaseInfo, test,
-      jar, coverage-plugin-jar, src-jar">
+      jar, coverage-plugin-jar, jar-all-src-nodeps">
     <echo message="Tagging the release in Subversion..."/>
     <svn username="${googlecode.username}" password="${googlecode.password}">
       <copy srcurl="${svn.trunkUrl}" desturl="${svn.tagsUrl}/${release.id}"
@@ -392,6 +391,10 @@
               targetfilename="${ant.project.name}-${release.id}.jar"
               username="${googlecode.username}" password="${googlecode.password}"
               projectname="js-test-driver" summary="Self-contained executable jar"/>
+    <gcupload labels="Featured, Type-Archive" filename="${bin.dir}/${ant.project.name}-nodeps.jar"
+              targetfilename="${ant.project.name}-nodeps-${release.id}.jar"
+              username="${googlecode.username}" password="${googlecode.password}"
+              projectname="js-test-driver" summary="Jar without bundled dependencies"/>
     <gcupload labels="Featured, Type-Source" filename="${bin.dir}/${ant.project.name}-src.jar"
               targetfilename="${ant.project.name}-${release.id}-src.jar"
               username="${googlecode.username}" password="${googlecode.password}"
@@ -400,6 +403,10 @@
               targetfilename="coverage-${release.id}.jar"
               username="${googlecode.username}" password="${googlecode.password}"
               projectname="js-test-driver" summary="Coverage Plugin"/>
+    <gcupload labels="Featured, Type-Archive" filename="${bin.dir}/plugins/coverage-nodeps.jar"
+              targetfilename="coverage-nodeps-${release.id}.jar"
+              username="${googlecode.username}" password="${googlecode.password}"
+              projectname="js-test-driver" summary="Coverage Plugin without bundled dependencies"/>
     <echo message="Release has been deployed. You should now remove the 'featured' label from the previous release on the googlecode site."/>
   </target>
 

@@ -18,7 +18,8 @@
   <name>JSTestDriver Plugin</name>
   <description>Execute JavaScript unit tests using JSTestDriver</description>
   <version>1.2</version>
-  <vendor url="http://code.google.com/p/js-test-driver/">Google</vendor>
+  <vendor url="http://code.google.com/p/js-test-driver/"
+          email="js-test-driver@googlegroups.com">Google</vendor>
   <idea-version since-build="9886"/>
   <depends>com.intellij.modules.lang</depends>
   <extensions defaultExtensionNs="com.intellij">
