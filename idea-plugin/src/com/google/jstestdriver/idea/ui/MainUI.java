@@ -18,25 +18,44 @@ package com.google.jstestdriver.idea.ui;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.jstestdriver.*;
-import com.google.jstestdriver.guice.PrintStreamClientModule;
-import com.google.jstestdriver.guice.XmlClientModule;
+import com.google.jstestdriver.ActionFactory;
+import com.google.jstestdriver.ActionRunner;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.ConfigurationParser;
+import com.google.jstestdriver.DefaultPathRewriter;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.Flags;
+import com.google.jstestdriver.FlagsParser;
+import com.google.jstestdriver.JsTestDriverModule;
+import com.google.jstestdriver.ServerStartupAction;
+import com.google.jstestdriver.guice.TestResultPrintingModule;
+
 import org.apache.commons.logging.LogFactory;
 import org.kohsuke.args4j.CmdLineException;
 import org.mortbay.log.Slf4jLog;
 
-import javax.swing.*;
-import java.awt.*;
-import static java.awt.BorderLayout.*;
+import java.awt.BorderLayout;
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.NORTH;
+import static java.awt.BorderLayout.SOUTH;
 import java.io.File;
 import java.io.Reader;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
 /**
- * Entry point for the Swing GUI of JSTestDriver.
+ * This class provides an entry point for the Swing GUI of JSTestDriver, independent of running
+ * as an IDEA plugin. Right now, this is not released in a form that anyone uses.
+ * TODO(alexeagle): should we delete this, or document that it can be used?
  *
  * @author alexeagle@google.com (Alex Eagle)
  */
@@ -114,14 +133,9 @@ public class MainUI {
         serverAddress = String.format("http://%s:%d", "127.0.0.1", flags.getPort());
       }
       List<Module> modules = new LinkedList<Module>();
-      // TODO(corysmith): Figure out how to avoid creating a client.
-      if (flags.getTestOutput().length() > 0) {
-        modules.add(new XmlClientModule(System.out));
-      } else {
-        modules.add(new PrintStreamClientModule(System.out));
-      }
+
       Injector injector =
-        Guice.createInjector(
+        Guice.createInjector(new TestResultPrintingModule(System.out, flags.getTestOutput()),
             new JsTestDriverModule(flags,
                                    fileSet,
                                    modules,
