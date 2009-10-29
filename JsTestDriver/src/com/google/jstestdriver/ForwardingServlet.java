@@ -31,35 +31,35 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class ForwardingServlet extends ProxyServlet.Transparent {
 
-  private static final int SKIP_FORWARD_INDEX = 8;
-  private static final ThreadLocal<HttpServletRequest> threadLocal =
-    new ThreadLocal<HttpServletRequest>();
+  private static final int SKIP_FORWARD_INDEX = "/forward".length();
+  private static final ThreadLocal<String> threadLocalReferrer =
+    new ThreadLocal<String>();
 
   private final ForwardingMapper forwardingMapper;
 
-  public ForwardingServlet(ForwardingMapper forwardingMapper) {
+  public ForwardingServlet(ForwardingMapper forwardingMapper, String defaultServer, int port) {
+    super("forward", defaultServer, port);
     this.forwardingMapper = forwardingMapper;
   }
 
   @Override
   public void service(ServletRequest req, ServletResponse resp) throws ServletException,
       IOException {
+    HttpServletRequest request = (HttpServletRequest) req;
     try {
-      HttpServletRequest request = (HttpServletRequest) req;
-
-      threadLocal.set(request);
+      threadLocalReferrer.set(request.getHeader("Referer"));
       super.service(req, resp);
+    } catch (Exception e) {
+      throw new RuntimeException("Unable to forward " + request.getRequestURI(), e);
     } finally {
-      threadLocal.remove();
+      threadLocalReferrer.remove();
     }
   }
 
   @Override
   protected URL proxyHttpURL(String scheme, String serverName, int serverPort, String uri)
       throws MalformedURLException {
-    HttpServletRequest request = threadLocal.get();
-
-    return getForwardingUrl(scheme, serverName, serverPort, uri, request.getHeader("Referer"));
+    return getForwardingUrl(scheme, serverName, serverPort, uri, threadLocalReferrer.get());
   }
 
   public URL getForwardingUrl(String scheme, String serverName, int serverPort, String uri,

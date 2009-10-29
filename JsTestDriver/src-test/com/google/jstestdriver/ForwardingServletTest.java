@@ -26,7 +26,7 @@ public class ForwardingServletTest extends TestCase {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
 
     forwardingMapper.addForwardingMapping("/", "http://www.google.com");
-    ForwardingServlet servlet = new ForwardingServlet(forwardingMapper);
+    ForwardingServlet servlet = new ForwardingServlet(forwardingMapper, "localhost", 8080);
 
     assertEquals("http://www.google.com", servlet.getForwardingUrl("http", "server", 42,
         "/", null).toString());
@@ -36,7 +36,7 @@ public class ForwardingServletTest extends TestCase {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
 
     forwardingMapper.addForwardingMapping("/", "http://www.google.com");
-    ForwardingServlet servlet = new ForwardingServlet(forwardingMapper);
+    ForwardingServlet servlet = new ForwardingServlet(forwardingMapper, "localhost", 8080);
 
     assertEquals("http://www.google.com/my/own/path/something.png", servlet.getForwardingUrl(
         "http", "server", 42, "/forward/my/own/path/something.png", "http://server:42/").toString());
@@ -46,7 +46,7 @@ public class ForwardingServletTest extends TestCase {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
 
     forwardingMapper.addForwardingMapping("/", "http://www.google.com");
-    ForwardingServlet servlet = new ForwardingServlet(forwardingMapper);
+    ForwardingServlet servlet = new ForwardingServlet(forwardingMapper, "localhost", 8080);
 
     assertEquals("http://www.google.com", servlet.getForwardingUrl("http", "server", 42,
         "/", null).toString());
@@ -65,7 +65,7 @@ public class ForwardingServletTest extends TestCase {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
 
     forwardingMapper.addForwardingMapping("/", "http://mycool.server.com:873");
-    ForwardingServlet servlet = new ForwardingServlet(forwardingMapper);
+    ForwardingServlet servlet = new ForwardingServlet(forwardingMapper, "localhost", 8080);
 
     assertEquals("http://mycool.server.com:873", servlet.getForwardingUrl("http", "server", 42,
         "/", null).toString());

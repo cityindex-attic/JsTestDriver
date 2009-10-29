@@ -23,6 +23,7 @@ import com.google.jstestdriver.guice.TestResultPrintingModule;
 import org.kohsuke.args4j.CmdLineException;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.jetty.servlet.ServletHolder;
 
@@ -42,13 +43,13 @@ import javax.servlet.Servlet;
 public class JsTestDriverServer extends Observable {
   
   private final Server server = new Server();
-  private ServletHandler servletHandler;
 
   private final int port;
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache filesCache;
   private final URLTranslator urlTranslator;
   private final URLRewriter urlRewriter;
+  private Context context;
 
   public JsTestDriverServer(int port, CapturedBrowsers capturedBrowsers,
       FilesCache preloadedFilesCache, URLTranslator urlTranslator, URLRewriter urlRewriter) {
@@ -80,11 +81,11 @@ public class JsTestDriverServer extends Observable {
     addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesCache));
     addServlet("/cache", new FileCacheServlet());
     addServlet("/test/*", new TestResourceServlet(filesCache));
-    addServlet("/forward/*", new ForwardingServlet(forwardingMapper));
+    addServlet("/forward/*", new ForwardingServlet(forwardingMapper, "localhost", port));
   }
 
   private void addServlet(String url, Servlet servlet) {
-    servletHandler.addServletWithMapping(new ServletHolder(servlet), url);
+    context.addServlet(new ServletHolder(servlet), url);
   }
 
   private void initJetty(int port) {
@@ -92,8 +93,7 @@ public class JsTestDriverServer extends Observable {
 
     connector.setPort(port);
     server.addConnector(connector);
-    servletHandler = new ServletHandler();
-    server.addHandler(servletHandler);
+    context = new Context(server, "/", Context.SESSIONS);
   }
 
   public void start() {
