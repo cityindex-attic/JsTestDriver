@@ -60,7 +60,6 @@ public class PluginLoader {
     return modules;
   }
 
-  @SuppressWarnings("unchecked")
   private Module getModuleInstance(Plugin plugin, Class<Module> module) {
     try {
       Constructor<Module> argsConstructor = module.getConstructor(List.class);

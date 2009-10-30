@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver.coverage;
 
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +34,18 @@ public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(CoverageInstrumentingProcessor.class);
   private final CodeCoverageDecorator decorator;
+  private final Set<String> excludes;
 
   @Inject
-  public CoverageInstrumentingProcessor(CodeCoverageDecorator decorator) {
+  public CoverageInstrumentingProcessor(CodeCoverageDecorator decorator,
+                                        @Coverage("coverageExcludes") Set<String> excludes) {
     this.decorator = decorator;
+    this.excludes = excludes;
   }
 
   public FileInfo process(FileInfo file) {
-    if (file.getFileName().contains("LCOV.js") || !file.canLoad() || file.isServeOnly()) {
+    if (file.getFileName().contains("LCOV.js") || !file.canLoad()
+      || file.isServeOnly() || excludes.contains(file.getFileName())) {
       return file;
     }
     LOGGER.info("Generating coverage for " + file.getFileName());

@@ -19,10 +19,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.ResponseStreamFactory;
@@ -37,6 +42,12 @@ import com.google.jstestdriver.hooks.FileLoadPreProcessor;
  */
 public class CoverageModule extends AbstractModule {
 
+  private final List<String> excludes;
+
+  public CoverageModule(List<String> excludes) {
+    this.excludes = excludes;
+  }
+
   @Override
   protected void configure() {
     Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class)
@@ -47,8 +58,52 @@ public class CoverageModule extends AbstractModule {
         .addBinding().to(CoverageResponseStreamFactory.class);
     Multibinder.newSetBinder(binder(), ActionListProcessor.class)
         .addBinding().to(CoverageActionDecorator.class);
+    bind(new TypeLiteral<Set<String>>(){})
+      .annotatedWith(new CoverageImpl("coverageExcludes")).toInstance(Sets.newHashSet(excludes));
+    
   }
-  
+
+  /** Lets me bind to annotations with arguments, namespaced to the Coverage plugin.*/
+  static class CoverageImpl implements Coverage {
+
+    private final String value;
+
+    @Override
+    public int hashCode() {
+      // This is specified in java.lang.Annotation.
+      return (127 * "value".hashCode()) ^ value.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (!(obj instanceof Coverage))
+        return false;
+      Coverage other = (Coverage) obj;
+      if (value == null) {
+        if (other.value() != null)
+          return false;
+      } else if (!value.equals(other.value()))
+        return false;
+      return true;
+    }
+
+    public CoverageImpl(String name) {
+      this.value = name;
+    }
+
+    public String value() {
+      return value;
+    }
+
+    public Class<? extends Annotation> annotationType() {
+      return Coverage.class;
+    }
+  }
+
   // TODO(corysmith): figure out if there is a better way for plugins to configure themselves.
   // no point in requiring bad practice to integrate. (unlike some frameworks...)
   @Provides @Inject

@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class CoverageModuleTest extends TestCase {
   public void testGetActionRunner() throws Exception {
-    CoverageModule coverage = new CoverageModule();
+    CoverageModule coverage = new CoverageModule(Collections.<String>emptyList());
     TestResultPrintingModule printStream = new TestResultPrintingModule(System.out, "");
     FlagsImpl flags = new FlagsImpl();
     flags.setTests(Arrays.asList("test"));

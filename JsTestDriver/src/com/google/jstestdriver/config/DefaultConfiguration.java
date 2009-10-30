@@ -24,7 +24,6 @@ import com.google.jstestdriver.Plugin;
 
 /**
  * @author corysmith@google.com (Cory Smith)
- *
  */
 public class DefaultConfiguration implements Configuration{
 
