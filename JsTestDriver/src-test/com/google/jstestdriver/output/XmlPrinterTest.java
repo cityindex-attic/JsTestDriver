@@ -57,7 +57,7 @@ public class XmlPrinterTest extends TestCase {
     File[] files = tempFile.listFiles();
 
     assertEquals(1, files.length);
-    assertEquals("TEST-Firefox_25_Linux_1.testCase1.xml", files[0].getName());
+    assertEquals("TEST-Firefox_25_Linux.testCase1.xml", files[0].getName());
   }
 
   public void testSeveralTestCasesInSeveralBrowsers() throws Exception {
@@ -71,10 +71,10 @@ public class XmlPrinterTest extends TestCase {
 
     assertEquals(4, files.length);
     Arrays.sort(files);
-    assertEquals("TEST-Firefox_25_Linux_1.testCase1.xml", files[0]);
+    assertEquals("TEST-Firefox_25_Linux.testCase1.xml", files[0]);
     assertEquals("TEST-Firefox_25_Linux_2.testCase1.xml", files[1]);
-    assertEquals("TEST-Safari_3_MacIntel_3.testCase1.xml", files[2]);
-    assertEquals("TEST-Safari_3_MacIntel_3.testCase2.xml", files[3]);
+    assertEquals("TEST-Safari_3_MacIntel.testCase1.xml", files[2]);
+    assertEquals("TEST-Safari_3_MacIntel.testCase2.xml", files[3]);
   }
 
   private BrowserInfo makeBrowser(String name, String os, String version, int id) {

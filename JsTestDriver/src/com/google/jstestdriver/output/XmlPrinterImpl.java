@@ -32,6 +32,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -51,19 +53,21 @@ public class XmlPrinterImpl implements XmlPrinter {
   }
 
   public void writeXmlReportFiles() {
+    Map<BrowserInfo, String> browserNames =
+        createUniqueBrowserNames(resultHolder.getResults().keySet());
     for (BrowserInfo browser : resultHolder.getResults().keySet()) {
       Multimap<String, TestResult> testCaseRollup = newMultiMap();
       for (TestResult testResult : resultHolder.getResults().get(browser)) {
         testCaseRollup.put(testResult.getTestCaseName(), testResult);
       }
       for (String testCaseName : testCaseRollup.keySet()) {
-        File xmlOutputFile = new File(xmlOutputDir, formatFileName(browser, testCaseName));
+        String suiteName = formatSuiteName(browserNames.get(browser), testCaseName);
+        File xmlOutputFile = new File(xmlOutputDir, formatFileName(suiteName));
         try {
           xmlOutputFile.createNewFile();
           TestXmlSerializer serializer = new TestXmlSerializer(new FileWriter(xmlOutputFile));
 
-          serializer.writeTestCase(formatSuiteName(browser, testCaseName),
-              testCaseRollup.get(testCaseName));
+          serializer.writeTestCase(suiteName, testCaseRollup.get(testCaseName));
         } catch (IOException e) {
           logger.error("Could not create file: {}", xmlOutputFile.getAbsolutePath(), e);
         }
@@ -71,14 +75,26 @@ public class XmlPrinterImpl implements XmlPrinter {
     }
   }
 
-  private String formatFileName(BrowserInfo browser, String testCaseName) {
-    String suiteName = formatSuiteName(browser, testCaseName);
+  private Map<BrowserInfo, String> createUniqueBrowserNames(Set<BrowserInfo> browserInfos) {
+    Map<BrowserInfo, String> result = Maps.newHashMap();
+    for (BrowserInfo browserInfo : browserInfos) {
+      if (result.containsValue(browserInfo.toString())) {
+        System.out.println("browserInfo = " + browserInfo);
+        result.put(browserInfo, browserInfo.toUniqueString());
+      } else {
+        result.put(browserInfo, browserInfo.toString());
+      }
+    }
+    return result;
+  }
+
+  private String formatFileName(String suiteName) {
     return String.format(fileNameFormat, suiteName);
   }
 
-  private String formatSuiteName(BrowserInfo browser, String testCaseName) {
+  private String formatSuiteName(String browser, String testCaseName) {
     return String.format("%s.%s",
-        browser.toUniqueString().replaceAll("\\s", "_").replaceAll("\\.", ""), testCaseName);
+        browser.replaceAll("\\s", "_").replaceAll("\\.", ""), testCaseName);
   }
 
   private Multimap<String, TestResult> newMultiMap() {
