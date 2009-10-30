@@ -20,6 +20,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.util.Providers;
 import com.google.jstestdriver.output.MultiTestResultListener;
 import com.google.jstestdriver.output.TestResultListener;
+import com.google.jstestdriver.output.XmlPrinterImpl;
+import com.google.jstestdriver.output.XmlPrinter;
 
 import junit.framework.TestCase;
 
@@ -63,6 +65,7 @@ public class IDEPluginActionBuilderTest extends TestCase {
                      @Override
                      protected void configure() {
                        bind(Server.class).to(MyServer.class);
+                       bind(XmlPrinter.class).to(XmlPrinterImpl.class);
                        bind(TestResultListener.class).toInstance(
                            new MultiTestResultListener(Collections.<TestResultListener>emptySet()));
                      }
@@ -84,6 +87,7 @@ public class IDEPluginActionBuilderTest extends TestCase {
                      @Override
                      protected void configure() {
                        bind(Server.class).to(MyServer.class);
+                       bind(XmlPrinter.class).to(XmlPrinterImpl.class);                       
                        bind(TestResultListener.class).toProvider(Providers.<TestResultListener>of(null));                       
                      }
                    });

@@ -22,6 +22,7 @@ import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 import com.google.jstestdriver.output.PrintXmlTestResultsAction;
+import com.google.jstestdriver.output.XmlPrinterImpl;
 import com.google.jstestdriver.output.XmlPrinter;
 
 import junit.framework.TestCase;
@@ -175,7 +176,7 @@ public class DefaultActionListProviderTest extends TestCase {
     List<String> tests = Arrays.asList("foo.testBar");
     DefaultActionListProvider parser =
         createProvider(Arrays.asList("browser"), 9876, null, false, tests, Collections
-            .<ActionListProcessor> emptySet(), ".", new XmlPrinter(null, null));
+            .<ActionListProcessor> emptySet(), ".", new XmlPrinterImpl(null, null));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);

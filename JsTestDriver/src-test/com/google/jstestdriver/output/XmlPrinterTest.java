@@ -52,7 +52,7 @@ public class XmlPrinterTest extends TestCase {
 
   public void testTestSuiteFileNameIsNice() throws Exception {
     data.onTestComplete(firefoxPassed1);
-    XmlPrinter printer = new XmlPrinter(data, tempFile.getAbsolutePath());
+    XmlPrinter printer = new XmlPrinterImpl(data, tempFile.getAbsolutePath());
     printer.writeXmlReportFiles();
     File[] files = tempFile.listFiles();
 
@@ -65,7 +65,7 @@ public class XmlPrinterTest extends TestCase {
         safariError1, safariPassed1)) {
       data.onTestComplete(testResult);
     }
-    XmlPrinter printer = new XmlPrinter(data, tempFile.getAbsolutePath());
+    XmlPrinter printer = new XmlPrinterImpl(data, tempFile.getAbsolutePath());
     printer.writeXmlReportFiles();
     String[] files = tempFile.list();
 
