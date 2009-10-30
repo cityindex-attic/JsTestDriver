@@ -36,6 +36,7 @@ import java.util.Set;
  * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+@Deprecated
 public class ConfigurationParser {
 
   private static final List<String> EMPTY_LIST = Lists.newArrayList();
