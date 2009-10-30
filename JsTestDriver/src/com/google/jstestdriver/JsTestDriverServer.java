@@ -1,12 +1,12 @@
 /*
  * Copyright 2008 Google Inc.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,33 +15,31 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.jstestdriver.guice.TestResultPrintingModule;
+import java.io.File;
+import java.util.List;
+import java.util.Observable;
 
-import org.kohsuke.args4j.CmdLineException;
+import javax.servlet.Servlet;
+
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-import java.io.File;
-import java.io.Reader;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Set;
-
-import javax.servlet.Servlet;
+import com.google.common.collect.Lists;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.jstestdriver.config.Configuration;
+import com.google.jstestdriver.config.DefaultConfiguration;
+import com.google.jstestdriver.config.YamlParser;
+import com.google.jstestdriver.guice.TestResultPrintingModule;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class JsTestDriverServer extends Observable {
-  
+
   private final Server server = new Server();
 
   private final int port;
@@ -52,7 +50,8 @@ public class JsTestDriverServer extends Observable {
   private Context context;
 
   public JsTestDriverServer(int port, CapturedBrowsers capturedBrowsers,
-      FilesCache preloadedFilesCache, URLTranslator urlTranslator, URLRewriter urlRewriter) {
+      FilesCache preloadedFilesCache, URLTranslator urlTranslator,
+      URLRewriter urlRewriter) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = preloadedFilesCache;
@@ -68,20 +67,22 @@ public class JsTestDriverServer extends Observable {
     addServlet("/", new HomeServlet(capturedBrowsers));
     addServlet("/hello", new HelloServlet());
     addServlet("/heartbeat", new HeartbeatServlet(capturedBrowsers));
-    addServlet("/capture", new CaptureServlet(new BrowserHunter(capturedBrowsers)));
-    addServlet("/runner/*", new StandaloneRunnerServlet(new BrowserHunter(capturedBrowsers),
-        filesCache, new StandaloneRunnerFilesFilterImpl(), new SlaveResourceService(
-            SlaveResourceService.RESOURCE_LOCATION)));
+    addServlet("/capture", new CaptureServlet(new BrowserHunter(
+      capturedBrowsers)));
+    addServlet("/runner/*", new StandaloneRunnerServlet(new BrowserHunter(
+      capturedBrowsers), filesCache, new StandaloneRunnerFilesFilterImpl(),
+      new SlaveResourceService(SlaveResourceService.RESOURCE_LOCATION)));
     addServlet("/slave/*", new SlaveResourceServlet(new SlaveResourceService(
-        SlaveResourceService.RESOURCE_LOCATION)));
-    addServlet("/cmd", new CommandServlet(capturedBrowsers, urlTranslator, urlRewriter,
-        forwardingMapper));
-    addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers, urlTranslator,
-        forwardingMapper));
+      SlaveResourceService.RESOURCE_LOCATION)));
+    addServlet("/cmd", new CommandServlet(capturedBrowsers, urlTranslator,
+      urlRewriter, forwardingMapper));
+    addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers,
+      urlTranslator, forwardingMapper));
     addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesCache));
     addServlet("/cache", new FileCacheServlet());
     addServlet("/test/*", new TestResourceServlet(filesCache));
-    addServlet("/forward/*", new ForwardingServlet(forwardingMapper, "localhost", port));
+    addServlet("/forward/*", new ForwardingServlet(forwardingMapper,
+      "localhost", port));
   }
 
   private void addServlet(String url, Servlet servlet) {
@@ -122,46 +123,30 @@ public class JsTestDriverServer extends Observable {
 
   public static void main(String[] args) {
     try {
+      YamlParser parser = new YamlParser(new DefaultPathRewriter());
       Flags flags = new FlagsParser().parseArgument(args);
       File config = new File(flags.getConfig());
-      Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
-      List<Module> modules = new LinkedList<Module>();
+      List<Module> modules = Lists.newLinkedList();
+      modules.add(new TestResultPrintingModule(System.out, flags.getTestOutput()));
 
-      // TODO(corysmith): move the handling of the serverAddress into a configuration class that 
-      // returns an appropriate module configuration.
-      String serverAddress = flags.getServer();
+      Configuration configuration = new DefaultConfiguration();
       if (flags.hasWork()) {
         if (!config.exists()) {
           throw new RuntimeException("Config file doesn't exist: " + flags.getConfig());
         }
-        Reader configReader = new java.io.FileReader(config);
-        ConfigurationParser configParser = new ConfigurationParser(config.getParentFile(),
-            configReader, new DefaultPathRewriter());
-        PluginLoader pluginLoader = new PluginLoader();
-        configParser.parse();
-        fileSet = configParser.getFilesList();
-        if (serverAddress == null || serverAddress.length() == 0) {
-          serverAddress = configParser.getServer();
-        }
-        modules.addAll(pluginLoader.load(configParser.getPlugins()));
-      }
-      if (serverAddress == null || serverAddress.length() == 0) {
-        if (flags.getPort() == -1) {
-          throw new RuntimeException("Oh Snap! No server defined!");
-        }
-        serverAddress = String.format("http://%s:%d", "127.0.0.1", flags.getPort());
+        configuration = parser.parse(config.getParentFile(), new java.io.FileReader(config));
+        modules.addAll(new PluginLoader().load(configuration.getPlugins()));
       }
 
-      Injector injector =
-          Guice.createInjector(new JsTestDriverModule(flags, fileSet, modules, serverAddress),
-             new TestResultPrintingModule(System.out, flags.getTestOutput()));
+      Injector injector = Guice.createInjector(
+          new JsTestDriverModule(flags,
+              configuration.getFilesList(),
+              modules,
+              configuration.createServerAddress(flags.getServer(), flags.getPort())));
 
       injector.getInstance(ActionRunner.class).runActions();
-    } catch (CmdLineException e) {
-      System.err.println(e.getMessage());
-    } catch (FailureException e) {
-      System.exit(1);
     } catch (Exception e) {
+      System.err.println(e.getMessage());
       e.printStackTrace(System.err);
       System.exit(1);
     }
