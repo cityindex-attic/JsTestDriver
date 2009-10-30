@@ -20,8 +20,16 @@ import com.google.jstestdriver.TestResult;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public interface TestResultPrinter {
-  public void open(String name);
-  public void print(TestResult testResult);
-  public void close();
+public interface TestResultListener {
+  /**
+   * Called on the browser thread
+   * @param testResult
+   */
+  public void onTestComplete(TestResult testResult);
+
+  /**
+   * To be called from the main thread, after all the browser threads have completed running.
+   * TODO: this method can go away, if the summary stdout printing happens in its own action
+   */
+  public void finish();
 }

@@ -17,6 +17,9 @@ package com.google.jstestdriver;
 
 import com.google.gson.Gson;
 import com.google.inject.AbstractModule;
+import com.google.inject.util.Providers;
+import com.google.jstestdriver.output.MultiTestResultListener;
+import com.google.jstestdriver.output.TestResultListener;
 
 import junit.framework.TestCase;
 
@@ -26,6 +29,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +63,8 @@ public class IDEPluginActionBuilderTest extends TestCase {
                      @Override
                      protected void configure() {
                        bind(Server.class).to(MyServer.class);
+                       bind(TestResultListener.class).toInstance(
+                           new MultiTestResultListener(Collections.<TestResultListener>emptySet()));
                      }
                    });
     builder.addAllTests();
@@ -78,6 +84,7 @@ public class IDEPluginActionBuilderTest extends TestCase {
                      @Override
                      protected void configure() {
                        bind(Server.class).to(MyServer.class);
+                       bind(TestResultListener.class).toProvider(Providers.<TestResultListener>of(null));                       
                      }
                    });
     builder.addAllTests();

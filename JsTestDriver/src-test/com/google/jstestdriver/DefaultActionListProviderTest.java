@@ -21,6 +21,8 @@ import com.google.inject.util.Providers;
 import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
+import com.google.jstestdriver.output.PrintXmlTestResultsAction;
+import com.google.jstestdriver.output.XmlPrinter;
 
 import junit.framework.TestCase;
 
@@ -40,7 +42,7 @@ public class DefaultActionListProviderTest extends TestCase {
     List<String> browsers = Arrays.asList("browser");
     DefaultActionListProvider parser =
         createProvider(browsers, 9876, null, false, Collections.<String> emptyList(), Collections
-            .<ActionListProcessor> emptySet());
+            .<ActionListProcessor> emptySet(), "", null);
     List<Action> actions = parser.get();
 
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
@@ -66,7 +68,7 @@ public class DefaultActionListProviderTest extends TestCase {
     });
 
     DefaultActionListProvider parser =
-        createProvider(browsers, 9876, null, false, Collections.<String> emptyList(), processors);
+        createProvider(browsers, 9876, null, false, Collections.<String> emptyList(), processors, "", null);
     assertSame(expectedActions,parser.get());
   }
 
@@ -75,7 +77,8 @@ public class DefaultActionListProviderTest extends TestCase {
                                                    String serverAddress,
                                                    boolean reset,
                                                    List<String> tests,
-                                                   Set<ActionListProcessor> processors) {
+                                                   Set<ActionListProcessor> processors,
+                                                   String testOutput, XmlPrinter xmlPrinter) {
     ActionFactory actionFactory =
         new ActionFactory(null, Collections.<TestsPreProcessor>emptySet());
     return new DefaultActionListProvider(
@@ -90,20 +93,22 @@ public class DefaultActionListProviderTest extends TestCase {
         port,
         Collections.<FileInfo>emptySet(),
         serverAddress,
+        testOutput,
         null,
         new DefaultThreadedActionProvider(actionFactory, null, reset, Collections
             .<String> emptyList(), false, tests, Collections.<String> emptyList()),
         Providers.<JsTestDriverClient>of(null),
         Providers.<URLTranslator>of(null), Providers.<URLRewriter>of(null),
         new FailureAccumulator(),
-        processors);
+        processors,
+        xmlPrinter);
   }
 
   public void testParseWithServerAndReset() throws Exception {
     String serverAddress = "http://otherserver:8989";
     DefaultActionListProvider parser =
         createProvider(Arrays.asList("browser1"), -1, serverAddress, true, Collections
-            .<String> emptyList(), Collections.<ActionListProcessor>emptySet());
+            .<String> emptyList(), Collections.<ActionListProcessor>emptySet(), "", null);
 
     FlagsImpl flags = new FlagsImpl();
     flags.setServer(serverAddress);
@@ -133,7 +138,7 @@ public class DefaultActionListProviderTest extends TestCase {
     String serverAddress = "http://otherserver:8989";
     DefaultActionListProvider parser =
         createProvider(browserPaths, -1, serverAddress, false, Collections.<String> emptyList(),
-            Collections.<ActionListProcessor> emptySet());
+            Collections.<ActionListProcessor> emptySet(), "", null);
 
     List<Action> actions = parser.get();
 
@@ -146,7 +151,7 @@ public class DefaultActionListProviderTest extends TestCase {
     List<String> tests = Arrays.asList("foo.testBar");
     DefaultActionListProvider parser =
         createProvider(Arrays.asList("browser"), 9876, null, false, tests, Collections
-            .<ActionListProcessor> emptySet());
+            .<ActionListProcessor> emptySet(), "", null);
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -164,6 +169,25 @@ public class DefaultActionListProviderTest extends TestCase {
     assertEquals(1, testRunner.getActions().size());
     assertTrue(testRunner.getActions().get(0) instanceof RunTestsAction);
     assertEquals(tests, ((RunTestsAction) testRunner.getActions().get(0)).getTests());
+  }
+
+  public void testXmlTestResultsActionIsAddedIfTestOutputFolderIsSet() throws Exception {
+    List<String> tests = Arrays.asList("foo.testBar");
+    DefaultActionListProvider parser =
+        createProvider(Arrays.asList("browser"), 9876, null, false, tests, Collections
+            .<ActionListProcessor> emptySet(), ".", new XmlPrinter(null, null));
+
+    List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
+    expectedActions.add(ServerStartupAction.class);
+    expectedActions.add(BrowserStartupAction.class);
+    expectedActions.add(ThreadedActionsRunner.class);
+    expectedActions.add(PrintXmlTestResultsAction.class);
+    expectedActions.add(BrowserShutdownAction.class);
+    expectedActions.add(ServerShutdownAction.class);
+    expectedActions.add(FailureCheckerAction.class);
+
+    List<Action> actions = parser.get();
+    assertSequence(expectedActions, actions);
   }
 
   private void assertSequence(List<Class<? extends Action>> expectedActions,

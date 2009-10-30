@@ -15,11 +15,16 @@
  */
 package com.google.jstestdriver.output;
 
+import com.google.gson.Gson;
+import com.google.jstestdriver.JsException;
+import com.google.jstestdriver.TestResult;
+import com.google.jstestdriver.TestResult.Result;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.Writer;
+import java.util.Collection;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -34,11 +39,13 @@ import javax.xml.transform.stream.StreamResult;
  */
 public class TestXmlSerializer {
 
-  private final TransformerHandler transformerHandler;
-  private final OutputStream outputStream;
 
-  public TestXmlSerializer(OutputStream outputStream) {
-    this.outputStream = outputStream;
+  private final Gson gson = new Gson();
+
+  private final TransformerHandler transformerHandler;
+  private final Writer fileWriter;
+
+  public TestXmlSerializer(Writer fileWriter) {
     try {
       transformerHandler =
           ((SAXTransformerFactory) SAXTransformerFactory.newInstance()).newTransformerHandler();
@@ -47,21 +54,28 @@ public class TestXmlSerializer {
       transformer.setOutputProperty(OutputKeys.METHOD, "xml");
       transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      transformerHandler.setResult(new StreamResult(outputStream));
+      transformerHandler.setResult(new StreamResult(fileWriter));
     } catch (TransformerConfigurationException e) {
       throw new RuntimeException(e);
     } catch (TransformerFactoryConfigurationError e) {
       throw new RuntimeException(e);
     }
+    this.fileWriter = fileWriter;
   }
 
-  public void startTestSuite(String name) {
+  private void startTestSuite(String name, TestXmlSerializer.SuiteAggregator totals) {
     try {
       transformerHandler.startDocument();
       AttributesImpl atts = new AttributesImpl();
 
       if (name.trim().length() > 0) {
         atts.addAttribute("", "", "name", "CDATA", name);
+        // errors="0" failures="0" hostname="alexeagle.mtv.corp.google.com" name="com.google.jstestdriver.ConfigurationParserTest" tests="9" time="0.232
+
+        atts.addAttribute("", "", "errors", "CDATA", String.valueOf(totals.error));
+        atts.addAttribute("", "", "failures", "CDATA", String.valueOf(totals.failed));
+        atts.addAttribute("", "", "tests", "CDATA", String.valueOf(totals.tests));
+        atts.addAttribute("", "", "time", "CDATA", String.valueOf(totals.elapsedTime));        
       }
       transformerHandler.startElement("", "", "testsuite", atts);
     } catch (SAXException e) {
@@ -69,29 +83,25 @@ public class TestXmlSerializer {
     }
   }
 
-  public void startTestSuite() {
-    startTestSuite("");
-  }
-
-  public void endTestSuite() {
+  private void endTestSuite() {
     try {
       transformerHandler.endElement("", "", "testsuite");
       transformerHandler.endDocument();
-      outputStream.flush();
-      outputStream.close();
+//      outputStream.flush();
+//      outputStream.close();
     } catch (SAXException e) {
       throw new RuntimeException(e);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+//    } catch (IOException e) {
+//      throw new RuntimeException(e);
     }
   }
 
-  public void startTestCase(String testCaseName, String testName, float time) {
+  private void startTestCase(String testCaseName, String testName, float time) {
     AttributesImpl atts = new AttributesImpl();
 
     atts.addAttribute("", "", "classname", "CDATA", testCaseName);
     atts.addAttribute("", "", "name", "CDATA", testName);
-    atts.addAttribute("", "", "time", "CDATA", Float.toString(time));
+    atts.addAttribute("", "", "time", "CDATA", Float.toString(time / 1000f));
     try {
       transformerHandler.startElement("", "", "testcase", atts);
     } catch (SAXException e) {
@@ -99,7 +109,7 @@ public class TestXmlSerializer {
     }
   }
 
-  public void endTestCase() {
+  private void endTestCase() {
     try {
       transformerHandler.endElement("", "", "testcase");
     } catch (SAXException e) {
@@ -107,13 +117,14 @@ public class TestXmlSerializer {
     }
   }
 
-  public void addFailure(String type, String msg) {
+  private void addFailure(String stack, String message) {
     try {
       AttributesImpl atts = new AttributesImpl();
 
-      atts.addAttribute("", "", "type", "CDATA", type);
+      atts.addAttribute("", "", "type", "CDATA", "failed");
+      atts.addAttribute("", "", "message", "CDATA", message);
       transformerHandler.startElement("", "", "failure", atts);
-      char[] charMsg = msg.toCharArray();
+      char[] charMsg = stack.toCharArray();
 
       transformerHandler.characters(charMsg, 0, charMsg.length);
       transformerHandler.endElement("", "", "failure");
@@ -122,11 +133,11 @@ public class TestXmlSerializer {
     }
   }
 
-  public void addError(String msg, String inner) {
+  private void addError(String inner) {
     try {
       AttributesImpl atts = new AttributesImpl();
 
-      atts.addAttribute("", "", "message", "CDATA", msg);
+      atts.addAttribute("", "", "type", "CDATA", "error");
       transformerHandler.startElement("", "", "error", atts);
       char[] charMsg = inner.toCharArray();
 
@@ -137,7 +148,7 @@ public class TestXmlSerializer {
     }
   }
 
-  public void addOutput(String output) {
+  private void addOutput(String output) {
     try {
       AttributesImpl atts = new AttributesImpl();
 
@@ -151,5 +162,59 @@ public class TestXmlSerializer {
     } catch (SAXException e) {
       throw new RuntimeException(e);
     }    
+  }
+
+  public void writeTestCase(String testCaseName, Collection<TestResult> testResults) {
+    StringBuilder output = new StringBuilder();
+    SuiteAggregator totals = new SuiteAggregator(testResults).aggregate();
+    startTestSuite(testCaseName, totals);
+    for (TestResult testResult : testResults) {
+      startTestCase(testCaseName, testResult.getTestName(), testResult.getTime());
+      if (testResult.getResult() != Result.passed) {
+        String message;
+
+        try {
+          JsException exception = gson.fromJson(testResult.getMessage(), JsException.class);
+
+          message = exception.getMessage();
+        } catch (Exception e) {
+          message = testResult.getMessage();
+        }
+        if (testResult.getResult() == TestResult.Result.failed) {
+          addFailure(testResult.getStack(), message);
+        } else if (testResult.getResult() == TestResult.Result.error) {
+          addError(message);
+        }
+      }
+      output.append(testResult.getLog());
+      endTestCase();
+    }
+    if (output.length() > 0) {
+        addOutput(output.toString());
+      }
+    endTestSuite();
+  }
+
+  private class SuiteAggregator {
+    int tests = 0;
+    int failed = 0;
+    int error = 0;
+    float elapsedTime = 0;
+    private final Collection<TestResult> results;
+    private boolean topLevel = false;
+
+    public SuiteAggregator(Collection<TestResult> results) {
+      this.results = results;
+    }
+
+    public SuiteAggregator aggregate() {
+      for (TestResult result : results) {
+        tests++;
+        failed += (result.getResult() == Result.failed ? 1 : 0);
+        error += (result.getResult() == Result.error ? 1 : 0);
+        elapsedTime += result.getTime() / 1000;
+      }
+      return this;
+    }
   }
 }

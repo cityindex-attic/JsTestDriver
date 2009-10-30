@@ -17,7 +17,7 @@ package com.google.jstestdriver.coverage;
 
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.TestResult;
-import com.google.jstestdriver.output.TestResultPrinter;
+import com.google.jstestdriver.output.TestResultListener;
 
 import junit.framework.TestCase;
 
@@ -27,21 +27,18 @@ import junit.framework.TestCase;
  */
 public class CoverageResponseStreamFactoryTest extends TestCase {
 
-  public final class TestResultPrinterStub implements TestResultPrinter {
+  public final class TestResultListenerStub implements TestResultListener {
     public TestResult testResult;
 
-    public void close() {
+    public void finish() {
     }
 
-    public void open(String name) {
-    }
-
-    public void print(TestResult testResult) {
+    public void onTestComplete(TestResult testResult) {
       this.testResult = testResult;
     }
   }
 
-  final TestResultPrinter printer = new TestResultPrinterStub();
+  final TestResultListener listener = new TestResultListenerStub();
 
   public void testGetRunTestsActionResponseStream() throws Exception {
     CoverageResponseStreamFactory factory = new CoverageResponseStreamFactory(null);

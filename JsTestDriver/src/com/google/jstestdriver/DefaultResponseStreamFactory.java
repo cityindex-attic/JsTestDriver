@@ -16,14 +16,12 @@
 package com.google.jstestdriver;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.DryRunAction.DryRunActionResponseStream;
 import com.google.jstestdriver.EvalAction.EvalActionResponseStream;
 import com.google.jstestdriver.ResetAction.ResetActionResponseStream;
-import com.google.jstestdriver.output.ResponsePrinterFactory;
-import com.google.jstestdriver.output.TestResultPrinter;
-
-import java.io.File;
+import com.google.jstestdriver.output.TestResultListener;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -31,12 +29,12 @@ import java.io.File;
  */
 public class DefaultResponseStreamFactory implements ResponseStreamFactory {
 
-  private final ResponsePrinterFactory responsePrinterFactory;
+  private final Provider<TestResultListener> responsePrinterFactory;
   private final String configFileName;
   private final FailureAccumulator accumulator;
 
   @Inject
-  public DefaultResponseStreamFactory(ResponsePrinterFactory responsePrinterFactory,
+  public DefaultResponseStreamFactory(Provider<TestResultListener> responsePrinterFactory,
                                       @Named("config") String configFileName,
                                       FailureAccumulator accumulator) {
     this.responsePrinterFactory = responsePrinterFactory;
@@ -46,13 +44,10 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
 
   public ResponseStream getRunTestsActionResponseStream(String browserId) {
     String testSuiteName = String.format("com.google.jstestdriver.%s", browserId);
-    TestResultPrinter printer =
-        responsePrinterFactory.getResponsePrinter(
-            String.format("TEST-%s-%s.xml", new File(configFileName).getName(), testSuiteName));
+    TestResultListener listener = responsePrinterFactory.get();
 
-    printer.open(testSuiteName);
     RunTestsActionResponseStream responseStream = new RunTestsActionResponseStream(
-        new TestResultGenerator(), printer, accumulator);
+        new TestResultGenerator(), listener, accumulator);
 
     return responseStream;
   }

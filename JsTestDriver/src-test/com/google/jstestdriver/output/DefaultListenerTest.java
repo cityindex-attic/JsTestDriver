@@ -13,10 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.output;
 
 import com.google.gson.Gson;
-import com.google.jstestdriver.output.DefaultPrinter;
+import com.google.inject.util.Providers;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.JsException;
+import com.google.jstestdriver.TestResult;
 
 import junit.framework.TestCase;
 
@@ -24,7 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public class DefaultPrinterTest extends TestCase {
+public class DefaultListenerTest extends TestCase {
 
   private static final String NEW_LINE = System.getProperty("line.separator");
   private final Gson gson = new Gson();
@@ -32,18 +35,18 @@ public class DefaultPrinterTest extends TestCase {
   private PrintStream out = new PrintStream(buf, true);
 
   public void testEachPassedTestPrintsDotEorFFailuresOnClose() throws Exception {
-    DefaultPrinter printer = new DefaultPrinter(out, 1, false);
+    DefaultListener printer = new DefaultListener(out, Providers.of(1), false);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
     browser.setVersion("1");
     browser.setOs("os");
-    printer.print(new TestResult(browser, "passed", "", "", "A", "d", 1));
-    printer.print(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(new TestResult(browser, "passed", "", "", "A", "d", 1));
+    printer.onTestComplete(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "", "B", "e", 2));
-    printer.print(new TestResult(browser, "error", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(new TestResult(browser, "error", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "", "C", "f", 3));
-    printer.close();
+    printer.finish();
     assertEquals(".FE" + NEW_LINE +
         "Total 3 tests (Passed: 1; Fails: 1; Errors: 1) (6.00 ms)" + NEW_LINE +
         "  TB 1 os: Run 3 tests (Passed: 1; Fails: 1; Errors 1) (6.00 ms)" + NEW_LINE +
@@ -52,7 +55,7 @@ public class DefaultPrinterTest extends TestCase {
   }
 
   public void testEachTestPrintsDotAndWrapsLongLine() throws Exception {
-    DefaultPrinter printer = new DefaultPrinter(out, 1, false);
+    DefaultListener printer = new DefaultListener(out, Providers.of(1), false);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
@@ -61,21 +64,21 @@ public class DefaultPrinterTest extends TestCase {
     printer.setLineLength(1);
     TestResult result = new TestResult(browser, "passed", "", "", "", "", 0);
 
-    printer.print(result);
-    printer.print(result);
-    printer.print(result);
+    printer.onTestComplete(result);
+    printer.onTestComplete(result);
+    printer.onTestComplete(result);
     assertEquals("." + NEW_LINE + "." + NEW_LINE + "." + NEW_LINE, buf.toString());
   }
 
   public void testNotVerbosePassAndLog() throws Exception {
-    DefaultPrinter printer = new DefaultPrinter(out, 1, false);
+    DefaultListener printer = new DefaultListener(out, Providers.of(1), false);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
     browser.setVersion("1");
     browser.setOs("os");
-    printer.print(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
-    printer.close();
+    printer.onTestComplete(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
+    printer.finish();
     assertEquals("." + NEW_LINE +
         "Total 1 tests (Passed: 1; Fails: 0; Errors: 0) (1.00 ms)" + NEW_LINE +
         "  TB 1 os: Run 1 tests (Passed: 1; Fails: 0; Errors 0) (1.00 ms)" + NEW_LINE +
@@ -84,14 +87,14 @@ public class DefaultPrinterTest extends TestCase {
   }
 
   public void testVerbosePassAndLog() throws Exception {
-    DefaultPrinter printer = new DefaultPrinter(out, 1, true);
+    DefaultListener printer = new DefaultListener(out, Providers.of(1), true);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
     browser.setVersion("1");
     browser.setOs("os");
-    printer.print(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
-    printer.close();
+    printer.onTestComplete(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
+    printer.finish();
     assertEquals("[PASSED] A.d" + NEW_LINE +
         "  [LOG] some log" + NEW_LINE +
         "Total 1 tests (Passed: 1; Fails: 0; Errors: 0) (1.00 ms)" + NEW_LINE +
@@ -100,18 +103,18 @@ public class DefaultPrinterTest extends TestCase {
   }
 
   public void testNotVerbosePassFailErrorAndLog() throws Exception {
-    DefaultPrinter printer = new DefaultPrinter(out, 1, false);
+    DefaultListener printer = new DefaultListener(out, Providers.of(1), false);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
     browser.setVersion("1");
     browser.setOs("os");
-    printer.print(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
-    printer.print(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
+    printer.onTestComplete(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "[LOG] failed log", "B", "e", 2));
-    printer.print(new TestResult(browser, "error", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(new TestResult(browser, "error", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "[LOG] error log", "C", "f", 3));
-    printer.close();
+    printer.finish();
     assertEquals(".FE" + NEW_LINE +
         "Total 3 tests (Passed: 1; Fails: 1; Errors: 1) (6.00 ms)" + NEW_LINE +
         "  TB 1 os: Run 3 tests (Passed: 1; Fails: 1; Errors 1) (6.00 ms)" + NEW_LINE +
@@ -124,18 +127,18 @@ public class DefaultPrinterTest extends TestCase {
   }
 
   public void testVerbosePassFailErrorAndLog() throws Exception {
-    DefaultPrinter printer = new DefaultPrinter(out, 1, true);
+    DefaultListener printer = new DefaultListener(out, Providers.of(1), true);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
     browser.setVersion("1");
     browser.setOs("os");
-    printer.print(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
-    printer.print(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
+    printer.onTestComplete(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "[LOG] failed log", "B", "e", 2));
-    printer.print(new TestResult(browser, "error", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(new TestResult(browser, "error", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "[LOG] error log", "C", "f", 3));
-    printer.close();
+    printer.finish();
     assertEquals("[PASSED] A.d" + NEW_LINE +
         "  [LOG] some log" + NEW_LINE +
         "[FAILED] B.e" + NEW_LINE +

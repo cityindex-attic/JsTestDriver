@@ -16,7 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
-import com.google.jstestdriver.output.TestResultPrinter;
+import com.google.jstestdriver.output.TestResultListener;
 
 import junit.framework.TestCase;
 
@@ -27,26 +27,22 @@ import java.util.Collections;
  */
 public class RunTestsActionResponseStreamTest extends TestCase {
 
-  private final class TestResultPrinterStub implements TestResultPrinter {
-    public boolean closed;
+  private final class TestResultListenerStub implements TestResultListener {
+    public boolean finished;
     public TestResult testResult;
 
-    public void close() {
-      this.closed = true;
+    public void finish() {
+      finished = true;
     }
 
-    public void print(TestResult testResult) {
+    public void onTestComplete(TestResult testResult) {
       this.testResult = testResult;
-    }
-
-    public void open(String name) {
-      fail("unexpected call to open");
     }
   }
 
   public void testPrint() throws Exception {
     Gson gson = new Gson();
-    TestResultPrinterStub printer = new TestResultPrinterStub();
+    TestResultListenerStub printer = new TestResultListenerStub();
     RunTestsActionResponseStream stream = new RunTestsActionResponseStream(
       new TestResultGenerator(), printer, new FailureAccumulator());
     Response response = new Response();
@@ -58,8 +54,8 @@ public class RunTestsActionResponseStreamTest extends TestCase {
     stream.stream(response);
     assertEquals(testResult.getResult(), printer.testResult.getResult());
     assertEquals(testResult.getBrowserInfo(), printer.testResult.getBrowserInfo());
-    assertFalse(printer.closed);
+    assertFalse(printer.finished);
     stream.finish();
-    assertTrue(printer.closed);
+    assertTrue(printer.finished);
   }
 }

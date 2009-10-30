@@ -15,7 +15,7 @@
  */
 package com.google.jstestdriver;
 
-import com.google.jstestdriver.output.TestResultPrinter;
+import com.google.jstestdriver.output.TestResultListener;
 
 import java.util.Collection;
 
@@ -25,13 +25,13 @@ import java.util.Collection;
 public class RunTestsActionResponseStream implements ResponseStream {
 
   private final TestResultGenerator testResultGenerator;
-  private final TestResultPrinter printer;
+  private final TestResultListener listener;
   private final FailureAccumulator accumulator;
 
   public RunTestsActionResponseStream(TestResultGenerator testResultGenerator,
-      TestResultPrinter printer, FailureAccumulator accumulator) {
+      TestResultListener listener, FailureAccumulator accumulator) {
     this.testResultGenerator = testResultGenerator;
-    this.printer = printer;
+    this.listener = listener;
     this.accumulator = accumulator;
   }
 
@@ -43,11 +43,11 @@ public class RunTestsActionResponseStream implements ResponseStream {
           || result.getResult() == TestResult.Result.error) {
         accumulator.add();
       }
-      printer.print(result);
+      listener.onTestComplete(result);
     }
   }
 
   public void finish() {
-    printer.close();
+    listener.finish();    
   }
 }

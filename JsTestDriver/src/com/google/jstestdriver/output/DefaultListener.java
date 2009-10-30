@@ -15,7 +15,11 @@
  */
 package com.google.jstestdriver.output;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.name.Named;
 import com.google.jstestdriver.FailureParser;
+import com.google.jstestdriver.JsTestDriverModule.BrowserCount;
 import com.google.jstestdriver.RunData;
 import com.google.jstestdriver.TestResult;
 
@@ -28,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class DefaultPrinter implements TestResultPrinter {
+public class DefaultListener implements TestResultListener {
 
   private static final String NEW_LINE = System.getProperty("line.separator");
 
@@ -43,9 +47,12 @@ public class DefaultPrinter implements TestResultPrinter {
 
   private int lineLength = 70;
 
-  public DefaultPrinter(PrintStream out, int browsers, boolean verbose) {
+  @Inject
+  public DefaultListener(@Named("outputStream") PrintStream out,
+                         @BrowserCount Provider<Integer> browserCountProvider,
+                         @Named("verbose") boolean verbose) {
     this.out = out;
-    this.browsers = new AtomicInteger(browsers);
+    this.browsers = new AtomicInteger(browserCountProvider.get());
     this.verbose = verbose;
   }
 
@@ -53,10 +60,7 @@ public class DefaultPrinter implements TestResultPrinter {
     this.lineLength = lineLength;
   }
 
-  public void open(String name) {
-  }
-
-  public void close() {
+  public void finish() {
     if (browsers.decrementAndGet() == 0) {
       if (!verbose) {
         out.println();
@@ -117,7 +121,7 @@ public class DefaultPrinter implements TestResultPrinter {
     return max;
   }
 
-  public void print(TestResult testResult) {
+  public void onTestComplete(TestResult testResult) {
     String browser = testResult.getBrowserInfo().toString();
     RunData runData = browsersRunData.get(browser);
 

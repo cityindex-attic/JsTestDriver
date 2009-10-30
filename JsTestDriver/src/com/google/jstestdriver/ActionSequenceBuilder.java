@@ -16,6 +16,8 @@
 package com.google.jstestdriver;
 
 import com.google.inject.Provider;
+import com.google.jstestdriver.output.PrintXmlTestResultsAction;
+import com.google.jstestdriver.output.XmlPrinter;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -53,6 +55,7 @@ public class ActionSequenceBuilder {
   private List<String> dryRunFor = new LinkedList<String>();
   private List<ThreadedAction> threadedActions;
   private List<String> commands = new LinkedList<String>();
+  private XmlPrinter xmlPrinter;
 
   /**
    * Begins the building of an action sequence.
@@ -140,6 +143,9 @@ public class ActionSequenceBuilder {
       actions.add(new ThreadedActionsRunner(client, threadedActions, Executors
           .newCachedThreadPool()));
     }
+    if (xmlPrinter != null) {
+      actions.add(new PrintXmlTestResultsAction(xmlPrinter));
+    }
 
     // wrap the actions with the setup/teardown actions.
     addBrowserControlActions(actions);
@@ -213,6 +219,11 @@ public class ActionSequenceBuilder {
    */
   public ActionSequenceBuilder addCommands(List<String> commands) {
     this.commands.addAll(commands);
+    return this;
+  }
+
+  public ActionSequenceBuilder printingResultsWhenFinished(XmlPrinter printer) {
+    this.xmlPrinter = printer;
     return this;
   }
 }

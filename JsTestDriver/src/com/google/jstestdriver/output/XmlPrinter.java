@@ -15,107 +15,74 @@
  */
 package com.google.jstestdriver.output;
 
-import com.google.gson.Gson;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.JsException;
-import com.google.jstestdriver.RunData;
 import com.google.jstestdriver.TestResult;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Collection;
 
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class XmlPrinter implements TestResultPrinter {
+public class XmlPrinter {
 
-  private static final String NEW_LINE = System.getProperty("line.separator");
+  private final Logger logger = LoggerFactory.getLogger(XmlPrinter.class); 
+  private final TestResultHolder resultHolder;
+  private final String xmlOutputDir;
+  private final MessageFormat fileNameFormat = new MessageFormat("TEST-{0}.{1}.xml");
 
-  private final Gson gson = new Gson();
-
-  private final TestXmlSerializer serializer;
-  private final AtomicInteger browsers;
-  private final ConcurrentHashMap<String, RunData> browsersRunData;
-  private final RunData runData = new RunData();
-
-  public XmlPrinter(TestXmlSerializer serializer, AtomicInteger browsers,
-      ConcurrentHashMap<String, RunData> browsersRunData) {
-    this.serializer = serializer;
-    this.browsers = browsers;
-    this.browsersRunData = browsersRunData;
+  @Inject
+  public XmlPrinter(TestResultHolder resultHolder, @Named("testOutput") String xmlOutputDir) {
+    this.resultHolder = resultHolder;
+    this.xmlOutputDir = xmlOutputDir;
   }
 
-  public void open(String name) {
-    serializer.startTestSuite(name);
-  }
+  public void writeXmlReportFiles() {
+    for (BrowserInfo browser : resultHolder.getResults().keySet()) {
+      Multimap<String, TestResult> testCaseRollup = newMultiMap();
+      for (TestResult testResult : resultHolder.getResults().get(browser)) {
+        testCaseRollup.put(testResult.getTestCaseName(), testResult);
+      }
+      for (String testCaseName : testCaseRollup.keySet()) {
+        File xmlOutputFile = new File(xmlOutputDir, formatFileName(browser, testCaseName));
+        try {
+          xmlOutputFile.createNewFile();
+          TestXmlSerializer serializer = new TestXmlSerializer(new FileWriter(xmlOutputFile));
 
-  public void close() {
-    if (browsers.decrementAndGet() == 0) {
-      StringBuilder output = new StringBuilder();
-
-      for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
-        RunData data = entry.getValue();
-        List<TestResult> problems = data.getProblems();
-
-        for (TestResult testResult : problems) {
-          output.append(testResult.getLog() + NEW_LINE);
+          serializer.writeTestCase(testCaseName, testCaseRollup.get(testCaseName));
+        } catch (IOException e) {
+          logger.error("Could not create file: {}", xmlOutputFile.getAbsolutePath(), e);
         }
       }
-      if (output.length() > 0) {
-        serializer.addOutput(output.toString());
-      }
-    }
-    serializer.endTestSuite();
-  }
-
-  // TODO(jeremiele): I know what you think, I think it too...
-  private void logData(TestResult testResult) {
-    TestResult.Result result = testResult.getResult();
-    String browserName = testResult.getBrowserInfo().getName();
-    String browserVersion = testResult.getBrowserInfo().getVersion();
-    String os = testResult.getBrowserInfo().getOs();
-
-    // There is one thread per browser it should be added the first time
-    browsersRunData.putIfAbsent(browserName + " " + browserVersion + " " + os, runData);
-    String log = testResult.getLog();
-
-    if (log.length() > 0) {
-      runData.addProblem(testResult);
-    }
-    if (result == TestResult.Result.passed) {
-      runData.addPass();
-    } else if (result == TestResult.Result.failed) {
-      runData.addFail();
-    } else if (result == TestResult.Result.error) {
-      runData.addError();
     }
   }
 
-  public void print(TestResult testResult) {
-    logData(testResult);
-    BrowserInfo browserInfo = testResult.getBrowserInfo();
+  private String formatFileName(BrowserInfo browser, String testCaseName) {
+    return fileNameFormat.format(new Object[]{
+        browser.toUniqueString().replaceAll("\\s", "_").replaceAll("\\.", ""), testCaseName });
+  }
 
-    serializer.startTestCase(testResult.getTestCaseName(), testResult.getTestName() + ":" +
-        browserInfo.getName() + browserInfo.getVersion(), testResult.getTime() / 1000);
-    if (testResult.getResult() != TestResult.Result.passed) {
-      String message = "";
-
-      try {
-        JsException exception = gson.fromJson(testResult.getMessage(), JsException.class);
-
-        message = exception.getMessage();
-      } catch (Exception e) {
-        message = testResult.getMessage();
+  private Multimap<String, TestResult> newMultiMap() {
+    return Multimaps.newMultimap(
+            Maps.<String, Collection<TestResult>>newHashMap(),
+        new Supplier<Collection<TestResult>>() {
+      public Collection<TestResult> get() {
+        return Lists.newLinkedList();
       }
-      if (testResult.getResult() == TestResult.Result.failed) {
-        serializer.addFailure(testResult.getResult().toString(), message);
-      } else if (testResult.getResult() == TestResult.Result.error) {
-        serializer.addError(testResult.getResult().toString(), message);
-      }
-    }
-    serializer.endTestCase();
+    });
   }
 }

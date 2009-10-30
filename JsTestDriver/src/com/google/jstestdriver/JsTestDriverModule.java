@@ -16,12 +16,17 @@
 package com.google.jstestdriver;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.BindingAnnotation;
+import com.google.inject.Inject;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.guice.FlagsModule;
 
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.util.List;
 import java.util.Set;
 
@@ -48,6 +53,8 @@ public class JsTestDriverModule extends AbstractModule {
     this.serverAddress = serverAddress;
   }
 
+  @BindingAnnotation @Retention(RUNTIME) public @interface BrowserCount{}
+
   @Override
   protected void configure() {
     bind(String.class)
@@ -67,7 +74,34 @@ public class JsTestDriverModule extends AbstractModule {
     for (Module module : plugins) {
       install(module);
     }
-    bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet")).toProvider(
-        FileSetProvider.class).in(Singleton.class);
+    bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet")).
+        toProvider(FileSetProvider.class).in(Singleton.class);
+    bind(Integer.class).annotatedWith(BrowserCount.class).
+        toProvider(BrowserCountProvider.class).in(Singleton.class);
   }
+
+  /**
+   * Provides the number of browsers. Needed by any code that is aware of the threading model for
+   * running tests in multiple browsers.
+   *
+   * @author alexeagle@google.com (Alex Eagle)
+   */
+  public static class BrowserCountProvider implements Provider<Integer> {
+    private final JsTestDriverClient client;
+
+    @Inject
+    public BrowserCountProvider(JsTestDriverClient client) {
+      this.client = client;
+    }
+
+    public synchronized Integer get() {
+      try {
+        return client.listBrowsers().size();
+      } catch (Exception e) {
+        throw new RuntimeException("Cannot inject the browser count until the server has started." +
+            " Try injecting a Provider of it instead.", e);
+      }
+    }
+  }
+
 }

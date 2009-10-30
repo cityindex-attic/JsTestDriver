@@ -86,6 +86,10 @@ public class BrowserInfo {
     return String.format("%s %s %s", name, version, os);
   }
 
+  public String toUniqueString() {
+    return toString() + " " + id;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

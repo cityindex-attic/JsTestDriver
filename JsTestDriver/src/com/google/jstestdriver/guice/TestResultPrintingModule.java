@@ -1,15 +1,16 @@
 package com.google.jstestdriver.guice;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import static com.google.inject.multibindings.Multibinder.newSetBinder;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.DefaultResponseStreamFactory;
 import com.google.jstestdriver.ResponseStreamFactory;
-import com.google.jstestdriver.output.MultiResponsePrinterFactory;
-import com.google.jstestdriver.output.PrintStreamResponsePrinterFactory;
-import com.google.jstestdriver.output.ResponsePrinterFactory;
-import com.google.jstestdriver.output.XmlResponsePrinterFactory;
+import com.google.jstestdriver.output.DefaultListener;
+import com.google.jstestdriver.output.MultiTestResultListener;
+import com.google.jstestdriver.output.TestResultHolder;
+import com.google.jstestdriver.output.TestResultListener;
 
 import java.io.PrintStream;
 
@@ -32,14 +33,15 @@ public class TestResultPrintingModule extends AbstractModule {
 
   protected void configure() {
     bind(PrintStream.class).annotatedWith(Names.named("outputStream")).toInstance(out);
+    Multibinder<TestResultListener> testResultListeners =
+        newSetBinder(binder(), TestResultListener.class);
 
-    Multibinder<ResponsePrinterFactory> responsePrinterFactories =
-        newSetBinder(binder(), ResponsePrinterFactory.class);
     if (testOutput.length() > 0) {
-      responsePrinterFactories.addBinding().to(XmlResponsePrinterFactory.class);
+      testResultListeners.addBinding().to(TestResultHolder.class).in(Singleton.class);
     }
-    responsePrinterFactories.addBinding().to(PrintStreamResponsePrinterFactory.class);
-    bind(ResponsePrinterFactory.class).to(MultiResponsePrinterFactory.class);
+    testResultListeners.addBinding().to(DefaultListener.class).in(Singleton.class);
+    bind(TestResultHolder.class).in(Singleton.class);
+    bind(TestResultListener.class).to(MultiTestResultListener.class);
     newSetBinder(binder(),
         ResponseStreamFactory.class).addBinding().to(DefaultResponseStreamFactory.class);
   }
