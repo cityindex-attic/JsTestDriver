@@ -43,7 +43,7 @@ public class XmlPrinter {
   private final Logger logger = LoggerFactory.getLogger(XmlPrinter.class); 
   private final TestResultHolder resultHolder;
   private final String xmlOutputDir;
-  private final MessageFormat fileNameFormat = new MessageFormat("TEST-{0}.{1}.xml");
+  private final String fileNameFormat = "TEST-%s.xml";
 
   @Inject
   public XmlPrinter(TestResultHolder resultHolder, @Named("testOutput") String xmlOutputDir) {
@@ -63,7 +63,8 @@ public class XmlPrinter {
           xmlOutputFile.createNewFile();
           TestXmlSerializer serializer = new TestXmlSerializer(new FileWriter(xmlOutputFile));
 
-          serializer.writeTestCase(testCaseName, testCaseRollup.get(testCaseName));
+          serializer.writeTestCase(formatSuiteName(browser, testCaseName),
+              testCaseRollup.get(testCaseName));
         } catch (IOException e) {
           logger.error("Could not create file: {}", xmlOutputFile.getAbsolutePath(), e);
         }
@@ -72,8 +73,13 @@ public class XmlPrinter {
   }
 
   private String formatFileName(BrowserInfo browser, String testCaseName) {
-    return fileNameFormat.format(new Object[]{
-        browser.toUniqueString().replaceAll("\\s", "_").replaceAll("\\.", ""), testCaseName });
+    String suiteName = formatSuiteName(browser, testCaseName);
+    return String.format(fileNameFormat, suiteName);
+  }
+
+  private String formatSuiteName(BrowserInfo browser, String testCaseName) {
+    return String.format("%s.%s",
+        browser.toUniqueString().replaceAll("\\s", "_").replaceAll("\\.", ""), testCaseName);
   }
 
   private Multimap<String, TestResult> newMultiMap() {
