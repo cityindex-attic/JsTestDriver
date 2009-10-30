@@ -75,11 +75,10 @@ public class XmlPrinterImpl implements XmlPrinter {
     }
   }
 
-  private Map<BrowserInfo, String> createUniqueBrowserNames(Set<BrowserInfo> browserInfos) {
+  public static Map<BrowserInfo, String> createUniqueBrowserNames(Set<BrowserInfo> browserInfos) {
     Map<BrowserInfo, String> result = Maps.newHashMap();
     for (BrowserInfo browserInfo : browserInfos) {
       if (result.containsValue(browserInfo.toString())) {
-        System.out.println("browserInfo = " + browserInfo);
         result.put(browserInfo, browserInfo.toUniqueString());
       } else {
         result.put(browserInfo, browserInfo.toString());

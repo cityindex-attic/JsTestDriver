@@ -2,7 +2,7 @@ package com.google.jstestdriver.output;
 
 import com.google.common.base.Supplier;
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import com.google.common.collect.Multimap;
 import static com.google.common.collect.Multimaps.newMultimap;
 import static com.google.common.collect.Multimaps.synchronizedMultimap;
@@ -23,7 +23,7 @@ public class TestResultHolder implements TestResultListener {
   private final Multimap<BrowserInfo, TestResult> results;
 
   public TestResultHolder() {
-    HashMap<BrowserInfo, Collection<TestResult>> map = newHashMap();
+    HashMap<BrowserInfo, Collection<TestResult>> map = newLinkedHashMap();
     Supplier<Collection<TestResult>> collectionSupplier = new Supplier<Collection<TestResult>>() {
       public Collection<TestResult> get() {
         return newLinkedList();
