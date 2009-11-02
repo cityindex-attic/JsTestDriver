@@ -25,6 +25,13 @@ assertsTest.prototype.testAssertTrue = function() {
     assertEquals('expected true but was false', e.message);
     assertEquals('AssertError', e.name);
   }
+  try {
+    assertTrue(undefined);
+	fail("assertTrue did not throw an exception");
+  }catch (e){
+    assertEquals('Not a boolean: [undefined]', e.message);
+	assertEquals('AssertError', e.name);
+  }
 };
 
 
@@ -36,6 +43,13 @@ assertsTest.prototype.testAssertTrueWithMsg = function() {
   } catch (e) {
     assertEquals('this is a message expected true but was false', e.message);
     assertEquals('AssertError', e.name);
+  }
+  try {
+    assertTrue("This should fail",undefined);
+	fail("assertTrue did not throw an exception");
+  }catch (e){
+    assertEquals('Not a boolean: [undefined]', e.message);
+	assertEquals('AssertError', e.name);
   }
 };
 
@@ -49,6 +63,13 @@ assertsTest.prototype.testAssertFalse = function() {
     assertEquals('expected false but was true', e.message);
     assertEquals('AssertError', e.name);
   }
+  try {
+    assertFalse(undefined);
+	fail("assertFalse did not throw an exception");
+  }catch (e){
+    assertEquals('Not a boolean: [undefined]', e.message);
+	assertEquals('AssertError', e.name);
+  }
 };
 
 
@@ -60,6 +81,13 @@ assertsTest.prototype.testAssertFalseWithMsg = function() {
   } catch (e) {
     assertEquals('this is a message expected false but was true', e.message);
     assertEquals('AssertError', e.name);
+  }
+  try {
+    assertFalse("This should fail",undefined);
+	fail("assertFalse did not throw an exception");
+  }catch (e){
+    assertEquals('Not a boolean: [undefined]', e.message);
+	assertEquals('AssertError', e.name);
   }
 };
 
@@ -81,6 +109,12 @@ assertsTest.prototype.testAssertEquals = function() {
     assertEquals('expected ["mooh","meuh"] but was ["meuh"]', e.message);
     assertEquals('AssertError', e.name);
   }
+  try{
+	assertEquals(true,undefined);
+	fail('assertEquals did not throw an exception when testing against undefined');
+  }catch (e){
+	assertEquals('AssertError',e.name);
+  }
 };
 
 
@@ -92,6 +126,12 @@ assertsTest.prototype.testAssertEqualsWithMsg = function() {
   } catch (e) {
     assertEquals('this is a message expected "hello" but was "world"', e.message);
     assertEquals('AssertError', e.name);
+  }
+  try{
+	assertEquals("This should fail since true !== undefined'",true,undefined);
+	fail('assertEquals did not throw an exception when testing against undefined');
+  }catch (e){
+	assertEquals('AssertError',e.name);
   }
 };
 
@@ -106,6 +146,13 @@ assertsTest.prototype.testAssertSame = function() {
   } catch (e) {
     assertEquals('expected {"data":"data"} but was {"data":"data"}', e.message);
     assertEquals('AssertError', e.name);
+  }
+  try{
+    var trueObj = { tre: true}; 
+	assertSame(trueObj,undefined);
+	fail('assertSame did not throw an exception');
+  }catch (e){
+	assertEquals('AssertError',e.name);
   }
 };
 
@@ -122,6 +169,13 @@ assertsTest.prototype.testAssertSameWithMsg = function() {
         e.message);
     assertEquals('AssertError', e.name);
   }
+  try{
+    var trueObj = { tre: true}; 
+	assertSame("This should fail because object !== undefined",trueObj,undefined);
+	fail('assertSame did not throw an exception');
+  }catch (e){
+	assertEquals('AssertError',e.name);
+  }
 };
 
 
@@ -136,6 +190,8 @@ assertsTest.prototype.testAssertNotSame = function() {
     assertEquals('expected not same as {"data":"data"} but was {"data":"data"}', e.message);
     assertEquals('AssertError', e.name);
   }
+  var trueObj = { tre: true}; 
+  assertNotSame(trueObj,undefined);
 };
 
 
@@ -151,6 +207,8 @@ assertsTest.prototype.testAssertNotSameWithMsg = function() {
         '{"data":"data"}', e.message);
     assertEquals('AssertError', e.name);
   }
+  var trueObj = { tre: true}; 
+  assertNotSame("This is a message",trueObj,undefined);
 };
 
 
@@ -162,6 +220,13 @@ assertsTest.prototype.testAssertNull = function() {
   } catch (e) {
     assertEquals('expected null but was {}', e.message);
     assertEquals('AssertError', e.name);
+  }
+  try{
+	assertNull(undefined);
+	fail('assertNull did not throw an exception');
+  } catch (e) {
+	assertEquals('expected null but was [undefined]', e.message);
+	assertEquals('AssertError',e.name);
   }
 };
 
@@ -175,6 +240,13 @@ assertsTest.prototype.testAssertNullWithMsg = function() {
     assertEquals('this is a message expected null but was {}', e.message);
     assertEquals('AssertError', e.name);
   }
+  try{
+	assertNull("This should fail",undefined);
+	fail('assertNull did not throw an exception');
+  } catch (e) {
+	assertEquals('This should fail expected null but was [undefined]', e.message);
+	assertEquals('AssertError',e.name);
+  }
 };
 
 
@@ -187,6 +259,7 @@ assertsTest.prototype.testAssertNotNull = function() {
     assertEquals('expected not null but was null', e.message);
     assertEquals('AssertError', e.name);
   }
+	assertNotNull(undefined);
 };
 
 /*
@@ -211,6 +284,7 @@ assertsTest.prototype.testAssertNotNullWithMsg = function() {
     assertEquals('this is a message expected not null but was null', e.message);
     assertEquals('AssertError', e.name);
   }
+  assertNotNull("This is a message",undefined);
 };
 
 
