@@ -90,26 +90,62 @@ assertEquals = function(msg, expected, actual) {
     msg += ' ';
   }
   jstestdriver.assertCount++;
-  var equals = true;
+    
+  // The local compare function closure is needed to allow easy recursive
+  // checking without destroying a meaninful assertion message on failure.
+  var compare = function(expected, actual) {
+    var key = null;
 
-  if (jstestdriver.jQuery.isArray(expected) && jstestdriver.jQuery.isArray(actual)) {
-    if (expected.length != actual.length) {
-      equals = false;
-    } else {
-      var size = expected.length;
-
-      for (var i = 0; i < size; i++) {
-        if (expected[i] != actual[i]) {
-          equals = false;
-          break;
-        }
+    // Do we compare an Array or an Object?
+    // 'null' and 'undefined' are of type 'object' therefore the extra check is
+    // required.
+    if (expected !== undefined && typeof(expected) == 'object') {
+      var actualLength   = 0;
+      var expectedLength = 0;
+      // If an array is expected the length of actual should be simple to
+      // determine. If it is not it is undefined.
+      if (expected instanceof [].constructor) {
+          actualLength = actual.length;
       }
-    }
-  } else {
-    equals = actual == expected;
-  }
+      else {
+          // In case it is an object it is a little bit more complicated to get the
+          // length.
+          for(key in actual) {
+            if (!actual.hasOwnProperty(key)) {
+                continue;
+            }
+            ++actualLength;
+          }
+      }
 
-  if (!equals) {
+      for (key in expected) {
+        if (!expected.hasOwnProperty(key)) {
+          // Do not run up the inheritance chain
+          continue;
+        }
+        if (!compare(expected[key], actual[key])) {
+          return false;
+        }
+        ++expectedLength;
+      }
+
+      if (expectedLength !== actualLength) {
+          return false;
+      }
+        
+      return true;
+    }
+
+    // We are dealing with a scalar here. Simple comparison should do the trick
+    if (actual != expected) {
+      return false;
+    }
+
+    // actual and expected are equal
+    return true;
+  };
+
+  if (!compare(expected, actual)) {
     fail(msg + 'expected ' + this.prettyPrintEntity_(expected) + ' but was ' +
         this.prettyPrintEntity_(actual) + '');
   }
