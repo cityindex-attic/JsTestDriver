@@ -95,6 +95,7 @@ public class JsTestDriverServer extends Observable {
     connector.setPort(port);
     server.addConnector(connector);
     context = new Context(server, "/", Context.SESSIONS);
+    context.setMaxFormContentSize(Integer.MAX_VALUE);
   }
 
   public void start() {
