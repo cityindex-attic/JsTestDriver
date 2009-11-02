@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SlaveBrowser {
 
-  private static final long TIMEOUT = 5000; // 5 seconds
+  private static final long TIMEOUT = 15000; // 15 seconds
   private static final int POLL_RESPONSE_TIMEOUT = 2;
 
   private final Time time;
