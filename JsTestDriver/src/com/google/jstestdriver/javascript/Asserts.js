@@ -228,3 +228,35 @@ assertNotNull = function(msg, actual) {
   }
   return true;
 };
+
+
+assertUndefined = function(msg, actual) {
+  if (arguments.length == 1) {
+    actual = msg;
+    msg = '';
+  } else {
+    msg += ' ';
+  }
+  jstestdriver.assertCount++;
+
+  if (actual !== undefined) {
+    fail(msg + 'expected undefined but was ' + this.prettyPrintEntity_(actual) + '');
+  }
+  return true;
+};
+
+
+assertNotUndefined = function(msg, actual) {
+  if (arguments.length == 1) {
+    actual = msg;
+    msg = '';
+  } else {
+    msg += ' ';
+  }
+  jstestdriver.assertCount++;
+
+  if (actual === undefined) {
+    fail(msg + 'expected not undefined but was ' + this.prettyPrintEntity_(actual) + '');
+  }
+  return true;
+};
