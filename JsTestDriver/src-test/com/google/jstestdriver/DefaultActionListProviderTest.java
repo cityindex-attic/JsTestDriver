@@ -49,7 +49,6 @@ public class DefaultActionListProviderTest extends TestCase {
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
     expectedActions.add(BrowserStartupAction.class);
-    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
     assertSequence(expectedActions, actions);
     assertEquals(browsers, findAction(actions, BrowserStartupAction.class).getBrowserPath());
@@ -158,7 +157,6 @@ public class DefaultActionListProviderTest extends TestCase {
     expectedActions.add(ServerStartupAction.class);
     expectedActions.add(BrowserStartupAction.class);
     expectedActions.add(ThreadedActionsRunner.class);
-    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
 
@@ -183,7 +181,6 @@ public class DefaultActionListProviderTest extends TestCase {
     expectedActions.add(BrowserStartupAction.class);
     expectedActions.add(ThreadedActionsRunner.class);
     expectedActions.add(PrintXmlTestResultsAction.class);
-    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
 
