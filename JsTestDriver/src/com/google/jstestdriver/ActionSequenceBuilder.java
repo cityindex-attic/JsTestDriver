@@ -90,7 +90,9 @@ public class ActionSequenceBuilder {
           remoteServerAddress, new SimpleProcessFactory(), new CountDownLatch(browsers.size()));
       capturedBrowsers.addObserver(browserStartupAction);
       actions.add(0, browserStartupAction);
-      actions.add(new BrowserShutdownAction(browserStartupAction));
+      if (!leaveServerRunning()) {
+        actions.add(new BrowserShutdownAction(browserStartupAction));
+      }
     }
   }
 

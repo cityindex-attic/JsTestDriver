@@ -37,10 +37,10 @@ public class BrowserShutdownAction implements Action {
 
     for (Process process : processes) {
       try {
-      process.destroy();
-      if (process.exitValue() != 0) {
-        LOGGER.warn("Unexpected shutdown " + process + " " + process.exitValue());
-      }
+        process.destroy();
+        if (process.exitValue() != 0) {
+          LOGGER.warn("Unexpected shutdown " + process + " " + process.exitValue());
+        }
       } catch (IllegalThreadStateException e) {
         LOGGER.warn("Process refused to exit" + process);
       }
