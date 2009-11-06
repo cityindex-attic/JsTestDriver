@@ -182,6 +182,7 @@ public class DefaultActionListProviderTest extends TestCase {
     expectedActions.add(BrowserStartupAction.class);
     expectedActions.add(ThreadedActionsRunner.class);
     expectedActions.add(PrintXmlTestResultsAction.class);
+    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
 
