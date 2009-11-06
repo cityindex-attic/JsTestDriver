@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver.html;
 
-import java.io.StringWriter;
+import com.google.common.collect.Lists;
 
 import junit.framework.TestCase;
 
-import com.google.common.collect.Lists;
+import java.io.StringWriter;
 
 /**
  * @author corysmith@google.com (Cory Smith)

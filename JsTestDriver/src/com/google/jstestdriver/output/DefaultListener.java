@@ -19,9 +19,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.FailureParser;
-import com.google.jstestdriver.JsTestDriverModule.BrowserCount;
 import com.google.jstestdriver.RunData;
 import com.google.jstestdriver.TestResult;
+import com.google.jstestdriver.JsTestDriverModule.BrowserCount;
 
 import java.io.PrintStream;
 import java.util.List;

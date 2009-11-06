@@ -15,9 +15,9 @@
  */
 package com.google.jstestdriver.html;
 
-import java.io.StringWriter;
-
 import junit.framework.TestCase;
+
+import java.io.StringWriter;
 
 /**
  * @author corysmith@google.com (Cory Smith)

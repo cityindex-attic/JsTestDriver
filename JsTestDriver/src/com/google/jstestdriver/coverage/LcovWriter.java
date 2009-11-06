@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver.coverage;
 
+import com.google.inject.name.Named;
+
 import java.io.IOException;
 import java.io.Writer;
-
-import com.google.inject.name.Named;
 
 /**
  * Writes the code coverage in the LCOV format.

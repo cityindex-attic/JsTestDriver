@@ -16,15 +16,15 @@
 
 package com.google.jstestdriver.coverage;
 
-import java.io.CharArrayReader;
+import com.google.jstestdriver.coverage.es3.ES3InstrumentLexer;
+import com.google.jstestdriver.coverage.es3.ES3InstrumentParser;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenRewriteStream;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
-import com.google.jstestdriver.coverage.es3.ES3InstrumentLexer;
-import com.google.jstestdriver.coverage.es3.ES3InstrumentParser;
+import java.io.CharArrayReader;
 
 /**
  * Decorates the source code with coverage instrumentation.

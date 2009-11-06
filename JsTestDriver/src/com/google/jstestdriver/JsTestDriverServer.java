@@ -15,17 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
-import java.util.List;
-import java.util.Observable;
-
-import javax.servlet.Servlet;
-
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
-
 import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -34,6 +23,17 @@ import com.google.jstestdriver.config.Configuration;
 import com.google.jstestdriver.config.DefaultConfiguration;
 import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
+
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.ServletHolder;
+
+import java.io.File;
+import java.util.List;
+import java.util.Observable;
+
+import javax.servlet.Servlet;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

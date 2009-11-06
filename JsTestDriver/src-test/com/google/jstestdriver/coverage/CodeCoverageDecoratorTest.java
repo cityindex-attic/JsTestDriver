@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver.coverage;
 
-import java.util.Iterator;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 import junit.framework.TestCase;
 
-import com.google.common.collect.Lists;
+import java.util.Iterator;
+import java.util.List;
 
 public class CodeCoverageDecoratorTest extends TestCase {
 

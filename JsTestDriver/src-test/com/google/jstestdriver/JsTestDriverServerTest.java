@@ -15,16 +15,16 @@
  */
 package com.google.jstestdriver;
 
+import junit.framework.TestCase;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Observer;
 import java.util.Observable;
-
-import junit.framework.TestCase;
+import java.util.Observer;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

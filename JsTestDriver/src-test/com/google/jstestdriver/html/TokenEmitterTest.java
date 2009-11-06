@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver.html;
 
+import junit.framework.TestCase;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-
-import junit.framework.TestCase;
 
 /**
  * @author corysmith@google.com (Cory Smith)

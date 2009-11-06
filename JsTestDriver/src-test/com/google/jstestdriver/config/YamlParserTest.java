@@ -19,8 +19,6 @@ import com.google.common.collect.Lists;
 import com.google.jstestdriver.DefaultPathRewriter;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Plugin;
-import com.google.jstestdriver.config.Configuration;
-import com.google.jstestdriver.config.YamlParser;
 
 import junit.framework.TestCase;
 

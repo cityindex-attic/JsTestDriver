@@ -15,17 +15,17 @@
  */
 package com.google.jstestdriver.coverage;
 
-import java.util.Arrays;
-import java.util.List;
-
-import junit.framework.TestCase;
-
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.TestResult;
+
+import junit.framework.TestCase;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author corysmith@google.com (Cory Smith)

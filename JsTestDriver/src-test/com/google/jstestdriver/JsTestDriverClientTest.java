@@ -15,14 +15,14 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Provider;
+
+import junit.framework.TestCase;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-
-import com.google.inject.Provider;
-
-import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

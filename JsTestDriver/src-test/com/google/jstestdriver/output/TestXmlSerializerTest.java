@@ -15,11 +15,13 @@
  */
 package com.google.jstestdriver.output;
 
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.TestResult;
 import static com.google.jstestdriver.TestResult.Result.error;
 import static com.google.jstestdriver.TestResult.Result.failed;
 import static com.google.jstestdriver.TestResult.Result.passed;
+import static java.util.Arrays.asList;
+
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.TestResult;
 
 import junit.framework.TestCase;
 
@@ -30,7 +32,6 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import static java.util.Arrays.asList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

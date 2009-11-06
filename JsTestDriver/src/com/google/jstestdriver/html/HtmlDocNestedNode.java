@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver.html;
 
+import com.google.jstestdriver.html.HtmlDocNodeFactory.CreateNodeStrategy;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-
-import com.google.jstestdriver.html.HtmlDocNodeFactory.CreateNodeStrategy;
 
 
 /**

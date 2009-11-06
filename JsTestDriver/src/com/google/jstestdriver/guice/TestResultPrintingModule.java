@@ -15,10 +15,11 @@
  */
 package com.google.jstestdriver.guice;
 
+import static com.google.inject.multibindings.Multibinder.newSetBinder;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
-import static com.google.inject.multibindings.Multibinder.newSetBinder;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.DefaultResponseStreamFactory;
 import com.google.jstestdriver.ResponseStreamFactory;

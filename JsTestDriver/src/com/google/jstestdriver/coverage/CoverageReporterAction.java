@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver.coverage;
 
+import com.google.jstestdriver.Action;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.jstestdriver.Action;
 
 /**
  * Reports the coverage information to the file system.

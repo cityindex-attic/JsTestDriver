@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

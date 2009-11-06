@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.ImplementedBy;
+
 import java.util.Collection;
 import java.util.List;
-
-import com.google.inject.ImplementedBy;
 
 
 /**

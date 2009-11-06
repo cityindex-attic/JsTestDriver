@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Set;
+import com.google.common.collect.Sets;
 
 import junit.framework.TestCase;
 
-import com.google.common.collect.Sets;
+import java.util.Set;
 
 /**
  * @author corysmith@google.com (Cory Smith)

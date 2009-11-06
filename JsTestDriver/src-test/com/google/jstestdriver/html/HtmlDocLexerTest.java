@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver.html;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 import junit.framework.TestCase;
 
-import com.google.common.collect.Lists;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.util.List;
 
 /**
  * @author corysmith@google.com (Cory Smith)

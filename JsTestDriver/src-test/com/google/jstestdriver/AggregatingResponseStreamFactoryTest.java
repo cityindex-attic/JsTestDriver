@@ -15,9 +15,9 @@
  */
 package com.google.jstestdriver;
 
-import junit.framework.TestCase;
-
 import com.google.common.collect.Sets;
+
+import junit.framework.TestCase;
 
 /**
  * @author corysmith@google.com (Cory Smith)

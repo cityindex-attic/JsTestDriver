@@ -20,8 +20,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.util.Providers;
 import com.google.jstestdriver.output.MultiTestResultListener;
 import com.google.jstestdriver.output.TestResultListener;
-import com.google.jstestdriver.output.XmlPrinterImpl;
 import com.google.jstestdriver.output.XmlPrinter;
+import com.google.jstestdriver.output.XmlPrinterImpl;
 
 import junit.framework.TestCase;
 

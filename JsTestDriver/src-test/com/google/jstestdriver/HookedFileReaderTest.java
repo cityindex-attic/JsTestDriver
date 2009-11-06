@@ -16,10 +16,10 @@
 
 package com.google.jstestdriver;
 
+import junit.framework.TestCase;
+
 import java.io.File;
 import java.io.FileWriter;
-
-import junit.framework.TestCase;
 
 public class HookedFileReaderTest extends TestCase {
 

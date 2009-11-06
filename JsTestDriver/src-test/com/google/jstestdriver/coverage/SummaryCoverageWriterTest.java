@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver.coverage;
 
-import java.io.ByteArrayOutputStream;
+import com.google.common.collect.Lists;
 
 import junit.framework.TestCase;
 
-import com.google.common.collect.Lists;
+import java.io.ByteArrayOutputStream;
 
 /**
  * @author corysmith@google.com (Cory Smith)

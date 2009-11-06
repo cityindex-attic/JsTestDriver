@@ -1,11 +1,12 @@
 package com.google.jstestdriver.output;
 
-import com.google.common.base.Supplier;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import com.google.common.collect.Multimap;
 import static com.google.common.collect.Multimaps.newMultimap;
 import static com.google.common.collect.Multimaps.synchronizedMultimap;
+
+import com.google.common.base.Supplier;
+import com.google.common.collect.Multimap;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.TestResult;
 

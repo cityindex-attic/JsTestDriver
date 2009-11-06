@@ -2,6 +2,9 @@
 
 package com.google.jstestdriver;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -11,9 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * Provides a filecache for clients to determine if a file has changed since they last ran.

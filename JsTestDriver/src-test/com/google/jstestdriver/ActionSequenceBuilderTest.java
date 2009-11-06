@@ -15,18 +15,18 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.util.Providers;
+import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
+import com.google.jstestdriver.hooks.TestsPreProcessor;
+
+import junit.framework.TestCase;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-
-import junit.framework.TestCase;
-
-import com.google.inject.util.Providers;
-import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
-import com.google.jstestdriver.hooks.TestsPreProcessor;
 
 public class ActionSequenceBuilderTest extends TestCase {
 

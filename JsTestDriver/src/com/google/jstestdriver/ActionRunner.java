@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Iterator;
-import java.util.List;
+import com.google.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

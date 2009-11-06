@@ -15,9 +15,9 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Collection;
-
 import com.google.inject.ImplementedBy;
+
+import java.util.Collection;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

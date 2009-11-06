@@ -2,9 +2,9 @@ package com.google.jstestdriver;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.lang.annotation.Retention;
-
 import com.google.inject.BindingAnnotation;
+
+import java.lang.annotation.Retention;
 
 /**
  * The annotation used by JsTestDriver internal injections.

@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
@@ -26,7 +28,6 @@ import com.google.inject.name.Names;
 import com.google.jstestdriver.guice.FlagsModule;
 
 import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.util.List;
 import java.util.Set;
 

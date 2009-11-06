@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver;
 
-import java.util.List;
-
 import junit.framework.TestCase;
 
 import org.kohsuke.args4j.CmdLineException;
+
+import java.util.List;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

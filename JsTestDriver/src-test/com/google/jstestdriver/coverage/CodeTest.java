@@ -16,11 +16,11 @@
 
 package com.google.jstestdriver.coverage;
 
+import junit.framework.TestCase;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 
 public class CodeTest extends TestCase {

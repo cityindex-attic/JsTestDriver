@@ -15,14 +15,14 @@
  */
 package com.google.jstestdriver.html;
 
+import com.google.inject.Inject;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.hooks.FileLoadPostProcessor;
+
 import java.io.ByteArrayInputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Writer;
-
-import com.google.inject.Inject;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 
 /**
  * Extract the inline html deocrators.

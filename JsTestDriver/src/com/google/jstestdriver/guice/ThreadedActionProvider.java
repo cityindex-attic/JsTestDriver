@@ -16,10 +16,10 @@
 
 package com.google.jstestdriver.guice;
 
-import java.util.List;
-
 import com.google.inject.Provider;
 import com.google.jstestdriver.ThreadedAction;
+
+import java.util.List;
 
 /**
  * Provides {@link ThreadedAction}s for the JsTestDriverClient. Implement this interface and bind

@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver.html;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.html.HtmlDocParser.NodeFactory;
+
+import java.util.List;
 
 public class HtmlDocNodeFactory implements NodeFactory {
   private static final Token DOC_START = ConcreteToken.from("/*:DOC");

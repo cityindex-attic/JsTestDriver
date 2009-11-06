@@ -15,14 +15,14 @@
  */
 package com.google.jstestdriver.coverage;
 
-import java.util.Collection;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultGenerator;
+
+import java.util.Collection;
 
 /**
  * @author corysmith

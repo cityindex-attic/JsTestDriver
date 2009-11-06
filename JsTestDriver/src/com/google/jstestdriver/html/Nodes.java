@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver.html;
 
+import com.google.common.collect.Lists;
+
 import java.io.Writer;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 public class Nodes {
   List<Node> nodes = Lists.<Node>newArrayList();

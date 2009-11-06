@@ -22,8 +22,8 @@ import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 import com.google.jstestdriver.output.PrintXmlTestResultsAction;
-import com.google.jstestdriver.output.XmlPrinterImpl;
 import com.google.jstestdriver.output.XmlPrinter;
+import com.google.jstestdriver.output.XmlPrinterImpl;
 
 import junit.framework.TestCase;
 
@@ -157,6 +157,7 @@ public class DefaultActionListProviderTest extends TestCase {
     expectedActions.add(ServerStartupAction.class);
     expectedActions.add(BrowserStartupAction.class);
     expectedActions.add(ThreadedActionsRunner.class);
+    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
 

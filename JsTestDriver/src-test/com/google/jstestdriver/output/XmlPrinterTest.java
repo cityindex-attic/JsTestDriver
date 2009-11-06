@@ -1,16 +1,17 @@
 package com.google.jstestdriver.output;
 
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.TestResult;
 import static com.google.jstestdriver.TestResult.Result.error;
 import static com.google.jstestdriver.TestResult.Result.passed;
+import static java.io.File.createTempFile;
+import static java.util.Arrays.asList;
+
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.TestResult;
 
 import junit.framework.TestCase;
 
 import java.io.File;
-import static java.io.File.createTempFile;
 import java.util.Arrays;
-import static java.util.Arrays.asList;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)

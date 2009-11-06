@@ -16,13 +16,13 @@
 
 package com.google.jstestdriver;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
-
 import junit.framework.TestCase;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 /**
  * @author corysmith

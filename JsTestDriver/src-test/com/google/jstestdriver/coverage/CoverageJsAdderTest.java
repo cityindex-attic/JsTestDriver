@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver.coverage;
 
-import java.util.LinkedList;
-import java.util.List;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.LoadedFileInfo;
 
 import junit.framework.TestCase;
 
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.LoadedFileInfo;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author corysmith@google.com (Cory Smith)
