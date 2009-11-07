@@ -57,7 +57,6 @@ public class TokenEmitter implements Iterator<Token>{
       if (currentToken != null) {
         Token nextToken = currentToken;
         currentToken = null;
-        System.out.println("final delayed token");
         return nextToken;
       }
       if (tokenBuilder.hasToken()) {
