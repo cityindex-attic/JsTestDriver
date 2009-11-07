@@ -21,6 +21,7 @@ import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.PathRewriter;
 import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.hooks.FileParsePostProcessor;
 
 import org.apache.oro.io.GlobFilenameFilter;
 import org.apache.oro.text.GlobCompiler;
@@ -47,8 +48,11 @@ public class YamlParser {
 
   private final PathResolver pathResolver = new PathResolver();
 
-  public YamlParser(PathRewriter pathRewriter) {
+  private final Set<FileParsePostProcessor> processors;
+
+  public YamlParser(PathRewriter pathRewriter, Set<FileParsePostProcessor> processors) {
     this.pathRewriter = pathRewriter;
+    this.processors = processors;
   }
 
   @SuppressWarnings("unchecked")
@@ -127,6 +131,7 @@ public class YamlParser {
       Set<FileInfo> resolvedFiles = new LinkedHashSet<FileInfo>();
 
       for (String f : files) {
+        // TODO(corysmith): Replace path rewriter with hooks.
         f = pathRewriter.rewrite(f);
         boolean isPatch = f.startsWith("patch");
 
@@ -168,6 +173,9 @@ public class YamlParser {
               .lastModified(), isPatch, serveOnly, null));
           }
         }
+      }
+      for (FileParsePostProcessor processor : processors) {
+        resolvedFiles = processor.process(resolvedFiles);
       }
       return resolvedFiles;
     }

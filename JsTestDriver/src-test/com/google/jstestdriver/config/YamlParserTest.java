@@ -16,9 +16,11 @@
 package com.google.jstestdriver.config;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.jstestdriver.DefaultPathRewriter;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.hooks.FileParsePostProcessor;
 
 import junit.framework.TestCase;
 
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -74,7 +77,8 @@ public class YamlParserTest extends TestCase {
     String configFile = "load:\n - code/*.js\n - test/*.js\nexclude:\n"
       + " - code/code2.js\n - test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    YamlParser parser = new YamlParser(new DefaultPathRewriter());
+    YamlParser parser = new YamlParser(new DefaultPathRewriter(),
+        Collections.<FileParsePostProcessor>emptySet());
 
     Configuration config = parser.parse(tmpDir, new InputStreamReader(bais));
     Set<FileInfo> files = config.getFilesList();
@@ -84,6 +88,34 @@ public class YamlParserTest extends TestCase {
     assertTrue(listFiles.get(0).getFileName().endsWith("code/code.js"));
     assertTrue(listFiles.get(1).getFileName().endsWith("test/test.js"));
     assertTrue(listFiles.get(2).getFileName().endsWith("test/test3.js"));
+  }
+  
+  public void testParseConfigFileAndProcessAListOfFiles() throws Exception {
+    File codeDir = createTmpSubDir("code");
+    final String fileName = "code.js";
+    final File code = createTmpFile(codeDir, fileName);
+    
+    String configFile = "load:\n - code/*.js";
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    YamlParser parser = new YamlParser(new DefaultPathRewriter(),
+        Sets.<FileParsePostProcessor>newHashSet(new FileParsePostProcessor(){
+          public Set<FileInfo> process(Set<FileInfo> files) {
+            Set<FileInfo> processed = Sets.newHashSet();
+            for (FileInfo fileInfo : files) {
+              processed.add(new FileInfo(fileInfo.getFileName(),
+                  code.lastModified(), false, true, null));
+            }
+            return processed;
+          }
+        }));
+
+    Configuration config = parser.parse(tmpDir, new InputStreamReader(bais));
+    Set<FileInfo> files = config.getFilesList();
+    List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
+    
+    assertEquals(1, files.size());
+    assertTrue(listFiles.get(0).getFileName().endsWith("code/code.js"));
+    assertTrue(listFiles.get(0).isServeOnly());
   }
 
   public void testParseConfigFileAndHaveListOfFilesWithPatches()
@@ -101,7 +133,8 @@ public class YamlParserTest extends TestCase {
       + "- patch code/patch.js\n" + "- code/code2.js\n" + "- test/*.js\n"
       + "exclude:\n" + "- code/code2.js\n" + "- test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    YamlParser parser = new YamlParser(new DefaultPathRewriter());
+    YamlParser parser = new YamlParser(new DefaultPathRewriter(),
+        Collections.<FileParsePostProcessor>emptySet());
 
     Configuration config = parser.parse(tmpDir, new InputStreamReader(bais));
     Set<FileInfo> files = config.getFilesList();
@@ -131,7 +164,8 @@ public class YamlParserTest extends TestCase {
       + "- code/code.js\n" + "- code/code2.js\n" + "- test/*.js\n"
       + "exclude:\n" + "- code/code2.js\n" + "- test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    YamlParser parser = new YamlParser(new DefaultPathRewriter());
+    YamlParser parser = new YamlParser(new DefaultPathRewriter(),
+        Collections.<FileParsePostProcessor>emptySet());
     try {
       parser.parse(tmpDir, new InputStreamReader(bais));
       fail("should have thrown an exception due to patching a non-existant file");
@@ -146,7 +180,8 @@ public class YamlParserTest extends TestCase {
     String configFile = "plugin:\n" + "  - name: test\n"
       + "    jar: \"pathtojar\"\n" + "    module: \"com.test.PluginModule\"\n";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    YamlParser parser = new YamlParser(new DefaultPathRewriter());
+    YamlParser parser = new YamlParser(new DefaultPathRewriter(),
+        Collections.<FileParsePostProcessor>emptySet());
 
     Configuration config = parser.parse(tmpDir, new InputStreamReader(bais));
     List<Plugin> plugins = config.getPlugins();
@@ -165,7 +200,8 @@ public class YamlParserTest extends TestCase {
       + "    module: \"com.test.PluginModule2\"\n"
       + "    args: hello, world, some/file.js\n";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    YamlParser parser = new YamlParser(new DefaultPathRewriter());
+    YamlParser parser = new YamlParser(new DefaultPathRewriter(),
+        Collections.<FileParsePostProcessor>emptySet());
 
     Configuration config = parser.parse(tmpDir, new InputStreamReader(bais));
     List<Plugin> plugins = config.getPlugins();
@@ -181,7 +217,8 @@ public class YamlParserTest extends TestCase {
       + "    jar: \"pathtojar\"\n" + "    module: \"com.test.PluginModule\"\n"
       + "    args: hello, mooh, some/file.js, another/file.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    YamlParser parser = new YamlParser(new DefaultPathRewriter());
+    YamlParser parser = new YamlParser(new DefaultPathRewriter(),
+        Collections.<FileParsePostProcessor>emptySet());
 
     Configuration config = parser.parse(tmpDir, new InputStreamReader(bais));
     List<Plugin> plugins = config.getPlugins();
@@ -199,7 +236,8 @@ public class YamlParserTest extends TestCase {
     String configFile = "plugin:\n" + "  - name: test\n"
       + "    jar: \"pathtojar\"\n" + "    module: \"com.test.PluginModule\"\n";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    YamlParser parser = new YamlParser(new DefaultPathRewriter());
+    YamlParser parser = new YamlParser(new DefaultPathRewriter(),
+        Collections.<FileParsePostProcessor>emptySet());
 
     Configuration config = parser.parse(tmpDir, new InputStreamReader(bais));
     List<Plugin> plugins = config.getPlugins();
@@ -224,7 +262,8 @@ public class YamlParserTest extends TestCase {
       + "serve:\n" + " - serve/serve1.js\n" + "exclude:\n"
       + " - code/code2.js\n" + " - test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    YamlParser parser = new YamlParser(new DefaultPathRewriter());
+    YamlParser parser = new YamlParser(new DefaultPathRewriter(),
+        Collections.<FileParsePostProcessor>emptySet());
 
     Configuration config = parser.parse(tmpDir, new InputStreamReader(bais));
     Set<FileInfo> serveFilesSet = config.getFilesList();
@@ -250,7 +289,8 @@ public class YamlParserTest extends TestCase {
     String configFile = "load:\n - code/*.js\n - test/*.js\nexclude:\n"
       + " - code/code2.js\n - test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-    YamlParser parser = new YamlParser(new DefaultPathRewriter());
+    YamlParser parser = new YamlParser(new DefaultPathRewriter(),
+        Collections.<FileParsePostProcessor>emptySet());
 
     Configuration config = parser.parse(tmpDir,new InputStreamReader(bais));
     Set<FileInfo> files = config.getFilesList();

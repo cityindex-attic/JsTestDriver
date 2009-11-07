@@ -23,6 +23,7 @@ import com.google.jstestdriver.config.Configuration;
 import com.google.jstestdriver.config.DefaultConfiguration;
 import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
+import com.google.jstestdriver.hooks.FileParsePostProcessor;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
@@ -30,6 +31,7 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 
@@ -124,7 +126,8 @@ public class JsTestDriverServer extends Observable {
 
   public static void main(String[] args) {
     try {
-      YamlParser parser = new YamlParser(new DefaultPathRewriter());
+      YamlParser parser = new YamlParser(new DefaultPathRewriter(),
+          Collections.<FileParsePostProcessor>emptySet());
       Flags flags = new FlagsParser().parseArgument(args);
       File config = new File(flags.getConfig());
       List<Module> modules = Lists.newLinkedList();
