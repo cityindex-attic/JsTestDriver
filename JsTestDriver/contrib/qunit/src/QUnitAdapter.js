@@ -74,4 +74,6 @@ you need to set it up and tear it down in each test.
     	ok: window.ok
     };
 
+	module('Default Module');
+
 })();

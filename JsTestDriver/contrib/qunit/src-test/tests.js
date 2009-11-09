@@ -1,4 +1,17 @@
+test_without_module_is_called = false;
+
+test('Test without module is called', function() {
+	expect(1);
+	test_without_module_is_called = true;
+	ok('true');
+});
+
 module('Asserts');
+
+test('Test without module - assert', function() {
+	expect(1);
+	ok(test_without_module_is_called);
+});
 
 test('OK true succeeds', function() {
 	expect(1);
