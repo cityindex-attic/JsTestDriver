@@ -118,24 +118,31 @@ public class CommandServlet extends HttpServlet {
           gson.fromJson(fileSourcesList, new TypeToken<List<FileSource>>() {}.getType());
 
       for (FileSource fileSource : fileSources) {
-        String url = urlRewriter.rewrite(fileSource.getFileSrc());
+        String fileSrc = fileSource.getFileSrc();
 
-        if (url.startsWith("http://") || url.startsWith("https://")) {
-          String translation = urlTranslator.getTranslation(url);
+        if (fileSrc.startsWith("http://") || fileSrc.startsWith("https://")) {
+          String url = urlRewriter.rewrite(fileSource.getFileSrc());
+          
+          if (url.startsWith("http://") || url.startsWith("https://")) {
+            String translation = urlTranslator.getTranslation(url);
 
-          if (translation == null) {
-            try {
-              urlTranslator.translate(url);
-              translation = urlTranslator.getTranslation(url);
-              forwardingMapper.addForwardingMapping(translation, url);
-            } catch (MalformedURLException e) {
-              LOGGER.warn("Could not translate URL: " + url
-                  + " fallback to default URL, things will probably start to act weird...", e);
-              translation = url;
+            if (translation == null) {
+              try {
+                urlTranslator.translate(url);
+                translation = urlTranslator.getTranslation(url);
+                forwardingMapper.addForwardingMapping(translation, url);
+              } catch (MalformedURLException e) {
+                LOGGER.warn("Could not translate URL: " + url
+                    + " fallback to default URL, things will probably start to act weird...", e);
+                translation = url;
+              }
             }
+            fileSource.setBasePath(url);
+            fileSource.setFileSource(translation);
+          } else {
+            fileSource.setBasePath(url);
+            fileSource.setFileSource(url);
           }
-          fileSource.setBasePath(url);
-          fileSource.setFileSource(translation);
         }
       }
       parameters.remove(0);

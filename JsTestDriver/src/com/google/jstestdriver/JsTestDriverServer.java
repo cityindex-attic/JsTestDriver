@@ -27,6 +27,7 @@ import com.google.jstestdriver.hooks.FileParsePostProcessor;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.handler.ResourceHandler;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
@@ -96,6 +97,13 @@ public class JsTestDriverServer extends Observable {
 
     connector.setPort(port);
     server.addConnector(connector);
+    ResourceHandler resourceHandler = new ResourceHandler();
+
+    resourceHandler.setResourceBase("../");
+    ExcludeResourceHandler excludedResourceHandler = new ExcludeResourceHandler(resourceHandler);
+
+    excludedResourceHandler.exclude("/");
+    server.addHandler(excludedResourceHandler);
     context = new Context(server, "/", Context.SESSIONS);
     context.setMaxFormContentSize(Integer.MAX_VALUE);
   }

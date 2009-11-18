@@ -43,9 +43,6 @@ public class HomeServlet extends HttpServlet {
 
     if ("/".equals(req.getRequestURI())) {
       service(writer);
-    } else {
-      resp.setStatus(204);
-      writer.flush();
     }
   }
 
