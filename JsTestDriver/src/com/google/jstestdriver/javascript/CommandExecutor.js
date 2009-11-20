@@ -98,9 +98,6 @@ jstestdriver.CommandExecutor.prototype.execute = function(cmd) {
       response: this.__boundEvaluateCommand(cmd),
       browser: {
         "id": this.__id,
-        "name": jstestdriver.getBrowserFriendlyName(),
-        "version": jstestdriver.getBrowserFriendlyVersion(),
-        "os": navigator.platform
       }
     }
   };
@@ -167,9 +164,6 @@ jstestdriver.CommandExecutor.prototype.onFileLoaded = function(status) {
         response: JSON.stringify(status),
         browser: {
           "id": this.__id,
-          "name": jstestdriver.getBrowserFriendlyName(),
-          "version": jstestdriver.getBrowserFriendlyVersion(),
-          "os": navigator.platform
         }
       }
   };
@@ -309,9 +303,6 @@ jstestdriver.CommandExecutor.prototype.sendTestResults_ = function() {
           response: JSON.stringify(this.testsDone_),
           browser: {
             "id": this.__id,
-            "name": jstestdriver.getBrowserFriendlyName(),
-            "version": jstestdriver.getBrowserFriendlyVersion(),
-            "os": navigator.platform
           }
         }
     };
@@ -348,9 +339,6 @@ jstestdriver.CommandExecutor.prototype.sendTestResultsOnComplete_ = function() {
           response: JSON.stringify(this.testsDone_),
           browser: {
             "id": this.__id,
-            "name": jstestdriver.getBrowserFriendlyName(),
-            "version": jstestdriver.getBrowserFriendlyVersion(),
-            "os": navigator.platform
           }
       }
   };
@@ -400,9 +388,6 @@ jstestdriver.CommandExecutor.prototype.registerCommand = function(name, func) {
       response: 'Command ' + name + ' registered.',
       browser: {
         "id": this.__id,
-        "name": jstestdriver.getBrowserFriendlyName(),
-        "version": jstestdriver.getBrowserFriendlyVersion(),
-        "os": navigator.platform
       }
     }
   });
@@ -416,9 +401,6 @@ jstestdriver.CommandExecutor.prototype.dryRun = function() {
       response: JSON.stringify(this.__testCaseManager.getCurrentlyLoadedTest()),
       browser: {
         "id": this.__id,
-        "name": jstestdriver.getBrowserFriendlyName(),
-        "version": jstestdriver.getBrowserFriendlyVersion(),
-        "os": navigator.platform
       }
     }
   });
@@ -434,9 +416,6 @@ jstestdriver.CommandExecutor.prototype.dryRunFor = function(args) {
       response: JSON.stringify(this.__testCaseManager.getCurrentlyLoadedTestFor(expressions)),
       browser: {
         "id": this.__id,
-        "name": jstestdriver.getBrowserFriendlyName(),
-        "version": jstestdriver.getBrowserFriendlyVersion(),
-        "os": navigator.platform
       }
     }
   });
@@ -451,9 +430,6 @@ jstestdriver.CommandExecutor.prototype.listen = function() {
         response: 'Runner reset.',
         browser: {
           "id": this.__id,
-          "name": jstestdriver.getBrowserFriendlyName(),
-          "version": jstestdriver.getBrowserFriendlyVersion(),
-          "os": navigator.platform
         }
       }
     };

@@ -82,10 +82,21 @@ public class CommandServlet extends HttpServlet {
     }
     return cmdResponse;
   }
-  
+
+  private void substituteBrowserInfo(CommandResponse cmdResponse) {
+    Response response = gson.fromJson(cmdResponse.getResponse(), Response.class);
+    SlaveBrowser slaveBrowser =
+        capturedBrowsers.getBrowser(response.getBrowser().getId().toString());
+
+    response.setBrowser(slaveBrowser.getBrowserInfo());
+    cmdResponse.setResponse(gson.toJson(response));
+  }
+
   public void streamResponse(String id, PrintWriter writer) {
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
     CommandResponse cmdResponse = getResponse(browser);
+
+    substituteBrowserInfo(cmdResponse);
     String response = "{ 'last':" + cmdResponse.isLast() + ", 'response':" +
         cmdResponse.getResponse() + " }";
 

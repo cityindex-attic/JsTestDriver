@@ -57,7 +57,7 @@ public class SlaveBrowser {
   }
 
   public static class CommandResponse {
-    private final String response;
+    private String response;
     private final boolean last;
 
     public CommandResponse(String response, boolean last) {
@@ -77,6 +77,10 @@ public class SlaveBrowser {
      */
     public boolean isLast() {
       return last;
+    }
+
+    public void setResponse(String response) {
+      this.response = response;
     }
   }
 
