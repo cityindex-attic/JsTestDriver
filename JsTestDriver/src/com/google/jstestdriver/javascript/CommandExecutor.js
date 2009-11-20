@@ -97,7 +97,7 @@ jstestdriver.CommandExecutor.prototype.execute = function(cmd) {
     response: {
       response: this.__boundEvaluateCommand(cmd),
       browser: {
-        "id": this.__id,
+        "id": this.__id
       }
     }
   };
@@ -163,7 +163,7 @@ jstestdriver.CommandExecutor.prototype.onFileLoaded = function(status) {
       response: {
         response: JSON.stringify(status),
         browser: {
-          "id": this.__id,
+          "id": this.__id
         }
       }
   };
@@ -302,7 +302,7 @@ jstestdriver.CommandExecutor.prototype.sendTestResults_ = function() {
         response: {
           response: JSON.stringify(this.testsDone_),
           browser: {
-            "id": this.__id,
+            "id": this.__id
           }
         }
     };
@@ -338,7 +338,7 @@ jstestdriver.CommandExecutor.prototype.sendTestResultsOnComplete_ = function() {
       response: {
           response: JSON.stringify(this.testsDone_),
           browser: {
-            "id": this.__id,
+            "id": this.__id
           }
       }
   };
@@ -387,7 +387,7 @@ jstestdriver.CommandExecutor.prototype.registerCommand = function(name, func) {
     response: {
       response: 'Command ' + name + ' registered.',
       browser: {
-        "id": this.__id,
+        "id": this.__id
       }
     }
   });
@@ -400,7 +400,7 @@ jstestdriver.CommandExecutor.prototype.dryRun = function() {
     response: {
       response: JSON.stringify(this.__testCaseManager.getCurrentlyLoadedTest()),
       browser: {
-        "id": this.__id,
+        "id": this.__id
       }
     }
   });
@@ -415,7 +415,7 @@ jstestdriver.CommandExecutor.prototype.dryRunFor = function(args) {
     response: {
       response: JSON.stringify(this.__testCaseManager.getCurrentlyLoadedTestFor(expressions)),
       browser: {
-        "id": this.__id,
+        "id": this.__id
       }
     }
   });
@@ -429,7 +429,7 @@ jstestdriver.CommandExecutor.prototype.listen = function() {
       response: {
         response: 'Runner reset.',
         browser: {
-          "id": this.__id,
+          "id": this.__id
         }
       }
     };
