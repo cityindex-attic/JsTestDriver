@@ -42,6 +42,7 @@ public class HomeServlet extends HttpServlet {
     PrintWriter writer = resp.getWriter();
 
     if ("/".equals(req.getRequestURI())) {
+      resp.setContentType("text/html");
       service(writer);
     }
   }
