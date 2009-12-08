@@ -58,4 +58,8 @@ public class BrowserHunter {
   public boolean isBrowserCaptured(String id) {
     return capturedBrowsers.getBrowser(id) != null;
   }
+
+  public void freeBrowser(String id) {
+    capturedBrowsers.removeSlave(id);
+  }
 }

@@ -57,7 +57,11 @@ public class StandaloneRunnerServlet  extends HttpServlet  {
     String path = SlaveResourceServlet.stripId(req.getPathInfo());
     String id = getIdFromUrl(req.getPathInfo());
 
-    if (!browserHunter.isBrowserCaptured(id)) {
+    if (req.getPathInfo().endsWith("RemoteConsoleRunnerquirks.html") ||
+        req.getPathInfo().endsWith("RemoteConsoleRunnerstrict.html")) {
+      if (browserHunter.isBrowserCaptured(id)) {
+        browserHunter.freeBrowser(id);
+      }
       service(req.getHeader("User-Agent"), path, id);
     }
     service.serve(path, resp.getOutputStream());
