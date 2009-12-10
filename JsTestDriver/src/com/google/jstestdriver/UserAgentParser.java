@@ -39,6 +39,8 @@ public class UserAgentParser {
       userAgentOs = "Windows";
     } else if (lowerCaseUserAgent.contains("linux")) {
       userAgentOs = "Linux";
+    } else if (lowerCaseUserAgent.contains("iphone")) {
+      userAgentOs = "iPhone OS";
     } else if (lowerCaseUserAgent.contains("mac")) {
       userAgentOs = "Mac OS";
     }
