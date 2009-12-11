@@ -378,7 +378,7 @@
     </jar>
   </target>
 
-  <target name="jar-all-src-nodeps" depends="coverage-plugin-jar-nodeps, jar-nodeps, src-jar">
+  <target name="jar-all-src-nodeps" depends="coverage-plugin-jar-nodeps, html-plugin-jar-nodeps, jar-nodeps, src-jar">
   </target>
 
   <target name="checkNoLocalChanges">
