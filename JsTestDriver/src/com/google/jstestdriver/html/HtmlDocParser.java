@@ -15,6 +15,10 @@
  */
 package com.google.jstestdriver.html;
 
+import com.google.jstestdriver.token.BufferedTokenStream;
+import com.google.jstestdriver.token.Nodes;
+import com.google.jstestdriver.token.Token;
+
 
 /**
  * Parses htmldoc into a list of nodes.

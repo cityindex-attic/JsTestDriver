@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver.html;
 
+import com.google.jstestdriver.token.Node;
+import com.google.jstestdriver.token.Token;
+
 import java.io.Writer;
 import java.util.List;
 

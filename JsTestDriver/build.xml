@@ -286,7 +286,7 @@
         <include name="${javascript-resources}/lib/*.js" />
       </fileset>
       <exclude name="**/coverage/**"/>
-      <!-- not excluding the html plugin for the jar with deps. -->
+      <!-- not excluding the token library for the jar with deps. -->
     </jar>
   </target>
 
@@ -303,7 +303,7 @@
         <include name="${javascript-resources}/lib/*.js" />
       </fileset>
       <exclude name="**/coverage/**"/>
-      <exclude name="**/html/**"/>
+      <exclude name="**/token/**"/>
     </jar>
   </target>
 
@@ -355,30 +355,30 @@
     </jar>
   </target>
 
-  <target name="html-plugin-jar-nodeps" depends="jar-nodeps">
+  <target name="token-jar-nodeps" depends="jar-nodeps">
     <mkdir dir="${bin.dir}/plugins/" />
-    <jar destfile="${bin.dir}/plugins/htmldoc-nodeps.jar"
+    <jar destfile="${bin.dir}/plugins/token-nodeps.jar"
       duplicate="preserve">
       <fileset dir="${obj.dir}">
-        <include name="**/html/**"/>
+        <include name="**/token/**"/>
       </fileset>
       <manifest>
       </manifest>
     </jar>
-    <jar destfile="${bin.dir}/plugins/htmldoc-src.jar"
+    <jar destfile="${bin.dir}/plugins/token-src.jar"
       duplicate="preserve">
       <fileset dir="${src.dir}">
-        <include name="**/html/**"/>
+        <include name="**/token/**"/>
       </fileset>
       <fileset dir="${src-gen.dir}">
-        <include name="**/html/**"/>
+        <include name="**/token/**"/>
       </fileset>
       <manifest>
       </manifest>
     </jar>
   </target>
 
-  <target name="jar-all-src-nodeps" depends="coverage-plugin-jar-nodeps, html-plugin-jar-nodeps, jar-nodeps, src-jar">
+  <target name="jar-all-src-nodeps" depends="coverage-plugin-jar-nodeps, token-jar-nodeps, jar-nodeps, src-jar">
   </target>
 
   <target name="checkNoLocalChanges">
@@ -436,7 +436,16 @@
   </target>
 
   <target name="src-jar" depends="init">
-    <jar destfile="${bin.dir}/${ant.project.name}-src.jar" basedir="${src.dir}" />
+    <jar destfile="${bin.dir}/${ant.project.name}-src.jar" basedir="${src.dir}">
+      <fileset dir="${obj.dir}/">
+        <include name="${javascript-resources}/jstestdrivernamespace.js" />
+        <include name="${javascript-resources}/runner.js" />
+        <include name="${javascript-resources}/heartbeatclient.js" />
+        <include name="${javascript-resources}/lib/*.js" />
+      </fileset>
+      <exclude name="**/coverage/**"/>
+      <exclude name="**/token/**"/>
+    </jar>
   </target>
 
   <target name="jstestdriver" depends="jar">

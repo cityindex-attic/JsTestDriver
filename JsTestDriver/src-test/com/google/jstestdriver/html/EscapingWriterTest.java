@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver.html;
 
+import com.google.jstestdriver.token.EscapingWriter;
+
 import junit.framework.TestCase;
 
 import java.io.StringWriter;

@@ -16,6 +16,10 @@
 package com.google.jstestdriver.html;
 
 import com.google.common.collect.Lists;
+import com.google.jstestdriver.token.BufferedTokenStream;
+import com.google.jstestdriver.token.ConcreteToken;
+import com.google.jstestdriver.token.Nodes;
+import com.google.jstestdriver.token.Token;
 
 import junit.framework.TestCase;
 
