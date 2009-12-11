@@ -46,6 +46,7 @@ public class ProcessingFileLoader implements FileLoader {
     this.preProcessors = preProcessors;
   }
 
+  //TODO(corysmith): Remove shouldReset.
   public List<FileInfo> loadFiles(Collection<FileInfo> filesToLoad, boolean shouldReset) {
     List<FileInfo> loadedFiles = new LinkedList<FileInfo>();
     try {
