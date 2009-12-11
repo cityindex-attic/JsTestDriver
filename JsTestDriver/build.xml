@@ -286,6 +286,7 @@
         <include name="${javascript-resources}/lib/*.js" />
       </fileset>
       <exclude name="**/coverage/**"/>
+      <!-- not excluding the html plugin for the jar with deps. -->
     </jar>
   </target>
 
@@ -302,6 +303,7 @@
         <include name="${javascript-resources}/lib/*.js" />
       </fileset>
       <exclude name="**/coverage/**"/>
+      <exclude name="**/html/**"/>
     </jar>
   </target>
 
@@ -347,6 +349,29 @@
       </fileset>
       <fileset dir="${src-gen.dir}">
         <include name="**/coverage/**"/>
+      </fileset>
+      <manifest>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="html-plugin-jar-nodeps" depends="jar-nodeps">
+    <mkdir dir="${bin.dir}/plugins/" />
+    <jar destfile="${bin.dir}/plugins/htmldoc-nodeps.jar"
+      duplicate="preserve">
+      <fileset dir="${obj.dir}">
+        <include name="**/html/**"/>
+      </fileset>
+      <manifest>
+      </manifest>
+    </jar>
+    <jar destfile="${bin.dir}/plugins/htmldoc-src.jar"
+      duplicate="preserve">
+      <fileset dir="${src.dir}">
+        <include name="**/html/**"/>
+      </fileset>
+      <fileset dir="${src-gen.dir}">
+        <include name="**/html/**"/>
       </fileset>
       <manifest>
       </manifest>

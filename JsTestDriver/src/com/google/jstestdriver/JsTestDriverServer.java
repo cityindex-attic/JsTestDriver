@@ -24,6 +24,7 @@ import com.google.jstestdriver.config.DefaultConfiguration;
 import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
+import com.google.jstestdriver.html.HtmlDocModule;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
@@ -140,6 +141,7 @@ public class JsTestDriverServer extends Observable {
         }
         configuration = parser.parse(config.getParentFile(), new java.io.FileReader(config));
         modules.addAll(new PluginLoader().load(configuration.getPlugins()));
+        modules.add(new HtmlDocModule()); // by default the html plugin is installed.
       }
 
       Injector injector = Guice.createInjector(
