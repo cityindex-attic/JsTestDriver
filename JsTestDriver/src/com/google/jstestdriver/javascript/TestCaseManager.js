@@ -13,10 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.TestCaseManager = function() {
+
+/**
+ * Handles the TestCases
+ */
+jstestdriver.TestCaseManager = function(pluginRegistrar) {
   this.testCasesInfo_ = [];
   this.fileToTestCaseMap_ = {};
   this.latestTestCaseInfo_ = null;
+  this.pluginRegistrar_ = pluginRegistrar;
 };
 
 
@@ -97,16 +102,9 @@ jstestdriver.TestCaseManager.prototype.getDefaultTestRunsConfiguration = functio
 
 jstestdriver.TestCaseManager.prototype.getTestRunsConfigurationFor = function(expressions) {
   var testRunsConfiguration = [];
-  var size = this.testCasesInfo_.length;
-
-  for (var i = 0; i < size; i++) {
-    var testCaseInfo = this.testCasesInfo_[i];
-    var testRunConfiguration = testCaseInfo.getTestRunConfigurationFor(expressions);
-
-    if (testRunConfiguration != null) {
-      testRunsConfiguration.push(testRunConfiguration);
-    }
-  }
+  this.pluginRegistrar_.getTestRunsConfigurationFor(this.testCasesInfo_,
+                                                    expressions,
+                                                    testRunsConfiguration);
   return testRunsConfiguration;
 };
 

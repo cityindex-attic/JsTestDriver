@@ -24,9 +24,10 @@ jstestdriver.initializePluginRegistrar = function() {
     jstestdriver.jQuery(document).unbind();
     jstestdriver.jQuery(document).die();
   });
+  var testCaseManagerPlugin = new jstestdriver.plugins.TestCaseManagerPlugin();
   var assertsPlugin = new jstestdriver.plugins.AssertsPlugin();
   var defaultPlugin = new jstestdriver.plugins.DefaultPlugin(fileLoaderPlugin, testRunnerPlugin,
-      assertsPlugin);
+      assertsPlugin, testCaseManagerPlugin);
   jstestdriver.pluginRegistrar = new jstestdriver.PluginRegistrar(defaultPlugin);
 };
 
@@ -72,6 +73,9 @@ jstestdriver.PluginRegistrar.RUN_TEST = 'runTestConfiguration';
 
 
 jstestdriver.PluginRegistrar.IS_FAILURE = 'isFailure';
+
+
+jstestdriver.PluginRegistrar.GET_TEST_RUN_CONFIGURATIONS = 'getTestRunsConfigurationFor';
 
 
 jstestdriver.PluginRegistrar.prototype.register = function(plugin) {
@@ -264,4 +268,23 @@ jstestdriver.PluginRegistrar.prototype.processTestResult = function(testResult) 
  */
 jstestdriver.PluginRegistrar.prototype.isFailure = function(exception) {
   return this.dispatch_(jstestdriver.PluginRegistrar.IS_FAILURE, arguments);
+};
+
+
+/**
+ * getTestRunsConfigurationFor
+ * 
+ * By defining the method getTestRunsConfigurationFor a plugin will be able to
+ * modify the process in which a TestCaseInfo provides a TestRunConfiguration from an expression
+ * such as fooCase.testBar.
+ * 
+ * getTestRunsConfigurationFor takes 3 parameters:
+ * - testCaseInfos: The array of loaded TestCaseInfos.
+ * - expressions: The array of expressions used to determine the TestRunConfiguration.
+ * - testRunsConfiguration: An array to add test case TestRunConfigurations to.
+ * 
+ */
+jstestdriver.PluginRegistrar.prototype.getTestRunsConfigurationFor =
+    function(testCaseInfos, expressions, testRunsConfiguration) {
+  return this.dispatch_(jstestdriver.PluginRegistrar.GET_TEST_RUN_CONFIGURATIONS, arguments);
 };

@@ -134,7 +134,7 @@
           TestCaseManager.js,TestCaseBuilder.js,TestRunner.js,CommandExecutor.js" />
         <filelist dir="${obj.dir}/${javascript-resources}/plugins"
           files="ScriptLoader.js,StylesheetLoader.js,FileLoaderPlugin.js,TestRunnerPlugin.js,
-          DefaultPlugin.js,AssertsPlugin.js" />
+          DefaultPlugin.js,AssertsPlugin.js,TestCaseManagerPlugin.js" />
       </concat>
       <concat destfile="${obj.dir}/${javascript-resources}/heartbeatclient.js">
         <filelist dir="${obj.dir}/${javascript-resources}" files="Utils.js,Heartbeat.js" />

@@ -17,7 +17,7 @@ var TestCaseManagerTest = jstestdriver.testCaseManager.TestCase('TestCaseManager
 
 
 TestCaseManagerTest.prototype.testAddTestCaseInfo = function() {
-  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseManager = new jstestdriver.TestCaseManager(null);
   var testCaseInfo = new jstestdriver.TestCaseInfo('name', function() {});
 
   testCaseManager.add(testCaseInfo);
@@ -32,7 +32,7 @@ TestCaseManagerTest.prototype.testAddTestCaseInfo = function() {
 
 
 TestCaseManagerTest.prototype.testAddAndReplace = function() {
-  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseManager = new jstestdriver.TestCaseManager(null);
   var testCaseInfo1 = new jstestdriver.TestCaseInfo('testCase1', function() {});
   var testCaseInfo2 = new jstestdriver.TestCaseInfo('testCase2', function() {});
   var testCaseInfo3 = new jstestdriver.TestCaseInfo('testCase3', function() {});
@@ -56,7 +56,7 @@ TestCaseManagerTest.prototype.testAddAndReplace = function() {
 
 
 TestCaseManagerTest.prototype.testDefaultRunConfigProperlyGenerated = function() {
-  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseManager = new jstestdriver.TestCaseManager(null);
   var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
   var testCase1 = testCaseBuilder.TestCase('testCase1');
   testCase1.prototype.testFoo = function() {};
@@ -78,7 +78,7 @@ TestCaseManagerTest.prototype.testDefaultRunConfigProperlyGenerated = function()
 
 
 TestCaseManagerTest.prototype.testCurrentlyLoadedTestInfoAreCorrect = function() {
-  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseManager = new jstestdriver.TestCaseManager(null);
   var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
   var testCase1 = testCaseBuilder.TestCase('testCase1');
 
@@ -99,7 +99,11 @@ TestCaseManagerTest.prototype.testCurrentlyLoadedTestInfoAreCorrect = function()
 
 
 TestCaseManagerTest.prototype.testCurrentlyLoadedTestForExpressionsInfoAreCorrect = function() {
-  var testCaseManager = new jstestdriver.TestCaseManager();
+  var registrar = new jstestdriver.PluginRegistrar(
+          new jstestdriver.plugins.DefaultPlugin(
+                  null, null, null, new jstestdriver.plugins.TestCaseManagerPlugin()));
+
+  var testCaseManager = new jstestdriver.TestCaseManager(registrar);
   var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
   var testCase1 = testCaseBuilder.TestCase('testCase1');
 
@@ -123,7 +127,7 @@ TestCaseManagerTest.prototype.testCurrentlyLoadedTestForExpressionsInfoAreCorrec
 
 
 TestCaseManagerTest.prototype.testSameFilenameTestCaseIsReplaced = function() {
-  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseManager = new jstestdriver.TestCaseManager(null);
   var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
   var testCase1 = testCaseBuilder.TestCase('testCase1');
 
@@ -148,7 +152,7 @@ TestCaseManagerTest.prototype.testSameFilenameTestCaseIsReplaced = function() {
 
 
 TestCaseManagerTest.prototype.testTestCaseDifferentFilenameIsReplaced = function() {
-  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseManager = new jstestdriver.TestCaseManager(null);
   var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
   var testCase1 = testCaseBuilder.TestCase('testCase1');
 
@@ -173,7 +177,7 @@ TestCaseManagerTest.prototype.testTestCaseDifferentFilenameIsReplaced = function
 
 
 TestCaseManagerTest.prototype.testRemoveTestCaseForFilename = function() {
-  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseManager = new jstestdriver.TestCaseManager(null);
   var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
   var testCase1 = testCaseBuilder.TestCase('testCase1');
 
