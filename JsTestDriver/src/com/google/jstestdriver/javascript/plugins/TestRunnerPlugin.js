@@ -79,17 +79,18 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest_ = function(testCaseName
     // refactored.
     res = jstestdriver.pluginRegistrar.isFailure(e) ? 'failed' : 'error';
     msg = JSON.stringify(e);
-  } finally {
-    try {
-      if (testCaseInstance.tearDown) {
-        testCaseInstance.tearDown();
-      }
-    } catch (e) {
+  }
+  try {
+    if (testCaseInstance.tearDown) {
+      testCaseInstance.tearDown();
+    }
+  } catch (e) {
+    if (res == 'passed' && msg == '') {
       res = 'error';
       msg = JSON.stringify(e);
     }
-    this.clearBody_();
   }
+  this.clearBody_();
   var end = new this.dateObj_().getTime();
 
   return new jstestdriver.TestResult(testCaseName, testName, res, msg,
