@@ -501,6 +501,7 @@
   </target>
 
   <target name="cbuild" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage, idea-plugin, eclipse-plugin, eclipse-plugin-test" />
+  <target name="alltests" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage" />
 
   <target name="testability-explorer" depends="jar">
     <taskdef name="testability" classname="com.google.ant.TestabilityTask" classpathref="ant-tasks"/>
