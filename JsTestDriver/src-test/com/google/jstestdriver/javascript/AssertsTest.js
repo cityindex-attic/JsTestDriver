@@ -332,9 +332,9 @@ assertsTest.prototype.testAssertCount = function() {
         assertNotEquals(expected, actual);
       } catch (e) {}
 
-      GLOBAL.assertEquals, 2, args.length);
-      GLOBAL.assertEquals, expected, args[0]);
-      GLOBAL.assertEquals, actual, args[1]);
+      this.assertEquals.call(GLOBAL, 2, args.length);
+      this.assertEquals.call(GLOBAL, expected, args[0]);
+      this.assertEquals.call(GLOBAL, actual, args[1]);
     },
 
     "test should call assertEquals with original message": function () {
@@ -345,8 +345,8 @@ assertsTest.prototype.testAssertCount = function() {
         assertNotEquals(msg, expected, actual);
       } catch (e) {}
 
-      GLOBAL.assertEquals, 3, args.length);
-      GLOBAL.assertEquals, msg, args[0]);
+      this.assertEquals.call(GLOBAL,  3, args.length);
+      this.assertEquals.call(GLOBAL,  msg, args[0]);
     },
 
     "test should fail when assertEquals passes": function () {
@@ -356,9 +356,9 @@ assertsTest.prototype.testAssertCount = function() {
         assertNotEquals("string1", "string1");
         fail("assertNotEquals should fail on equal strings");
       } catch (e) {
-        GLOBAL.assertEquals, "AssertError", e.name);
-        GLOBAL.assertEquals,
-            "expected \"string1\" not to be equal to \"string1\"", e.message);
+        this.assertEquals.call(GLOBAL,  "AssertError", e.name);
+        this.assertEquals.call(GLOBAL, 
+            'expected "string1" not to be equal to "string1"', e.message);
       }
     },
 
@@ -650,7 +650,7 @@ assertsTest.prototype.testAssertCount = function() {
         fail("assertArray should fail when isArray returns false");
       } catch (e) {
         assertEquals("AssertError", e.name);
-        assertEquals("expected to be array but was {}");
+        assertEquals("expected to be array, but was {}", e.message);
       }
     },
 
@@ -662,7 +662,7 @@ assertsTest.prototype.testAssertCount = function() {
         fail("assertArray should fail when isArray returns false");
       } catch (e) {
         assertEquals("AssertError", e.name);
-        assertEquals("no array expected to be array but was {}");
+        assertEquals("no array expected to be array, but was {}", e.message);
       }
     }
   });
@@ -682,7 +682,7 @@ assertsTest.prototype.testAssertCount = function() {
         fail("assertTypeOf should fail for wrong type");
       } catch (e) {
         assertEquals("AssertError", e.name);
-        assertEquals("expected to be object but was string");
+        assertEquals("expected to be object but was string", e.message);
       }
     },
 
@@ -802,7 +802,7 @@ assertsTest.prototype.testAssertCount = function() {
         fail("assertMatch should fail when missing string");
       } catch (e) {
         assertEquals("AssertError", e.name);
-        assertEquals("expected atleast 2 arguments, got 1", e.message);
+        assertEquals("expected at least 2 arguments, got 1", e.message);
       }
     },
 
@@ -905,7 +905,8 @@ assertsTest.prototype.testAssertCount = function() {
         fail("assertTagName should fail for wrong tag name");
       } catch (e) {
         assertEquals("AssertError", e.name);
-        assertEquals("should be span expected tagName to be span but was DIV", e.message);
+        assertEquals("should be span expected tagName to be span but was DIV",
+            e.message);
       }
     }
   });

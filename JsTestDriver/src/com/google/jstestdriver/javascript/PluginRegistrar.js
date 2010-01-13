@@ -13,25 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.initializePluginRegistrar = function() {
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader(window, document,
-      jstestdriver.testCaseManager);
-  var stylesheetLoader = new jstestdriver.plugins.StylesheetLoader(window, document,
-          jstestdriver.jQuery.browser.mozilla || jstestdriver.jQuery.browser.safari);
-  var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
-  var testRunnerPlugin = new jstestdriver.plugins.TestRunnerPlugin(Date, function() {
-    jstestdriver.jQuery('body').children().remove();
-    jstestdriver.jQuery(document).unbind();
-    jstestdriver.jQuery(document).die();
-  });
-  var testCaseManagerPlugin = new jstestdriver.plugins.TestCaseManagerPlugin();
-  var assertsPlugin = new jstestdriver.plugins.AssertsPlugin();
-  var defaultPlugin = new jstestdriver.plugins.DefaultPlugin(fileLoaderPlugin, testRunnerPlugin,
-      assertsPlugin, testCaseManagerPlugin);
-  jstestdriver.pluginRegistrar = new jstestdriver.PluginRegistrar(defaultPlugin);
-};
-
-
 /**
  * The PluginRegistrar allows developers to load their own plugins to perform certain actions.
  * A plugin must define methods with specific names in order for it to be used.
@@ -57,9 +38,8 @@ jstestdriver.initializePluginRegistrar = function() {
  * For more information regarding the supported method just read the documentation for the method
  * in this class.
  */
-jstestdriver.PluginRegistrar = function(defaultPlugin) {
+jstestdriver.PluginRegistrar = function() {
   this.plugins_ = [];
-  this.plugins_.push(defaultPlugin);
 };
 
 

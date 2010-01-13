@@ -99,9 +99,10 @@ TestCaseManagerTest.prototype.testCurrentlyLoadedTestInfoAreCorrect = function()
 
 
 TestCaseManagerTest.prototype.testCurrentlyLoadedTestForExpressionsInfoAreCorrect = function() {
-  var registrar = new jstestdriver.PluginRegistrar(
-          new jstestdriver.plugins.DefaultPlugin(
-                  null, null, null, new jstestdriver.plugins.TestCaseManagerPlugin()));
+  var registrar = new jstestdriver.PluginRegistrar();
+  registrar.register(
+      new jstestdriver.plugins.DefaultPlugin(
+          null, null, null, new jstestdriver.plugins.TestCaseManagerPlugin()));
 
   var testCaseManager = new jstestdriver.TestCaseManager(registrar);
   var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);

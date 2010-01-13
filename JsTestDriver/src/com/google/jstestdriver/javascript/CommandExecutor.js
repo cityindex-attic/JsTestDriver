@@ -17,15 +17,45 @@ jstestdriver.listen = function() {
   var id = jstestdriver.extractId(window.location.toString());
   var url = jstestdriver.SERVER_URL + id;
 
-  jstestdriver.testCaseManager = new jstestdriver.TestCaseManager();
-  jstestdriver.initializePluginRegistrar();
-  var testRunner = new jstestdriver.TestRunner(jstestdriver.pluginRegistrar);
-  jstestdriver.testCaseBuilder = new jstestdriver.TestCaseBuilder(jstestdriver.testCaseManager);
+  jstestdriver.pluginRegistrar = new jstestdriver.PluginRegistrar();
+  jstestdriver.testCaseManager =
+      new jstestdriver.TestCaseManager(jstestdriver.pluginRegistrar);
+
+  var testRunner = new jstestdriver.TestRunner(jstestdriver.pluginRegistrar,
+                                               function (callback){
+    callback();
+  });
+  jstestdriver.testCaseBuilder =
+      new jstestdriver.TestCaseBuilder(jstestdriver.testCaseManager);
   jstestdriver.global.TestCase = jstestdriver.bind(jstestdriver.testCaseBuilder,
       jstestdriver.testCaseBuilder.TestCase);
 
+  // default plugin
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader(window, document,
+        jstestdriver.testCaseManager);
+  var stylesheetLoader =
+      new jstestdriver.plugins.StylesheetLoader(window, document,
+            jstestdriver.jQuery.browser.mozilla || jstestdriver.jQuery.browser.safari);
+  var fileLoaderPlugin =
+      new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
+  var testRunnerPlugin =
+        new jstestdriver.plugins.TestRunnerPlugin(Date, function() {
+      jstestdriver.jQuery('body').children().remove();
+      jstestdriver.jQuery(document).unbind();
+      jstestdriver.jQuery(document).die();
+  });
+
+  jstestdriver.pluginRegistrar.register(
+      new jstestdriver.plugins.DefaultPlugin(
+          fileLoaderPlugin,
+          testRunnerPlugin,
+          new jstestdriver.plugins.AssertsPlugin(),
+          new jstestdriver.plugins.TestCaseManagerPlugin()));
+
   // legacy
   jstestdriver.testCaseManager.TestCase = jstestdriver.global.TestCase;
+
+  
   new jstestdriver.CommandExecutor(parseInt(id),
       url,
       jstestdriver.convertToJson(jstestdriver.jQuery.post),

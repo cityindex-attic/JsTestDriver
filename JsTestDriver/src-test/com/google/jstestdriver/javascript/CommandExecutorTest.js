@@ -214,7 +214,8 @@ commandExecutorTest.prototype.testCallPluginOnTestResultAdded = function() {
     result.data = expected.data;
   }
   
-  var registrar = new jstestdriver.PluginRegistrar(tmpPlugin);
+  var registrar = new jstestdriver.PluginRegistrar();
+  registrar.register(tmpPlugin);
   
   var dataSent = null;
   var executor = new jstestdriver.CommandExecutor(1, "/Q1", function (_url, _data, _callback) {

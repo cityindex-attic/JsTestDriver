@@ -38,7 +38,8 @@ FileLoaderTest.prototype.testFilesToLoad = function() {
   var stylesheetLoader = new jstestdriver.plugins.StylesheetLoader(win, mockDOM);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var defaultPlugin = new jstestdriver.plugins.DefaultPlugin(fileLoaderPlugin);
-  var pluginRegistrar = new jstestdriver.PluginRegistrar(defaultPlugin);
+  var pluginRegistrar = new jstestdriver.PluginRegistrar();
+  pluginRegistrar.register(defaultPlugin);
   var fileLoader = new jstestdriver.FileLoader(pluginRegistrar, function(res) {
     var loadedFiles = res.loadedFiles;
 

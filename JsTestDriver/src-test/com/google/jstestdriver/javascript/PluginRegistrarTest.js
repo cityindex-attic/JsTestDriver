@@ -17,7 +17,8 @@ var PluginRegistrarTest = jstestdriver.testCaseManager.TestCase('PluginRegistrar
 
 
 PluginRegistrarTest.prototype.testRegisterPlugin = function() {
-  var pluginRegistrar = new jstestdriver.PluginRegistrar({ name: 'default' });
+  var pluginRegistrar = new jstestdriver.PluginRegistrar();
+  pluginRegistrar.register({ name: 'default' });
   var myPlugin = new TestPlugin('myPlugin', true);
 
   pluginRegistrar.register(myPlugin);
@@ -29,7 +30,8 @@ PluginRegistrarTest.prototype.testRegisterPlugin = function() {
 
 
 PluginRegistrarTest.prototype.testUnregisterPlugin = function() {
-  var pluginRegistrar = new jstestdriver.PluginRegistrar({ name: 'default' });
+  var pluginRegistrar = new jstestdriver.PluginRegistrar();
+  pluginRegistrar.register({ name: 'default' });
   var myPlugin = new TestPlugin('myPlugin', true);
 
   pluginRegistrar.register(myPlugin);
@@ -45,7 +47,8 @@ PluginRegistrarTest.prototype.testUnregisterPlugin = function() {
 
 
 PluginRegistrarTest.prototype.testUnregisterPluginUnknowPlugin = function() {
-  var pluginRegistrar = new jstestdriver.PluginRegistrar({ name: 'default' });
+  var pluginRegistrar = new jstestdriver.PluginRegistrar();
+  pluginRegistrar.register({ name: 'default' });
   var myPlugin = new TestPlugin('myPlugin', true);
 
   pluginRegistrar.unregister(myPlugin);
@@ -59,7 +62,8 @@ PluginRegistrarTest.prototype.testUnregisterPluginUnknowPlugin = function() {
 
 
 PluginRegistrarTest.prototype.testHandleAction = function() {
-  var pluginRegistrar = new jstestdriver.PluginRegistrar({ name: 'default' });
+  var pluginRegistrar = new jstestdriver.PluginRegistrar();
+  pluginRegistrar.register({ name: 'default' });
   var myFirstPlugin = new TestPlugin('myFirstPlugin', false);
   var mySecondPlugin = new TestPlugin('mySecondPlugin', true);
   var myThirdPlugin = new TestPlugin('myThirdPlugin', false)
@@ -89,7 +93,8 @@ PluginRegistrarTest.prototype.testHandleAction = function() {
 
 
 PluginRegistrarTest.prototype.testPluginIsReplaced = function() {
-  var pluginRegistrar = new jstestdriver.PluginRegistrar({ name: 'default' });
+  var pluginRegistrar = new jstestdriver.PluginRegistrar();
+pluginRegistrar.register({ name: 'default' });
   var myPlugin = new TestPlugin('myPlugin', false);
   var myOtherPlugin = new TestPlugin('myPlugin', false);
 

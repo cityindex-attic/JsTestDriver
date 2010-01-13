@@ -50,14 +50,14 @@ function argsWithOptionalMsg_(args, length) {
   // make copy because it's bad practice to change a passed in mutable
   // And to ensure we aren't working with an arguments array. IE gets bitchy.
   for(var i = 0; i < args.length; i++) {
-    copyOfArgs[i] = args[i];
+    copyOfArgs.push(args[i]);
   }
   var min = length - 1;
 
-  if (copyOfArgs.length < min) {
+  if (args.length < min) {
     this.fail("expected at least " +
-        min + " arguments, got " + copyOfArgs.length);
-  } else if (copyOfArgs.length == length) {
+        min + " arguments, got " + args.length);
+  } else if (args.length == length) {
     copyOfArgs[0] += " ";
   } else {
     copyOfArgs.unshift("");
@@ -93,75 +93,69 @@ function assertFalse(msg, actual) {
 
 
 function assertEquals(msg, expected, actual) {
-  if (arguments.length == 2) {
-    var tmp = expected;
-
-    expected = msg;
-    actual = tmp;
-    msg = '';
-  } else {
-    msg += ' ';
-  }
+  var args = this.argsWithOptionalMsg_(arguments, 3);
   jstestdriver.assertCount++;
-    
-  // The local compare function closure is needed to allow easy recursive
-  // checking without destroying a meaningful assertion message on failure.
-  var compare = function(expected, actual) {
-    var key = null;
+  msg = args[0];
+  expected = args[1];
+  actual = args[2];
 
-    // Do we compare an Array or an Object?
-    // 'null' and 'undefined' are of type 'object' therefore the extra check is
-    // required.
-    if (expected !== undefined && typeof(expected) == 'object') {
-      var actualLength   = 0;
-      var expectedLength = 0;
-      // If an array is expected the length of actual should be simple to
-      // determine. If it is not it is undefined.
-      if (expected instanceof [].constructor) {
-          actualLength = actual.length;
-      }
-      else {
-          // In case it is an object it is a little bit more complicated to
-          // get the length.
-          for(key in actual) {
-            if (!actual.hasOwnProperty(key)) {
-                continue;
-            }
-            ++actualLength;
-          }
-      }
-
-      for (key in expected) {
-        if (!expected.hasOwnProperty(key)) {
-          // Do not run up the inheritance chain
-          continue;
-        }
-        if (!compare(expected[key], actual[key])) {
-          return false;
-        }
-        ++expectedLength;
-      }
-
-      if (expectedLength !== actualLength) {
-          return false;
-      }
-        
-      return true;
-    }
-
-    // We are dealing with a scalar here. Simple comparison should do the trick
-    if (actual != expected) {
-      return false;
-    }
-
-    // actual and expected are equal
-    return true;
-  };
-
-  if (!compare(expected, actual)) {
+  if (!compare_(expected, actual)) {
     this.fail(msg + 'expected ' + this.prettyPrintEntity_(expected) +
         ' but was ' + this.prettyPrintEntity_(actual) + '');
   }
+  return true;
+};
+
+
+function compare_(expected, actual) {
+  var key = null;
+
+  // Do we compare an Array or an Object?
+  // 'null' and 'undefined' are of type 'object' therefore the extra check is
+  // required.
+  if (expected !== undefined && typeof(expected) == 'object') {
+    var actualLength   = 0;
+    var expectedLength = 0;
+    // If an array is expected the length of actual should be simple to
+    // determine. If it is not it is undefined.
+    if (expected instanceof [].constructor) {
+        actualLength = actual.length;
+    }
+    else {
+        // In case it is an object it is a little bit more complicated to
+        // get the length.
+        for(key in actual) {
+          if (!actual.hasOwnProperty(key)) {
+              continue;
+          }
+          ++actualLength;
+        }
+    }
+
+    for (key in expected) {
+      if (!expected.hasOwnProperty(key)) {
+        // Do not run up the inheritance chain
+        continue;
+      }
+      if (!compare_(expected[key], actual[key])) {
+        return false;
+      }
+      ++expectedLength;
+    }
+
+    if (expectedLength !== actualLength) {
+        return false;
+    }
+      
+    return true;
+  }
+
+  // We are dealing with a scalar here. Simple comparison should do the trick
+  if (actual != expected) {
+    return false;
+  }
+
+  // actual and expected are equal
   return true;
 };
 
@@ -179,7 +173,7 @@ function assertNotEquals(msg, expected, actual) {
 
   var args = this.argsWithOptionalMsg_(arguments, 3);
 
-  this.fail(msg + "expected " + this.prettyPrintEntity_(args[1]) +
+  this.fail(args[0] + "expected " + this.prettyPrintEntity_(args[1]) +
        " not to be equal to " + this.prettyPrintEntity_(args[2]));
 }
 
@@ -424,13 +418,10 @@ function assertTagName(msg, tagName, element) {
     var args = this.argsWithOptionalMsg_(arguments, 3);
     var actual = args[2] && args[2].tagName;
 
-    try {
-        this.assertMatch(args[0], new RegExp(tagName, "i"), actual);
-    } catch (e) {
-        this.fail(args[0] + "expected tagName to be " + args[1] + " but was " +
-            actual);
+    if (String(actual).toUpperCase() != args[1].toUpperCase()) {
+      this.fail(args[0] + "expected tagName to be " + args[1] + " but was " +
+                actual);
     }
-
     return true;
 }
 

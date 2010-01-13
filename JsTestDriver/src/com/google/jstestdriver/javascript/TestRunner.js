@@ -13,10 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.TestRunner = function(pluginRegistrar) {
+jstestdriver.TestRunner = function(pluginRegistrar, testRunBreaker) {
   this.pluginRegistrar_ = pluginRegistrar;
-  this.boundOnTestRunConfigurationComplete = jstestdriver.bind(this,
-      this.onTestRunConfigurationComplete_);
+  var self = this;
+  this.boundOnTestRunConfigurationComplete = function() {
+    testRunBreaker(jstestdriver.bind(self,
+                                     self.onTestRunConfigurationComplete_));
+  };
 };
 
 
