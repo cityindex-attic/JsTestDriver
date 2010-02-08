@@ -16,6 +16,7 @@ package com.google.jstestdriver.eclipse.core;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.google.jstestdriver.BrowserCaptureEvent;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.SlaveBrowser;
 
@@ -79,8 +80,14 @@ public class SlaveBrowserRootData extends Observable implements Observer {
   }
 
   public void update(Observable o, Object arg) {
-    SlaveBrowser slave = (SlaveBrowser) arg;
+    if (arg == null) {
+      return;
+    }
+    SlaveBrowser slave = ((BrowserCaptureEvent) arg).getBrowser();
     BrowserInfo browserInfo = slave.getBrowserInfo();
+    if (browserInfo == null) {
+      return;
+    }
     if (browserInfo.getName().contains("Firefox")) {
       firefoxSlaves.addSlaveBrowser(slave);
     } else if (browserInfo.getName().contains("Chrome")) {
