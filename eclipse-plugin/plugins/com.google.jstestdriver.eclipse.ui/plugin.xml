@@ -5,8 +5,9 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            allowMultiple="false"
             category="org.eclipse.wst.jsdt.ui.java"
-            class="com.google.jstestdriver.eclipse.ui.views.JsTestDriverView"
+            class="com.google.eclipse.javascript.jstestdriver.ui.view.JsTestDriverView"
             icon="icons/JsTestDriver.png"
             id="com.google.jstestdriver.eclipse.ui.views.JsTestDriverView"
             name="JsTestDriver">
@@ -36,7 +37,7 @@
             id="com.google.jstestdriver.eclipse.ui.jsTestDriverViewContribution"
             targetID="com.google.jstestdriver.eclipse.ui.views.JsTestDriverView">
          <action
-               class="com.google.jstestdriver.eclipse.ui.views.ServerStartStopViewActionDelegate"
+               class="com.google.eclipse.javascript.jstestdriver.ui.view.actions.ServerStartStopViewActionDelegate"
                icon="icons/startServer.png"
                id="com.google.jstestdriver.eclipse.ui.serverStartStopAction"
                label="Start Server"
@@ -46,7 +47,7 @@
                tooltip="Start Server">
          </action>
          <action
-               class="com.google.jstestdriver.eclipse.ui.views.FilterTestResultsActionDelegate"
+               class="com.google.eclipse.javascript.jstestdriver.ui.view.actions.FilterTestResultsActionDelegate"
                icon="icons/failures.gif"
                id="com.google.jstestdriver.eclipse.ui.filterTestResultsAction"
                label="Show Only Failures"
@@ -56,7 +57,7 @@
                tooltip="Show only failures">
          </action>
          <action
-               class="com.google.jstestdriver.eclipse.ui.views.RerunLastLaunchActionDelegate"
+               class="com.google.eclipse.javascript.jstestdriver.ui.view.actions.RerunLastLaunchActionDelegate"
                icon="icons/relaunch.gif"
                id="com.google.jstestdriver.eclipse.ui.rerunLastLaunchAction"
                label="Rerun last configuration"
@@ -66,7 +67,7 @@
                tooltip="Rerun last configuration">
          </action>
          <action
-               class="com.google.jstestdriver.eclipse.ui.views.ResetBrowsersActionDelegate"
+               class="com.google.eclipse.javascript.jstestdriver.ui.view.actions.ResetBrowsersActionDelegate"
                icon="icons/icon-refresh.gif"
                id="com.google.jstestdriver.eclipse.ui.resetBrowsersAction"
                label="Reset Browsers"
@@ -80,7 +81,7 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="com.google.jstestdriver.eclipse.ui.launch.JsTestDriverLaunchConfigurationDelegate"
+            delegate="com.google.eclipse.javascript.jstestdriver.ui.launch.JsTestDriverLaunchConfigurationDelegate"
             id="com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration"
             modes="run"
             name="Js Test Driver Test"
@@ -90,7 +91,7 @@
    <extension
          point="org.eclipse.debug.core.sourceLocators">
       <sourceLocator
-            class="com.google.jstestdriver.eclipse.ui.launch.JavascriptSourceLocator"
+            class="com.google.eclipse.javascript.jstestdriver.ui.launch.JavascriptSourceLocator"
             id="com.google.jstestdriver.eclipse.ui.jstdSourceLocator"
             name="JsSourceLocator">
       </sourceLocator>
@@ -98,14 +99,14 @@
    <extension
          point="org.eclipse.debug.core.sourcePathComputers">
       <sourcePathComputer
-            class="com.google.jstestdriver.eclipse.ui.launch.JavascriptSourcePathComputer"
+            class="com.google.eclipse.javascript.jstestdriver.ui.launch.JavascriptSourcePathComputer"
             id="com.google.jstestdriver.eclipse.ui.jstdSourcePathComputer">
       </sourcePathComputer>
    </extension>
    <extension
          point="org.eclipse.debug.core.sourceContainerTypes">
       <sourceContainerType
-            class="com.google.jstestdriver.eclipse.ui.launch.JavascriptSourceContainer"
+            class="com.google.eclipse.javascript.jstestdriver.ui.launch.JavascriptSourceContainer"
             id="com.google.jstestdriver.eclipse.ui.jstdSourceContainer"
             name="JavascriptSourceContainer">
       </sourceContainerType>
@@ -121,7 +122,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            class="com.google.jstestdriver.eclipse.ui.launch.JsTestDriverLaunchTabGroup"
+            class="com.google.eclipse.javascript.jstestdriver.ui.launch.config.JsTestDriverLaunchTabGroup"
             id="com.google.jstestdriver.eclipse.ui.jstdLaunchConfigurationTabGroup"
             type="com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration">
       </launchConfigurationTabGroup>
@@ -129,7 +130,7 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            class="com.google.jstestdriver.eclipse.ui.launch.JsTestDriverLaunchShortcut"
+            class="com.google.eclipse.javascript.jstestdriver.ui.launch.JsTestDriverLaunchShortcut"
             icon="icons/JsTestDriver.png"
             id="com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchShortcut"
             label="Js Test Driver Test"
@@ -153,7 +154,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="com.google.jstestdriver.eclipse.ui.WorkbenchPreferencePage"
+            class="com.google.eclipse.javascript.jstestdriver.ui.prefs.WorkbenchPreferencePage"
             id="com.google.jstestdriver.eclipse.ui.jstdPreferencePage"
             name="JS Test Driver">
       </page>

@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="com.google.eclipse.javascript.jstestdriver.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="com.google.eclipse.javascript.jstestdriver.core" id="com.google.eclipse.javascript.jstestdriver.core.jstdLaunchListener" name="JSTD Launch Listener"/>
+      </appinfo>
+      <documentation>
+         Listeners which get notified whenever a JS Test Driver launch happens
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+         <documentation>
+            The jstdLaunchListener extension which allows interested plugins to be notified about impending JSTestDriver test runs. Implementing plugins will have to provide atleast one class which implemented JstdLaunchListener.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="jstdLaunchListener"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="jstdLaunchListener">
+      <annotation>
+         <documentation>
+            Anyone implementing the jstdLaunchListener extension point will have to provide atleast one class which implements com.google.eclipse.javascript.jstestdriver.core.JstdLaunchListener. This allows plugins to be notified about impending JsTestDriver test runs.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A class which contains &quot;aboutToLaunch&quot; and provides the LaunchConfiguration for all interested plugins.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":com.google.eclipse.javascript.jstestdriver.core.JstdLaunchListener"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
+
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright 2009 Google Inc. All Rights Reserved.
+      </documentation>
+   </annotation>
+
+</schema>

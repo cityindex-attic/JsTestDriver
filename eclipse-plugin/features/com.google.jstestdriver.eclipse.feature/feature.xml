@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="com.google.jstestdriver.eclipse.feature"
+      id="com.google.eclipse.javascript.jstestdriver.feature"
       label="JS Test Driver"
       version="1.0.7"
-      provider-name="GOOGLE">
+      provider-name="Google, Inc.">
 
    <description url="http://code.google.com/p/js-test-driver">
       The goal of JsTestDriver is to build a JavaScript test runner

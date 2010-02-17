@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JS Test Driver UI
-Bundle-SymbolicName: com.google.jstestdriver.eclipse.ui;singleton:=true
+Bundle-SymbolicName: com.google.eclipse.javascript.jstestdriver.ui;singleton:=true
 Bundle-Version: 1.0.7
-Bundle-Activator: com.google.jstestdriver.eclipse.ui.Activator
-Bundle-Vendor: GOOGLE
+Bundle-Activator: com.google.eclipse.javascript.jstestdriver.ui.Activator
+Bundle-Vendor: Google, Inc.
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.debug.core;bundle-version="3.4.0",
@@ -13,14 +13,16 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide;bundle-version="3.4.0",
  org.eclipse.ui.editors;bundle-version="3.4.0",
  org.eclipse.ui.console;bundle-version="3.4.0",
- com.google.jstestdriver.eclipse.core;bundle-version="1.0.5"
+ com.google.eclipse.javascript.jstestdriver.core;bundle-version="1.0.7"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: com.google.jstestdriver.eclipse.ui,
- com.google.jstestdriver.eclipse.ui.icon,
- com.google.jstestdriver.eclipse.ui.icon.icons,
- com.google.jstestdriver.eclipse.ui.launch,
- com.google.jstestdriver.eclipse.ui.launch.model,
- com.google.jstestdriver.eclipse.ui.launch.save,
- com.google.jstestdriver.eclipse.ui.views
+Export-Package: com.google.eclipse.javascript.jstestdriver.ui,
+ com.google.eclipse.javascript.jstestdriver.ui.icon.icons,
+ com.google.eclipse.javascript.jstestdriver.ui.launch,
+ com.google.eclipse.javascript.jstestdriver.ui.launch.config,
+ com.google.eclipse.javascript.jstestdriver.ui.launch.save,
+ com.google.eclipse.javascript.jstestdriver.ui.prefs,
+ com.google.eclipse.javascript.jstestdriver.ui.runner,
+ com.google.eclipse.javascript.jstestdriver.ui.view,
+ com.google.eclipse.javascript.jstestdriver.ui.view.actions
 Bundle-ClassPath: .
