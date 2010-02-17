@@ -13,10 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.eclipse.core;
+package com.google.eclipse.javascript.jstestdriver.core;
 
 import java.util.HashMap;
 
+import com.google.eclipse.javascript.jstestdriver.core.model.SlaveBrowserRootData;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.DefaultURLRewriter;
 import com.google.jstestdriver.DefaultURLTranslator;

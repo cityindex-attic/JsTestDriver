@@ -3,17 +3,18 @@ Bundle-ManifestVersion: 2
 Bundle-Name: JS Test Driver Core
 Bundle-SymbolicName: com.google.jstestdriver.eclipse.core;singleton:=true
 Bundle-Version: 1.0.7
-Bundle-Activator: com.google.jstestdriver.eclipse.core.Activator
+Bundle-Activator: com.google.eclipse.javascript.jstestdriver.core.Activator
 Bundle-Vendor: GOOGLE
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.core.resources;bundle-version="3.4.0"
+ org.eclipse.core.resources;bundle-version="3.4.0",
+ org.eclipse.debug.core;bundle-version="3.5.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: com.google.inject,
+Export-Package: com.google.eclipse.javascript.jstestdriver.core,
+ com.google.eclipse.javascript.jstestdriver.core.model,
+ com.google.inject,
  com.google.jstestdriver,
- com.google.jstestdriver.eclipse.core,
- com.google.jstestdriver.eclipse.internal.core,
  com.google.jstestdriver.hooks
 Bundle-ClassPath: lib/JsTestDriver.jar,
  .
