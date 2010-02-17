@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.google.jstestdriver.eclipse.feature_1.0.7.jar" id="com.google.jstestdriver.eclipse.feature" version="1.0.7">
+   <feature url="features/com.google.eclipse.javascript.jstestdriver.feature_1.0.7.jar" id="com.google.eclipse.javascript.jstestdriver.feature" version="1.0.7">
       <category name="JS Test Driver Plugin for Eclipse"/>
    </feature>
    <category-def name="JS Test Driver Plugin for Eclipse" label="JS Test Driver Plugin for Eclipse"/>

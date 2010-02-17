@@ -17,7 +17,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: com.google.eclipse.javascript.jstestdriver.ui,
- com.google.eclipse.javascript.jstestdriver.ui.icon.icons,
  com.google.eclipse.javascript.jstestdriver.ui.launch,
  com.google.eclipse.javascript.jstestdriver.ui.launch.config,
  com.google.eclipse.javascript.jstestdriver.ui.launch.save,

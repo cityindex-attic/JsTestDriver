@@ -14,18 +14,6 @@
       </view>
    </extension>
    <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               id="com.google.jstestdriver.eclipse.ui.views.JsTestDriverView"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
          point="org.eclipse.help.contexts">
       <contexts
             file="contexts.xml">
@@ -87,29 +75,6 @@
             name="Js Test Driver Test"
             public="true">
       </launchConfigurationType>
-   </extension>
-   <extension
-         point="org.eclipse.debug.core.sourceLocators">
-      <sourceLocator
-            class="com.google.eclipse.javascript.jstestdriver.ui.launch.JavascriptSourceLocator"
-            id="com.google.jstestdriver.eclipse.ui.jstdSourceLocator"
-            name="JsSourceLocator">
-      </sourceLocator>
-   </extension>
-   <extension
-         point="org.eclipse.debug.core.sourcePathComputers">
-      <sourcePathComputer
-            class="com.google.eclipse.javascript.jstestdriver.ui.launch.JavascriptSourcePathComputer"
-            id="com.google.jstestdriver.eclipse.ui.jstdSourcePathComputer">
-      </sourcePathComputer>
-   </extension>
-   <extension
-         point="org.eclipse.debug.core.sourceContainerTypes">
-      <sourceContainerType
-            class="com.google.eclipse.javascript.jstestdriver.ui.launch.JavascriptSourceContainer"
-            id="com.google.jstestdriver.eclipse.ui.jstdSourceContainer"
-            name="JavascriptSourceContainer">
-      </sourceContainerType>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
