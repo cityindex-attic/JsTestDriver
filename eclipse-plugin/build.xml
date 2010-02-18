@@ -66,6 +66,7 @@
     <fileset dir="." id="testFiles" includes="TEST*.xml"/>
     <fileset dir="plugins/com.google.eclipse.javascript.jstestdriver.core/@dot" id="coreDotFolder"/>
     <fileset file="plugins/com.google.eclipse.javascript.jstestdriver.core/@dot.log" id="coreDotLogFile"/>
+    <fileset dir="plugins/com.google.eclipse.javascript.jstestdriver.core/bin" id="coreBinFolder"/>
     <fileset dir="plugins/com.google.eclipse.javascript.jstestdriver.core/temp.folder" id="coreTmpFolder"/>
     <fileset dir="plugins/com.google.eclipse.javascript.jstestdriver.ui/@dot" id="uiDotFolder"/>
     <fileset dir="plugins/com.google.eclipse.javascript.jstestdriver.ui/bin" id="uiBinFolder"/>
