@@ -23,7 +23,7 @@ import com.google.eclipse.javascript.jstestdriver.core.model.ResultModel;
 /**
  * Filter for the Test Result tree view, which only shows failures.
  * 
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class FailureOnlyViewerFilter extends ViewerFilter {
 

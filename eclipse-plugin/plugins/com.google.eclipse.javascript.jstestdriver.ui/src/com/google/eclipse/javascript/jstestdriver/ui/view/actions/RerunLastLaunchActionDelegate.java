@@ -35,7 +35,7 @@ import com.google.eclipse.javascript.jstestdriver.ui.view.JsTestDriverView;
 import com.google.eclipse.javascript.jstestdriver.ui.view.TestResultsPanel;
 
 /**
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  * 
  */
 public class RerunLastLaunchActionDelegate implements IViewActionDelegate {

@@ -15,9 +15,11 @@
  */
 package com.google.eclipse.javascript.jstestdriver.ui.launch.config;
 
-import java.text.MessageFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.eclipse.javascript.jstestdriver.core.ProjectHelper;
+import com.google.eclipse.javascript.jstestdriver.ui.launch.JavascriptLaunchConfigurationHelper;
+import com.google.eclipse.javascript.jstestdriver.ui.launch.LaunchConfigurationConstants;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -25,45 +27,41 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
-import com.google.eclipse.javascript.jstestdriver.core.ProjectHelper;
-import com.google.eclipse.javascript.jstestdriver.ui.Activator;
-import com.google.eclipse.javascript.jstestdriver.ui.launch.JavascriptLaunchConfigurationHelper;
-import com.google.eclipse.javascript.jstestdriver.ui.launch.LaunchConfigurationConstants;
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * UI elements for the Js Test Driver Launch Configuration Tab, along with information on what 
  * information to set on the launch configuration and retrieve from it.
  * 
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
 
   private final Logger logger =
       Logger.getLogger(JsTestDriverLaunchTab.class.getName());
-  private final JavascriptLaunchConfigurationHelper configurationHelper =
-      new JavascriptLaunchConfigurationHelper();
-  private Text projectText;
-  private Text confFileText;
+  private Combo projectCombo;
+  private Combo confFileCombo;
   private Button runOnEverySaveCheckbox;
+  private JavascriptLaunchConfigurationHelper configurationHelper =
+      new JavascriptLaunchConfigurationHelper();
 
   public void createControl(Composite parent) {
     Composite control = new Composite(parent, SWT.NONE);
@@ -71,23 +69,39 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
     super.setControl(control);
 
     Group jstdPropertiesControl = new Group(control, SWT.NONE);
-    jstdPropertiesControl.setLayout(new GridLayout(3, false));
+    jstdPropertiesControl.setLayout(new GridLayout(2, false));
     jstdPropertiesControl.setText("JSTD:");
     GridData jstdGridData = new GridData(GridData.FILL_HORIZONTAL);
     jstdPropertiesControl.setLayoutData(jstdGridData);
 
     createJstdPropreties(jstdPropertiesControl);
-
+    setUpProjectCombo();
+  }
+  
+  private String[] getConfigurationFiles(IProject project) {
+    try {
+      List<String> resources = Lists.newLinkedList();
+      for (IResource resource : project.members()) {
+        if (resource.getName().endsWith(".conf")) {
+          resources.add(resource.getName());
+        }
+      }
+      Collections.sort(resources);
+      return resources.toArray(new String[resources.size()]);
+    } catch (CoreException e) {
+      logger.log(Level.SEVERE, "", e);
+      return new String[] {};
+    }
   }
 
   private void createJstdPropreties(Composite control) {
     Label projectLabel = new Label(control, SWT.NONE);
     projectLabel.setText("Project:");
 
-    projectText = new Text(control, SWT.BORDER);
+    projectCombo = new Combo(control, SWT.BORDER);
     GridData projectGridData = new GridData(GridData.FILL_HORIZONTAL);
-    projectText.setLayoutData(projectGridData);
-    projectText.addKeyListener(new KeyListener() {
+    projectCombo.setLayoutData(projectGridData);
+    projectCombo.addKeyListener(new KeyListener() {
 
       public void keyPressed(KeyEvent e) {
       }
@@ -97,25 +111,24 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
       }
     });
 
-    Button projectBrowseButton = new Button(control, SWT.PUSH);
-    projectBrowseButton.setText("Browse...");
-    projectBrowseButton.addSelectionListener(new SelectionListener() {
+    projectCombo.addSelectionListener(new SelectionListener() {
 
       public void widgetDefaultSelected(SelectionEvent e) {
       }
 
       public void widgetSelected(SelectionEvent e) {
-        setUpBrowseProjectDialog();
+        setUpConfFileCombo();
+        setTabDirty();
       }
     });
 
     Label confFileLabel = new Label(control, SWT.NONE);
     confFileLabel.setText("Conf File:");
 
-    confFileText = new Text(control, SWT.BORDER);
+    confFileCombo = new Combo(control, SWT.BORDER);
     GridData confFileGridData = new GridData(GridData.FILL_HORIZONTAL);
-    confFileText.setLayoutData(confFileGridData);
-    confFileText.addKeyListener(new KeyListener() {
+    confFileCombo.setLayoutData(confFileGridData);
+    confFileCombo.addKeyListener(new KeyListener() {
 
       public void keyPressed(KeyEvent e) {
       }
@@ -125,15 +138,13 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
       }
     });
 
-    Button confFileBrowseButton = new Button(control, SWT.PUSH);
-    confFileBrowseButton.setText("Browse...");
-    confFileBrowseButton.addSelectionListener(new SelectionListener() {
+    confFileCombo.addSelectionListener(new SelectionListener() {
 
       public void widgetDefaultSelected(SelectionEvent e) {
       }
 
       public void widgetSelected(SelectionEvent e) {
-        setUpBrowseConfFileDialog();
+        setTabDirty();
       }
     });
     
@@ -153,43 +164,31 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
     });
   }
 
-  private void setUpBrowseProjectDialog() {
-    ILabelProvider labelProvider = new BrowseProjectLabelProvider();
+  private void setUpProjectCombo() {
     IProject[] projects = new ProjectHelper().getAllProjects();
-    ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-        getControl().getShell(), labelProvider);
-    dialog.setMessage("Choose your project:");
     if (projects != null) {
-      dialog.setElements(projects);
-    }
-
-    if (dialog.open() == Window.OK) {
-      IProject project = (IProject) dialog.getFirstResult();
-      projectText.setText(project.getName());
-      setTabDirty();
+      String[] projectNames = Lists.transform(Arrays.asList(projects),
+          new Function<IProject, String>() {
+        @Override
+        public String apply(IProject project) {
+          return project.getName();
+        }
+      }).toArray(new String[projects.length]);
+      Arrays.sort(projectNames);
+      projectCombo.setItems(projectNames);
     }
   }
-
-  private void setUpBrowseConfFileDialog() {
-    IProject selectedProject = getSelectedProject();
-    if (selectedProject == null) {
-      return;
-    }
-    ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
-        getControl().getShell(), new BrowseConfFileLabelProvider(),
-        new BrowseConfFileContentProvider());
-    dialog.setInput(selectedProject);
-    dialog.setMessage("Choose config file:");
-    if (dialog.open() == Window.OK) {
-      IResource resource = (IResource) dialog.getFirstResult();
-      confFileText.setText(resource.getName());
-      setTabDirty();
+  
+  private void setUpConfFileCombo() {
+    IProject project = getSelectedProject();
+    if (project != null) {
+      confFileCombo.setItems(getConfigurationFiles(project));
     }
   }
 
   private IProject getSelectedProject() {
-    String projectName = projectText.getText();
-    if (projectName != null && !"".equals(projectName.trim())) {
+    String projectName = getSelectedComboString(projectCombo);
+    if (projectName != null && !"".equals(projectName)) {
       return new ProjectHelper().getProject(projectName);
     } else {
       return null;
@@ -207,11 +206,12 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
 
   @Override
   public boolean isValid(ILaunchConfiguration launchConfig) {
-    boolean isTextBoxFilled = !"".equals(projectText.getText().trim())
-        && !"".equals(confFileText.getText().trim());
-    if (isTextBoxFilled) {
-      String projectName = projectText.getText();
-      if (configurationHelper.isExistingLaunchConfigWithRunOnSaveOtherThanCurrent(projectName,
+    boolean isSelected =
+        !"".equals(getSelectedComboString(projectCombo))
+        && !"".equals(getSelectedComboString(confFileCombo));
+    if (isSelected) {
+      String projectName = getSelectedComboString(projectCombo);
+      if (configurationHelper .isExistingLaunchConfigWithRunOnSaveOtherThanCurrent(projectName,
           launchConfig.getName()) && runOnEverySaveCheckbox.getSelection()) {
         setErrorMessage(MessageFormat.format("Project named {0} already has another active"
             + " configuration with Run on every save set.", projectName));
@@ -223,12 +223,13 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
     return false;
   }
 
+  @Override
   public void initializeFrom(ILaunchConfiguration configuration) {
     try {
       String initProjectName = configuration.getAttribute(
           LaunchConfigurationConstants.PROJECT_NAME, "");
       if (initProjectName != null && !"".equals(initProjectName.trim())) {
-        projectText.setText(initProjectName);
+        selectComboItem(projectCombo, initProjectName);
         IProject project = new ProjectHelper().getProject(initProjectName);
         if (project == null || !project.exists()) {
           setErrorMessage(MessageFormat
@@ -236,32 +237,36 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
                   "Project named {0} does not exist. Please choose another project.",
                   initProjectName));
         }
-      } else {
-        projectText.setText("");
+        confFileCombo.setItems(getConfigurationFiles(project));
+        String initConfFileName = configuration.getAttribute(
+            LaunchConfigurationConstants.CONF_FILENAME, "");
+        selectComboItem(confFileCombo, initConfFileName);
       }
 
-      String initConfFileName = configuration.getAttribute(
-          LaunchConfigurationConstants.CONF_FILENAME, "");
-      if (initConfFileName != null && !"".equals(initConfFileName.trim())) {
-        confFileText.setText(initConfFileName);
-      } else {
-        confFileText.setText("");
-      }
-      
-      boolean initRunOnEveryBuild = configuration.getAttribute(
-          LaunchConfigurationConstants.RUN_ON_EVERY_SAVE, false);
-      runOnEverySaveCheckbox.setSelection(initRunOnEveryBuild);
+
     } catch (CoreException e) {
-      logger.log(Level.SEVERE, "", e);
+      logger.log(Level.WARNING, "Core exception occured", e);
     }
+  }
+
+  private void selectComboItem(Combo combo, String item) {
+    combo.select(Arrays.binarySearch(combo.getItems(), item));
+  }
+  
+  private String getSelectedComboString(Combo combo) {
+    int selectionIndex = combo.getSelectionIndex();
+    if (selectionIndex != -1) {
+      return combo.getItem(selectionIndex).trim();
+    }
+    return "";
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy configuration) {
     if (getSelectedProject() != null) {
       configuration.setAttribute(LaunchConfigurationConstants.PROJECT_NAME,
-          projectText.getText());
+          getSelectedComboString(projectCombo));
       configuration.setAttribute(LaunchConfigurationConstants.CONF_FILENAME,
-          confFileText.getText());
+          getSelectedComboString(confFileCombo));
       configuration.setAttribute(LaunchConfigurationConstants.RUN_ON_EVERY_SAVE,
           runOnEverySaveCheckbox.getSelection());
     }
@@ -271,44 +276,5 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
     configuration.setAttribute(LaunchConfigurationConstants.PROJECT_NAME, "");
     configuration.setAttribute(LaunchConfigurationConstants.CONF_FILENAME, "");
     configuration.setAttribute(LaunchConfigurationConstants.RUN_ON_EVERY_SAVE, false);
-  }
-
-  private class BrowseConfFileLabelProvider extends LabelProvider {
-    @Override
-    public Image getImage(Object element) {
-      if (element instanceof IResource
-          && ((IResource) element).getName().endsWith(".conf")) {
-        return Activator.getDefault().getIcons().configurationFileIcon();
-      }
-      return null;
-    }
-    
-    @Override
-    public String getText(Object element) {
-      if (element instanceof IResource
-          && ((IResource) element).getName().endsWith(".conf")) {
-        return ((IResource) element).getName();
-      }
-      return null;
-    }
-  }
-
-  private class BrowseProjectLabelProvider extends LabelProvider {
-
-    @Override
-    public Image getImage(Object element) {
-      if (element instanceof IProject) {
-        return Activator.getDefault().getIcons().projectIcon();
-      }
-      return null;
-    }
-
-    @Override
-    public String getText(Object element) {
-      if (element instanceof IProject) {
-        return ((IProject) element).getName();
-      }
-      return null;
-    }
   }
 }

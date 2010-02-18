@@ -23,7 +23,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 /**
  * Launch Tab Group for JS Test Driver.
  * 
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class JsTestDriverLaunchTabGroup extends
     AbstractLaunchConfigurationTabGroup {

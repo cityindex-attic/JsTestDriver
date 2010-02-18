@@ -57,7 +57,7 @@ import com.google.eclipse.javascript.jstestdriver.ui.view.TestResultsPanel;
 /**
  * Launcher which knows how to run from a specific editor window.
  * 
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
   private final TestCaseNameFinder finder = new TestCaseNameFinder();

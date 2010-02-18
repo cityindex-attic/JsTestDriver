@@ -21,7 +21,7 @@ import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class BrowserChooserEditorField extends FileFieldEditor {
 

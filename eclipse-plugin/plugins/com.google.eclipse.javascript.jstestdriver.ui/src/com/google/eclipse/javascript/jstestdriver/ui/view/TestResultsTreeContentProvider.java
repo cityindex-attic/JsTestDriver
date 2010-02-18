@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.Viewer;
 import com.google.eclipse.javascript.jstestdriver.core.model.ResultModel;
 
 /**
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  *
  */
 public class TestResultsTreeContentProvider implements

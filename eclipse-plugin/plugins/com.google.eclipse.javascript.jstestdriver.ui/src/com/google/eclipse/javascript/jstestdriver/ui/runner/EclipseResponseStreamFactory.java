@@ -21,7 +21,7 @@ import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.TestResultGenerator;
 
 /**
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class EclipseResponseStreamFactory implements ResponseStreamFactory {
 

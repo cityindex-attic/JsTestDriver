@@ -1,4 +1,18 @@
-// Copyright 2009 Google Inc. All Rights Reserved.
+/*
+* Copyright 2009 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 
 package com.google.eclipse.javascript.jstestdriver.ui.launch;
 
@@ -27,7 +41,7 @@ import java.util.List;
  * Delegate that launches JSTestDriver run configurations. Sets up the Test Results view for the
  * upcoming run, does a dry run to find the number of tests and then executes them and updates
  * the view as and when results come in.
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class JsTestDriverLaunchConfigurationDelegate extends LaunchConfigurationDelegate {
 

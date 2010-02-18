@@ -33,7 +33,7 @@ import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.DefaultPathRewriter;
 
 /**
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class JavascriptLaunchConfigurationHelper {
   private static final String JSTD_LAUNCH_CONFIGURATION_TYPE =

@@ -34,7 +34,7 @@ import com.google.eclipse.javascript.jstestdriver.ui.launch.JavascriptLaunchConf
 import com.google.eclipse.javascript.jstestdriver.ui.launch.LaunchConfigurationConstants;
 
 /**
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class JavascriptOnSaveTestRunner implements IResourceChangeListener {
 

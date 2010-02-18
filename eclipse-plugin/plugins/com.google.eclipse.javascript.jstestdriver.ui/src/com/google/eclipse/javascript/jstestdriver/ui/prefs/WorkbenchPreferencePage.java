@@ -24,7 +24,7 @@ import com.google.eclipse.javascript.jstestdriver.ui.Activator;
 
 /**
  * Page to display and set global settings and preferences for JS Test Driver.
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class WorkbenchPreferencePage extends FieldEditorPreferencePage
     implements IWorkbenchPreferencePage {

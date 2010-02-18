@@ -29,7 +29,7 @@ import com.google.eclipse.javascript.jstestdriver.core.Server;
  * Given the path to the browser, knows how to launch based on which OS is
  * currently running.
  * 
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class BrowserLaunchCapableSelectionListener implements SelectionListener {
   private static final Logger logger =

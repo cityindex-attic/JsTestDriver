@@ -30,7 +30,7 @@ import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 
 /**
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  *
  */
 public class EclipseDryRunActionResponseStream implements ResponseStream {

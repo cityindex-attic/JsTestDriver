@@ -23,7 +23,7 @@ import com.google.eclipse.javascript.jstestdriver.ui.launch.TestCaseNameFinder;
 import junit.framework.TestCase;
 
 /**
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class TestCaseNameFinderTest extends TestCase {
   private TestCaseNameFinder finder;

@@ -27,7 +27,7 @@ import com.google.eclipse.javascript.jstestdriver.ui.view.actions.FailureOnlyVie
 import com.google.jstestdriver.TestResult;
 
 /**
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class FailureOnlyViewerFilterTest extends TestCase {
   TestResult passing1 = new TestResult(null, "passed", "", "", "testcase1", "test1", 0f);

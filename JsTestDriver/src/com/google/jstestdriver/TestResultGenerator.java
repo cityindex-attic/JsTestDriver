@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Generates the test results given a gson and a response.
  * 
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class TestResultGenerator {
 

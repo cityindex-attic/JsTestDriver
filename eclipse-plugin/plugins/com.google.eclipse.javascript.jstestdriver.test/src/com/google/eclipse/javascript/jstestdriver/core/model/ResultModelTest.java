@@ -25,7 +25,7 @@ import com.google.eclipse.javascript.jstestdriver.core.model.ResultModel;
 import com.google.jstestdriver.TestResult;
 
 /**
- * @author shyamseshadri@google.com (Shyam Seshadri)
+ * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class ResultModelTest extends TestCase {
   TestResult passing1 = new TestResult(null, "passed", "", "", "testcase1", "test1", 1f);
