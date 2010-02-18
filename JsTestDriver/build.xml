@@ -357,8 +357,8 @@
   </target>
 
   <target name="token-jar-nodeps" depends="jar-nodeps">
-    <mkdir dir="${bin.dir}/plugins/" />
-    <jar destfile="${bin.dir}/plugins/token-nodeps.jar"
+    <mkdir dir="${bin.dir}" />
+    <jar destfile="${bin.dir}/token-nodeps.jar"
       duplicate="preserve">
       <fileset dir="${obj.dir}">
         <include name="**/token/**"/>
@@ -366,7 +366,7 @@
       <manifest>
       </manifest>
     </jar>
-    <jar destfile="${bin.dir}/plugins/token-src.jar"
+    <jar destfile="${bin.dir}/token-src.jar"
       duplicate="preserve">
       <fileset dir="${src.dir}">
         <include name="**/token/**"/>
@@ -442,7 +442,7 @@
         <include name="${javascript-resources}/jstestdrivernamespace.js" />
         <include name="${javascript-resources}/runner.js" />
         <include name="${javascript-resources}/heartbeatclient.js" />
-        <include name="${javascript-resources}/lib/*.js" />
+        <exclude name="${javascript-resources}/lib/*.js" />
       </fileset>
       <exclude name="**/coverage/**"/>
       <exclude name="**/token/**"/>
