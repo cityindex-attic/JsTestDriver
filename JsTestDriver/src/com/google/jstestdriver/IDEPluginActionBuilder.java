@@ -23,6 +23,7 @@ import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.guice.FlagsModule;
+import com.google.jstestdriver.html.HtmlDocModule;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -80,7 +81,7 @@ public class IDEPluginActionBuilder {
 
   public ActionRunner build() {
     configParser.parse();
-
+    modules.add(new HtmlDocModule());
     Injector injector = Guice.createInjector(new ActionFactoryModule(),
         new ConfigurationModule(
       modules,

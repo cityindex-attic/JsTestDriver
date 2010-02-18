@@ -8,7 +8,7 @@
             category="org.eclipse.wst.jsdt.ui.java"
             class="com.google.eclipse.javascript.jstestdriver.ui.view.JsTestDriverView"
             icon="icons/JsTestDriver.png"
-            id="com.google.eclipse.javascript.jstestdriver.ui.views.JsTestDriverView"
+            id="com.google.eclipse.javascript.jstestdriver.ui.view.JsTestDriverView"
             name="JsTestDriver">
       </view>
    </extension>
@@ -22,7 +22,7 @@
          point="org.eclipse.ui.viewActions">
       <viewContribution
             id="com.google.eclipse.javascript.jstestdriver.ui.jsTestDriverViewContribution"
-            targetID="com.google.eclipse.javascript.jstestdriver.ui.views.JsTestDriverView">
+            targetID="com.google.eclipse.javascript.jstestdriver.ui.view.JsTestDriverView">
          <action
                class="com.google.eclipse.javascript.jstestdriver.ui.view.actions.ServerStartStopViewActionDelegate"
                icon="icons/startServer.png"

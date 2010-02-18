@@ -19,7 +19,7 @@ public class JsTestDriverView extends ViewPart {
    * ID of the JsTestDriver view extension
    */
   public static final String ID =
-      "com.google.eclipse.javascript.jstestdriver.ui.views.jsTestDriverView";
+      "com.google.eclipse.javascript.jstestdriver.ui.view.JsTestDriverView";
 
   private ServerInfoPanel serverInfoPanel;
   private TestResultsPanel testResultsPanel;

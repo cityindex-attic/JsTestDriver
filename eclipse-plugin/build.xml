@@ -68,6 +68,8 @@
     <fileset file="plugins/com.google.eclipse.javascript.jstestdriver.core/@dot.log" id="coreDotLogFile"/>
     <fileset dir="plugins/com.google.eclipse.javascript.jstestdriver.core/temp.folder" id="coreTmpFolder"/>
     <fileset dir="plugins/com.google.eclipse.javascript.jstestdriver.ui/@dot" id="uiDotFolder"/>
+    <fileset dir="plugins/com.google.eclipse.javascript.jstestdriver.ui/bin" id="uiBinFolder"/>
+    <fileset dir="plugins/com.google.eclipse.javascript.jstestdriver.test/bin" id="testBinFolder"/>
     <fileset file="plugins/com.google.eclipse.javascript.jstestdriver.ui/@dot.log" id="uiDotLogFile"/>
     <fileset dir="plugins/com.google.eclipse.javascript.jstestdriver.ui/temp.folder" id="uiTmpFolder"/>
     <fileset dir="." id="compilerArgs" includes="**/javaCompiler...args"/>

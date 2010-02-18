@@ -44,7 +44,7 @@ public class EclipseRunTestsResponseStream implements ResponseStream {
             .getActiveWorkbenchWindow().getActivePage();
         try {
           JsTestDriverView view = (JsTestDriverView) page
-              .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
+              .showView(JsTestDriverView.ID);
           TestResultsPanel panel = view.getTestResultsPanel();
           panel.addTestResults(testResults);
         } catch (PartInitException e) {
