@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: JS Test Driver UI
+Bundle-SymbolicName: com.google.eclipse.javascript.jstestdriver.ui;singleton:=true
+Bundle-Version: 1.1
+Bundle-Activator: com.google.eclipse.javascript.jstestdriver.ui.Activator
+Bundle-Vendor: Google, Inc.
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.debug.core;bundle-version="3.4.0",
+ org.eclipse.debug.ui;bundle-version="3.4.0",
+ org.eclipse.jface.text;bundle-version="3.4.0",
+ org.eclipse.ui.ide;bundle-version="3.4.0",
+ org.eclipse.ui.editors;bundle-version="3.4.0",
+ org.eclipse.ui.console;bundle-version="3.4.0",
+ com.google.eclipse.javascript.jstestdriver.core;bundle-version="1.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: com.google.eclipse.javascript.jstestdriver.ui,
+ com.google.eclipse.javascript.jstestdriver.ui.launch,
+ com.google.eclipse.javascript.jstestdriver.ui.launch.config,
+ com.google.eclipse.javascript.jstestdriver.ui.launch.save,
+ com.google.eclipse.javascript.jstestdriver.ui.prefs,
+ com.google.eclipse.javascript.jstestdriver.ui.runner,
+ com.google.eclipse.javascript.jstestdriver.ui.view,
+ com.google.eclipse.javascript.jstestdriver.ui.view.actions
+Bundle-ClassPath: .

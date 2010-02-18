@@ -4,7 +4,7 @@ Bundle-Name: JsTestDriver
 Bundle-SymbolicName: com.google.jstestdriver
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: GOOGLE
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.jstestdriver,
  junit.framework
