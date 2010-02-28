@@ -154,7 +154,8 @@
 
   <target name="compile" depends="init, antlr">
     <macro-compile destdir="${obj.dir}" debug="true"/>
-    <javac srcdir="${src.dir}" destdir="${obj.dir}" target="${javac.target}">
+    <javac srcdir="${src.dir}" destdir="${obj.dir}" target="${javac.target}"
+       debuglevel="lines, vars, source">
       <classpath>
         <path refid="classpath" />
       </classpath>

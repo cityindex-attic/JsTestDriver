@@ -90,11 +90,9 @@ public class JsTestDriverServerTest extends TestCase {
   }
 
   private static class MockObserver implements Observer {
-    Observable target;
     Object event;
     int numCalls = 0;
     public void update(Observable o, Object arg) {
-      target = o;
       event = arg;
       numCalls++;
     }

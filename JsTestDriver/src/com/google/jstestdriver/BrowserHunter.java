@@ -23,9 +23,11 @@ import org.slf4j.LoggerFactory;
  */
 public class BrowserHunter {
 
-  private static final Logger logger = LoggerFactory.getLogger(BrowserHunter.class.getName());
+  private static final Logger logger =
+      LoggerFactory.getLogger(BrowserHunter.class.getName());
 
-  private static final String REMOTE_CONSOLE_RUNNER = "/slave/%s/RemoteConsoleRunner%s.html";
+  private static final String REMOTE_CONSOLE_RUNNER =
+      "/slave/%s/RemoteConsoleRunner%s.html";
 
   private final CapturedBrowsers capturedBrowsers;
 

@@ -20,6 +20,7 @@ import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.output.XmlPrinter;
@@ -40,7 +41,7 @@ public class DefaultActionListProvider implements ActionListProvider {
   private final FileLoader fileLoader;
   private final List<String> tests;
   private final List<String> arguments;
-  private final List<String> browsers;
+  private final Set<BrowserRunner> browsers;
   private final boolean reset;
   private final List<String> dryRunFor;
   private final int port;
@@ -65,7 +66,7 @@ public class DefaultActionListProvider implements ActionListProvider {
       FileLoader fileLoader,
       @Named("tests") List<String> tests,
       @Named("arguments") List<String> arguments,
-      @Named("browsers") List<String> browsers,
+      Set<BrowserRunner> browsers,
       @Named("reset") boolean reset,
       @Named("dryRunFor") List<String> dryRunFor,
       @Named("preloadFiles") boolean preloadFiles,

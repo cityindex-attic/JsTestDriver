@@ -19,7 +19,11 @@ import junit.framework.TestCase;
 
 import org.kohsuke.args4j.CmdLineException;
 
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.browser.CommandLineBrowserRunner;
+
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -39,11 +43,16 @@ public class FlagsTest extends TestCase {
       flags = parser.parseArgument(new String[] { "--testOutput", "/path/file"});
       assertEquals("/path/file", flags.getTestOutput());
       flags = parser.parseArgument(new String[] { "--browser", "/path/browser,beep"});
-      List<String> browserPath = flags.getBrowser();
+      Set<BrowserRunner> browsers = flags.getBrowser();
 
-      assertEquals(2, browserPath.size());
-      assertEquals("/path/browser", browserPath.get(0));
-      assertEquals("beep", browserPath.get(1));
+      assertEquals(2, browsers.size());
+      assertTrue(
+          browsers.contains(
+              new CommandLineBrowserRunner("/path/browser", null)));
+      assertTrue(
+          browsers.contains(
+              new CommandLineBrowserRunner("beep", null)));
+
       flags = parser.parseArgument(new String[] { "--reset" });
       assertTrue(flags.getReset());
       flags = parser.parseArgument(new String[] { "--tests", "testCase.testName"});

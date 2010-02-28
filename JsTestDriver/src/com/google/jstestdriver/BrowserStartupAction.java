@@ -15,16 +15,16 @@
  */
 package com.google.jstestdriver;
 
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import com.google.jstestdriver.browser.BrowserRunner;
 
 /**
  * Starts a list of browsers when run.
@@ -32,40 +32,36 @@ import java.util.concurrent.TimeUnit;
  */
 public class BrowserStartupAction implements Action, Observer {
 
-  private static final Logger logger = LoggerFactory.getLogger(BrowserStartupAction.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(BrowserStartupAction.class);
   private final CountDownLatch latch;
-  private final List<String> browserPath;
+  private final Set<BrowserRunner> browsers;
   private final String serverAddress;
-  private volatile List<Process> processes = new ArrayList<Process>();
-  private final ProcessFactory processFactory;
 
-  public BrowserStartupAction(List<String> browserPath, String serverAddress,
-      ProcessFactory processFactory, CountDownLatch latch) {
-    this.browserPath = browserPath;
-    this.serverAddress = serverAddress;
-    this.processFactory = processFactory;
-    this.latch = latch;
+  public BrowserStartupAction(Set<BrowserRunner> browsers,
+                              String serverAddress,
+                              CountDownLatch latch) {
+      this.browsers = browsers;
+      this.serverAddress = serverAddress;
+      this.latch = latch;
   }
 
   public void run() {
     try {
       String url = String.format("%s/capture", serverAddress);
-
-      for (String browser : browserPath) {
-        try {
-          processes.add(processFactory.start(browser, url));
-        } catch (IOException e) {
-          logger.error("Could not start: {} because {}", browser, e.toString());
-        }
+      for (BrowserRunner browser : browsers) {
+        browser.startBrowser(url);
       }
       if (!latch.await(30, TimeUnit.SECONDS)) {
         long count = latch.getCount();
 
-        if (count < browserPath.size()) {
+        if (count < browsers.size()) {
           logger.warn("Not all browsers were captured continuing anyway...");
         } else {
           logger.error("None of the browsers were captured after 30 seconds");
-          new BrowserShutdownAction(this).run();
+          for (BrowserRunner browser : browsers) {
+            browser.stopBrowser();
+          }
         }
       }
     } catch (InterruptedException e) {
@@ -73,16 +69,12 @@ public class BrowserStartupAction implements Action, Observer {
     }
   }
 
-  public List<Process> getProcesses() {
-    return processes;
-  }
-
   public void update(Observable o, Object arg) {
     latch.countDown();
   }
   
-  public List<String> getBrowserPath() {
-    return browserPath;
+  public Set<BrowserRunner> getBrowsers() {
+    return browsers;
   }
   
   public String getServerAddress() {

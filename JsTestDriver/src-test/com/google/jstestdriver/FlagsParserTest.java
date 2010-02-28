@@ -21,8 +21,13 @@ import junit.framework.TestCase;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.browser.CommandLineBrowserRunner;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * @author corysmith
@@ -39,12 +44,12 @@ public class FlagsParserTest extends TestCase {
   }
   public void testParseListWithSlash() throws Exception {
     Flags flags = new FlagsParser().parseArgument(new String[]{"--browser", "/path/browser,/beep"});
-    assertEquals(Arrays.asList("/path/browser", "/beep"), flags.getBrowser());
+    assertEquals(browsers("/beep", "/path/browser"), flags.getBrowser());
   }
   public void testParseListWithSlashAndComma() throws Exception {
     Flags flags = new FlagsParser().parseArgument(new String[]{"--browser",
         "open,/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome"});
-    assertEquals(Arrays.asList("open", "/Applications/Google\\ Chrome.app/" +
+    assertEquals(browsers("open", "/Applications/Google\\ Chrome.app/" +
         "Contents/MacOS/Google\\ Chrome"), flags.getBrowser());
   }
 
@@ -55,12 +60,23 @@ public class FlagsParserTest extends TestCase {
       "C:\\Program Files\\Internet Explorer\\iexplore.exe," +
       "C:\\Documents and Settings\\Misko\\Local Settings" +
       "\\Application Data\\Google\\Chrome\\Application\\chrome.exe"});
-    assertEquals(Arrays.asList("C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+    assertEquals(browsers("C:\\Program Files\\Mozilla Firefox\\firefox.exe",
       "C:\\Program Files\\Safari\\Safari.exe",
       "C:\\Program Files\\Internet Explorer\\iexplore.exe",
       "C:\\Documents and Settings\\Misko\\Local Settings" +
       "\\Application Data\\Google\\Chrome\\Application\\chrome.exe"), flags.getBrowser());
   }
+  
+  Set<BrowserRunner> browsers(String... paths) {
+    Set<BrowserRunner> browsers = Sets.newHashSet();
+    for (String path : paths) {
+      browsers.add(new CommandLineBrowserRunner(path,
+          new SimpleProcessFactory()));
+    }
+    return browsers;
+  }
+  
+  
   public void testParseInteger() throws Exception {
     Flags flags = new FlagsParser().parseArgument(new String[]{"--port", "4504"});
     assertEquals(new Integer(4504), flags.getPort());

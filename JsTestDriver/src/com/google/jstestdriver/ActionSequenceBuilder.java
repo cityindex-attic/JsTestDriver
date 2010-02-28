@@ -15,10 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.Provider;
-import com.google.jstestdriver.output.PrintXmlTestResultsAction;
-import com.google.jstestdriver.output.XmlPrinter;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -26,6 +22,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+
+import com.google.common.collect.Sets;
+import com.google.inject.Provider;
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.output.PrintXmlTestResultsAction;
+import com.google.jstestdriver.output.XmlPrinter;
 
 /**
  * A builder for creating a sequence of {@link Action}s to be run by the
@@ -43,7 +45,7 @@ public class ActionSequenceBuilder {
   private final Provider<URLRewriter> urlRewriterProvider;
   private final FailureAccumulator accumulator;
 
-  private List<String> browsers = new LinkedList<String>();
+  private Set<BrowserRunner> browsers = Sets.newHashSet();
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
   private HashMap<String, FileInfo> files = new LinkedHashMap<String, FileInfo>();
   private Set<FileInfo> fileSet;
@@ -86,12 +88,14 @@ public class ActionSequenceBuilder {
   /** Add the Browser startup and shutdown actions to the actions stack. */
   private void addBrowserControlActions(List<Action> actions) {
     if (!browsers.isEmpty()) {
-      BrowserStartupAction browserStartupAction = new BrowserStartupAction(browsers,
-          remoteServerAddress, new SimpleProcessFactory(), new CountDownLatch(browsers.size()));
+      BrowserStartupAction browserStartupAction =
+          new BrowserStartupAction(browsers,
+                                   remoteServerAddress,
+                                   new CountDownLatch(browsers.size()));
       capturedBrowsers.addObserver(browserStartupAction);
       actions.add(0, browserStartupAction);
       if (!leaveServerRunning()) {
-        actions.add(new BrowserShutdownAction(browserStartupAction));
+        actions.add(new BrowserShutdownAction(browsers));
       }
     }
   }
@@ -171,7 +175,7 @@ public class ActionSequenceBuilder {
    * Indicates a list of browsers that the actions should be executed in. This
    * is required.
    */
-  public ActionSequenceBuilder onBrowsers(List<String> browsers) {
+  public ActionSequenceBuilder onBrowsers(Set<BrowserRunner> browsers) {
     this.browsers.addAll(browsers);
     return this;
   }

@@ -15,7 +15,10 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Sets;
 import com.google.inject.util.Providers;
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.browser.CommandLineBrowserRunner;
 import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 
@@ -27,6 +30,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class ActionSequenceBuilderTest extends TestCase {
 
@@ -36,7 +40,7 @@ public class ActionSequenceBuilderTest extends TestCase {
   public void testAddTestsWithRemoteServerAddress() throws Exception {
     List<String> tests = tests();
     boolean captureConsole = true;
-    List<String> browsers = browsers();
+    Set<BrowserRunner> browsers = browsers();
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(actionFactory, null, null, threadedActionProvider(tests,
             Collections.<String> emptyList(), false, Collections.<String> emptyList(),
@@ -71,12 +75,18 @@ public class ActionSequenceBuilderTest extends TestCase {
   public void testAddTestsWithLocalServer() throws Exception {
     List<String> tests = tests();
     boolean captureConsole = true;
-    ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null, Collections.<TestsPreProcessor>emptySet()), null, null, threadedActionProvider(
-            tests, Collections.<String> emptyList(), false, Collections.<String> emptyList(),
-            captureConsole), Providers.<JsTestDriverClient> of(null), Providers
-            .<URLTranslator> of(null), Providers.<URLRewriter> of(null), new FailureAccumulator());
-    List<String> browsers = browsers();
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(
+        new ActionFactory(
+            null,
+            Collections.<TestsPreProcessor> emptySet()),
+            null, null, threadedActionProvider(tests, Collections
+            .<String> emptyList(), false, Collections.<String> emptyList(),
+            captureConsole),
+            Providers.<JsTestDriverClient> of(null),
+            Providers.<URLTranslator> of(null),
+            Providers.<URLRewriter> of(null),
+        new FailureAccumulator());
+    Set<BrowserRunner> browsers = browsers();
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -258,10 +268,9 @@ public class ActionSequenceBuilderTest extends TestCase {
     return tests;
   }
 
-  private List<String> browsers() {
-    List<String> browsers = new ArrayList<String>();
-    browsers.add("foo");
-    return browsers;
+  private Set<BrowserRunner> browsers() {
+    return Sets.<BrowserRunner>newHashSet(
+        new CommandLineBrowserRunner("foo", null));
   }
 
   private <T> void assertSequence(List<Class<? extends T>> expectedActions, List<T> actions) {

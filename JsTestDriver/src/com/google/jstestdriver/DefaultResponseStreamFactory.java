@@ -43,7 +43,8 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
   }
 
   public ResponseStream getRunTestsActionResponseStream(String browserId) {
-    String testSuiteName = String.format("com.google.jstestdriver.%s", browserId);
+    String testSuiteName =
+        String.format("com.google.jstestdriver.%s", browserId);
     TestResultListener listener = responsePrinterFactory.get();
 
     RunTestsActionResponseStream responseStream = new RunTestsActionResponseStream(

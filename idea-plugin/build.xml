@@ -41,7 +41,7 @@
 
   <target name="compile" depends="init">
     <javac srcdir="${src.dir}" destdir="${obj.dir}"
-      classpathref="compile.classpath" target="1.5"/>
+      classpathref="compile.classpath" target="1.6"/>
     <copy todir="${obj.dir}">
       <fileset dir="${src.dir}">
         <exclude name="**/*.java" />
@@ -52,7 +52,7 @@
   <target name="compile.forms" description="Compiles all UI form files" depends="compile">
     <property name="forms.src" value=""/>
     <idea-form-compiler srcdir="${src.dir}/com/google/jstestdriver/idea/ui" destdir="${obj.dir}"
-                        deprecation="no" optimize="off" target="1.5">
+                        deprecation="no" optimize="off" target="1.6">
       <classpath refid="forms.classpath"/>
       <classpath refid="compile.classpath"/>
     </idea-form-compiler>

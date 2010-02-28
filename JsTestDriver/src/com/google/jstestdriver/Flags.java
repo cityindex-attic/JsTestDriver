@@ -15,9 +15,11 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.guice.GuiceBinding;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -36,8 +38,7 @@ public interface Flags {
   @GuiceBinding(name="testOutput")
   public String getTestOutput();
 
-  @GuiceBinding(name="browsers", parameterizedType = String.class)
-  public List<String> getBrowser();
+  public Set<BrowserRunner> getBrowser();
 
   @GuiceBinding(name="reset")
   public boolean getReset();

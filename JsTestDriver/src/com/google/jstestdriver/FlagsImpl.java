@@ -15,11 +15,16 @@
  */
 package com.google.jstestdriver;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.browser.CommandLineBrowserRunner;
 
 /**
  * FlagsParser for the JsTestDriver.
@@ -30,7 +35,7 @@ public class FlagsImpl implements Flags {
   private Integer port = -1;
   private String server;
   private String testOutput = "";
-  private List<String> browser = new ArrayList<String>();
+  private Set<BrowserRunner> browser = Sets.newHashSet();
   private boolean reset;
   private String config = "jsTestDriver.conf";
   private List<String> tests = new ArrayList<String>();
@@ -76,10 +81,13 @@ public class FlagsImpl implements Flags {
 
   @Option(name="--browser", usage="The path to the browser executable")
   public void setBrowser(List<String> browsers) {
-    this.browser = browsers;
+    for (String browser : browsers) {
+      this.browser.add(
+          new CommandLineBrowserRunner(browser, new SimpleProcessFactory()));
+    }
   }
 
-  public List<String> getBrowser() {
+  public Set<BrowserRunner> getBrowser() {
     return browser;
   }
 

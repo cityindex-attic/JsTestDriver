@@ -13,29 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.browser;
 
 /**
- * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
- *
+ * Defines an interface for starting and stopping a browser.
+ * @author corbinsmith@gmail.com (Cory Smith)
  */
-public class FailureException extends RuntimeException {
+public interface BrowserRunner {
+  /** Starts a browser and points it towards the server for capturing. */
+  public void startBrowser(String serverAddress);
 
-  private static final long serialVersionUID = 1721753798613488383L;
-
-  public FailureException() {
-    super();
-  }
-  
-  public FailureException(String message) {
-    super(message);
-  }
-  
-  public FailureException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public FailureException(Throwable cause) {
-    super(cause);
-  }
+  /** Shuts down the browser. */
+  public void stopBrowser();
 }

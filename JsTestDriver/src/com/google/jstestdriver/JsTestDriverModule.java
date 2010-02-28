@@ -24,7 +24,10 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
+import com.google.inject.binder.LinkedBindingBuilder;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
+import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.guice.FlagsModule;
 
 import java.lang.annotation.Retention;
@@ -75,6 +78,12 @@ public class JsTestDriverModule extends AbstractModule {
     for (Module module : plugins) {
       install(module);
     }
+    
+    for (BrowserRunner runner : flags.getBrowser()) {
+      Multibinder.newSetBinder(binder(),
+          BrowserRunner.class).addBinding().toInstance(runner);
+    }
+    
     bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet")).
         toProvider(FileSetProvider.class).in(Singleton.class);
     bind(Integer.class).annotatedWith(BrowserCount.class).

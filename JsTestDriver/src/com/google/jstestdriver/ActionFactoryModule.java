@@ -17,6 +17,7 @@ package com.google.jstestdriver;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
+import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
@@ -35,5 +36,6 @@ public class ActionFactoryModule extends AbstractModule {
     Multibinder.newSetBinder(binder(), ActionListProcessor.class);
     Multibinder.newSetBinder(binder(), TestsPreProcessor.class);
     Multibinder.newSetBinder(binder(), FileSetPreProcessor.class);
+    Multibinder.newSetBinder(binder(), BrowserRunner.class);
   }
 }

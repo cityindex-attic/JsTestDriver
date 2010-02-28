@@ -74,8 +74,6 @@ public class BrowserQueryResponseServlet extends HttpServlet {
               FileSource fileSource = fileResult.getFileSource();
 
               if (fileResult.isSuccess()) {
-                String filePath = fileSource.getFileSrc();
-
                 fileInfos.add(new FileInfo(fileSource.getBasePath(), fileSource.getTimestamp(),
                     false, false, null));
               } else {

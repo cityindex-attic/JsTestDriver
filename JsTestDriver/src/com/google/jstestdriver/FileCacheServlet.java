@@ -40,14 +40,16 @@ public class FileCacheServlet extends HttpServlet {
   Set<FileInfo> currentFiles = new HashSet<FileInfo>();
   private Gson gson = new Gson();
 
-  @SuppressWarnings("unused")
   @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+  protected void doPost(HttpServletRequest req,
+                        HttpServletResponse resp) throws ServletException,
       IOException {
     String fileSetString = req.getParameter("fileSet");
     Collection<FileInfo> newFiles =
-      gson.fromJson(fileSetString, new TypeToken<Collection<FileInfo>>() {}.getType());
-    resp.getWriter().write(gson.toJson(strategy.createExpiredFileSet(newFiles, currentFiles)));
+      gson.fromJson(fileSetString,
+          new TypeToken<Collection<FileInfo>>() {}.getType());
+    resp.getWriter().write(
+        gson.toJson(strategy.createExpiredFileSet(newFiles, currentFiles)));
     // updates the currentFiles, as FileInfo hashes by name.
     for (FileInfo fileInfo : newFiles) {
       currentFiles.remove(fileInfo);

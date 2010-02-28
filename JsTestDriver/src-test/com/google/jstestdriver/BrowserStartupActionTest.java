@@ -15,15 +15,13 @@
  */
 package com.google.jstestdriver;
 
-import junit.framework.TestCase;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import junit.framework.TestCase;
+
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.browser.BrowserRunner;
 
 /**
  * @author corysmith@google.com (Cory Smith)
@@ -33,112 +31,56 @@ public class BrowserStartupActionTest extends TestCase {
 
   public void testProcessRun() throws Exception {
     CountDownLatchFake latch = new CountDownLatchFake(1, false, true);
-    final String browserPath = "path/to/ff";
+    final FakeBrowser browser = new FakeBrowser();
+    
     final String serverAddress = "http://foo:8080";
-    final BrowserStartupAction action = new BrowserStartupAction(Arrays.asList(browserPath),
-                                                           serverAddress,
-                                                           new ProcessFactory(){
-      public Process start(String ... commands) {
-        return new ProcessStub(commands);
-      }
-    }, latch);
+    
+    final BrowserStartupAction action =
+        new BrowserStartupAction(Sets.<BrowserRunner>newHashSet(browser),
+            serverAddress, latch);
 
     action.run();
 
-    assertFalse(action.getProcesses().isEmpty());
-    assertEquals(new ProcessStub(new String[] {browserPath, serverAddress + "/capture"}),
-      action.getProcesses().get(0));
+    assertTrue(browser.started);
+    assertEquals(serverAddress + "/capture", browser.serverAddress);
   }
   
   public void testProcessStartFailure() throws Exception {
     CountDownLatchFake latch = new CountDownLatchFake(1, false, true);
-    final String browserPath = "path/to/ff";
-    final String nonexistant = "nonexistant";
+    final FakeBrowser browser = new FakeBrowser();
+    final BrowserRunner errorBrowser = new BrowserRunner() {
+      
+      public void stopBrowser() {
+      }
+      
+      public void startBrowser(String serverAddress) {
+      }
+    };
+    
     final String serverAddress = "http://foo:8080";
     final BrowserStartupAction action = new BrowserStartupAction(
-      Arrays.asList(browserPath, nonexistant, browserPath),
+      Sets.<BrowserRunner>newHashSet(browser, errorBrowser, browser),
       serverAddress,
-      new ProcessFactory(){
-        public Process start(String ... commands) throws IOException{
-          if (commands[0].equals(nonexistant)) {
-            throw new IOException();
-          }
-          return new ProcessStub(commands);
-        }
-    }, latch);
+      latch);
     
     action.run();
     
-    ArrayList<ProcessStub> expected = new ArrayList<ProcessStub>(Arrays.asList(
-      new ProcessStub(new String[] {browserPath, serverAddress + "/capture"}),
-      new ProcessStub(new String[] {browserPath, serverAddress + "/capture"})
-    ));
-
-    assertFalse(action.getProcesses().isEmpty());
-    assertEquals(expected,
-                 action.getProcesses());
   }
 
-  private final static class ProcessStub extends Process {
+  private final class FakeBrowser implements BrowserRunner {
+    public String serverAddress;
+    public boolean started;
 
-    public final String[] commands;
-
-    public ProcessStub(String[] commands) {
-      this.commands = commands;
-    }
-    @Override
-    public void destroy() {
+    public void stopBrowser() {
+      started = false;
     }
 
-    @Override
-    public int exitValue() {
-      return 0;
-    }
-
-    @Override
-    public InputStream getErrorStream() {
-      return null;
-    }
-
-    @Override
-    public InputStream getInputStream() {
-      return null;
-    }
-
-    @Override
-    public OutputStream getOutputStream() {
-      return null;
-    }
-
-    @Override
-    public int waitFor() {
-      return 0;
-    }
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + Arrays.hashCode(commands);
-      return result;
-    }
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
-      ProcessStub other = (ProcessStub) obj;
-      if (!Arrays.equals(commands, other.commands))
-        return false;
-      return true;
-    }
-    @Override
-    public String toString() {
-      return String.format("%s(%s)", getClass().getSimpleName(), Arrays.toString(commands));
+    public void startBrowser(String serverAddress) {
+      this.serverAddress = serverAddress;
+      started = true;
     }
   }
+
 
   static class CountDownLatchFake extends CountDownLatch{
     private final boolean awaitResponse;

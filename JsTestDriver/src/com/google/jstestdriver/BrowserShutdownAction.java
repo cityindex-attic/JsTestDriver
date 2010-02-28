@@ -15,35 +15,29 @@
  */
 package com.google.jstestdriver;
 
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import com.google.jstestdriver.browser.BrowserRunner;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class BrowserShutdownAction implements Action {
-  private static final Logger LOGGER = LoggerFactory.getLogger(BrowserShutdownAction.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(BrowserShutdownAction.class);
 
-  private final BrowserStartupAction browserStartupAction;
+  private final Set<BrowserRunner> browsers;
 
-  public BrowserShutdownAction(BrowserStartupAction browserStartupAction) {
-    this.browserStartupAction = browserStartupAction;
+  public BrowserShutdownAction(Set<BrowserRunner> browsers) {
+    this.browsers = browsers;
   }
 
   public void run() {
-    List<Process> processes = browserStartupAction.getProcesses();
-
-    for (Process process : processes) {
-      try {
-        process.destroy();
-        if (process.exitValue() != 0) {
-          LOGGER.warn("Unexpected shutdown " + process + " " + process.exitValue());
-        }
-      } catch (IllegalThreadStateException e) {
-        LOGGER.warn("Process refused to exit" + process);
-      }
+    for (BrowserRunner browser : browsers) {
+      browser.stopBrowser();
     } 
   }
 }
