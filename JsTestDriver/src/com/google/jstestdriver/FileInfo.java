@@ -91,12 +91,31 @@ public class FileInfo {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    return hashCode() == obj.hashCode();
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((file == null) ? 0 : file.hashCode());
+    result = prime * result + (serveOnly ? 1231 : 1237);
+    return result;
   }
 
   @Override
-  public int hashCode() {
-    return file.hashCode();
+  public boolean equals(Object obj) {
+    if (!(obj instanceof FileInfo)) {
+      return false;
+    }
+    FileInfo other = (FileInfo) obj;
+    if (file == null) {
+      if (other.file != null){
+        return false;
+      }
+    }
+    if (!file.equals(other.file)){
+      return false;
+    }
+    if (serveOnly != other.serveOnly){
+      return false;
+    }
+    return true;
   }
 }
