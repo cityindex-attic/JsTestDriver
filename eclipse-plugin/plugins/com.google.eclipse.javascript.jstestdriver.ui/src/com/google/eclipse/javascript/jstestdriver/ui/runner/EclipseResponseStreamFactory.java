@@ -30,7 +30,7 @@ public class EclipseResponseStreamFactory implements ResponseStreamFactory {
   }
 
   public ResponseStream getResetActionResponseStream() {
-    return new ResetAction.ResetActionResponseStream();
+    return new ResetAction.ResetActionResponseStream(System.out);
   }
 
   public ResponseStream getRunTestsActionResponseStream(String browserId) {
