@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.jstestdriver.Response.ResponseType;
 import com.google.jstestdriver.output.TestResultListener;
 
 import junit.framework.TestCase;
@@ -38,6 +39,10 @@ public class RunTestsActionResponseStreamTest extends TestCase {
     public void onTestComplete(TestResult testResult) {
       this.testResult = testResult;
     }
+
+    public void onFileLoad(String browser, FileResult fileResult) {
+      
+    }
   }
 
   public void testPrint() throws Exception {
@@ -46,6 +51,7 @@ public class RunTestsActionResponseStreamTest extends TestCase {
     RunTestsActionResponseStream stream = new RunTestsActionResponseStream(
       new TestResultGenerator(), printer, new FailureAccumulator());
     Response response = new Response();
+    response.setType(ResponseType.TEST_RESULT.name());
     BrowserInfo browser = new BrowserInfo();
     browser.setId(null);
     TestResult testResult = new TestResult(browser, "passed",

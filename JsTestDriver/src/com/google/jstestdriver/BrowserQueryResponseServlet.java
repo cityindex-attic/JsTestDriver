@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.jstestdriver.Response.ResponseType;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -63,8 +64,9 @@ public class BrowserQueryResponseServlet extends HttpServlet {
       if (response != null && browser.isCommandRunning()) {
         Response res = gson.fromJson(response, Response.class);
 
-        if (res.getResponse().contains("\"loadedFiles\":")) {
-          LoadedFiles loadedFiles = gson.fromJson(res.getResponse(), LoadedFiles.class);
+        if (res.getResponseType() == ResponseType.FILE_LOAD_RESULT) {
+          LoadedFiles loadedFiles = gson.fromJson(res.getResponse(),
+                                                  res.getGsonType());
           Collection<FileResult> allLoadedFiles = loadedFiles.getLoadedFiles();
           if (!allLoadedFiles.isEmpty()) {
             LinkedHashSet<FileInfo> fileInfos = new LinkedHashSet<FileInfo>();
@@ -82,13 +84,16 @@ public class BrowserQueryResponseServlet extends HttpServlet {
             }
             browser.addFiles(fileInfos);
             if (errorFiles.size() > 0) {
-              browser.removeFiles(errorFiles);
+              // call it a full reset, becuase we don't know what the state in
+              // the browser is.
+              browser.resetFileSet();
+              //browser.removeFiles(errorFiles);
             }
           }
         }
         boolean isLast = done != null;
 
-        browser.addResponse(response, isLast);
+        browser.addResponse(res, isLast);
         if (!isLast) {
           writer.print(NOOP);
           writer.flush();

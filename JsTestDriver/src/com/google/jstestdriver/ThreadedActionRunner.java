@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -23,6 +26,7 @@ import java.util.concurrent.CountDownLatch;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class ThreadedActionRunner implements Runnable {
+  private static final Logger logger = LoggerFactory.getLogger(ThreadedActionRunner.class);
 
   private final String id;
   private final JsTestDriverClient client;
@@ -40,6 +44,7 @@ public class ThreadedActionRunner implements Runnable {
   public void run() {
     try {
       for (ThreadedAction action : actions) {
+        logger.debug("Running Threaded Action {}", action);
         action.run(id, client);
       }
     } finally {

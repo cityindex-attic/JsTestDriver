@@ -129,12 +129,30 @@
       </concat>
       <concat destfile="${obj.dir}/${javascript-resources}/runner.js">
         <filelist dir="${obj.dir}/${javascript-resources}"
-          files="Asserts.js,FileSource.js,FileResult.js,Utils.js,Console.js,PluginRegistrar.js,
-          LibLoader.js,FileLoader.js,TestCaseInfo.js,TestResult.js,TestRunConfiguration.js,
-          TestCaseManager.js,TestCaseBuilder.js,TestRunner.js,CommandExecutor.js" />
+          files="Response.js,
+                 Asserts.js,
+                 FileSource.js,
+                 FileResult.js,
+                 Utils.js,
+                 Console.js,
+                 PluginRegistrar.js,
+                 LibLoader.js,
+                 FileLoader.js,
+                 TestCaseInfo.js,
+                 TestResult.js,
+                 TestRunConfiguration.js,
+                 TestCaseManager.js,
+                 TestCaseBuilder.js,
+                 TestRunner.js,
+                 CommandExecutor.js" />
         <filelist dir="${obj.dir}/${javascript-resources}/plugins"
-          files="ScriptLoader.js,StylesheetLoader.js,FileLoaderPlugin.js,TestRunnerPlugin.js,
-          DefaultPlugin.js,AssertsPlugin.js,TestCaseManagerPlugin.js" />
+          files="ScriptLoader.js,
+                 StylesheetLoader.js,
+                 FileLoaderPlugin.js,
+                 TestRunnerPlugin.js,
+                 DefaultPlugin.js,
+                 AssertsPlugin.js,
+                 TestCaseManagerPlugin.js" />
       </concat>
       <concat destfile="${obj.dir}/${javascript-resources}/heartbeatclient.js">
         <filelist dir="${obj.dir}/${javascript-resources}" files="Utils.js,Heartbeat.js" />

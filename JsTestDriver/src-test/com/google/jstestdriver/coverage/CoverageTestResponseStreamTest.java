@@ -21,6 +21,7 @@ import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.TestResult;
+import com.google.jstestdriver.Response.ResponseType;
 
 import junit.framework.TestCase;
 
@@ -39,6 +40,7 @@ public class CoverageTestResponseStreamTest extends TestCase {
       browserId, accumulator);
 
     Response response = new Response();
+    response.setType(ResponseType.TEST_RESULT.name());
     Gson gson = new Gson();
     BrowserInfo browser = new BrowserInfo();
     browser.setName(browserId);
@@ -65,6 +67,7 @@ public class CoverageTestResponseStreamTest extends TestCase {
       browserId, null);
     
     Response response = new Response();
+    response.setType(ResponseType.TEST_RESULT.name());
     Gson gson = new Gson();
     BrowserInfo browser = new BrowserInfo();
     browser.setName(browserId);

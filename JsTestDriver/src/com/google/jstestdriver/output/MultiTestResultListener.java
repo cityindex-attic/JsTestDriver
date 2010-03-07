@@ -1,6 +1,7 @@
 package com.google.jstestdriver.output;
 
 import com.google.inject.Inject;
+import com.google.jstestdriver.FileResult;
 import com.google.jstestdriver.TestResult;
 
 import java.util.Set;
@@ -27,6 +28,12 @@ public class MultiTestResultListener implements TestResultListener {
   public void finish() {
     for (TestResultListener delegate : delegates) {
       delegate.finish();
+    }
+  }
+
+  public void onFileLoad(String browser, FileResult fileResult) {
+    for (TestResultListener delegate : delegates) {
+      delegate.onFileLoad(browser, fileResult);
     }
   }
 }

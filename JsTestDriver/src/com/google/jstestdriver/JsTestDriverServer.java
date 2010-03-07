@@ -30,6 +30,8 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Collections;
@@ -42,6 +44,8 @@ import javax.servlet.Servlet;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class JsTestDriverServer extends Observable {
+  private static final Logger logger =
+      LoggerFactory.getLogger(JsTestDriverServer.class);
 
   private final Server server = new Server();
 
@@ -152,8 +156,7 @@ public class JsTestDriverServer extends Observable {
 
       injector.getInstance(ActionRunner.class).runActions();
     } catch (Exception e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace(System.err);
+      logger.debug("Error {}", e);
       System.exit(1);
     }
   }

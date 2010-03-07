@@ -43,7 +43,12 @@ public class SlaveResourceServlet extends HttpServlet {
   }
 
   public void service(String pathInfo, OutputStream out) throws IOException {
-    service.serve(stripId(pathInfo), out);
+    
+    try {
+      service.serve(stripId(pathInfo), out);
+    } catch (IllegalArgumentException e) {
+      System.out.println(e);
+    }
   }
 
   private final static Pattern PATHWITHOUTID = Pattern.compile("/.*?(/.*)$");

@@ -37,6 +37,7 @@ public class BrowserShutdownAction implements Action {
 
   public void run() {
     for (BrowserRunner browser : browsers) {
+      logger.debug("Stopping {}", browser);
       browser.stopBrowser();
     } 
   }

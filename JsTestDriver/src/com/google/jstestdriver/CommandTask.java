@@ -182,19 +182,8 @@ public class CommandTask {
         if (response.getResponse().startsWith("PANIC:")) {
           throw new RuntimeException(response.getResponse());
         }
-        LoadedFiles loadedFiles = gson.fromJson(response.getResponse(), LoadedFiles.class);
-
-        if (loadedFiles.getLoadedFiles().isEmpty()) {
-          System.err.println("No files were loaded.");
-        } else {
-          if (loadedFiles.hasError()) {
-            for (FileResult fileResult : loadedFiles.getLoadedFiles()) {
-              if (!fileResult.isSuccess()) {
-                System.err.println(fileResult.getMessage());
-              }
-            }
-          }
-        }
+        //LoadedFiles loadedFiles = gson.fromJson(response.getResponse(), LoadedFiles.class);
+        stream.stream(response);
       }
     }
   }
@@ -249,6 +238,9 @@ public class CommandTask {
         shouldPanic(resObj.getResponse());
         stream.stream(resObj);
       } while (streamMessage != null && !streamMessage.isLast());
+    } catch (Exception e) {
+      System.out.println(e);
+      e.printStackTrace();
     } finally {
       stream.finish();
       heartBeatManager.cancelTimer();

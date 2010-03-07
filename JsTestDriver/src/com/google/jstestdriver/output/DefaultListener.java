@@ -18,13 +18,12 @@ package com.google.jstestdriver.output;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
-import com.google.jstestdriver.FailureParser;
+import com.google.jstestdriver.FileResult;
 import com.google.jstestdriver.RunData;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.JsTestDriverModule.BrowserCount;
 
 import java.io.PrintStream;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DefaultListener implements TestResultListener {
 
-  private static final String NEW_LINE = System.getProperty("line.separator");
+  static final String NEW_LINE = System.getProperty("line.separator");
 
   private final PrintStream out;
   private final AtomicInteger browsers;
@@ -62,55 +61,34 @@ public class DefaultListener implements TestResultListener {
 
   public void finish() {
     if (browsers.decrementAndGet() == 0) {
-      if (!verbose) {
-        out.println();
-      }
-      out.println(String.format("Total %d tests (Passed: %d; Fails: %d; Errors: %d) (%.2f ms)",
-          (totalPasses.get() + totalFails.get() + totalErrors.get()), totalPasses.get(),
-          totalFails.get(), totalErrors.get(), findMaxTime()));
+      printSummary(out);
       for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
         RunData data = entry.getValue();
 
-        out.println(String.format("  %s: Run %d tests (Passed: %d; Fails: %d; Errors %d) (%.2f ms)",
-            entry.getKey(), (data.getPassed() + data.getFailed() + data.getErrors()),
-            data.getPassed(), data.getFailed(), data.getErrors(), data.getTotalTime()));
-        List<TestResult> problems = data.getProblems();
+        printBrowserSummary(out, entry.getKey(), data);
 
-        for (TestResult testResult : problems) {
-          if (testResult.getResult() != TestResult.Result.passed) {
-            FailureParser parser = new FailureParser();
-
-            parser.parse(testResult.getMessage());
-            String message = parser.getMessage();
-            List<String> stack = parser.getStack();
-            String formattedStack = "";
-
-            if (stack.size() > 0) {
-              StringBuilder sb = new StringBuilder();
-
-              for (String line : stack) {
-                sb.append(NEW_LINE + "      " + line);
-              }
-              formattedStack = sb.toString();
-            }
-            out.println(String.format("    %s.%s %s (%.2f ms): %s%s", testResult.getTestCaseName(),
-                testResult.getTestName(), testResult.getResult(), testResult.getTime(), message,
-                formattedStack));
-          } else {
-            out.println(String.format("    %s.%s %s (%.2f ms)", testResult.getTestCaseName(),
-                testResult.getTestName(), testResult.getResult(), testResult.getTime()));
-          }
-          if (!verbose && testResult.getLog().length() > 0) {
-            String[] logLines = testResult.getLog().split("\n");
-
-            for (String line : logLines) {
-              out.println("      " + line);
-            }
-          }
+        for (Problem problem : data.getProblems()) {
+          problem.print(out, verbose);
         }
       }
     }
   }
+
+  private void printSummary(PrintStream out) {
+    if (!verbose) {
+      out.println();
+    }
+    out.println(String.format("Total %d tests (Passed: %d; Fails: %d; Errors: %d) (%.2f ms)",
+        (totalPasses.get() + totalFails.get() + totalErrors.get()), totalPasses.get(),
+        totalFails.get(), totalErrors.get(), findMaxTime()));
+  }
+
+  private void printBrowserSummary(PrintStream out, String browser, RunData data) {
+    out.println(String.format("  %s: Run %d tests (Passed: %d; Fails: %d; Errors %d) (%.2f ms)",
+        browser, (data.getPassed() + data.getFailed() + data.getErrors()),
+        data.getPassed(), data.getFailed(), data.getErrors(), data.getTotalTime()));
+  }
+
 
   private float findMaxTime() {
     float max = 0f;
@@ -123,12 +101,7 @@ public class DefaultListener implements TestResultListener {
 
   public void onTestComplete(TestResult testResult) {
     String browser = testResult.getBrowserInfo().toString();
-    RunData runData = browsersRunData.get(browser);
-
-    if (runData == null) {
-      runData = new RunData();
-      browsersRunData.put(browser, runData);
-    }
+    RunData runData = currentRunData(browser);
     TestResult.Result result = testResult.getResult();
     String log = testResult.getLog();
 
@@ -137,17 +110,10 @@ public class DefaultListener implements TestResultListener {
       if (!verbose) {
         out.print('.');
         if (log.length() > 0) {
-          runData.addProblem(testResult);
+          runData.addProblem(new TestResultProblem(testResult));
         }
       } else {
-        out.println("[PASSED] " + testResult.getTestCaseName() + "." + testResult.getTestName());
-        if (log.length() > 0) {
-          String[] logLines = log.split("\n");
-
-          for (String line : logLines) {
-            out.println("  " + line);
-          }
-        }
+        printInProgress("[PASSED] ", testResult, log);
       }
       runData.addPass();
       totalPasses.incrementAndGet();
@@ -155,33 +121,19 @@ public class DefaultListener implements TestResultListener {
       if (!verbose) {
         out.print('F');
       } else {
-        out.println("[FAILED] " + testResult.getTestCaseName() + "." + testResult.getTestName());
-        if (log.length() > 0) {
-          String[] logLines = log.split("\n");
-
-          for (String line : logLines) {
-            out.println("  " + line);
-          }
-        }
+        printInProgress("[FAILED] ", testResult, log);
       }
       runData.addFail();
-      runData.addProblem(testResult);
+      runData.addProblem(new TestResultProblem(testResult));
       totalFails.incrementAndGet();
     } else if (result == TestResult.Result.error) {
       if (!verbose) {
         out.print('E');
       } else {
-        out.println("[ERROR] " + testResult.getTestCaseName() + "." + testResult.getTestName());
-        if (log.length() > 0) {
-          String[] logLines = log.split("\n");
-
-          for (String line : logLines) {
-            out.println("  " + line);
-          }
-        }
+        printInProgress("[ERROR] ", testResult, log);
       }
       runData.addError();
-      runData.addProblem(testResult);
+      runData.addProblem(new TestResultProblem(testResult));
       totalErrors.incrementAndGet();
     } else {
       out.print("<" + result + ">");
@@ -195,11 +147,44 @@ public class DefaultListener implements TestResultListener {
           }
         }
       }
-      runData.addProblem(testResult);
+      runData.addProblem(new TestResultProblem(testResult));
     }
     if (lineColumn.incrementAndGet() == lineLength) {
       out.println();
       lineColumn.set(0);
+    }
+  }
+
+  private void printInProgress(String type, TestResult testResult, String log) {
+    out.println(type + testResult.getTestCaseName() + "." + testResult.getTestName());
+    if (log.length() > 0) {
+      String[] logLines = log.split("\n");
+
+      for (String line : logLines) {
+        out.println("  " + line);
+      }
+    }
+  }
+
+  private synchronized RunData currentRunData(String browser) {
+    RunData runData = browsersRunData.get(browser);
+
+    if (runData == null) {
+      runData = new RunData();
+      browsersRunData.put(browser, runData);
+    }
+    return runData;
+  }
+
+  public void onFileLoad(String browser, FileResult fileResult) {
+    if (fileResult.isSuccess()) {
+      return;
+    }
+    RunData runData = currentRunData(browser);
+    runData.addError();
+    runData.addProblem(new FileLoadProblem(fileResult));
+    if (verbose) {
+      out.println("[ERROR] " + fileResult.getMessage());
     }
   }
 }

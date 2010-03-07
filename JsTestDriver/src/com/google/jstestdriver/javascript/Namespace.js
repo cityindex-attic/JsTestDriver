@@ -66,4 +66,4 @@ document.write = function(str) {
 };
 
 
-jstestdriver.EMPTY_FUNC = function() {};
+var noop = jstestdriver.EMPTY_FUNC = function() {};

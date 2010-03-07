@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import java.io.PrintStream;
+
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -30,13 +32,19 @@ public class EvalAction extends ThreadedAction {
 
   public static class EvalActionResponseStream implements ResponseStream {
 
+    private final PrintStream out;
+
+    public EvalActionResponseStream(PrintStream out) {
+      this.out = out;
+    }
+
     public void finish() {
     }
 
     public void stream(Response response) {
       BrowserInfo browser = response.getBrowser();
 
-      System.out.println(String.format("%s %s: %s", browser.getName(), browser.getVersion(),
+      out.println(String.format("%s %s: %s", browser.getName(), browser.getVersion(),
           response.getResponse()));
     }
   }

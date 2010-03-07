@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.jstestdriver.Response.ResponseType;
 
 import junit.framework.TestCase;
 
@@ -73,9 +74,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     response.setBrowser(browserInfo);
     servlet.service(id, null, gson.toJson(response), "", writer);
     assertEquals("BrowserCommand", out.toString());
-    assertEquals("{\"response\":\"response\",\"browser\":{\"id\":1,\"name\":\"browser\"," +
-    		"\"version\":\"version\",\"os\":\"OS\"},\"error\":\"\",\"executionTime\":0}",
-    		slave.getResponse().getResponse());
+    assertEquals(response, slave.getResponse().getResponse());
   }
 
   public void testSimulatePollTimeoutDequeueNullCommand() throws Exception {
@@ -158,6 +157,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     slave.createCommand("BrowserCommand");
     Response response = new Response();
 
+    response.setType(ResponseType.FILE_LOAD_RESULT.name());
     response.setResponse(gson.toJson(new LoadedFiles(fileResults)));
     servlet.service("1", null, gson.toJson(response), "", writer);
 

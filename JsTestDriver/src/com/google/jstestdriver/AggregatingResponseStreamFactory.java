@@ -86,5 +86,10 @@ public class AggregatingResponseStreamFactory implements ResponseStreamFactory {
         stream.stream(response);
       }
     }
+
+    @Override
+    public String toString() {
+      return "AggregatingResponseStream [streams=" + streams + "]";
+    }
   }
 }

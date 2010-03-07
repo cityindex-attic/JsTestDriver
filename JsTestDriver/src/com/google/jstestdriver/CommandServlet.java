@@ -68,28 +68,28 @@ public class CommandServlet extends HttpServlet {
     CommandResponse cmdResponse = null;
 
     while (cmdResponse == null) {
-      cmdResponse = browser.getResponse();
       if (!browser.isAlive()) {
         capturedBrowsers.removeSlave(browser.getId());
         Response response = new Response();
 
         response.setBrowser(browser.getBrowserInfo());
-        response.setResponse("PANIC: browser " + browser.getId()
+        response.setResponse("PANIC: browser " + browser.getBrowserInfo()
                 + " is not responding anymore, removing it from the list of captured browsers");
 
-        cmdResponse = new CommandResponse(gson.toJson(response), true);
+        return new CommandResponse(response, true);
       }
+      cmdResponse = browser.getResponse();
     }
     return cmdResponse;
   }
 
   private void substituteBrowserInfo(CommandResponse cmdResponse) {
-    Response response = gson.fromJson(cmdResponse.getResponse(), Response.class);
+    Response response = cmdResponse.getResponse();
     SlaveBrowser slaveBrowser =
         capturedBrowsers.getBrowser(response.getBrowser().getId().toString());
 
     response.setBrowser(slaveBrowser.getBrowserInfo());
-    cmdResponse.setResponse(gson.toJson(response));
+    cmdResponse.setResponse(response);
   }
 
   public void streamResponse(String id, PrintWriter writer) {
@@ -97,10 +97,10 @@ public class CommandServlet extends HttpServlet {
     CommandResponse cmdResponse = getResponse(browser);
 
     substituteBrowserInfo(cmdResponse);
-    String response = "{ 'last':" + cmdResponse.isLast() + ", 'response':" +
-        cmdResponse.getResponse() + " }";
+    StreamMessage response =
+        new StreamMessage(cmdResponse.isLast(), cmdResponse.getResponse());
 
-    writer.write(response);
+    writer.write(gson.toJson(response));
   }
 
   @Override

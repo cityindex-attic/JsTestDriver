@@ -23,6 +23,8 @@ import com.google.jstestdriver.EvalAction.EvalActionResponseStream;
 import com.google.jstestdriver.ResetAction.ResetActionResponseStream;
 import com.google.jstestdriver.output.TestResultListener;
 
+import java.io.PrintStream;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  * 
@@ -32,14 +34,17 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
   private final Provider<TestResultListener> responsePrinterFactory;
   private final String configFileName;
   private final FailureAccumulator accumulator;
+  private final PrintStream out;
 
   @Inject
   public DefaultResponseStreamFactory(Provider<TestResultListener> responsePrinterFactory,
                                       @Named("config") String configFileName,
-                                      FailureAccumulator accumulator) {
+                                      FailureAccumulator accumulator,
+                                      @Named("outputStream") PrintStream out) {
     this.responsePrinterFactory = responsePrinterFactory;
     this.configFileName = configFileName;
     this.accumulator = accumulator;
+    this.out = out;
   }
 
   public ResponseStream getRunTestsActionResponseStream(String browserId) {
@@ -54,14 +59,14 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
   }
 
   public ResponseStream getDryRunActionResponseStream() {
-    return new DryRunActionResponseStream();
+    return new DryRunActionResponseStream(out);
   }
 
   public ResponseStream getEvalActionResponseStream() {
-    return new EvalActionResponseStream();
+    return new EvalActionResponseStream(out);
   }
 
   public ResponseStream getResetActionResponseStream() {
-    return new ResetActionResponseStream();
+    return new ResetActionResponseStream(out);
   }
 }

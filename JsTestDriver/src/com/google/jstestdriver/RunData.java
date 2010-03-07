@@ -15,7 +15,9 @@
  */
 package com.google.jstestdriver;
 
-import java.util.ArrayList;
+import com.google.common.collect.Lists;
+import com.google.jstestdriver.output.Problem;
+
 import java.util.List;
 
 /**
@@ -26,7 +28,7 @@ public class RunData {
   private int fails = 0;
   private int errors = 0;
   private float totalTime;
-  private final List<TestResult> problems = new ArrayList<TestResult>();
+  private final List<Problem> problems = Lists.newLinkedList();
 
   public void addPass() {
     passes++;
@@ -40,8 +42,8 @@ public class RunData {
     errors++;
   }
 
-  public void addProblem(TestResult testResult) {
-    problems.add(testResult);
+  public void addProblem(Problem problem) {
+    problems.add(problem);
   }
 
   public void addTime(float time) {
@@ -60,7 +62,7 @@ public class RunData {
     return errors;
   }
 
-  public List<TestResult> getProblems() {
+  public List<Problem> getProblems() {
     return problems;
   }
 

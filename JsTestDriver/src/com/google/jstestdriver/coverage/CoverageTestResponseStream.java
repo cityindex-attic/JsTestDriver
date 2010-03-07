@@ -21,6 +21,7 @@ import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultGenerator;
+import com.google.jstestdriver.Response.ResponseType;
 
 import java.util.Collection;
 
@@ -45,6 +46,9 @@ public class CoverageTestResponseStream implements ResponseStream {
   }
 
   public void stream(Response response) {
+    if (response.getResponseType() != ResponseType.TEST_RESULT) {
+      return;
+    }
     try {
       Collection<TestResult> testResults = generator.getTestResults(response);
       for (TestResult testResult : testResults) {

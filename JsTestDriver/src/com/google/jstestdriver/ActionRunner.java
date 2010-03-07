@@ -41,8 +41,9 @@ public class ActionRunner {
 
     while (iterator.hasNext()) {
       Action action = iterator.next();
-      logger.debug("Running {}", action);
+      logger.debug("Starting {}", action);
       action.run();
+      logger.debug("Finishing {}", action);
     }
   }
 }

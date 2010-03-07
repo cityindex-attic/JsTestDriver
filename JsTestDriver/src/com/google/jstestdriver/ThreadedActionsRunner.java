@@ -41,7 +41,7 @@ public class ThreadedActionsRunner implements Action {
     int browsersNumber = browsers.size();
 
     if (browsersNumber == 0) {
-      System.err.println("No browsers were captured, nothing to run...");
+      throw new FailureException("No browsers were captured, nothing to run...");
     }
     CountDownLatch latch = new CountDownLatch(browsersNumber);
 

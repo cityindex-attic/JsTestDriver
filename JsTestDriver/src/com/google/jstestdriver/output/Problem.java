@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Google Inc.
+ * Copyright 2010 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,22 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+
+package com.google.jstestdriver.output;
+
+import java.io.PrintStream;
 
 /**
- * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
+ * Generic interface for problem reporting during test execution.
+ * 
+ * @author corbinrsmith@gmail.com (Cory Smith)
  */
-public class FailureCheckerAction implements Action {
-
-  private final FailureAccumulator accumulator;
-
-  public FailureCheckerAction(FailureAccumulator accumulator) {
-    this.accumulator = accumulator;
-  }
-
-  public void run() {
-    if (accumulator.hasFailures()) {
-      throw new FailureException("Tests failed. (Useful, isn't this?)");
-    }
-  }
+public interface Problem {
+  /** Prints a formatted description of the problem. */
+  public void print(PrintStream out, boolean verbose);
 }

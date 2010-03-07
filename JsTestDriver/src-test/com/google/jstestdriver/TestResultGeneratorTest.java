@@ -14,6 +14,7 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.jstestdriver.Response.ResponseType;
 
 import junit.framework.TestCase;
 
@@ -34,6 +35,7 @@ public class TestResultGeneratorTest extends TestCase {
     String gsonString = gson.toJson(results);
     TestResultGenerator generator = new TestResultGenerator();
     Response response = new Response();
+    response.setType(ResponseType.TEST_RESULT.name());
     response.setResponse(gsonString);
     response.setBrowser(new BrowserInfo());
     Collection<TestResult> testResults = generator.getTestResults(response);

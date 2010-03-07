@@ -57,10 +57,10 @@ public class SlaveBrowser {
   }
 
   public static class CommandResponse {
-    private String response;
+    private Response response;
     private final boolean last;
 
-    public CommandResponse(String response, boolean last) {
+    public CommandResponse(Response response, boolean last) {
       this.response = response;
       this.last = last;
     }
@@ -68,7 +68,7 @@ public class SlaveBrowser {
     /**
      * @return the response
      */
-    public String getResponse() {
+    public Response getResponse() {
       return response;
     }
 
@@ -79,7 +79,7 @@ public class SlaveBrowser {
       return last;
     }
 
-    public void setResponse(String response) {
+    public void setResponse(Response response) {
       this.response = response;
     }
   }
@@ -149,7 +149,7 @@ public class SlaveBrowser {
     }
   }
 
-  public void addResponse(String response, boolean isLast) {
+  public void addResponse(Response response, boolean isLast) {
     if (isLast) {
       commandRunning = null;
     }

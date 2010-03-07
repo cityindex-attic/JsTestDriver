@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import java.io.PrintStream;
+
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -23,11 +25,17 @@ public class ResetAction extends ThreadedAction {
 
   public static class ResetActionResponseStream implements ResponseStream {
 
+    private final PrintStream out;
+
+    public ResetActionResponseStream(PrintStream out) {
+      this.out = out;
+    }
+
     public void finish() {
     }
 
     public void stream(Response response) {
-      System.out.println(String.format("%s: %s", response.getBrowser().getName(),
+      out.println(String.format("%s: %s", response.getBrowser().getName(),
           response.getResponse()));
     }
   }

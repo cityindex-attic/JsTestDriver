@@ -17,6 +17,7 @@ package com.google.jstestdriver;
 
 import com.google.gson.Gson;
 
+import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -29,6 +30,11 @@ public class DryRunAction extends ThreadedAction {
   public static class DryRunActionResponseStream implements ResponseStream {
 
     private final Gson gson = new Gson();
+    private final PrintStream out;
+
+    public DryRunActionResponseStream(PrintStream out) {
+      this.out = out;
+    }
 
     public void finish() {
     }
@@ -37,7 +43,7 @@ public class DryRunAction extends ThreadedAction {
       BrowserInfo browser = response.getBrowser();
       DryRunInfo dryRunInfo = gson.fromJson(response.getResponse(), DryRunInfo.class);
 
-      System.out.println(String.format("%s %s: %s tests %s", browser.getName(), browser
+      out.println(String.format("%s %s: %s tests %s", browser.getName(), browser
           .getVersion(), dryRunInfo.getNumTests(), dryRunInfo.getTestNames()));
     }
   }

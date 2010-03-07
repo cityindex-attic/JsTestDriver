@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver.coverage;
 
+import com.google.jstestdriver.FileResult;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.output.TestResultListener;
@@ -35,6 +36,11 @@ public class CoverageResponseStreamFactoryTest extends TestCase {
 
     public void onTestComplete(TestResult testResult) {
       this.testResult = testResult;
+    }
+
+    public void onFileLoad(String browser, FileResult fileResult) {
+      // TODO Auto-generated method stub
+      
     }
   }
 

@@ -8,6 +8,7 @@ import static com.google.common.collect.Multimaps.synchronizedMultimap;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Multimap;
 import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.FileResult;
 import com.google.jstestdriver.TestResult;
 
 import java.util.Collection;
@@ -46,5 +47,9 @@ public class TestResultHolder implements TestResultListener {
   }
 
   public void finish() {
+  }
+
+  public void onFileLoad(String browser, FileResult fileResult) {
+    // TODO(corysmith): Add load error to the xml results
   }
 }

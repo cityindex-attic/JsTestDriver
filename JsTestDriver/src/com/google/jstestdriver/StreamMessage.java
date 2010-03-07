@@ -16,12 +16,19 @@
 package com.google.jstestdriver;
 
 /**
+ * Represents a packet of streamed response.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class StreamMessage {
-
   private boolean last;
   private Response response;
+
+  public StreamMessage() {}
+  
+  public StreamMessage(boolean last, Response response) {
+    this.last = last;
+    this.response = response;
+  }
 
   public boolean isLast() {
     return last;

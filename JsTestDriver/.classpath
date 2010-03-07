@@ -16,7 +16,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/junit/junit.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jvyaml-0.2/lib/jvyaml.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.5.6/slf4j-api-1.5.6-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.5.6/slf4j-api-1.5.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.5.6/slf4j-api-1.5.6.jar" sourcepath="lib/slf4j-1.5.6/slf4j-api-1.5.6-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/svnant-1.2.1/lib/ganymed.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/svnant-1.2.1/lib/svnant.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/svnant-1.2.1/lib/svnClientAdapter.jar"/>
@@ -36,7 +36,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/jetty/jetty-util-6.1.19.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jetty/servlet-api-2.5-20081211.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/google-collect-1.0-rc2/google-collect-1.0-rc2.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" sourcepath="lib/slf4j-1.5.6/slf4j-jdk14-1.5.6-sources.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/args4j-2.0.12/args4j-2.0.12.jar"/>
 	<classpathentry kind="output" path="bin"/>

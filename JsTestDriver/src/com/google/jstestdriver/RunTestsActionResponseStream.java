@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.Gson;
 import com.google.jstestdriver.output.TestResultListener;
 
 import java.util.Collection;
@@ -27,6 +28,7 @@ public class RunTestsActionResponseStream implements ResponseStream {
   private final TestResultGenerator testResultGenerator;
   private final TestResultListener listener;
   private final FailureAccumulator accumulator;
+  private final Gson gson = new Gson();
 
   public RunTestsActionResponseStream(TestResultGenerator testResultGenerator,
       TestResultListener listener, FailureAccumulator accumulator) {
@@ -36,18 +38,33 @@ public class RunTestsActionResponseStream implements ResponseStream {
   }
 
   public void stream(Response response) {
-    Collection<TestResult> testResults = testResultGenerator.getTestResults(response);
-
-    for (TestResult result : testResults) {
-      if (result.getResult() == TestResult.Result.failed
-          || result.getResult() == TestResult.Result.error) {
-        accumulator.add();
-      }
-      listener.onTestComplete(result);
+    switch(response.getResponseType()) {
+      case TEST_RESULT:
+        Collection<TestResult> testResults =
+            testResultGenerator.getTestResults(response);
+        for (TestResult result : testResults) {
+          if (result.getResult() == TestResult.Result.failed
+              || result.getResult() == TestResult.Result.error) {
+            System.out.println("Failed " + result);
+            accumulator.add();
+          }
+          listener.onTestComplete(result);
+        }
+        break;
+      case FILE_LOAD_RESULT:
+        LoadedFiles files = gson.fromJson(response.getResponse(),
+                                          response.getGsonType());
+        for (FileResult result : files.getLoadedFiles()) {
+          if (!result.isSuccess()) {
+            accumulator.add();
+          }
+          listener.onFileLoad(response.getBrowser().toString(), result);
+        }
+        break;
     }
   }
 
   public void finish() {
-    listener.finish();    
+    listener.finish();
   }
 }

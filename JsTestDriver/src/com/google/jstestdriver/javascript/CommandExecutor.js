@@ -124,6 +124,7 @@ jstestdriver.CommandExecutor.prototype.sendData = function(data) {
 jstestdriver.CommandExecutor.prototype.execute = function(cmd) {
   var data = {
     done: '',
+    type: jstestdriver.RESPONSE_TYPES.COMMAND_RESULT,
     response: {
       response: this.__boundEvaluateCommand(cmd),
       browser: {
@@ -187,17 +188,17 @@ jstestdriver.CommandExecutor.prototype.loadTest = function(args) {
 };
 
 
-jstestdriver.CommandExecutor.prototype.onFileLoaded = function(status) {
-  var data = {
-      done: '',
-      response: {
-        response: JSON.stringify(status),
-        browser: {
-          "id": this.__id
-        }
-      }
-  };
+jstestdriver.CommandExecutor.prototype.getBrowserInfo = function() {
+  return new jstestdriver.BrowserInfo(this.__id);
+};
 
+
+jstestdriver.CommandExecutor.prototype.onFileLoaded = function(status) {
+  var response = new jstestdriver.Response(
+      jstestdriver.RESPONSE_TYPES.FILE_LOAD_RESULT,
+      JSON.stringify(status),
+      this.getBrowserInfo());
+  var data = new jstestdriver.StreamMessage('', response);
   this.sendData(data);
 };
 
@@ -272,8 +273,10 @@ jstestdriver.CommandExecutor.prototype.runTestCases_ = function(testRunsConfigur
     captureConsole, runnerMode) {
   if (!runnerMode) {
     this.startTestInterval_(jstestdriver.TIMEOUT);
-    this.__testRunner.runTests(testRunsConfiguration, this.boundOnTestDone, this.boundOnComplete,
-        captureConsole);
+    this.__testRunner.runTests(testRunsConfiguration,
+                               this.boundOnTestDone,
+                               this.boundOnComplete,
+                               captureConsole);
   } else {
     this.__testRunner.runTests(testRunsConfiguration, this.boundOnTestDoneRunnerMode,
         this.boundOnCompleteRunnerMode, captureConsole);
@@ -328,14 +331,11 @@ jstestdriver.CommandExecutor.prototype.onDataSent_ = function() {
 jstestdriver.CommandExecutor.prototype.sendTestResults_ = function() {
   this.stopTestInterval_();
   if (this.testsDone_.length > 0) {
-    var data = {
-        response: {
-          response: JSON.stringify(this.testsDone_),
-          browser: {
-            "id": this.__id
-          }
-        }
-    };
+    var response = new jstestdriver.Response(
+            jstestdriver.RESPONSE_TYPES.TEST_RESULT,
+            JSON.stringify(this.testsDone_),
+            this.getBrowserInfo());
+    var data = new jstestdriver.StreamMessage('', response);
 
     this.testsDone_ = [];
     this.sentOn_ = new Date().getTime();
@@ -363,15 +363,11 @@ jstestdriver.CommandExecutor.prototype.sendTestResultsOnComplete_ = function() {
   this.stopTestInterval_();
   this.done_ = false;
   this.sentOn_ = -1;
-  var data = {
-      done: '',
-      response: {
-          response: JSON.stringify(this.testsDone_),
-          browser: {
-            "id": this.__id
-          }
-      }
-  };
+  var response = new jstestdriver.Response(
+      jstestdriver.RESPONSE_TYPES.TEST_RESULT,
+      JSON.stringify(this.testsDone_),
+      this.getBrowserInfo());
+  var data = new jstestdriver.StreamMessage('', response);
 
   this.testsDone_ = [];
   this.__sendRequest(this.__url, data, this.__boundExecuteCommand);  
@@ -395,8 +391,9 @@ jstestdriver.CommandExecutor.prototype.evaluateCommand = function(cmd) {
       res = evaluatedCmd.toString();
     }
   } catch (e) {
-    res = 'Exception ' + e.name + ': ' + e.message + '\n' + e.fileName + '(' + e.lineNumber +
-        '):\n' + e.stack;
+    res = 'Exception ' + e.name + ': ' + e.message +
+          '\n' + e.fileName + '(' + e.lineNumber +
+          '):\n' + e.stack;
   }
   return res;
 };
@@ -413,56 +410,44 @@ jstestdriver.CommandExecutor.prototype.reset = function() {
 
 jstestdriver.CommandExecutor.prototype.registerCommand = function(name, func) {
   this[name] = jstestdriver.bind(this, func);
-  this.sendData({
-    response: {
-      response: 'Command ' + name + ' registered.',
-      browser: {
-        "id": this.__id
-      }
-    }
-  });
+  var response =
+      new jstestdriver.Response(jstestdriver.RESPONSE_TYPES.REGISTER_RESULT,
+          'Command ' + name + ' registered.',
+          this.getBrowserInfo());
+
+  this.sendData(new jstestdriver.StreamMessage('', response));
 };
 
 
 jstestdriver.CommandExecutor.prototype.dryRun = function() {
-  this.sendData({
-    done: '',
-    response: {
-      response: JSON.stringify(this.__testCaseManager.getCurrentlyLoadedTest()),
-      browser: {
-        "id": this.__id
-      }
-    }
-  });
+  var response =
+      new jstestdriver.Response(jstestdriver.RESPONSE_TYPES.TEST_QUERY_RESULT,
+          JSON.stringify(this.__testCaseManager.getCurrentlyLoadedTest()),
+          this.getBrowserInfo());
+  
+  this.sendData(new jstestdriver.StreamMessage('', response));
 };
 
 
 jstestdriver.CommandExecutor.prototype.dryRunFor = function(args) {
   var expressions = jsonParse('{"expressions":' + args[0] + '}').expressions;
-
-  this.sendData({
-    done: '',
-    response: {
-      response: JSON.stringify(this.__testCaseManager.getCurrentlyLoadedTestFor(expressions)),
-      browser: {
-        "id": this.__id
-      }
-    }
-  });
+  var tests = JSON.stringify(
+      this.__testCaseManager.getCurrentlyLoadedTestFor(expressions))
+  var data = new jstestdriver.StreamMessage('',
+      new jstestdriver.Response(jstestdriver.RESPONSE_TYPES.TEST_QUERY_RESULT,
+          tests,
+          this.getBrowserInfo()));
+  this.sendData(data);
 };
 
 
 jstestdriver.CommandExecutor.prototype.listen = function() {
   if (window.location.href.search('\\?refresh') != -1) {
-    var data = {
-      done: '',
-      response: {
-        response: 'Runner reset.',
-        browser: {
-          "id": this.__id
-        }
-      }
-    };
+    var data = new jstestdriver.StreamMessage('',
+        new jstestdriver.Response(jstestdriver.RESPONSE_TYPES.RESET_RESULT,
+                                  'Runner reset.',
+                                  this.getBrowserInfo())
+    );
     this.__sendRequest(this.__url + '?start', data, this.__boundExecuteCommand);
   } else {
     this.__sendRequest(this.__url + '?start', null, this.__boundExecuteCommand);

@@ -17,8 +17,10 @@ package com.google.jstestdriver;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.Response.ResponseType;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,6 +42,11 @@ public class TestResultGenerator {
    * @return a {@link Collection} of {@link TestResult} with accurate {@link BrowserInfo} set.
    */
   public Collection<TestResult> getTestResults(Response response) {
+    // TODO(corysmith): Remove the check when all the ide plugins have been updated.
+    if (response.getResponseType() != ResponseType.TEST_RESULT) {
+      return Collections.<TestResult>emptyList();
+    }
+
     Collection<TestResult> results = gson.fromJson(response.getResponse(),
         new TypeToken<Collection<TestResult>>() {}.getType());
 
