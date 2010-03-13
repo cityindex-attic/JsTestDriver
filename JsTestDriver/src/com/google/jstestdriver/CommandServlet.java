@@ -85,10 +85,19 @@ public class CommandServlet extends HttpServlet {
 
   private void substituteBrowserInfo(CommandResponse cmdResponse) {
     Response response = cmdResponse.getResponse();
-    SlaveBrowser slaveBrowser =
-        capturedBrowsers.getBrowser(response.getBrowser().getId().toString());
 
-    response.setBrowser(slaveBrowser.getBrowserInfo());
+      SlaveBrowser slaveBrowser =
+          capturedBrowsers.getBrowser(response.getBrowser().getId().toString());
+    if (slaveBrowser != null) {
+      response.setBrowser(slaveBrowser.getBrowserInfo());
+    } else {
+      BrowserInfo nullBrowserInfo = new BrowserInfo();
+      nullBrowserInfo.setId(response.getBrowser().getId());
+      nullBrowserInfo.setName("unknown browser");
+      nullBrowserInfo.setVersion("unknown version");
+      nullBrowserInfo.setOs("unknown os");
+      response.setBrowser(nullBrowserInfo);
+    }
     cmdResponse.setResponse(response);
   }
 

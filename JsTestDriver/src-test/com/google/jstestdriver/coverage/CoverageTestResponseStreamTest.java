@@ -48,11 +48,11 @@ public class CoverageTestResponseStreamTest extends TestCase {
         "test.Foo", "Foo", 1f);
     
     List<FileCoverage> expectedFileCoverage =
-        Arrays.asList(new FileCoverage("foo.js", Lists.newArrayList(new CoveredLine(1, 1))));
+        Arrays.asList(new FileCoverage(-1, Lists.newArrayList(new CoveredLine(1, 1))));
     CoverageAccumulator expected = new CoverageAccumulator();
     expected.add(browserId, expectedFileCoverage);
     testResult.getData().put(CoverageTestResponseStream.COVERAGE_DATA_KEY,
-        gson.toJson(expectedFileCoverage));
+        "[[-1,[[1,1]]]]");
     response.setResponse(gson.toJson(Arrays.asList(testResult)));
 
     stream.stream(response);

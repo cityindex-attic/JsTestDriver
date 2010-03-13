@@ -141,11 +141,12 @@ public class CodeCoverageDecoratorTest extends TestCase {
     List<Instrumentation> instruments = Lists.newLinkedList();
     List<CodeLine> source = Lists.newLinkedList();
     String filePath = "filename.js";
-    String hash = Integer.toString(Math.abs(filePath.hashCode()), Character.MAX_RADIX);
+    CoverageNameMapper mapper = new CoverageNameMapper();
+    String hash = Integer.toString(Math.abs(String.valueOf(mapper.map(filePath)).hashCode()), Character.MAX_RADIX);
 
     public CoverageAsserter instrument(String instrument) {
       instruments.add(new LcovInstrumentation(instrument.replaceAll("LCOV_HASH",
-        "LCOV_" + hash).replaceAll("FILE", filePath)));
+        "LCOV_" + hash).replaceAll("'FILE'", String.valueOf(mapper.map(filePath)))));
       return this;
     }
     public CoverageAsserter noInstrument() {
@@ -167,13 +168,12 @@ public class CodeCoverageDecoratorTest extends TestCase {
         sourceCode.append(line.getSource());
       }
       
-      CodeCoverageDecorator decorator = new CodeCoverageDecorator();
+      CodeCoverageDecorator decorator = new CodeCoverageDecorator(mapper);
       Iterator<Instrumentation> instrumentsIterator = instruments.iterator();
       Iterator<CodeLine> sourceIterator = source.iterator();
-      String instrumented = decorator.decorate(
+      DecoratedCode decorated = decorator.decorate(
           new Code(filePath, sourceCode.toString()));
-      //System.out.println(instrumented);
-      for(String actual : instrumented.split("\n")) {
+      for(String actual : decorated.getInstrumentedCode().split("\n")) {
         instrumentsIterator.next().assertLine(actual);
         sourceIterator.next().assertLine(actual);
       }

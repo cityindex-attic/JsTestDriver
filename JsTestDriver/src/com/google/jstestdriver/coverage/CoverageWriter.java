@@ -22,7 +22,7 @@ package com.google.jstestdriver.coverage;
  *
  */
 public interface CoverageWriter {
-  public void writeRecordStart(String qualifiedFile);
+  public void writeRecordStart(Integer fileId);
   public void writeRecordEnd();
   public void writeCoverage(int lineNumber, int executedNumber);
   void flush();

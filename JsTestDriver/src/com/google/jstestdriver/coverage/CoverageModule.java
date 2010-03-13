@@ -109,7 +109,8 @@ public class CoverageModule extends AbstractModule {
   @Provides @Inject
   public CoverageWriter createCoverageWriter(@Named("testOutput") String testOut,
                                              @Named("config") String configFileName,
-                                             @Named("outputStream") PrintStream out) {
+                                             @Named("outputStream") PrintStream out,
+                                             CoverageNameMapper mapper) {
     if (testOut.length() > 0) {
       try {
         File testOutDir = new File(testOut);
@@ -122,11 +123,11 @@ public class CoverageModule extends AbstractModule {
           coverageFile.delete();
         }
         coverageFile.createNewFile();
-        return new LcovWriter(new FileWriter(coverageFile));
+        return new LcovWriter(new FileWriter(coverageFile), mapper);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
-    return new SummaryCoverageWriter(out);
+    return new SummaryCoverageWriter(out, mapper);
   }
 }

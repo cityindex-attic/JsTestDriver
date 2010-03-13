@@ -32,8 +32,8 @@ import java.util.List;
 public class CoverageAccumulatorTest extends TestCase {
 
   public void testWrite() throws Exception {
-    final String a = "foo.js";
-    final String b = "zar.js";
+    final Integer a = 1;
+    final Integer b = 2;
 
     final List<FileCoverage> expected = Arrays.asList(
         new FileCoverage(a, Lists.newArrayList(new CoveredLine(1, 2),
@@ -93,9 +93,9 @@ public class CoverageAccumulatorTest extends TestCase {
     public void writeRecordEnd() {
     }
 
-    public void writeRecordStart(String qualifiedFile) {
+    public void writeRecordStart(Integer fileId) {
       lines = new LinkedList<CoveredLine>();
-      this.coveredLines.add(new FileCoverage(qualifiedFile, lines));
+      this.coveredLines.add(new FileCoverage(fileId, lines));
     }
   }
 }

@@ -26,19 +26,19 @@ import java.util.List;
  */
 public class FileCoverage implements Comparable<FileCoverage>{
 
-  private String qualifiedFile;
+  private Integer fileId;
   private List<CoveredLine> lines = Lists.newLinkedList();
 
   public FileCoverage() {
   }
 
-  public FileCoverage(String qualifiedFile, List<CoveredLine> lines) {
-    this.qualifiedFile = qualifiedFile;
+  public FileCoverage(Integer fileId, List<CoveredLine> lines) {
+    this.fileId = fileId;
     this.lines = lines;
   }
   
   public FileCoverage aggegrate(FileCoverage other) {
-    if (qualifiedFile.equals(other.qualifiedFile)) {
+    if (fileId.equals(other.fileId)) {
       List<CoveredLine> rawLines = Lists.newLinkedList();
       rawLines.addAll(lines);
       rawLines.addAll(other.lines);
@@ -57,13 +57,13 @@ public class FileCoverage implements Comparable<FileCoverage>{
         }
         newLines.add(current);
       }
-      return new FileCoverage(qualifiedFile, newLines); 
+      return new FileCoverage(fileId, newLines); 
     }
     return null;
   }
 
   public void write(CoverageWriter coverageWriter) {
-    coverageWriter.writeRecordStart(qualifiedFile);
+    coverageWriter.writeRecordStart(fileId);
     for (CoveredLine line : lines) {
       line.write(coverageWriter);
     }
@@ -76,7 +76,7 @@ public class FileCoverage implements Comparable<FileCoverage>{
     int result = 1;
     result = prime * result + ((lines == null) ? 0 : lines.hashCode());
     result = prime * result
-      + ((qualifiedFile == null) ? 0 : qualifiedFile.hashCode());
+      + ((fileId == null) ? 0 : fileId.hashCode());
     return result;
   }
 
@@ -94,20 +94,20 @@ public class FileCoverage implements Comparable<FileCoverage>{
         return false;
     } else if (!lines.equals(other.lines))
       return false;
-    if (qualifiedFile == null) {
-      if (other.qualifiedFile != null)
+    if (fileId == null) {
+      if (other.fileId != null)
         return false;
-    } else if (!qualifiedFile.equals(other.qualifiedFile))
+    } else if (!fileId.equals(other.fileId))
       return false;
     return true;
   }
 
   public int compareTo(FileCoverage o) {
-    return qualifiedFile.compareTo(o.qualifiedFile);
+    return fileId.compareTo(o.fileId);
   }
   
   @Override
   public String toString() {
-    return String.format("%s(%s, %s)", getClass().getSimpleName(), qualifiedFile, lines);
+    return String.format("%s(%s, %s)", getClass().getSimpleName(), fileId, lines);
   }
 }

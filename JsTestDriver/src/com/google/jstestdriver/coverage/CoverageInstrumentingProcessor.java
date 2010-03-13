@@ -35,12 +35,15 @@ public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
       LoggerFactory.getLogger(CoverageInstrumentingProcessor.class);
   private final CodeCoverageDecorator decorator;
   private final Set<String> excludes;
+  private final CoverageAccumulator accumulator;
 
   @Inject
   public CoverageInstrumentingProcessor(CodeCoverageDecorator decorator,
-                                        @Coverage("coverageExcludes") Set<String> excludes) {
+                                        @Coverage("coverageExcludes") Set<String> excludes,
+                                        CoverageAccumulator accumulator) {
     this.decorator = decorator;
     this.excludes = excludes;
+    this.accumulator = accumulator;
   }
 
   public FileInfo process(FileInfo file) {
@@ -48,13 +51,18 @@ public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
       || file.isServeOnly() || excludes.contains(file.getFileName())) {
       return file;
     }
-    LOGGER.info("Generating coverage for " + file.getFileName());
-    String instrumented = decorator.decorate(new Code(file.getFileName(),
-                                                      file.getData()));
+    long start = System.currentTimeMillis();
+    DecoratedCode decorated = decorator.decorate(new Code(file.getFileName(),
+                                                 file.getData()));
+    LOGGER.debug(String.format("Instrumented %s in %ss",
+        file.getFileName(),
+        (System.currentTimeMillis() - start)/1000.0
+    ));
+    decorated.writeInitialLines(accumulator);
     return new FileInfo(file.getFileName(),
                         file.getTimestamp(),
                         file.isPatch(),
                         file.isServeOnly(),
-                        instrumented);
+                        decorated.getInstrumentedCode());
   }
 }

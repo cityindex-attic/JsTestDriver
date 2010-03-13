@@ -28,13 +28,13 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTestConfiguration = function(
   for (var i = 0; i < size; i++) {
     var testName = tests[i];
 
-    onTestDone(this.runTest_(testCaseInfo.getTestCaseName(), testCaseInfo.getTemplate(), testName));
+    onTestDone(this.runTest(testCaseInfo.getTestCaseName(), testCaseInfo.getTemplate(), testName));
   }
   onTestRunConfigurationComplete();
 };
 
 
-jstestdriver.plugins.TestRunnerPlugin.prototype.runTest_ = function(testCaseName, testCase,
+jstestdriver.plugins.TestRunnerPlugin.prototype.runTest = function(testCaseName, testCase,
     testName) {
   var testCaseInstance;
 

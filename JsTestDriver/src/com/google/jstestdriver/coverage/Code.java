@@ -16,8 +16,6 @@
 
 package com.google.jstestdriver.coverage;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents code to be instrumented.
@@ -42,15 +40,6 @@ public class Code {
     return filePath;
   }
 
-  public List<CodeLine> getLines() {
-    String[] lines = sourceCode.split("\n");
-    List<CodeLine> codeLines = new ArrayList<CodeLine>(lines.length);
-    for(int i = 0; i < lines.length; i++) {
-      codeLines.add(new CodeLine(i + 1, lines[i]));
-    }
-    return codeLines;
-  }
-  
   @Override
   public String toString() {
     return String.format("%s(%s, %s)",

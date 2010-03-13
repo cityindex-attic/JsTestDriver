@@ -156,6 +156,7 @@ public class JsTestDriverServer extends Observable {
 
       injector.getInstance(ActionRunner.class).runActions();
     } catch (Exception e) {
+      e.printStackTrace();
       logger.debug("Error {}", e);
       System.exit(1);
     }

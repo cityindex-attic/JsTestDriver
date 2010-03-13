@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -28,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 public class HeartbeatServlet extends HttpServlet {
 
   private static final long serialVersionUID = 5484417807218095115L;
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(HeartbeatServlet.class);
 
   private final CapturedBrowsers capturedBrowsers;
 
@@ -42,6 +47,7 @@ public class HeartbeatServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     PrintWriter writer = resp.getWriter();
     String id = req.getParameter("id");
+    LOGGER.info("heartbeat " + id);
     if (id != null) { 
       SlaveBrowser browser = capturedBrowsers.getBrowser(id);
       if (browser != null) {

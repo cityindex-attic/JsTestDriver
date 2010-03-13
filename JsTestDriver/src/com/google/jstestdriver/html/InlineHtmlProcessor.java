@@ -19,6 +19,9 @@ import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
@@ -31,6 +34,7 @@ import java.io.Writer;
  * 
  */
 public class InlineHtmlProcessor implements FileLoadPostProcessor {
+  private static final Logger LOGGER = LoggerFactory.getLogger(InlineHtmlProcessor.class);
   private final HtmlDocParser parser;
   private final HtmlDocLexer lexer;
 
@@ -42,6 +46,7 @@ public class InlineHtmlProcessor implements FileLoadPostProcessor {
   
   public FileInfo process(FileInfo file) {
     try {
+      LOGGER.debug("inlining html for " + file.getFileName());
       String source = file.getData();
       Writer writer = new CharArrayWriter();
       parser.parse(

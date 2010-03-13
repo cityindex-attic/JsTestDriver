@@ -30,10 +30,13 @@ public class SummaryCoverageWriter implements CoverageWriter {
   private float totalLines = 0f;
   private float executed = 0f;
   private final OutputStream out;
+  private final CoverageNameMapper mapper;
 
-  public SummaryCoverageWriter(OutputStream out) {
+  public SummaryCoverageWriter(OutputStream out, CoverageNameMapper mapper) {
     this.out = out;
+    this.mapper = mapper;
   }
+
 
   public void flush() {
   }
@@ -57,7 +60,7 @@ public class SummaryCoverageWriter implements CoverageWriter {
     }
   }
 
-  public void writeRecordStart(String qualifiedFile) {
-    this.qualifiedFile = qualifiedFile;
+  public void writeRecordStart(Integer fileId) {
+    this.qualifiedFile = mapper.unmap(fileId);
   }
 }

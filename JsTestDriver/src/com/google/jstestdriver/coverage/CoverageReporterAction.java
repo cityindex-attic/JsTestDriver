@@ -32,8 +32,8 @@ public class CoverageReporterAction implements Action {
 
   public CoverageReporterAction(CoverageAccumulator accumulator,
       CoverageWriter writer) {
-        this.accumulator = accumulator;
-        this.writer = writer;
+    this.accumulator = accumulator;
+    this.writer = writer;
   }
 
   public void run() {

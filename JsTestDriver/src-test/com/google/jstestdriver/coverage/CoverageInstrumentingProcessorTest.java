@@ -33,9 +33,11 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
     String expected = "decorated";
     Code code = new Code(fileInfo.getFileName(),
                          fileInfo.getData());
+    CoverageAccumulator accumulator = new CoverageAccumulator();
     FileInfo decorated =
       new CoverageInstrumentingProcessor(new DecoratorStub(expected, code),
-                                         Collections.<String>emptySet()).process(fileInfo);
+                                         Collections.<String>emptySet(),
+                                         accumulator).process(fileInfo);
     assertEquals(expected, decorated.getData());
     assertEquals(fileInfo.getFileName(), decorated.getFileName());
     assertEquals(fileInfo.getTimestamp(), decorated.getTimestamp());
@@ -48,7 +50,8 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
     FileInfo excluded = new FileInfo("excluded.dat", 0, true, false, "not{me}");
     FileInfo remote = new FileInfo("https://foobar", 0, true, false, null);
     CoverageInstrumentingProcessor processor =
-        new CoverageInstrumentingProcessor(null, Sets.<String>newHashSet(excluded.getFileName()));
+        new CoverageInstrumentingProcessor(null,
+            Sets.<String>newHashSet(excluded.getFileName()), null);
     assertSame(lcov, processor.process(lcov));
     assertSame(serveOnly, processor.process(serveOnly));
     assertSame(remote, processor.process(remote));
@@ -59,14 +62,15 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
     private final String decorated;
     private final Code expectedCode;
     public DecoratorStub(String decorated, Code expectedCode) {
+      super(null);
       this.decorated = decorated;
       this.expectedCode = expectedCode;
     }
 
     @Override
-    public String decorate(Code code) {
+    public DecoratedCode decorate(Code code) {
       assertEquals(expectedCode, code);
-      return decorated;
+      return new DecoratedCode(-1, "", Collections.<Integer>emptyList(), decorated);
     }
   }
 }

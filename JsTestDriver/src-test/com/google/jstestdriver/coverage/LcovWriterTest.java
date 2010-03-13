@@ -27,8 +27,11 @@ import java.io.StringWriter;
  */
 public class LcovWriterTest extends TestCase {
   public void testWriteCoverage() throws Exception {
-    final String a = "foo.js";
-    final String b = "zar.js";
+    final CoverageNameMapper nameMapper = new CoverageNameMapper();
+    final String aName = "foo.js";
+    final String bName = "zar.js";
+    final int a = nameMapper.map(aName);
+    final int b = nameMapper.map(bName);
     final FileCoverage[] coverages  = new FileCoverage[] {
         new FileCoverage(a, Lists.newArrayList(new CoveredLine(1, 3),
                                                new CoveredLine(2, 0))),
@@ -36,16 +39,16 @@ public class LcovWriterTest extends TestCase {
     };
     final StringWriter out = new StringWriter();
     
-    CoverageWriter writer = new LcovWriter(out);
+    CoverageWriter writer = new LcovWriter(out, nameMapper);
     for (FileCoverage coverage : coverages) {
       coverage.write(writer);
     }
     writer.flush();
-    assertEquals("SF:" + a + "\n"
+    assertEquals("SF:" + aName + "\n"
                + "DA:" + 1 + "," + 3 + "\n"
                + "DA:" + 2 + "," + 0 + "\n"
                + "end_of_record\n"
-               + "SF:" + b + "\n" 
+               + "SF:" + bName + "\n" 
                + "DA:" + 1 + "," + 3 + "\n"
                + "end_of_record\n", out.toString());
   }

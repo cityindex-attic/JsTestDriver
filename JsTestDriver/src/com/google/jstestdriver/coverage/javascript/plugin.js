@@ -14,11 +14,29 @@
  * the License.
  */
 (function() {
-  var plugin = {name : 'coverage'};
   var reporter = new coverage.Reporter();
   jstestdriver.global.LCOV = reporter;
-  plugin[jstestdriver.PluginRegistrar.PROCESS_TEST_RESULT] = function(testResult) {
-    testResult.data[coverage.COVERAGE_DATA_KEY] = reporter.summarizeCoverage().toJson();
-  }
+
+  var testRunnerPlugin =
+      new jstestdriver.plugins.TestRunnerPlugin(Date, function() {
+    jstestdriver.jQuery('body').children().remove();
+    jstestdriver.jQuery(document).unbind();
+    jstestdriver.jQuery(document).die();
+  });
+
+  var plugin =
+      new coverage.InstrumentedTestCaseRunnerPlugin(testRunnerPlugin,
+                                                    reporter,
+                                                    jstestdriver.setTimeout);
   jstestdriver.pluginRegistrar.register(plugin);
+
+  var resultsPlugin = {name : 'coverage'};
+  resultsPlugin[jstestdriver.PluginRegistrar.PROCESS_TEST_RESULT] = function(testResult) {
+    if (!testResult.data[coverage.COVERAGE_DATA_KEY]) {
+      testResult.data[coverage.COVERAGE_DATA_KEY] =
+          reporter.summarizeCoverage().toProtoBuffer();
+    }
+  }
+  jstestdriver.pluginRegistrar.register(resultsPlugin);
+
 })();

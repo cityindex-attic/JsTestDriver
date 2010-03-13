@@ -27,8 +27,11 @@ import java.io.ByteArrayOutputStream;
  */
 public class SummaryCoverageWriterTest extends TestCase {
   public void testWriteSummary() throws Exception {
-    final String a = "foo.js";
-    final String b = "zar.js";
+    final CoverageNameMapper nameMapper = new CoverageNameMapper();
+    final String aName = "foo.js";
+    final String bName = "zar.js";
+    final int a = nameMapper.map(aName);
+    final int b = nameMapper.map(bName);
     final FileCoverage[] coverages  = new FileCoverage[] {
         new FileCoverage(a, Lists.newArrayList(new CoveredLine(1, 3),
                                                new CoveredLine(2, 0))),
@@ -36,13 +39,13 @@ public class SummaryCoverageWriterTest extends TestCase {
     };
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     
-    SummaryCoverageWriter writer = new SummaryCoverageWriter(out);
+    SummaryCoverageWriter writer = new SummaryCoverageWriter(out, nameMapper);
     for (FileCoverage coverage : coverages) {
       coverage.write(writer);
     }
     writer.flush();
     assertEquals(String.format("%s: %s%% covered\n" +
                                "%s: %s%% covered\n",
-                               a, "50.0", b, "100.0"), out.toString());
+                               aName, "50.0", bName, "100.0"), out.toString());
   }
 }

@@ -276,6 +276,9 @@ public Token nextToken()
 
 @parser::members
 {
+
+public java.util.Map<String, java.util.List<Integer>> linesMap = new java.util.HashMap<String, java.util.List<Integer>>();
+
 private final boolean isLeftHandSideAssign(RuleReturnScope lhs, Object[] cached)
 {
 	if (cached[0] != null)
@@ -1587,7 +1590,7 @@ scope {
   $program::executableLines = new java.util.LinkedList();
   $program::stopLine = 0;
 }
-	: (sourceElement*) {java.util.Collections.sort($program::executableLines);}
+	: (sourceElement*) {java.util.Collections.sort($program::executableLines); linesMap.put($program::name, $program::executableLines);}
 	-> init_instrument(stmt = {$text}, hash = {$program::hash}, name = {name}, lines = {$program::executableLines.toString()})
 	;
 

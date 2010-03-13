@@ -45,7 +45,6 @@ public class RunTestsActionResponseStream implements ResponseStream {
         for (TestResult result : testResults) {
           if (result.getResult() == TestResult.Result.failed
               || result.getResult() == TestResult.Result.error) {
-            System.out.println("Failed " + result);
             accumulator.add();
           }
           listener.onTestComplete(result);

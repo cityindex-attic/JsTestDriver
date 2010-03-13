@@ -16,6 +16,7 @@
 
 package com.google.jstestdriver.coverage;
 
+import com.google.inject.Inject;
 import com.google.jstestdriver.coverage.es3.ES3InstrumentLexer;
 import com.google.jstestdriver.coverage.es3.ES3InstrumentParser;
 
@@ -35,14 +36,22 @@ public class CodeCoverageDecorator {
   private static final char[] TEMPLATE =
     ("group TestRewrite;\n" +
      "init_instrument(stmt, hash, name, lines) ::= \"LCOV_<hash>=" +
-        "LCOV.initNoop('<name>',0,<lines>);<stmt>\"" +
+        "LCOV.initNoop(<name>,0,<lines>);<stmt>\"" +
      "instrument(stmt, hash, ln) ::= \"LCOV_<hash>[<ln>]++; <stmt>\"" +
      "pass(stmt) ::= \"<stmt>\"").toCharArray();
+  private final CoverageNameMapper mapper;
 
-  public String decorate(Code code) {
+  @Inject
+  public CodeCoverageDecorator(CoverageNameMapper mapper) {
+    this.mapper = mapper;
+  }
+  
+  public DecoratedCode decorate(Code code) {
     StringTemplateGroup templates = new StringTemplateGroup(new CharArrayReader(TEMPLATE));
     ANTLRStringStream stream = new ANTLRStringStream(code.getSourceCode());
-    stream.name = code.getFilePath();
+    Integer fileId = mapper.map(code.getFilePath());
+    String mappedName = String.valueOf(fileId);
+    stream.name = mappedName;
     ES3InstrumentLexer lexer = new ES3InstrumentLexer(stream);
     TokenRewriteStream tokens = new TokenRewriteStream(lexer);
     ES3InstrumentParser parser = new ES3InstrumentParser(tokens);
@@ -52,6 +61,9 @@ public class CodeCoverageDecorator {
     } catch (RecognitionException e) {
       throw new RuntimeException(e);
     }
-    return tokens.toString();
+    return new DecoratedCode(fileId,
+                             code.getFilePath(),
+                             parser.linesMap.get(mappedName),
+                             tokens.toString());
   }
 }

@@ -49,6 +49,7 @@ public class TestResultPrintingModule extends AbstractModule {
     this.testOutput = testOutput;
   }
 
+  @Override
   protected void configure() {
     bind(PrintStream.class).annotatedWith(Names.named("outputStream")).toInstance(out);
     Multibinder<TestResultListener> testResultListeners =

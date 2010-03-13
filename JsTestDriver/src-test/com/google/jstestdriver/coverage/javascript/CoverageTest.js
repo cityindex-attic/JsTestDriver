@@ -19,7 +19,7 @@ var CoverageTest = TestCase('CoverageTest');
 CoverageTest.prototype.testInit = function() {
   var executableLines = [1,2,5];
   var totalLines = 6;
-  var fileName = 'FILE';
+  var fileName = 1;
   var fileCoverage = new coverage.Reporter().init(fileName, totalLines, executableLines);
   assertEquals('The length of fileCoverage is invalid.',totalLines, fileCoverage.length);
   for (var i = 1; i < executableLines.length; i++) {
@@ -31,7 +31,7 @@ CoverageTest.prototype.testInit = function() {
 CoverageTest.prototype.testInitNoop = function() {
   var executableLines = [1,2,5];
   var totalLines = 6;
-  var fileName = 'FILE';
+  var fileName = 1;
   var fileCoverage = new coverage.Reporter().initNoop(fileName, totalLines, executableLines);
   assertEquals('The length of fileCoverage is invalid.',totalLines, fileCoverage.length);
   for (var i = 0; i < executableLines.length; i++) {
@@ -43,7 +43,7 @@ CoverageTest.prototype.testToCoveredLines = function() {
   var executableLines = [1,2,5];
   var executed = [1, 0, 0];
   var totalLines = 6;
-  var fileName = 'FILE';
+  var fileName = 1;
   var fileCoverage = new coverage.Reporter().init(fileName, totalLines, executableLines);
   
   for (var i = 0; i < executableLines.length; i++) {
@@ -61,9 +61,9 @@ CoverageTest.prototype.testToCoveredLines = function() {
 
 CoverageTest.prototype.testSummarizeCoverage = function() {
   var reporter = new coverage.Reporter();
-  var fileOne = reporter.init('boo.js', 10, [1,3,5]);
+  var fileOne = reporter.init(1, 10, [1,3,5]);
   fileOne[5]++;
-  var fileTwo = reporter.init('foo.js', 5, [2,3,4]);
+  var fileTwo = reporter.init(2, 5, [2,3,4]);
   fileTwo[3]++;
   fileTwo[4]++;
   var reports = reporter.summarizeCoverage().coveredLines;
@@ -76,11 +76,27 @@ CoverageTest.prototype.testSummarizeCoverage = function() {
 
 CoverageTest.prototype.testCoveredLinesToJson = function() {
   var reporter = new coverage.Reporter();
-  var fileOne = reporter.init('boo.js', 10, [1,3,5]);
+  var fileOne = reporter.init(1, 10, [1,3,5]);
   fileOne[5]++;
-  var fileTwo = reporter.init('foo.js', 5, [2,3,4]);
+  var fileTwo = reporter.init(2, 5, [2,3,4]);
   fileTwo[3]++;
   fileTwo[4]++;
   var summary = reporter.summarizeCoverage();
-  assertEquals(JSON.stringify(summary.coveredLines), JSON.stringify(JSON.parse(summary.toJson())));
+  var uncompressedSummary = summary.toJson();
+  //jstestdriver.console.debug(uncompressedSummary);
+  //assertEquals(JSON.stringify(summary.coveredLines), JSON.stringify(JSON.parse(uncompressedSummary)));
+};
+
+CoverageTest.prototype.testCoveredLinesToProtoBuffer = function() {
+  var reporter = new coverage.Reporter();
+  var fileOne = reporter.init(1, 10, [1,3,5]);
+  fileOne[5]++;
+  var fileTwo = reporter.init(2, 5, [2,3,4]);
+  fileTwo[3]++;
+  fileTwo[4]++;
+  var summary = reporter.summarizeCoverage();
+  var uncompressedSummary = summary.toProtoBuffer();
+  jstestdriver.console.debug(uncompressedSummary);
+  assertEquals("[[1,[[1,1],[3,0],[5,1]]],[2,[[2,1],[3,1],[4,1]]]]",
+               uncompressedSummary);
 };

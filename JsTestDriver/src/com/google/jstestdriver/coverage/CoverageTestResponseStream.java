@@ -15,14 +15,15 @@
  */
 package com.google.jstestdriver.coverage;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.Response;
+import com.google.jstestdriver.Response.ResponseType;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultGenerator;
-import com.google.jstestdriver.Response.ResponseType;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 
 /**
@@ -35,7 +36,7 @@ public class CoverageTestResponseStream implements ResponseStream {
   private final String browserId;
   private final CoverageAccumulator accumulator;
   private final TestResultGenerator generator = new TestResultGenerator();
-  private final Gson gson = new Gson();
+  private final FileCoverageDeserializer deserializer = new FileCoverageDeserializer();
   
   public CoverageTestResponseStream(String browserId, CoverageAccumulator coverageReporter) {
     this.browserId = browserId;
@@ -52,16 +53,18 @@ public class CoverageTestResponseStream implements ResponseStream {
     try {
       Collection<TestResult> testResults = generator.getTestResults(response);
       for (TestResult testResult : testResults) {
-        final String coveredLines = testResult.getData().get(COVERAGE_DATA_KEY);
+        final String coveredLines =
+            testResult.getData().get(COVERAGE_DATA_KEY);
         if (coveredLines != null) {
-          Collection<FileCoverage> lines = gson.fromJson(coveredLines,
-              new TypeToken<Collection<FileCoverage>>(){}.getType());
+          InputStream inputStream = new ByteArrayInputStream(coveredLines.getBytes("UTF-8"));
+          Collection<FileCoverage> lines = deserializer.deserializeCoverages(inputStream);
           accumulator.add(browserId, lines);
         }
       }
-    }catch (RuntimeException e) {
-      e.printStackTrace();
+    } catch (RuntimeException e) {
       throw e;
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 }

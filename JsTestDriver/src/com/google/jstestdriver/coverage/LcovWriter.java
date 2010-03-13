@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver.coverage;
 
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import java.io.IOException;
@@ -26,14 +27,18 @@ import java.io.Writer;
  */
 public class LcovWriter implements CoverageWriter {
   private final Writer out;
+  private final CoverageNameMapper mapper;
 
-  public LcovWriter(@Named("coverageFileWriter") Writer out) {
+  @Inject
+  public LcovWriter(@Named("coverageFileWriter") Writer out,
+                    CoverageNameMapper mapper) {
     this.out = out;
+    this.mapper = mapper;
   }
 
-  public void writeRecordStart(String qualifiedFile){
+  public void writeRecordStart(Integer fileId){
     try {
-      out.append("SF:").append(qualifiedFile).append("\n");
+      out.append("SF:").append(mapper.unmap(fileId)).append("\n");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
