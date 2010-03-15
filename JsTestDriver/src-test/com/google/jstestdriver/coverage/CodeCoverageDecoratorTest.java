@@ -142,7 +142,11 @@ public class CodeCoverageDecoratorTest extends TestCase {
     List<CodeLine> source = Lists.newLinkedList();
     String filePath = "filename.js";
     CoverageNameMapper mapper = new CoverageNameMapper();
-    String hash = Integer.toString(Math.abs(String.valueOf(mapper.map(filePath)).hashCode()), Character.MAX_RADIX);
+    String hash = Integer.toString(
+        Math.abs(
+            String.valueOf(
+                mapper.map(filePath)).hashCode()),
+                Character.MAX_RADIX);
 
     public CoverageAsserter instrument(String instrument) {
       instruments.add(new LcovInstrumentation(instrument.replaceAll("LCOV_HASH",
@@ -168,7 +172,8 @@ public class CodeCoverageDecoratorTest extends TestCase {
         sourceCode.append(line.getSource());
       }
       
-      CodeCoverageDecorator decorator = new CodeCoverageDecorator(mapper);
+      CodeCoverageDecorator decorator =
+          new CodeCoverageDecorator(mapper, new CoverageAccumulator());
       Iterator<Instrumentation> instrumentsIterator = instruments.iterator();
       Iterator<CodeLine> sourceIterator = source.iterator();
       DecoratedCode decorated = decorator.decorate(

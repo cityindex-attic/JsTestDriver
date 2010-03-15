@@ -62,7 +62,7 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
     private final String decorated;
     private final Code expectedCode;
     public DecoratorStub(String decorated, Code expectedCode) {
-      super(null);
+      super(null, new CoverageAccumulator());
       this.decorated = decorated;
       this.expectedCode = expectedCode;
     }
