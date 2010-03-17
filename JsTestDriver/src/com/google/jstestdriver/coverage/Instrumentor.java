@@ -1,13 +1,14 @@
 package com.google.jstestdriver.coverage;
 
+import com.google.inject.ImplementedBy;
+
 
 /**
- * defines the expected interface for instrumenting code.
+ * Defines the expected interface for instrumenting code.
  * @author corysmith@google.com (Cory Smith)
  *
  */
+@ImplementedBy(CodeInstrumentor.class)
 public interface Instrumentor {
-
-  public abstract InstrumentedCode instrument(Code code);
-
+  public InstrumentedCode instrument(Code code);
 }
