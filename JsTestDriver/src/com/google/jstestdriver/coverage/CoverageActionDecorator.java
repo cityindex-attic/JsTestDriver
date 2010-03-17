@@ -28,19 +28,17 @@ import java.util.List;
  *
  */
 public class CoverageActionDecorator implements ActionListProcessor {
-  
-  private final CoverageWriter writer;
-  private final CoverageAccumulator accumulator;
+
+  private final CoverageReporterAction reporter;
 
   @Inject
-  public CoverageActionDecorator(CoverageAccumulator accumulator, CoverageWriter writer) {
-    this.accumulator = accumulator;
-    this.writer = writer;
+  public CoverageActionDecorator(CoverageReporterAction reporter) {
+    this.reporter = reporter;
   }
 
   public List<Action> process(List<Action> actions) {
     List<Action> processed = Lists.newLinkedList(actions);
-    processed.add(new CoverageReporterAction(accumulator, writer));
+    processed.add(reporter);
     return processed;
   }
 }

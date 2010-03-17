@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver.coverage;
 
+import com.google.inject.Inject;
 import com.google.jstestdriver.Action;
 
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class CoverageReporterAction implements Action {
   private final CoverageAccumulator accumulator;
   private final CoverageWriter writer;
 
+  @Inject
   public CoverageReporterAction(CoverageAccumulator accumulator,
       CoverageWriter writer) {
     this.accumulator = accumulator;
