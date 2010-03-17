@@ -26,6 +26,8 @@ import org.antlr.runtime.TokenRewriteStream;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
 import java.io.CharArrayReader;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Decorates the source code with coverage instrumentation.
@@ -62,9 +64,11 @@ public class CodeInstrumentor implements Instrumentor {
     } catch (RecognitionException e) {
       throw new RuntimeException(e);
     }
+    List<Integer> executableLines = parser.linesMap.get(mappedName);
     return new InstrumentedCode(fileId,
                                 code.getFilePath(),
-                                parser.linesMap.get(mappedName),
+                                executableLines == null ?
+                                    Collections.<Integer>emptyList() : executableLines,
                                 tokens.toString());
   }
 }
