@@ -60,6 +60,7 @@ public class CoverageJsAdderTest extends TestCase {
       this.source = source;
     }
     
+    @Override
     public String load(String path) {
       return source;
     }

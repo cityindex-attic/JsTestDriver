@@ -64,7 +64,7 @@ public class CoverageModule extends AbstractModule {
   }
 
   /** Lets me bind to annotations with arguments, namespaced to the Coverage plugin.*/
-  static class CoverageImpl implements Coverage {
+  public static class CoverageImpl implements Coverage {
 
     private final String value;
 

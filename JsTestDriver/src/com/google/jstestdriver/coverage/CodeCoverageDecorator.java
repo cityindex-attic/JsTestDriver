@@ -16,7 +16,6 @@
 
 package com.google.jstestdriver.coverage;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.jstestdriver.coverage.es3.ES3InstrumentLexer;
 import com.google.jstestdriver.coverage.es3.ES3InstrumentParser;
@@ -27,7 +26,6 @@ import org.antlr.runtime.TokenRewriteStream;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
 import java.io.CharArrayReader;
-import java.util.List;
 
 /**
  * Decorates the source code with coverage instrumentation.
@@ -42,13 +40,10 @@ public class CodeCoverageDecorator {
      "instrument(stmt, hash, ln) ::= \"LCOV_<hash>[<ln>]++; <stmt>\"" +
      "pass(stmt) ::= \"<stmt>\"").toCharArray();
   private final CoverageNameMapper mapper;
-  private final CoverageAccumulator accumulator;
 
   @Inject
-  public CodeCoverageDecorator(CoverageNameMapper mapper,
-                               CoverageAccumulator accumulator) {
+  public CodeCoverageDecorator(CoverageNameMapper mapper) {
     this.mapper = mapper;
-    this.accumulator = accumulator;
   }
   
   public DecoratedCode decorate(Code code) {
@@ -66,14 +61,6 @@ public class CodeCoverageDecorator {
     } catch (RecognitionException e) {
       throw new RuntimeException(e);
     }
-    List<CoveredLine> instrumentedLines = Lists.newLinkedList();
-
-    for (Integer line : parser.linesMap.get(mappedName)) {
-      instrumentedLines.add(new CoveredLine(line, 0));
-    }
-    accumulator.add("<initial instrument>",
-                    Lists.newArrayList(
-                        new FileCoverage(fileId, instrumentedLines)));
     return new DecoratedCode(fileId,
                              code.getFilePath(),
                              parser.linesMap.get(mappedName),
