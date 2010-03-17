@@ -19,14 +19,14 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
-public class DecoratedCode {
+public class InstrumentedCode {
 
   private final List<Integer> executableLines;
   private final String instrumentedCode;
   private final String path;
   private final Integer fileId;
 
-  public DecoratedCode(Integer fileId,
+  public InstrumentedCode(Integer fileId,
                        String path,
                        List<Integer> executableLines,
                        String instrumentedCode) {

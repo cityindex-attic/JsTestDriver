@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 import java.util.Iterator;
 import java.util.List;
 
-public class CodeCoverageDecoratorTest extends TestCase {
+public class CodeInstrumentorTest extends TestCase {
 
   public void testSourceFileLineCoverageDecoration() throws Exception {
     new CoverageAsserter()
@@ -172,11 +172,11 @@ public class CodeCoverageDecoratorTest extends TestCase {
         sourceCode.append(line.getSource());
       }
       
-      CoverageDecorator decorator =
-          new CodeCoverageDecorator(mapper);
+      Instrumentor decorator =
+          new CodeInstrumentor(mapper);
       Iterator<Instrumentation> instrumentsIterator = instruments.iterator();
       Iterator<CodeLine> sourceIterator = source.iterator();
-      DecoratedCode decorated = decorator.decorate(
+      InstrumentedCode decorated = decorator.instrument(
           new Code(filePath, sourceCode.toString()));
       for(String actual : decorated.getInstrumentedCode().split("\n")) {
         instrumentsIterator.next().assertLine(actual);

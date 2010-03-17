@@ -33,12 +33,12 @@ import java.util.Set;
 public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(CoverageInstrumentingProcessor.class);
-  private final CoverageDecorator decorator;
+  private final Instrumentor decorator;
   private final Set<String> excludes;
   private final CoverageAccumulator accumulator;
 
   @Inject
-  public CoverageInstrumentingProcessor(CoverageDecorator decorator,
+  public CoverageInstrumentingProcessor(Instrumentor decorator,
                                         @Coverage("coverageExcludes") Set<String> excludes,
                                         CoverageAccumulator accumulator) {
     this.decorator = decorator;
@@ -52,8 +52,8 @@ public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
       return file;
     }
     long start = System.currentTimeMillis();
-    DecoratedCode decorated = decorator.decorate(new Code(file.getFileName(),
-                                                 file.getData()));
+    InstrumentedCode decorated = decorator.instrument(new Code(file.getFileName(),
+                                                      file.getData()));
     LOGGER.debug(String.format("Instrumented %s in %ss",
         file.getFileName(),
         (System.currentTimeMillis() - start)/1000.0

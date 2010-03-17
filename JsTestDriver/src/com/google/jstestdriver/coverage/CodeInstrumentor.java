@@ -32,7 +32,7 @@ import java.io.CharArrayReader;
  * @author corysmith@google.com (Cory Smith)
  * @author misko@google.com (Misko Hevery)
  */
-public class CodeCoverageDecorator implements CoverageDecorator {
+public class CodeInstrumentor implements Instrumentor {
   private static final char[] TEMPLATE =
     ("group TestRewrite;\n" +
      "init_instrument(stmt, hash, name, lines) ::= \"LCOV_<hash>=" +
@@ -42,14 +42,12 @@ public class CodeCoverageDecorator implements CoverageDecorator {
   private final CoverageNameMapper mapper;
 
   @Inject
-  public CodeCoverageDecorator(CoverageNameMapper mapper) {
+  public CodeInstrumentor(CoverageNameMapper mapper) {
     this.mapper = mapper;
   }
   
-  /* (non-Javadoc)
-   * @see com.google.jstestdriver.coverage.CoverageDecorator#decorate(com.google.jstestdriver.coverage.Code)
-   */
-  public DecoratedCode decorate(Code code) {
+
+  public InstrumentedCode instrument(Code code) {
     StringTemplateGroup templates = new StringTemplateGroup(new CharArrayReader(TEMPLATE));
     ANTLRStringStream stream = new ANTLRStringStream(code.getSourceCode());
     Integer fileId = mapper.map(code.getFilePath());
@@ -64,9 +62,9 @@ public class CodeCoverageDecorator implements CoverageDecorator {
     } catch (RecognitionException e) {
       throw new RuntimeException(e);
     }
-    return new DecoratedCode(fileId,
-                             code.getFilePath(),
-                             parser.linesMap.get(mappedName),
-                             tokens.toString());
+    return new InstrumentedCode(fileId,
+                                code.getFilePath(),
+                                parser.linesMap.get(mappedName),
+                                tokens.toString());
   }
 }
