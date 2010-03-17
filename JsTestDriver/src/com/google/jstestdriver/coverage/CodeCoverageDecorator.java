@@ -32,7 +32,7 @@ import java.io.CharArrayReader;
  * @author corysmith@google.com (Cory Smith)
  * @author misko@google.com (Misko Hevery)
  */
-public class CodeCoverageDecorator {
+public class CodeCoverageDecorator implements CoverageDecorator {
   private static final char[] TEMPLATE =
     ("group TestRewrite;\n" +
      "init_instrument(stmt, hash, name, lines) ::= \"LCOV_<hash>=" +
@@ -46,6 +46,9 @@ public class CodeCoverageDecorator {
     this.mapper = mapper;
   }
   
+  /* (non-Javadoc)
+   * @see com.google.jstestdriver.coverage.CoverageDecorator#decorate(com.google.jstestdriver.coverage.Code)
+   */
   public DecoratedCode decorate(Code code) {
     StringTemplateGroup templates = new StringTemplateGroup(new CharArrayReader(TEMPLATE));
     ANTLRStringStream stream = new ANTLRStringStream(code.getSourceCode());

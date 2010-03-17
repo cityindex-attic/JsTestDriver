@@ -172,7 +172,7 @@ public class CodeCoverageDecoratorTest extends TestCase {
         sourceCode.append(line.getSource());
       }
       
-      CodeCoverageDecorator decorator =
+      CoverageDecorator decorator =
           new CodeCoverageDecorator(mapper);
       Iterator<Instrumentation> instrumentsIterator = instruments.iterator();
       Iterator<CodeLine> sourceIterator = source.iterator();

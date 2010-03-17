@@ -57,7 +57,7 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
     assertSame(remote, processor.process(remote));
     assertSame(excluded, processor.process(excluded));
   }
-  
+
   static class DecoratorStub extends CodeCoverageDecorator {
     private final String decorated;
     private final Code expectedCode;
@@ -70,7 +70,8 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
     @Override
     public DecoratedCode decorate(Code code) {
       assertEquals(expectedCode, code);
-      return new DecoratedCode(-1, "", Collections.<Integer>emptyList(), decorated);
+      return new DecoratedCode(-1,
+          "", Collections.<Integer>emptyList(), decorated);
     }
   }
 }

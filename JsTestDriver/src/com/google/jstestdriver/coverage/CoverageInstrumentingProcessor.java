@@ -33,12 +33,12 @@ import java.util.Set;
 public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(CoverageInstrumentingProcessor.class);
-  private final CodeCoverageDecorator decorator;
+  private final CoverageDecorator decorator;
   private final Set<String> excludes;
   private final CoverageAccumulator accumulator;
 
   @Inject
-  public CoverageInstrumentingProcessor(CodeCoverageDecorator decorator,
+  public CoverageInstrumentingProcessor(CoverageDecorator decorator,
                                         @Coverage("coverageExcludes") Set<String> excludes,
                                         CoverageAccumulator accumulator) {
     this.decorator = decorator;
