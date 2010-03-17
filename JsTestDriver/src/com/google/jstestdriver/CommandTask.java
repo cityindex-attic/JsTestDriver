@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.Response.ResponseType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,10 +115,10 @@ public class CommandTask {
     return new FileSource("/test/" + info.getFileName(), info.getTimestamp());
   }
 
-  private void shouldPanic(String msg) {
-    if (msg.startsWith("PANIC:")) {
-      LOGGER.error(msg);
-      throw new RuntimeException(msg);
+  private void shouldPanic(Response response) {
+    if (response.getResponseType() == ResponseType.BROWSER_PANIC) {
+      LOGGER.error(response.getResponse());
+      throw new RuntimeException(response.getResponse());
     }
   }
 
@@ -146,7 +147,7 @@ public class CommandTask {
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
 
-        shouldPanic(response.getResponse());
+        shouldPanic(response);
         finalFilesToUpload.addAll(filesToUpload);
       } else {
         for (FileInfo file : filesToUpload) {
@@ -179,7 +180,7 @@ public class CommandTask {
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
 
-        shouldPanic(response.getResponse());
+        shouldPanic(response);
         //LoadedFiles loadedFiles = gson.fromJson(response.getResponse(), LoadedFiles.class);
         stream.stream(response);
       }
@@ -233,7 +234,7 @@ public class CommandTask {
         streamMessage = gson.fromJson(response, StreamMessage.class);
         Response resObj = streamMessage.getResponse();
 
-        shouldPanic(resObj.getResponse());
+        shouldPanic(resObj);
         stream.stream(resObj);
       } while (streamMessage != null && !streamMessage.isLast());
     } catch (Exception e) {
