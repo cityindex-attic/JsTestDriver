@@ -30,6 +30,14 @@ public class CodeInstrumentorTest extends TestCase {
       .instrument("LCOV_HASH[2]++;").code(" var b = 2;")
       .assertCoverage();
   }
+  
+  //TODO(corysmith): Figure out how to fix this test.
+  /*public void testSourceFileLineCommentDecoration() throws Exception {
+    new CoverageAsserter()
+    .instrument("LCOV_HASH=LCOV.initNoop('FILE',0,[1, 2]);").code("//foo")
+    .noInstrument().code("// bar")
+    .assertCoverage();
+  }*/
 
 
   public void testDoNotDecorateStatementsAcrossMultipleLines() throws Exception {

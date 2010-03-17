@@ -21,7 +21,6 @@ import com.google.jstestdriver.coverage.es3.ES3InstrumentLexer;
 import com.google.jstestdriver.coverage.es3.ES3InstrumentParser;
 
 import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenRewriteStream;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
@@ -32,9 +31,16 @@ import java.util.List;
 /**
  * Decorates the source code with coverage instrumentation.
  * @author corysmith@google.com (Cory Smith)
- * @author misko@google.com (Misko Hevery)
  */
 public class CodeInstrumentor implements Instrumentor {
+
+  /** Thrown when instrumentation fails.*/
+  public class InstrumentationException extends Error {
+    public InstrumentationException(String path, Throwable cause) {
+      super("error instrumenting " + path, cause);
+    }
+  }
+
   private static final char[] TEMPLATE =
     ("group TestRewrite;\n" +
      "init_instrument(stmt, hash, name, lines) ::= \"LCOV_<hash>=" +
@@ -61,8 +67,8 @@ public class CodeInstrumentor implements Instrumentor {
     parser.setTemplateLib(templates);
     try {
       parser.program();
-    } catch (RecognitionException e) {
-      throw new RuntimeException(e);
+    } catch (Exception e) {
+      throw new InstrumentationException(code.getFilePath(), e);
     }
     List<Integer> executableLines = parser.linesMap.get(mappedName);
     return new InstrumentedCode(fileId,
