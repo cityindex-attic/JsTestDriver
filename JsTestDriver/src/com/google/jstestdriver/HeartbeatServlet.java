@@ -47,20 +47,22 @@ public class HeartbeatServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     PrintWriter writer = resp.getWriter();
     String id = req.getParameter("id");
-    LOGGER.info("heartbeat " + id);
     if (id != null) { 
       SlaveBrowser browser = capturedBrowsers.getBrowser(id);
       if (browser != null) {
+        LOGGER.debug("heartbeat " + browser);
         if (!browser.isAlive()) {
-          capturedBrowsers.removeSlave(id);
+          //capturedBrowsers.removeSlave(id);
           writer.write("DEAD");
         } else {
           writer.write("OK");
         }
       } else {
+        LOGGER.debug("heartbeat " + id + "with no browser.");
         writer.write("DEAD");
       }
     } else {
+      LOGGER.debug("no heartbeat, no browser.");
       writer.write("DEAD");
     }
     writer.flush();

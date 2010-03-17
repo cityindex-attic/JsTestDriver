@@ -69,12 +69,15 @@ public class CommandServlet extends HttpServlet {
 
     while (cmdResponse == null) {
       if (!browser.isAlive()) {
+        SlaveBrowser deadBrowser = capturedBrowsers.getBrowser(browser.getId());
         capturedBrowsers.removeSlave(browser.getId());
         Response response = new Response();
 
-        response.setBrowser(browser.getBrowserInfo());
-        response.setResponse("PANIC: browser " + browser.getBrowserInfo()
-                + " is not responding anymore, removing it from the list of captured browsers");
+        response.setBrowser(deadBrowser.getBrowserInfo());
+        response.setResponse(
+            gson.toJson(
+                new BrowserPanic(deadBrowser.getBrowserInfo())));
+        response.setType(BrowserPanic.TYPE_NAME);
 
         return new CommandResponse(response, true);
       }

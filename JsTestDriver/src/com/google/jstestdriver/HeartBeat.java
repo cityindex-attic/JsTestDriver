@@ -16,6 +16,9 @@
 
 package com.google.jstestdriver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -31,6 +34,7 @@ import java.util.TimerTask;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 class HeartBeat extends TimerTask {
+  private static final Logger logger = LoggerFactory.getLogger(HeartBeat.class);
 
   private final String url;
 
@@ -57,7 +61,10 @@ class HeartBeat extends TimerTask {
       connection = (HttpURLConnection) new URL(url).openConnection();
 
       connection.connect();
-      toString(connection.getInputStream());
+      if (logger.isDebugEnabled()) {
+        logger.debug("Client Heatbeat: {}",
+                     toString(connection.getInputStream()));
+      }
     } catch (MalformedURLException e) {
       throw new RuntimeException(e);
     } catch (IOException e) {

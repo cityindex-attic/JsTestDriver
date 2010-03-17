@@ -15,10 +15,14 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Lists;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -45,9 +49,13 @@ public class ThreadedActionsRunner implements Action {
     }
     CountDownLatch latch = new CountDownLatch(browsersNumber);
 
+    // TODO(corysmith): Change the threaded action runner to
+    // return useful information about a run.
+    List<Future<Boolean>> futures = Lists.newLinkedList();
     for (BrowserInfo browserInfo : browsers) {
-      executor.submit(new ThreadedActionRunner(browserInfo.getId().toString(),
-          client, latch, actions));
+      futures.add(executor.submit(
+          new ThreadedActionRunner(browserInfo.getId().toString(),
+          client, latch, actions)));
     }
     executor.shutdown();
     try {
@@ -55,12 +63,23 @@ public class ThreadedActionsRunner implements Action {
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
+    for (Future<Boolean> future : futures) {
+      try {
+        future.get();
+      } catch (InterruptedException e) {
+        // TODO(corysmith): fix the error reporting to be more useful.
+        throw new FailureException("Failure during run", e);
+      } catch (ExecutionException e) {
+        // TODO(corysmith): fix the error reporting to be more useful.
+        throw new FailureException("Failure during run", e);
+      }
+    }
   }
-  
+
   public List<ThreadedAction> getActions() {
     return actions;
   }
-  
+
   public RunTestsAction getRunTestsAction() {
     for (ThreadedAction action : actions) {
       if (action instanceof RunTestsAction) {
@@ -69,7 +88,7 @@ public class ThreadedActionsRunner implements Action {
     }
     return null;
   }
-  
+
   public JsTestDriverClient getClient() {
     return client;
   }

@@ -179,9 +179,7 @@ public class CommandTask {
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
 
-        if (response.getResponse().startsWith("PANIC:")) {
-          throw new RuntimeException(response.getResponse());
-        }
+        shouldPanic(response.getResponse());
         //LoadedFiles loadedFiles = gson.fromJson(response.getResponse(), LoadedFiles.class);
         stream.stream(response);
       }
@@ -239,8 +237,7 @@ public class CommandTask {
         stream.stream(resObj);
       } while (streamMessage != null && !streamMessage.isLast());
     } catch (Exception e) {
-      System.out.println(e);
-      e.printStackTrace();
+      throw new FailureException("Failed running " + params, e);
     } finally {
       stream.finish();
       heartBeatManager.cancelTimer();

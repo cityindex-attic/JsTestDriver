@@ -19,13 +19,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class ThreadedActionRunner implements Runnable {
+// TODO(corysmith): Work out a better return value.
+public class ThreadedActionRunner implements Callable<Boolean> {
   private static final Logger logger = LoggerFactory.getLogger(ThreadedActionRunner.class);
 
   private final String id;
@@ -33,15 +35,17 @@ public class ThreadedActionRunner implements Runnable {
   private final CountDownLatch latch;
   private final List<ThreadedAction> actions;
 
-  public ThreadedActionRunner(String id, JsTestDriverClient client,
-      CountDownLatch latch, List<ThreadedAction> actions) {
+  public ThreadedActionRunner(String id,
+                              JsTestDriverClient client,
+                              CountDownLatch latch,
+                              List<ThreadedAction> actions) {
     this.id = id;
     this.client = client;
     this.latch = latch;
     this.actions = actions;
   }
 
-  public void run() {
+  public Boolean call() {
     try {
       for (ThreadedAction action : actions) {
         logger.debug("Running Threaded Action {}", action);
@@ -50,9 +54,6 @@ public class ThreadedActionRunner implements Runnable {
     } finally {
       latch.countDown();
     }
-  }
-  
-  public List<ThreadedAction> getActions() {
-    return actions;
+    return true;
   }
 }

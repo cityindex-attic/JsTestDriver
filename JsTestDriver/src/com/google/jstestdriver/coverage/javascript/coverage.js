@@ -207,15 +207,15 @@ var coverage = (function() {
                                           runTest);
     
     var reporter = this.coverageReporter;
-    function processCoverage() {
-      return reporter.summarizeCoverage().toProtoBuffer();
+    function summarizeCoverage() {
+      return reporter.summarizeCoverage();
     }
 
     var testCaseRunner =
         new InstrumentedTestCaseRunner(iterator,
                                        onTestDone,
                                        onTestRunConfigurationComplete,
-                                       processCoverage,
+                                       summarizeCoverage,
                                        this.setTimeout);
     // replace this with a series of generic TestRunSteps: each Step just call done, which runs the next step.
     testCaseRunner.run();
@@ -255,9 +255,14 @@ var coverage = (function() {
   InstrumentedTestCaseRunner.prototype.processResults = function(result) {
     var self = this;
     this.setTimeout(function(){
-      result.data[COVERAGE_DATA_KEY] = self.processCoverage();
-      self.onTestDone(result);
-      self.setTimeout(self.boundRun, 1);
+      var summary = self.processCoverage();
+      self.setTimeout(function() {
+        result.data[COVERAGE_DATA_KEY] = summary.toProtoBuffer();
+        self.setTimeout(function() {
+          self.onTestDone(result);
+          self.setTimeout(self.boundRun, 1);
+        }, 1);
+      }, 1);
     }, 1);
   }
 

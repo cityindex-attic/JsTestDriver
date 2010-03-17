@@ -33,6 +33,7 @@ public class Response {
     TEST_RESULT(new TypeToken<Collection<TestResult>>() {}.getType()),
     TEST_QUERY_RESULT(null),
     RESET_RESULT(null),
+    BROWSER_PANIC(BrowserPanic.class),
     UNKNOWN(null),
     COMMAND_RESULT(null);
 
