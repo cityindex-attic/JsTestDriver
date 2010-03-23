@@ -18,6 +18,8 @@ package com.google.eclipse.javascript.jstestdriver.ui;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import com.google.eclipse.javascript.jstestdriver.ui.prefs.WorkbenchPreferencePage;
+
 /**
  * The activator class controls the plug-in life cycle
  *
@@ -40,6 +42,8 @@ public class Activator extends AbstractUIPlugin {
   @Override
   public void start(BundleContext context) throws Exception {
     super.start(context);
+    getPreferenceStore().setDefault(WorkbenchPreferencePage.PREFERRED_SERVER_PORT,
+                                    42442);
     plugin = this;
   }
 

@@ -66,9 +66,11 @@
       </viewContribution>
    </extension>
    <extension
+         id="com.google.eclipse.javascript.jstestdriver.ui.view.TestResultsPanel"
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="com.google.eclipse.javascript.jstestdriver.ui.launch.JsTestDriverLaunchConfigurationDelegate"
+            delegateName="JsTD Test"
             id="com.google.eclipse.javascript.jstestdriver.ui.jstdTestDriverLaunchConfiguration"
             modes="run"
             name="Js Test Driver Test"
@@ -122,6 +124,12 @@
             id="com.google.eclipse.javascript.jstestdriver.ui.jstdPreferencePage"
             name="JS Test Driver">
       </page>
+   </extension>
+   <extension
+         point="com.google.eclipse.javascript.jstestdriver.core.jstdLaunchListener">
+      <jstdLaunchListener
+            class="com.google.eclipse.javascript.jstestdriver.ui.view.TestResultsLaunchListener">
+      </jstdLaunchListener>
    </extension>
 
 </plugin>

@@ -60,7 +60,6 @@ jstestdriver.clearInterval = function() {
   return jstestdriver.globalClearInterval(arguments[0]);
 };
 
-
 document.write = function(str) {
   throw new Error('Illegal call to document.write');
 };

@@ -2,7 +2,7 @@
 <feature
       id="com.google.eclipse.javascript.jstestdriver.feature"
       label="JS Test Driver"
-      version="1.1"
+      version="1.1.1"
       provider-name="Google, Inc.">
 
    <description url="http://code.google.com/p/js-test-driver">
@@ -125,6 +125,17 @@ You may add Your own copyright statement to Your modifications and may provide a
 END OF TERMS AND CONDITIONS
    </license>
 
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.debug.core" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.debug.ui" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.console" version="3.4.0" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="com.google.eclipse.javascript.jstestdriver.core"
          download-size="0"
@@ -136,7 +147,7 @@ END OF TERMS AND CONDITIONS
          id="com.google.eclipse.javascript.jstestdriver.ui"
          download-size="0"
          install-size="0"
-         version="1.1"
+         version="1.1.1"
          unpack="false"/>
 
 </feature>

@@ -16,12 +16,8 @@
 
 package com.google.eclipse.javascript.jstestdriver.ui.view;
 
-import com.google.common.collect.Lists;
-import com.google.eclipse.javascript.jstestdriver.core.JstdLaunchListener;
-import com.google.eclipse.javascript.jstestdriver.core.model.EclipseJstdTestResult;
-import com.google.eclipse.javascript.jstestdriver.core.model.EclipseJstdTestRunResult;
-import com.google.eclipse.javascript.jstestdriver.core.model.ResultModel;
-import com.google.jstestdriver.TestResult;
+import java.io.IOException;
+import java.util.Collection;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -43,15 +39,18 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
-import java.io.IOException;
-import java.util.Collection;
+import com.google.common.collect.Lists;
+import com.google.eclipse.javascript.jstestdriver.core.model.EclipseJstdTestResult;
+import com.google.eclipse.javascript.jstestdriver.core.model.EclipseJstdTestRunResult;
+import com.google.eclipse.javascript.jstestdriver.core.model.ResultModel;
+import com.google.jstestdriver.TestResult;
 
 /**
  * Show the test results.
  *
  * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
-public class TestResultsPanel extends Composite implements JstdLaunchListener {
+public class TestResultsPanel extends Composite {
 
   private final EclipseJstdTestRunResult testRunResult;
   private final TreeViewer testResultsTree;
@@ -240,10 +239,5 @@ public class TestResultsPanel extends Composite implements JstdLaunchListener {
    */
   public void clearTreeFilter() {
     testResultsTree.setFilters(new ViewerFilter[0]);
-  }
-
-  @Override
-  public void aboutToLaunch(ILaunchConfiguration launchConfiguration) {
-    setupForNextTestRun(launchConfiguration);
   }
 }

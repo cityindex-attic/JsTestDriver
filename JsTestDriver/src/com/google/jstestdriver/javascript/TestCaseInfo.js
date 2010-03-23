@@ -13,9 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.TestCaseInfo = function(testCaseName, template) {
+jstestdriver.TestCaseInfo = function(testCaseName, template, opt_type) {
   this.testCaseName_ = testCaseName;
   this.template_ = template;
+  this.type_ = opt_type || jstestdriver.TestCaseInfo.DEFAULT_TYPE;
 };
 
 
@@ -23,7 +24,7 @@ jstestdriver.TestCaseInfo.DEFAULT_TYPE = 'default';
 
 
 jstestdriver.TestCaseInfo.prototype.getType = function() {
-  return jstestdriver.TestCaseInfo.DEFAULT_TYPE;
+  return this.type_;
 };
 
 
@@ -105,4 +106,12 @@ jstestdriver.TestCaseInfo.prototype.getTestRunConfigurationFor = function(expres
 jstestdriver.TestCaseInfo.prototype.equals = function(obj) {
   return obj && typeof obj.getTestCaseName != 'undefined'
       && obj.getTestCaseName() == this.testCaseName_;
+};
+
+
+jstestdriver.TestCaseInfo.prototype.toString = function() {
+  return "TestCaseInfo(" +
+    this.testCaseName_ +
+    "," + this.template_ +
+    "," + this.type_ + ")";
 };
