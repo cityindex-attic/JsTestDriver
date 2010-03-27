@@ -17,6 +17,7 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ import java.util.List;
 public class DryRunInfo {
   private int numTests;
   private List<String> testNames;
+  private static Gson gson = new Gson();
 
   /**
    * @return the numTests
@@ -44,6 +46,10 @@ public class DryRunInfo {
   }
 
   public static DryRunInfo fromJson(Response response) {
-    return new Gson().fromJson(response.getResponse(), DryRunInfo.class);        
+    try {
+      return gson.fromJson(response.getResponse(), DryRunInfo.class);
+    } catch (JsonParseException e) {
+      throw new RuntimeException("error deserializing " + response.getResponse(), e);
+    }
   }
 }

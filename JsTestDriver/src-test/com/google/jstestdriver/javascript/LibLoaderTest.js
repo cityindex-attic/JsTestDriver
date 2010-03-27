@@ -37,3 +37,5 @@ libLoaderTest.prototype.testAllScriptLoadedExecuteCallback = function() {
   assertTrue(called);
   assertEquals("data", data);
 };
+
+
