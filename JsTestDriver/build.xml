@@ -111,22 +111,22 @@
           <exclude name="${javascript-resources}/*.js"/>
         </fileset>
       </copy>
-      <copy todir="@{destdir}/${javascript-resources}">
+      <!--copy todir="@{destdir}/${javascript-resources}">
         <fileset dir="${src.dir}/${javascript-resources}" includes="*.js" />
-      </copy>
-      <!--apply executable="java" dest="@{destdir}/${javascript-resources}">
+      </copy-->
+      <apply executable="java" dest="@{destdir}/${javascript-resources}">
         <arg value="-jar"/>
         <arg value="${lib.dir}/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar" />
         <arg value="-v" />
-        <arg value="- -type" />
+        <arg value="--type" />
         <arg value="js" />
-        <arg value="- -disable-optimizations" />
+        <arg value="--disable-optimizations" />
         <arg value="-o" />
         <targetfile/>
         <srcfile/>
         <fileset dir="${src.dir}/${javascript-resources}" includes="*.js" />
         <mapper type="glob" from="*.js" to="*.js"></mapper>
-      </apply-->
+      </apply>
       <concat destfile="@{destdir}/${javascript-resources}/jstestdrivernamespace.js">
         <filelist dir="@{destdir}/${javascript-resources}" files="Namespace.js" />
       </concat>
