@@ -27,4 +27,6 @@ public class LaunchConfigurationConstants {
   public static final String TESTS_TO_RUN = "com.google.jstestdriver.eclipse.ui.testsToRun";
   public static final String RUN_ON_EVERY_SAVE =
       "com.google.jstestdriver.eclipse.ui.runOnEverySave";
+  public static final String JSTD_LAUNCH_CONFIGURATION_TYPE =
+    "com.google.eclipse.javascript.jstestdriver.ui.JstdTestDriverLaunchConfiguration";
 }

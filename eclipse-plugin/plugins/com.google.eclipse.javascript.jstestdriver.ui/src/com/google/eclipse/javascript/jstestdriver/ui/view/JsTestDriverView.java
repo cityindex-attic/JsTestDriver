@@ -16,7 +16,9 @@
 package com.google.eclipse.javascript.jstestdriver.ui.view;
 
 import com.google.eclipse.javascript.jstestdriver.core.Server;
+import com.google.eclipse.javascript.jstestdriver.ui.launch.save.JavascriptOnSaveTestRunner;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -39,12 +41,16 @@ public class JsTestDriverView extends ViewPart {
   private TestResultsPanel testResultsPanel;
   private final ServerController serverController = new ServerController();
 
+  private JavascriptOnSaveTestRunner resourceListener;
+
   @Override
   public void createPartControl(Composite parent) {
     parent.setLayout(new GridLayout(1, false));
     serverInfoPanel = new ServerInfoPanel(parent, SWT.NONE);
     testResultsPanel = new TestResultsPanel(parent, SWT.NONE);
     serverController.connectObservers(serverInfoPanel);
+    resourceListener = new JavascriptOnSaveTestRunner();
+    ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener);
   }
 
   @Override
@@ -68,6 +74,7 @@ public class JsTestDriverView extends ViewPart {
 
   @Override
   public void dispose() {
+    ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
     serverController.disconnectObservers(serverInfoPanel);
     Server server = Server.getInstance();
     if (server != null && server.isStarted()) {

@@ -211,7 +211,7 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
         && !"".equals(getSelectedComboString(confFileCombo));
     if (isSelected) {
       String projectName = getSelectedComboString(projectCombo);
-      if (configurationHelper .isExistingLaunchConfigWithRunOnSaveOtherThanCurrent(projectName,
+      if (configurationHelper.isExistingLaunchConfigWithRunOnSaveOtherThanCurrent(projectName,
           launchConfig.getName()) && runOnEverySaveCheckbox.getSelection()) {
         setErrorMessage(MessageFormat.format("Project named {0} already has another active"
             + " configuration with Run on every save set.", projectName));
@@ -241,6 +241,9 @@ public class JsTestDriverLaunchTab extends AbstractLaunchConfigurationTab {
         String initConfFileName = configuration.getAttribute(
             LaunchConfigurationConstants.CONF_FILENAME, "");
         selectComboItem(confFileCombo, initConfFileName);
+        runOnEverySaveCheckbox.setSelection(
+            configuration.getAttribute(
+                LaunchConfigurationConstants.RUN_ON_EVERY_SAVE,false));
       }
 
 

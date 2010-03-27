@@ -15,6 +15,8 @@
  */
 package com.google.eclipse.javascript.jstestdriver.ui.launch;
 
+import static com.google.eclipse.javascript.jstestdriver.ui.launch.LaunchConfigurationConstants.JSTD_LAUNCH_CONFIGURATION_TYPE;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -36,8 +38,7 @@ import com.google.jstestdriver.DefaultPathRewriter;
  * @author shyamseshadri@gmail.com (Shyam Seshadri)
  */
 public class JavascriptLaunchConfigurationHelper {
-  private static final String JSTD_LAUNCH_CONFIGURATION_TYPE =
-      "com.google.eclipse.javascript.jstestdriver.ui.jstdTestDriverLaunchConfiguration";
+  
   public ILaunchConfiguration getLaunchConfiguration(String projectName) {
     try {
       ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();

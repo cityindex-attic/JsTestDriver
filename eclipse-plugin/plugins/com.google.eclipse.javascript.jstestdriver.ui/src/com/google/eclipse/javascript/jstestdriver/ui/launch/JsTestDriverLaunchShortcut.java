@@ -15,6 +15,10 @@
  */
 package com.google.eclipse.javascript.jstestdriver.ui.launch;
 
+import static com.google.eclipse.javascript.jstestdriver.ui.launch.LaunchConfigurationConstants.JSTD_LAUNCH_CONFIGURATION_TYPE;
+import static com.google.eclipse.javascript.jstestdriver.ui.launch.LaunchConfigurationConstants.PROJECT_NAME;
+import static com.google.eclipse.javascript.jstestdriver.ui.launch.LaunchConfigurationConstants.TESTS_TO_RUN;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -208,8 +212,7 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
       final List<String> testCases) throws CoreException {
     final ILaunchConfigurationWorkingCopy workingCopy = launchConfiguration.copy(
         "new run").getWorkingCopy();
-    workingCopy.setAttribute(LaunchConfigurationConstants.TESTS_TO_RUN,
-        testCases);
+    workingCopy.setAttribute(TESTS_TO_RUN, testCases);
     final ILaunchConfiguration configuration = workingCopy.doSave();
     Display.getDefault().asyncExec(new Runnable() {
 
@@ -217,8 +220,9 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
         IWorkbenchPage page = PlatformUI.getWorkbench()
             .getActiveWorkbenchWindow().getActivePage();
         try {
-          JsTestDriverView view = (JsTestDriverView) page
-              .showView("com.google.jstestdriver.eclipse.ui.views.JsTestDriverView");
+          JsTestDriverView view =
+              (JsTestDriverView) page.showView(
+                  JsTestDriverView.ID);
           TestResultsPanel panel = view.getTestResultsPanel();
           panel.setupForNextTestRun(configuration);
           actionRunnerFactory.getDryActionRunner(configuration, testCases).runActions();
@@ -236,11 +240,11 @@ public class JsTestDriverLaunchShortcut implements ILaunchShortcut {
       throws CoreException {
     ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
     ILaunchConfigurationType type = launchManager.getLaunchConfigurationType(
-        "com.google.jstestdriver.eclipse.ui.jstdTestDriverLaunchConfiguration");
+        JSTD_LAUNCH_CONFIGURATION_TYPE);
     ILaunchConfiguration[] launchConfigurations = launchManager
         .getLaunchConfigurations(type);
     for (ILaunchConfiguration configuration : launchConfigurations) {
-      if (configuration.getAttribute(LaunchConfigurationConstants.PROJECT_NAME, "").equals(projectName)) {
+      if (configuration.getAttribute(PROJECT_NAME, "").equals(projectName)) {
         return configuration;
       }
     }

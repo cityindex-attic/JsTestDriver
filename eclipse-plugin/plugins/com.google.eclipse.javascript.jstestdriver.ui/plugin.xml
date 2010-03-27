@@ -71,7 +71,7 @@
       <launchConfigurationType
             delegate="com.google.eclipse.javascript.jstestdriver.ui.launch.JsTestDriverLaunchConfigurationDelegate"
             delegateName="JsTD Test"
-            id="com.google.eclipse.javascript.jstestdriver.ui.jstdTestDriverLaunchConfiguration"
+            id="com.google.eclipse.javascript.jstestdriver.ui.JstdTestDriverLaunchConfiguration"
             modes="run"
             name="Js Test Driver Test"
             public="true">
@@ -80,7 +80,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            configTypeID="com.google.eclipse.javascript.jstestdriver.ui.jstdTestDriverLaunchConfiguration"
+            configTypeID="com.google.eclipse.javascript.jstestdriver.ui.JstdTestDriverLaunchConfiguration"
             icon="icons/JsTestDriver.png"
             id="com.google.eclipse.javascript.jstestdriver.ui.jsLaunchConfigurationTypeImage">
       </launchConfigurationTypeImage>
@@ -90,7 +90,7 @@
       <launchConfigurationTabGroup
             class="com.google.eclipse.javascript.jstestdriver.ui.launch.config.JsTestDriverLaunchTabGroup"
             id="com.google.eclipse.javascript.jstestdriver.ui.jstdLaunchConfigurationTabGroup"
-            type="com.google.eclipse.javascript.jstestdriver.ui.jstdTestDriverLaunchConfiguration">
+            type="com.google.eclipse.javascript.jstestdriver.ui.JstdTestDriverLaunchConfiguration">
       </launchConfigurationTabGroup>
    </extension>
    <extension

@@ -25,9 +25,9 @@ consoleTest.prototype.testLog = function() {
   console.log("A number %d", 42);
   assertEquals("[LOG] A number 42", console.getLog());
   console.log("A", "B");
-  console.log("C %s", "D");
+  console.log("C %s", "D"); 
   assertEquals("[LOG] A B\n[LOG] C D", console.getLog());
-  console.log("log");
+  console.log("log"); 
   console.debug("debug");
   assertEquals("[LOG] log\n[DEBUG] debug", console.getLog());
   console.log("log");
