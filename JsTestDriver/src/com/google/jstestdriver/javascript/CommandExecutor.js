@@ -198,7 +198,7 @@ jstestdriver.CommandExecutor.prototype.onFileLoaded = function(status) {
       jstestdriver.RESPONSE_TYPES.FILE_LOAD_RESULT,
       JSON.stringify(status),
       this.getBrowserInfo());
-  var data = new jstestdriver.StreamMessage('', response);
+  var data = new jstestdriver.CommandResponse(false, response);
   this.sendData(data);
 };
 
@@ -335,7 +335,7 @@ jstestdriver.CommandExecutor.prototype.sendTestResults_ = function() {
             jstestdriver.RESPONSE_TYPES.TEST_RESULT,
             JSON.stringify(this.testsDone_),
             this.getBrowserInfo());
-    var data = new jstestdriver.StreamMessage('', response);
+    var data = new jstestdriver.CommandResponse(false, response);
 
     this.testsDone_ = [];
     this.sentOn_ = new Date().getTime();
@@ -367,7 +367,7 @@ jstestdriver.CommandExecutor.prototype.sendTestResultsOnComplete_ = function() {
       jstestdriver.RESPONSE_TYPES.TEST_RESULT,
       JSON.stringify(this.testsDone_),
       this.getBrowserInfo());
-  var data = new jstestdriver.StreamMessage('', response);
+  var data = new jstestdriver.CommandResponse(true, response);
 
   this.testsDone_ = [];
   this.__sendRequest(this.__url, data, this.__boundExecuteCommand);  
@@ -375,9 +375,7 @@ jstestdriver.CommandExecutor.prototype.sendTestResultsOnComplete_ = function() {
 
 jstestdriver.CommandExecutor.prototype.onComplete_ = function() {
   this.done_ = true;
-  if (this.sentOn_ == -1) {
-    this.sendTestResultsOnComplete_();
-  }
+  this.sendTestResultsOnComplete_();
 };
 
 
@@ -415,7 +413,7 @@ jstestdriver.CommandExecutor.prototype.registerCommand = function(name, func) {
           'Command ' + name + ' registered.',
           this.getBrowserInfo());
 
-  this.sendData(new jstestdriver.StreamMessage('', response));
+  this.sendData(new jstestdriver.CommandResponse('', response));
 };
 
 
@@ -425,7 +423,7 @@ jstestdriver.CommandExecutor.prototype.dryRun = function() {
           JSON.stringify(this.__testCaseManager.getCurrentlyLoadedTest()),
           this.getBrowserInfo());
   
-  this.sendData(new jstestdriver.StreamMessage('', response));
+  this.sendData(new jstestdriver.CommandResponse(true, response));
 };
 
 
@@ -433,7 +431,7 @@ jstestdriver.CommandExecutor.prototype.dryRunFor = function(args) {
   var expressions = jsonParse('{"expressions":' + args[0] + '}').expressions;
   var tests = JSON.stringify(
       this.__testCaseManager.getCurrentlyLoadedTestFor(expressions))
-  var data = new jstestdriver.StreamMessage('',
+  var data = new jstestdriver.CommandResponse(true,
       new jstestdriver.Response(jstestdriver.RESPONSE_TYPES.TEST_QUERY_RESULT,
           tests,
           this.getBrowserInfo()));
@@ -443,7 +441,7 @@ jstestdriver.CommandExecutor.prototype.dryRunFor = function(args) {
 
 jstestdriver.CommandExecutor.prototype.listen = function() {
   if (window.location.href.search('\\?refresh') != -1) {
-    var data = new jstestdriver.StreamMessage('',
+    var data = new jstestdriver.CommandResponse(true,
         new jstestdriver.Response(jstestdriver.RESPONSE_TYPES.RESET_RESULT,
                                   'Runner reset.',
                                   this.getBrowserInfo())

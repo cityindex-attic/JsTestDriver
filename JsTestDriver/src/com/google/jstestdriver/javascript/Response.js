@@ -47,11 +47,11 @@ jstestdriver.Response = function(type, response, browser) {
 
 
 /**
- * Correlates to {com.google.jstestdriver.StreamMessage}.
+ * Correlates to {com.google.jstestdriver.CommandResponse}.
  * @param {String} done Indicates if this is the last streamed message.
  * @param {jstestdriver.Response} response The response.
  */
-jstestdriver.StreamMessage = function (done, response) {
+jstestdriver.CommandResponse = function (done, response) {
   this.done = done;
   this.response = response;
 };

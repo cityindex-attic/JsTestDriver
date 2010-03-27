@@ -79,6 +79,11 @@ public class HeartbeatServlet extends HttpServlet {
 
     if (browser != null) {
       browser.heartBeat();
+      if (browser.getCommandRunning() == null) {
+        writer.write("Waiting...");
+      } else {
+        writer.write("Running: " + browser.getCommandRunning());
+      }
     } else {
       writer.write("UNKNOWN");
     }

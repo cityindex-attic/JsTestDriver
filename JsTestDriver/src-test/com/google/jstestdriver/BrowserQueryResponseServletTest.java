@@ -72,7 +72,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browserInfo.setOs("OS");
     browserInfo.setVersion("version");
     response.setBrowser(browserInfo);
-    servlet.service(id, null, gson.toJson(response), "", writer);
+    servlet.service(id, null, gson.toJson(response), "true", writer);
     assertEquals("BrowserCommand", out.toString());
     assertEquals(response, slave.getResponse().getResponse());
   }

@@ -229,6 +229,7 @@ public class CommandTask {
       StreamMessage streamMessage = null;
 
       do {
+        LOGGER.debug("Fetching command {}", baseUrl + "/cmd?id=" + browserId);
         String response = server.fetch(baseUrl + "/cmd?id=" + browserId);
 
         streamMessage = gson.fromJson(response, StreamMessage.class);
@@ -236,7 +237,7 @@ public class CommandTask {
 
         shouldPanic(resObj);
         stream.stream(resObj);
-      } while (streamMessage != null && !streamMessage.isLast());
+      } while (!streamMessage.isLast());
     } catch (Exception e) {
       throw new FailureException("Failed running " + params, e);
     } finally {

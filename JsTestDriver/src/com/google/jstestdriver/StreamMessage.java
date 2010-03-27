@@ -37,4 +37,10 @@ public class StreamMessage {
   public Response getResponse() {
     return response;
   }
+
+  @Override
+  public String toString() {
+    return "StreamMessage [\n\tlast=" + last + ",\n\tresponse=" + response + "]";
+  }
+  
 }

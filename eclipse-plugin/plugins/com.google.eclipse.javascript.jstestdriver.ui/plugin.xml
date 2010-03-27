@@ -131,5 +131,8 @@
             class="com.google.eclipse.javascript.jstestdriver.ui.view.TestResultsLaunchListener">
       </jstdLaunchListener>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+   </extension>
 
 </plugin>

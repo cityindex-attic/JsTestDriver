@@ -52,12 +52,18 @@ public class HomeServlet extends HttpServlet {
     writer.write("<a href=\"/capture\">Capture This Browser</a><br/>");
     writer.write("<a href=\"/capture?strict\">Capture This Browser in strict mode</a><br/>");
     writer.write("<p>Captured Browsers:<br/>");
-    for (BrowserInfo info : capturedBrowsers.getBrowsers()) {
+    for (SlaveBrowser browser : capturedBrowsers.getSlaveBrowsers()) {
       writer.write("<p>");
+      BrowserInfo info = browser.getBrowserInfo();
       writer.write("Id: " + info.getId() + "<br/>");
       writer.write("Name: " + info.getName() + "<br/>");
       writer.write("Version: " + info.getVersion() + "<br/>");
       writer.write("Operating System: " + info.getOs() + "<br/>");
+      if (browser.getCommandRunning() != null) {
+        writer.write("Currently running " + browser.getCommandRunning() + "<br/>");
+      } else {
+        writer.write("Currently waiting...<br/>");
+      }
       writer.write("</p>");
     }
     writer.write("</p></body></html>");

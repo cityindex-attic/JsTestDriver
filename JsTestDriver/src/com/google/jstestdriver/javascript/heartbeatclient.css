@@ -1,5 +1,5 @@
 body {
-  background-color: green;
+  background-color: #6c6;
 }
 
 p {
@@ -7,5 +7,5 @@ p {
 }
 
 body.error {
-  background-color: red;
+  background-color: #999;
 }

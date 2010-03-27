@@ -15,6 +15,21 @@
  */
 var heartbeatTest = jstestdriver.testCaseManager.TestCase('heartbeatTest');
 
+
+heartbeatTest.prototype.getView = function(connected) {
+  return {
+    status : '',
+    connected : connected,
+    updateStatus : function(status) {
+      this.status = status;
+    },
+    updateConnected : function(connected) {
+      this.connected = connected; 
+    }
+  };
+};
+
+
 heartbeatTest.prototype.testStartHeartbeat = function() {
   var callbackCalled = false;
   var url = null;
@@ -23,6 +38,7 @@ heartbeatTest.prototype.testStartHeartbeat = function() {
   var timeoutDuration = 0;
   var timeoutCallback = null;
   var time = 0;
+  var view = this.getView(false);
   var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "quirks",
     function(_url, _data, _callback) {
       url = _url;
@@ -37,7 +53,7 @@ heartbeatTest.prototype.testStartHeartbeat = function() {
   function() {
     return time;
   },
-  null, null);
+  view, null);
 
   heartbeat.start();
   assertEquals("/heartbeat", url);
@@ -57,7 +73,7 @@ heartbeatTest.prototype.testStartHeartbeat = function() {
 heartbeatTest.prototype.testErrorCallback = function() {
   var callbackCalled = false;
   var errBack = null;
-  var ele = document.createElement('div');
+  var view = this.getView(true);
   var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "quirks",
                                              function(_url, _data, _callback, _errback) {
     errBack = _errback;
@@ -66,22 +82,19 @@ heartbeatTest.prototype.testErrorCallback = function() {
   function(callback, duration){},
   function() {
     return 0;
-  }, function() {
-    return ele;
-  });
+  },view, null);
 
   heartbeat.start();
   assertNotNull(errBack);
   
   errBack();
-  assertTrue(!!ele.className);
-  assertEquals(jstestdriver.Heartbeat.ERROR_CLASS, ele.className);
+  assertFalse(view.connected);
 };
 
 heartbeatTest.prototype.testErrorStopRetryAfterLimit = function() {
   var errBack = null;
   var timeoutCallback = null
-  var ele = document.createElement('div');
+  var view = this.getView(true);
   var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "quirks",
                                              function(_url, _data, _callback, _errback) {
     errBack = _errback;
@@ -93,15 +106,12 @@ heartbeatTest.prototype.testErrorStopRetryAfterLimit = function() {
   },
   function() {
     return 0;
-  }, function() {
-    return ele;
-  });
+  }, view, null);
   
   heartbeat.start();
   assertNotNull(errBack);
   errBack();
-  assertTrue(!!ele.className);
-  assertEquals(jstestdriver.Heartbeat.ERROR_CLASS, ele.className);
+  assertFalse(view.connected);
   for (var i = 0; i < jstestdriver.Heartbeat.RETRY_LIMIT; i++) {
     errBack();
     timeoutCallback();
@@ -116,6 +126,7 @@ heartbeatTest.prototype.testUnknownOnServer = function() {
   var callbackCalled = false;
   var sendCallback = null;
   var navigatePath = null;
+  var view = this.getView(true);
   var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "quirks", 
                                              function(_url, _data, _callback, _errback) {
     sendCallback = _callback;
@@ -127,7 +138,7 @@ heartbeatTest.prototype.testUnknownOnServer = function() {
   },
   function() {
     return 0;
-  }, null,
+  }, view,
   function (path){
     navigatePath = path;
   });
@@ -142,6 +153,7 @@ heartbeatTest.prototype.testUnknownOnServerStrict = function() {
   var callbackCalled = false;
   var sendCallback = null;
   var navigatePath = null;
+  var view = this.getView();
   var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "strict", 
                                              function(_url, _data, _callback, _errback) {
     sendCallback = _callback;
@@ -153,7 +165,7 @@ heartbeatTest.prototype.testUnknownOnServerStrict = function() {
   },
   function() {
     return 0;
-  }, null,
+  }, view,
   function (path){
     navigatePath = path;
   });
@@ -173,6 +185,7 @@ heartbeatTest.prototype.testHeartbeatCallbackFast = function() {
   var timeoutCallback = null;
   var interval = 30;
   var time = 0;
+  var view = this.getView(true);
   var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "quirks",
     function(_url, _data, _callback) {
       url = _url;
@@ -186,7 +199,7 @@ heartbeatTest.prototype.testHeartbeatCallbackFast = function() {
   },
   function() {
     return time;
-  }, null, null);
+  }, view, null);
   
   heartbeat.sendHeartbeat();
   assertEquals("/heartbeat", url);

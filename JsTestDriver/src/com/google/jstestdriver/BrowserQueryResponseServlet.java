@@ -27,10 +27,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class BrowserQueryResponseServlet extends HttpServlet {
+  private static final Logger logger =
+      LoggerFactory.getLogger(BrowserQueryResponseServlet.class);
 
   private static final long serialVersionUID = 995720234973219411L;
 
@@ -52,6 +57,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    logger.debug("POST: {}", req.toString());
     service(req.getPathInfo().substring(1), req.getParameter("start"), req.getParameter("response"),
         req.getParameter("done"), resp.getWriter());
   }
@@ -91,8 +97,9 @@ public class BrowserQueryResponseServlet extends HttpServlet {
             }
           }
         }
-        boolean isLast = done != null;
+        boolean isLast = Boolean.parseBoolean(done);
 
+        logger.debug("Recieved:\n done{} islast {} \n res {}", new Object[]{done, isLast, res});
         browser.addResponse(res, isLast);
         if (!isLast) {
           writer.print(NOOP);
