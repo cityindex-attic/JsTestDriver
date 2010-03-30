@@ -24,7 +24,15 @@ public class Plugin {
     this.args = args;
   }
 
-  public String getName() {
+  public String getName(ManifestLoader manifestLoader) {
+    if (name == null) {
+      try {
+        Manifest manifest = manifestLoader.load(pathToJar);
+        return manifest.getAttributes("jstd").getValue("plugin-name");
+      } catch (ManifestNotFound e) {
+        throw new RuntimeException(e);
+      }
+    }
     return name;
   }
 

@@ -30,6 +30,22 @@ import junit.framework.TestCase;
  *
  */
 public class PluginTest extends TestCase {
+  public void testGetName() throws Exception {
+    final String name = "foo";
+    final Plugin plugin = new Plugin(name, "somePath", null, null);
+    assertEquals(name, plugin.getName(null));
+  }
+  public void testGetNameFallBackToManifest() throws Exception {
+    final String name = "foo";
+    final Plugin plugin = new Plugin(null, "somePath", null, null);
+    assertEquals(name, plugin.getName(new ManifestLoader(){
+      @Override
+      public Manifest load(String jarPath) throws ManifestNotFound {
+        return createManifest("jstd", "fpp", name);
+      }
+    }));
+  }
+
   public void testGetModuleName() throws Exception {
     final String moduleName = "moduleName";
     final Plugin plugin = new Plugin("foo", "somePath", moduleName, null);
@@ -42,7 +58,7 @@ public class PluginTest extends TestCase {
     assertEquals(moduleName, plugin.getModuleName(new ManifestLoader(){
       @Override
       public Manifest load(String jarPath) throws ManifestNotFound {
-        return  createManifest("jstd", moduleName);
+        return createManifest("jstd", moduleName, "foo");
       }
     }));
   }
@@ -63,7 +79,7 @@ public class PluginTest extends TestCase {
   }
 
   private Manifest createManifest(final String sectionName, 
-                                  final String moduleName) {
+                                  final String moduleName, String name) {
     try {
       return new Manifest(new ByteArrayInputStream(
           ("Manifest-Version: 1.0\n" +
@@ -72,6 +88,7 @@ public class PluginTest extends TestCase {
           "Class-Path: ../JsTestDriver.jar\n" +
           "\n" +
           "Name: " + sectionName + "\n" +
+          "plugin-name: " + name + "\n" +
           "plugin-module: " + moduleName + "\n").getBytes()));
     } catch (IOException e) {
       throw new RuntimeException(e);
