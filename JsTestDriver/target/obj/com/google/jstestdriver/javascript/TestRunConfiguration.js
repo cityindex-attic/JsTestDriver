@@ -1,1 +1,0 @@
-jstestdriver.TestRunConfiguration=function(a,b){this.testCaseInfo_=a;this.tests_=b};jstestdriver.TestRunConfiguration.prototype.getTestCaseInfo=function(){return this.testCaseInfo_};jstestdriver.TestRunConfiguration.prototype.getTests=function(){return this.tests_};

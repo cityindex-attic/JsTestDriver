@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Safari_531227_Mac_OS.AssertTypeOfTest" errors="0" failures="0" tests="4" time="0.0010">
-<testcase classname="Safari_531227_Mac_OS.AssertTypeOfTest" name="test pass for correct type" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertTypeOfTest" name="test pass with message for correct type" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertTypeOfTest" name="test fail for wrong type" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertTypeOfTest" name="test fail with message for wrong type" time="0.0010"/>
-</testsuite>

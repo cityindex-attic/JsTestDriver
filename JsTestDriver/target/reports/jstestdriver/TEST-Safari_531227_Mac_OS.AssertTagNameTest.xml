@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Safari_531227_Mac_OS.AssertTagNameTest" errors="0" failures="0" tests="5" time="0.0060000005">
-<testcase classname="Safari_531227_Mac_OS.AssertTagNameTest" name="test should pass when tag name is correct" time="0.0040"/>
-<testcase classname="Safari_531227_Mac_OS.AssertTagNameTest" name="test should pass tag name regardless of casing" time="0.0010"/>
-<testcase classname="Safari_531227_Mac_OS.AssertTagNameTest" name="test should pass with message when tag name is correct" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertTagNameTest" name="test should fail for wrong tag name" time="0.0010"/>
-<testcase classname="Safari_531227_Mac_OS.AssertTagNameTest" name="test should fail with message for wrong tag name" time="0.0"/>
-</testsuite>

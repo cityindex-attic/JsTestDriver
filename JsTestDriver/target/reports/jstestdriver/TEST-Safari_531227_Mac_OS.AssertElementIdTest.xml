@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Safari_531227_Mac_OS.AssertElementIdTest" errors="0" failures="0" tests="4" time="0.0020">
-<testcase classname="Safari_531227_Mac_OS.AssertElementIdTest" name="test should pass when id is correct" time="0.0010"/>
-<testcase classname="Safari_531227_Mac_OS.AssertElementIdTest" name="test should pass with message when id is correct" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertElementIdTest" name="test should fail for wrong id" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertElementIdTest" name="test should fail with message for wrong id" time="0.0010"/>
-</testsuite>

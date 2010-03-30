@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Safari_531227_Mac_OS.AssertNoMatchTest" errors="0" failures="0" tests="5" time="0.0010">
-<testcase classname="Safari_531227_Mac_OS.AssertNoMatchTest" name="test should pass when string does not matches regexp" time="0.0010"/>
-<testcase classname="Safari_531227_Mac_OS.AssertNoMatchTest" name="test should pass with message when string does not matches regexp" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertNoMatchTest" name="test should pass when actual argument is undefined" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertNoMatchTest" name="test should fail when string matches regexp" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertNoMatchTest" name="test should fail with message when string matches regexp" time="0.0"/>
-</testsuite>

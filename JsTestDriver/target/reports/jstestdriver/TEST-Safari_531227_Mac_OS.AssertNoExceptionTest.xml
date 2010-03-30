@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Safari_531227_Mac_OS.AssertNoExceptionTest" errors="0" failures="0" tests="4" time="0.0030">
-<testcase classname="Safari_531227_Mac_OS.AssertNoExceptionTest" name="test should pass when callback does not throw exception" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertNoExceptionTest" name="test should pass with message when callback does not throw exception" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertNoExceptionTest" name="test should fail when callback throws exception" time="0.0"/>
-<testcase classname="Safari_531227_Mac_OS.AssertNoExceptionTest" name="test should fail with message when callback throws exception" time="0.0030"/>
-</testsuite>

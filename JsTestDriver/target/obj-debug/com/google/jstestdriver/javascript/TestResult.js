@@ -1,1 +1,0 @@
-jstestdriver.TestResult=function(g,b,a,d,c,f,e){this.testCaseName=g;this.testName=b;this.result=a;this.message=d;this.log=c;this.time=f;this.data=e||{}};
