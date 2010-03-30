@@ -16,16 +16,18 @@
 
 package com.google.jstestdriver.guice;
 
+import com.google.inject.ImplementedBy;
 import com.google.inject.Provider;
-import com.google.jstestdriver.ThreadedAction;
+import com.google.jstestdriver.BrowserAction;
 
 import java.util.List;
 
 /**
- * Provides {@link ThreadedAction}s for the JsTestDriverClient. Implement this interface and bind
- * it in Guice to provide your own {@link ThreadedAction} sequences.
+ * Provides {@link BrowserAction}s for the JsTestDriverClient. Implement this interface and bind
+ * it in Guice to provide your own {@link BrowserAction} sequences.
  * @author corysmith@google.com (Cory Smith)
  */
-public interface ThreadedActionProvider extends Provider<List<ThreadedAction>>{
-  public abstract List<ThreadedAction> get();
+@ImplementedBy(DefaultThreadedActionProvider.class)
+public interface ThreadedActionProvider extends Provider<List<BrowserAction>>{
+  public abstract List<BrowserAction> get();
 }

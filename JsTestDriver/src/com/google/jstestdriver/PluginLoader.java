@@ -15,8 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.Module;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -25,6 +23,9 @@ import java.net.URLClassLoader;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.inject.Module;
+import com.google.jstestdriver.util.ManifestLoader;
+
 /**
  * Handles the loading of Plugins from the filesystem.
  * 
@@ -32,6 +33,7 @@ import java.util.List;
  */
 public class PluginLoader {
 
+  final ManifestLoader manifestLoader = new ManifestLoader();
   /**
    * For each plugin, the specified jar is loaded, then the specified class is
    * extracted from the Jar.
@@ -48,7 +50,8 @@ public class PluginLoader {
         URLClassLoader urlClassLoader = new URLClassLoader(
             new URL[] { new URL("jar:file:" + plugin.getPathToJar() + "!/") },
             getClass().getClassLoader());
-        Class<?> module = Class.forName(plugin.getModuleName(), true, urlClassLoader);
+        String moduleName = plugin.getModuleName(manifestLoader);
+        Class<?> module = Class.forName(moduleName, true, urlClassLoader);
 
         modules.add(getModuleInstance(plugin, (Class<Module>) module));
       } catch (MalformedURLException e) {

@@ -120,16 +120,16 @@ public class DefaultActionListProviderTest extends TestCase {
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(BrowserStartupAction.class);
-    expectedActions.add(ThreadedActionsRunner.class);
+    expectedActions.add(BrowserActionsRunner.class);
     expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
 
     List<Action> actions = parser.get();
     assertSequence(expectedActions, actions);
 
-    ThreadedActionsRunner action = findAction(actions, ThreadedActionsRunner.class);
+    BrowserActionsRunner action = findAction(actions, BrowserActionsRunner.class);
     assertEquals(1, action.getActions().size());
-    ThreadedAction threadedAction = action.getActions().get(0);
+    BrowserAction threadedAction = action.getActions().get(0);
     assertTrue("Expected ResetAction, found " + threadedAction,
         threadedAction instanceof ResetAction);
   }
@@ -159,7 +159,7 @@ public class DefaultActionListProviderTest extends TestCase {
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
     expectedActions.add(BrowserStartupAction.class);
-    expectedActions.add(ThreadedActionsRunner.class);
+    expectedActions.add(BrowserActionsRunner.class);
     expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
@@ -167,7 +167,7 @@ public class DefaultActionListProviderTest extends TestCase {
     List<Action> actions = parser.get();
     assertSequence(expectedActions, actions);
 
-    ThreadedActionsRunner testRunner = findAction(actions, ThreadedActionsRunner.class);
+    BrowserActionsRunner testRunner = findAction(actions, BrowserActionsRunner.class);
     assertNotNull("Test action not found", testRunner);
     assertEquals(1, testRunner.getActions().size());
     assertTrue(testRunner.getActions().get(0) instanceof RunTestsAction);
@@ -183,7 +183,7 @@ public class DefaultActionListProviderTest extends TestCase {
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
     expectedActions.add(BrowserStartupAction.class);
-    expectedActions.add(ThreadedActionsRunner.class);
+    expectedActions.add(BrowserActionsRunner.class);
     expectedActions.add(PrintXmlTestResultsAction.class);
     expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);

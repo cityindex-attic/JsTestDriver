@@ -16,15 +16,9 @@
 package com.google.jstestdriver;
 
 /**
+ * Base class for actions to run in the browser.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public abstract class ThreadedAction {
-
-  protected final ResponseStreamFactory responseStreamFactory;
-
-  public ThreadedAction(ResponseStreamFactory responseStreamFactory) {
-    this.responseStreamFactory = responseStreamFactory;
-  }
-
-  public abstract void run(String id, JsTestDriverClient client);
+public interface BrowserAction {
+  public void run(String id, JsTestDriverClient client);
 }

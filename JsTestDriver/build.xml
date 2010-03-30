@@ -99,8 +99,14 @@
     <attribute name="destdir"/>
     <attribute name="debug" default="false" />
     <sequential>
-      <javac srcdir="${src.dir}" destdir="@{destdir}" classpathref="classpath"
-        debug="@{debug}" debuglevel="lines, vars, source" target="${javac.target}">
+      <javac
+        srcdir="${src.dir}"
+      	destdir="@{destdir}"
+      	classpathref="classpath"
+        debug="on"
+      	debuglevel="lines,vars,source"
+      	source="${javac.target}"
+      	target="${javac.target}">
         <src path="${src.dir}" />
         <src path="${src-gen.dir}" />
         <exclude name="com/google/jstestdriver/ui/**" />
@@ -346,6 +352,9 @@
       <manifest>
         <!-- plugins will need to have a reference to the JsTestDriver jar they are working with.-->
         <attribute name="Class-Path" value="../JsTestDriver.jar" />
+        <section name="jstd">
+          <attribute name="plugin-module" value="com.google.jstestdriver.coverage.CoverageModule" />
+        </section>
       </manifest>
     </jar>
   </target>

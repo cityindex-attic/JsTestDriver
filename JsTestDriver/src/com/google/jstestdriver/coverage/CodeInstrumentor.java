@@ -36,6 +36,9 @@ public class CodeInstrumentor implements Instrumentor {
 
   /** Thrown when instrumentation fails.*/
   public class InstrumentationException extends Error {
+
+    private static final long serialVersionUID = 6999317302885453217L;
+
     public InstrumentationException(String path, Throwable cause) {
       super("error instrumenting " + path, cause);
     }

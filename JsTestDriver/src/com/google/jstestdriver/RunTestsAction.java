@@ -21,23 +21,28 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Run the tests in the browser.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class RunTestsAction extends ThreadedAction {
+public class RunTestsAction implements BrowserAction {
 
   private final List<String> tests;
   private final boolean captureConsole;
   private final Set<TestsPreProcessor> preProcessors;
+  private final ResponseStreamFactory responseStreamFactory;
 
   public RunTestsAction(ResponseStreamFactory responseStreamFactory,
       List<String> tests, boolean captureConsole, Set<TestsPreProcessor> preProcessors) {
-    super(responseStreamFactory);
+    this.responseStreamFactory = responseStreamFactory;
     this.tests = tests;
     this.captureConsole = captureConsole;
     this.preProcessors = preProcessors;
   }
 
-  @Override
+  /**
+   * @param The Browser id to execute tests in.
+   * @param The client to run tests in.
+   */
   public void run(String id, JsTestDriverClient client) {
     List<String> testsToRun = tests;
     for (TestsPreProcessor preProcessor : preProcessors) {

@@ -1,6 +1,10 @@
 package com.google.jstestdriver;
 
 import java.util.List;
+import java.util.jar.Manifest;
+
+import com.google.jstestdriver.util.ManifestLoader;
+import com.google.jstestdriver.util.ManifestLoader.ManifestNotFound;
 
 /**
  * A representation of a parsed plugin.
@@ -28,7 +32,15 @@ public class Plugin {
     return pathToJar;
   }
 
-  public String getModuleName() {
+  public String getModuleName(ManifestLoader manifestLoader) {
+    if (moduleName == null) {
+      try {
+        Manifest manifest = manifestLoader.load(pathToJar);
+        return manifest.getAttributes("jstd").getValue("plugin-module");
+      } catch (ManifestNotFound e) {
+        throw new RuntimeException(e);
+      }
+    }
     return moduleName;
   }
 

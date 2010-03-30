@@ -24,6 +24,7 @@ import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.JsTestDriverModule;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
+import com.google.jstestdriver.guice.ThreadedActionProvider;
 
 import junit.framework.TestCase;
 
@@ -51,5 +52,8 @@ public class CoverageModuleTest extends TestCase {
     List<Action> actions =
         Guice.createInjector(jsTestDriverModule).getInstance(new Key<List<Action>>(){});
     assertTrue(actions.get(actions.size() - 1) instanceof CoverageReporterAction);
+    assertTrue(
+        Guice.createInjector(jsTestDriverModule).getInstance(
+            ThreadedActionProvider.class) instanceof CoverageThreadedActionProvider);
   }
 }

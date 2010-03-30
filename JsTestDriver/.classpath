@@ -14,7 +14,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/joda-time-1.6/joda-time-1.6-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/joda-time-1.6/joda-time-1.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/junit/junit.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jvyaml-0.2/lib/jvyaml.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jvyaml-0.2/lib/jvyaml.jar" sourcepath="/Users/corysmith/Downloads/jvyaml-0.2.1/src/"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.5.6/slf4j-api-1.5.6-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.5.6/slf4j-api-1.5.6.jar" sourcepath="lib/slf4j-1.5.6/slf4j-api-1.5.6-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/svnant-1.2.1/lib/ganymed.jar"/>

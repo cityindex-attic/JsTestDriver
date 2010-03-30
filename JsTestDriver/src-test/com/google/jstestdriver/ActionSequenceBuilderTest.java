@@ -49,7 +49,7 @@ public class ActionSequenceBuilderTest extends TestCase {
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(BrowserStartupAction.class);
-    expectedActions.add(ThreadedActionsRunner.class);
+    expectedActions.add(BrowserActionsRunner.class);
     expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
     builder.withRemoteServer("http://foo").usingFiles(files, false).onBrowsers(browsers);
@@ -58,7 +58,7 @@ public class ActionSequenceBuilderTest extends TestCase {
 
     assertSequence(expectedActions, sequence);
 
-    ThreadedActionsRunner runner = (ThreadedActionsRunner) sequence.get(1);
+    BrowserActionsRunner runner = (BrowserActionsRunner) sequence.get(1);
     assertEquals(1, runner.getActions().size());
     RunTestsAction testAction = (RunTestsAction) runner.getActions().get(0);
     assertEquals(tests, testAction.getTests());
@@ -91,7 +91,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
     expectedActions.add(BrowserStartupAction.class);
-    expectedActions.add(ThreadedActionsRunner.class);
+    expectedActions.add(BrowserActionsRunner.class);
     expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
@@ -101,7 +101,7 @@ public class ActionSequenceBuilderTest extends TestCase {
 
     assertSequence(expectedActions, sequence);
 
-    ThreadedActionsRunner runner = (ThreadedActionsRunner) sequence.get(2);
+    BrowserActionsRunner runner = (BrowserActionsRunner) sequence.get(2);
     assertEquals(1, runner.getActions().size());
     RunTestsAction testAction = (RunTestsAction) runner.getActions().get(0);
     assertEquals(tests, testAction.getTests());
@@ -134,13 +134,13 @@ public class ActionSequenceBuilderTest extends TestCase {
                                    .asDryRunFor(dryRunFor)
                                    .build();
 
-    ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
+    BrowserActionsRunner runner = findAction(sequence, BrowserActionsRunner.class);
     assertEquals(2, runner.getActions().size());
-    List<Class<? extends ThreadedAction>> expectedThreadedActions =
-        new ArrayList<Class<? extends ThreadedAction>>();
+    List<Class<? extends BrowserAction>> expectedThreadedActions =
+        new ArrayList<Class<? extends BrowserAction>>();
     expectedThreadedActions.add(DryRunAction.class);
     expectedThreadedActions.add(RunTestsAction.class);
-    this.<ThreadedAction> assertSequence(expectedThreadedActions, runner.getActions());
+    this.<BrowserAction> assertSequence(expectedThreadedActions, runner.getActions());
   }
 
   public void testAddTestsAndReset() throws Exception {
@@ -164,13 +164,13 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addTests(tests).reset(reset).build();
 
-    ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
+    BrowserActionsRunner runner = findAction(sequence, BrowserActionsRunner.class);
     assertEquals(2, runner.getActions().size());
-    List<Class<? extends ThreadedAction>> expectedThreadedActions =
-        new ArrayList<Class<? extends ThreadedAction>>();
+    List<Class<? extends BrowserAction>> expectedThreadedActions =
+        new ArrayList<Class<? extends BrowserAction>>();
     expectedThreadedActions.add(ResetAction.class);
     expectedThreadedActions.add(RunTestsAction.class);
-    this.<ThreadedAction> assertSequence(expectedThreadedActions, runner.getActions());
+    this.<BrowserAction> assertSequence(expectedThreadedActions, runner.getActions());
   }
   
   public void testAddTestsWithDryRunForAndReset() throws Exception {
@@ -201,14 +201,14 @@ public class ActionSequenceBuilderTest extends TestCase {
                                    .asDryRunFor(dryRunFor)
                                    .reset(reset).build();
 
-    ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
+    BrowserActionsRunner runner = findAction(sequence, BrowserActionsRunner.class);
     assertEquals(3, runner.getActions().size());
-    List<Class<? extends ThreadedAction>> expectedThreadedActions =
-        new ArrayList<Class<? extends ThreadedAction>>();
+    List<Class<? extends BrowserAction>> expectedThreadedActions =
+        new ArrayList<Class<? extends BrowserAction>>();
     expectedThreadedActions.add(ResetAction.class);
     expectedThreadedActions.add(DryRunAction.class);
     expectedThreadedActions.add(RunTestsAction.class);
-    this.<ThreadedAction> assertSequence(expectedThreadedActions, runner.getActions());
+    this.<BrowserAction> assertSequence(expectedThreadedActions, runner.getActions());
   }
 
   public void testAddCommands() throws Exception {
@@ -228,15 +228,15 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<Action> sequence = builder.withLocalServerPort(1001).usingFiles(files, false).onBrowsers(
         browsers()).addCommands(commands).build();
 
-    ThreadedActionsRunner runner = findAction(sequence, ThreadedActionsRunner.class);
+    BrowserActionsRunner runner = findAction(sequence, BrowserActionsRunner.class);
     assertNotNull(runner);
-    List<ThreadedAction> actions = runner.getActions();
+    List<BrowserAction> actions = runner.getActions();
     assertEquals(2, actions.size());
-    List<Class<? extends ThreadedAction>> expectedThreadedActions =
-        new ArrayList<Class<? extends ThreadedAction>>();
+    List<Class<? extends BrowserAction>> expectedThreadedActions =
+        new ArrayList<Class<? extends BrowserAction>>();
     expectedThreadedActions.add(EvalAction.class);
     expectedThreadedActions.add(EvalAction.class);
-    this.<ThreadedAction> assertSequence(expectedThreadedActions, actions);
+    this.<BrowserAction> assertSequence(expectedThreadedActions, actions);
     assertEquals(commands.get(0), ((EvalAction) actions.get(0)).getCmd());
     assertEquals(commands.get(1), ((EvalAction) actions.get(1)).getCmd());
   }
@@ -255,7 +255,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
 //    expectedActions.add(BrowserStartupAction.class);
-    expectedActions.add(ThreadedActionsRunner.class);
+    expectedActions.add(BrowserActionsRunner.class);
 //    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);

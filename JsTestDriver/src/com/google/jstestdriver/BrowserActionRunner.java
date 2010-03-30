@@ -27,18 +27,18 @@ import java.util.concurrent.CountDownLatch;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 // TODO(corysmith): Work out a better return value.
-public class ThreadedActionRunner implements Callable<Boolean> {
-  private static final Logger logger = LoggerFactory.getLogger(ThreadedActionRunner.class);
+public class BrowserActionRunner implements Callable<Boolean> {
+  private static final Logger logger = LoggerFactory.getLogger(BrowserActionRunner.class);
 
   private final String id;
   private final JsTestDriverClient client;
   private final CountDownLatch latch;
-  private final List<ThreadedAction> actions;
+  private final List<BrowserAction> actions;
 
-  public ThreadedActionRunner(String id,
-                              JsTestDriverClient client,
-                              CountDownLatch latch,
-                              List<ThreadedAction> actions) {
+  public BrowserActionRunner(String id,
+                             JsTestDriverClient client,
+                             CountDownLatch latch,
+                             List<BrowserAction> actions) {
     this.id = id;
     this.client = client;
     this.latch = latch;
@@ -47,8 +47,8 @@ public class ThreadedActionRunner implements Callable<Boolean> {
 
   public Boolean call() {
     try {
-      for (ThreadedAction action : actions) {
-        logger.debug("Running Threaded Action {}", action);
+      for (BrowserAction action : actions) {
+        logger.debug("Running BrowserAction {}", action);
         action.run(id, client);
       }
     } finally {

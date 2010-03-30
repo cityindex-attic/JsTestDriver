@@ -23,9 +23,10 @@ import java.util.List;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class DryRunAction extends ThreadedAction {
+public class DryRunAction implements BrowserAction {
 
   private final List<String> expressions;
+  private final ResponseStreamFactory responseStreamFactory;
 
   public static class DryRunActionResponseStream implements ResponseStream {
 
@@ -49,11 +50,10 @@ public class DryRunAction extends ThreadedAction {
   }
 
   public DryRunAction(ResponseStreamFactory responseStreamFactory, List<String> expressions) {
-    super(responseStreamFactory);
+    this.responseStreamFactory = responseStreamFactory;
     this.expressions = expressions;
   }
 
-  @Override
   public void run(String id, JsTestDriverClient client) {
     if (expressions.size() == 1 && expressions.get(0).equals("all")) {
       client.dryRun(id, responseStreamFactory.getDryRunActionResponseStream());

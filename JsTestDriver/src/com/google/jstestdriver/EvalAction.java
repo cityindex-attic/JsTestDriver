@@ -19,14 +19,16 @@ import java.io.PrintStream;
 
 
 /**
+ * Send javascript to the browser for evaluation.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class EvalAction extends ThreadedAction {
+public class EvalAction implements BrowserAction {
 
   private final String cmd;
+  private final ResponseStreamFactory responseStreamFactory;
 
   public EvalAction(ResponseStreamFactory responseStreamFactory, String cmd) {
-    super(responseStreamFactory);
+    this.responseStreamFactory = responseStreamFactory;
     this.cmd = cmd;
   }
 
@@ -49,7 +51,6 @@ public class EvalAction extends ThreadedAction {
     }
   }
 
-  @Override
   public void run(String id, JsTestDriverClient client) {
     client.eval(id, responseStreamFactory.getEvalActionResponseStream(), getCmd());
   }

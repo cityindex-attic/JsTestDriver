@@ -17,34 +17,39 @@ package com.google.jstestdriver;
 
 import java.io.PrintStream;
 
+import com.google.inject.Inject;
+
 
 /**
+ * Resets the browser to the original capture state.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class ResetAction extends ThreadedAction {
+public class ResetAction implements BrowserAction {
 
   public static class ResetActionResponseStream implements ResponseStream {
-
+    
     private final PrintStream out;
-
+    
     public ResetActionResponseStream(PrintStream out) {
       this.out = out;
     }
-
+    
     public void finish() {
     }
-
+    
     public void stream(Response response) {
       out.println(String.format("%s: %s", response.getBrowser().getName(),
           response.getResponse()));
     }
   }
+  private final ResponseStreamFactory responseStreamFactory;
 
+
+  @Inject
   public ResetAction(ResponseStreamFactory responseStreamFactory) {
-    super(responseStreamFactory);
+    this.responseStreamFactory = responseStreamFactory;
   }
 
-  @Override
   public void run(String id, JsTestDriverClient client) {
     client.reset(id, responseStreamFactory.getResetActionResponseStream());
   }

@@ -32,24 +32,19 @@ import java.io.PrintStream;
 public class DefaultResponseStreamFactory implements ResponseStreamFactory {
 
   private final Provider<TestResultListener> responsePrinterFactory;
-  private final String configFileName;
   private final FailureAccumulator accumulator;
   private final PrintStream out;
 
   @Inject
   public DefaultResponseStreamFactory(Provider<TestResultListener> responsePrinterFactory,
-                                      @Named("config") String configFileName,
                                       FailureAccumulator accumulator,
                                       @Named("outputStream") PrintStream out) {
     this.responsePrinterFactory = responsePrinterFactory;
-    this.configFileName = configFileName;
     this.accumulator = accumulator;
     this.out = out;
   }
 
   public ResponseStream getRunTestsActionResponseStream(String browserId) {
-    String testSuiteName =
-        String.format("com.google.jstestdriver.%s", browserId);
     TestResultListener listener = responsePrinterFactory.get();
 
     RunTestsActionResponseStream responseStream = new RunTestsActionResponseStream(

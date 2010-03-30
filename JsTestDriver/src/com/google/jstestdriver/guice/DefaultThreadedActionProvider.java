@@ -21,7 +21,7 @@ import com.google.inject.name.Named;
 import com.google.jstestdriver.ActionFactory;
 import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.RunTestsAction;
-import com.google.jstestdriver.ThreadedAction;
+import com.google.jstestdriver.BrowserAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +58,8 @@ public class DefaultThreadedActionProvider implements ThreadedActionProvider {
     this.responseStreamFactory = responseStreamFactory;
   }
 
-  public List<ThreadedAction> get() {
-    List<ThreadedAction> threadedActions = new ArrayList<ThreadedAction>();
+  public List<BrowserAction> get() {
+    List<BrowserAction> threadedActions = new ArrayList<BrowserAction>();
 
     if (reset) {
       threadedActions.add(actionFactory.createResetAction(responseStreamFactory));

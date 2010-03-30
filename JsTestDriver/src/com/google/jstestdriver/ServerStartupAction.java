@@ -50,7 +50,7 @@ public class ServerStartupAction implements ObservableAction {
   }
 
   public void run() {
-    logger.debug("Starting server...");
+    logger.info("Starting server...");
     server =
         new JsTestDriverServer(port, capturedBrowsers, preloadedFilesCache, urlTranslator,
             urlRewriter);

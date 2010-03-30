@@ -25,15 +25,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 /**
+ * Executes each {@link BrowserAction} on each browser.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class ThreadedActionsRunner implements Action {
+public class BrowserActionsRunner implements Action {
 
   private final JsTestDriverClient client;
-  private final List<ThreadedAction> actions;
+  private final List<BrowserAction> actions;
   private final ExecutorService executor;
 
-  public ThreadedActionsRunner(JsTestDriverClient client, List<ThreadedAction> actions,
+  public BrowserActionsRunner(JsTestDriverClient client, List<BrowserAction> actions,
       ExecutorService executor) {
     this.client = client;
     this.actions = actions;
@@ -54,7 +55,7 @@ public class ThreadedActionsRunner implements Action {
     List<Future<Boolean>> futures = Lists.newLinkedList();
     for (BrowserInfo browserInfo : browsers) {
       futures.add(executor.submit(
-          new ThreadedActionRunner(browserInfo.getId().toString(),
+          new BrowserActionRunner(browserInfo.getId().toString(),
           client, latch, actions)));
     }
     executor.shutdown();
@@ -76,12 +77,12 @@ public class ThreadedActionsRunner implements Action {
     }
   }
 
-  public List<ThreadedAction> getActions() {
+  public List<BrowserAction> getActions() {
     return actions;
   }
 
   public RunTestsAction getRunTestsAction() {
-    for (ThreadedAction action : actions) {
+    for (BrowserAction action : actions) {
       if (action instanceof RunTestsAction) {
         return (RunTestsAction) action;
       }

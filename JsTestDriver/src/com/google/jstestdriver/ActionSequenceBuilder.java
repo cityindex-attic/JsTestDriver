@@ -39,7 +39,7 @@ public class ActionSequenceBuilder {
 
   private final ActionFactory actionFactory;
   private final FileLoader fileLoader;
-  private final Provider<List<ThreadedAction>> threadedActionProvider;
+  private final Provider<List<BrowserAction>> threadedActionProvider;
   private final Provider<JsTestDriverClient> clientProvider;
   private final Provider<URLTranslator> urlTranslatorProvider;
   private final Provider<URLRewriter> urlRewriterProvider;
@@ -55,7 +55,6 @@ public class ActionSequenceBuilder {
   private boolean reset;
   private List<String> tests = new LinkedList<String>();
   private List<String> dryRunFor = new LinkedList<String>();
-  private List<ThreadedAction> threadedActions;
   private List<String> commands = new LinkedList<String>();
   private XmlPrinter xmlPrinter;
 
@@ -71,7 +70,7 @@ public class ActionSequenceBuilder {
   public ActionSequenceBuilder(ActionFactory actionFactory,
                                FileLoader fileLoader,
                                ResponseStreamFactory responseStreamFactory,
-                               Provider<List<ThreadedAction>> threadedActionProvider,
+                               Provider<List<BrowserAction>> threadedActionProvider,
                                Provider<JsTestDriverClient> clientProvider,
                                Provider<URLTranslator> urlTranslatorProvider,
                                Provider<URLRewriter> urlRewriterProvider,
@@ -143,10 +142,10 @@ public class ActionSequenceBuilder {
 
     JsTestDriverClient client = clientProvider.get();
 
-    threadedActions = threadedActionProvider.get();
+    List<BrowserAction> browserActions = threadedActionProvider.get();
 
-    if (!threadedActions.isEmpty()) {
-      actions.add(new ThreadedActionsRunner(client, threadedActions, Executors
+    if (!browserActions.isEmpty()) {
+      actions.add(new BrowserActionsRunner(client, browserActions, Executors
           .newCachedThreadPool()));
     }
     if (xmlPrinter != null) {

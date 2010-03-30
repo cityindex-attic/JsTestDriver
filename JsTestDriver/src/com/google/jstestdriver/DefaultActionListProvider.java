@@ -15,18 +15,18 @@
  */
 package com.google.jstestdriver;
 
+import java.util.List;
+import java.util.Set;
+
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
+import com.google.jstestdriver.guice.ThreadedActionProvider;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.output.XmlPrinter;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Provides a sequence of actions from a large number of arguments.
@@ -50,7 +50,7 @@ public class DefaultActionListProvider implements ActionListProvider {
   private final Set<FileInfo> fileSet;
   private final String testOutput;
   private final ResponseStreamFactory responseStreamFactory;
-  private final Provider<List<ThreadedAction>> threadedActionProvider;
+  private final ThreadedActionProvider threadedActionProvider;
   private final Provider<JsTestDriverClient> clientProvider;
   private final Provider<URLTranslator> urlTranslatorProvider;
   private final Provider<URLRewriter> urlRewriterProvider;
@@ -75,7 +75,7 @@ public class DefaultActionListProvider implements ActionListProvider {
       @Named("server") String server,
       @Named("testOutput") String testOutput,
       ResponseStreamFactory responseStreamFactory,
-      DefaultThreadedActionProvider threadedActionProvider,
+      ThreadedActionProvider threadedActionProvider,
       Provider<JsTestDriverClient> clientProvider,
       Provider<URLTranslator> urlTranslatorProvider,
       Provider<URLRewriter> urlRewriterProvider,
