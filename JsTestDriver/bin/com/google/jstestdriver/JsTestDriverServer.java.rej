@@ -1,0 +1,65 @@
+***************
+*** 29,34 ****
+  
+  import java.io.File;
+  import java.io.Reader;
+  import java.util.LinkedHashSet;
+  import java.util.LinkedList;
+  import java.util.List;
+--- 29,35 ----
+  
+  import java.io.File;
+  import java.io.Reader;
++ import java.nio.charset.Charset;
+  import java.util.LinkedHashSet;
+  import java.util.LinkedList;
+  import java.util.List;
+***************
+*** 125,130 ****
+      try {
+        Flags flags = new FlagsParser().parseArgument(args);
+        File config = new File(flags.getConfig());
+        Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
+        List<Module> modules = new LinkedList<Module>();
+  
+--- 126,132 ----
+      try {
+        Flags flags = new FlagsParser().parseArgument(args);
+        File config = new File(flags.getConfig());
++       String charset = Charset.defaultCharset().name();
+        Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
+        List<Module> modules = new LinkedList<Module>();
+  
+***************
+*** 141,146 ****
+          PluginLoader pluginLoader = new PluginLoader();
+          configParser.parse();
+          fileSet = configParser.getFilesList();
+          if (serverAddress == null || serverAddress.length() == 0) {
+            serverAddress = configParser.getServer();
+          }
+--- 143,149 ----
+          PluginLoader pluginLoader = new PluginLoader();
+          configParser.parse();
+          fileSet = configParser.getFilesList();
++         charset = configParser.getCharset();
+          if (serverAddress == null || serverAddress.length() == 0) {
+            serverAddress = configParser.getServer();
+          }
+***************
+*** 160,166 ****
+          modules.add(new PrintStreamClientModule(System.out));
+        }
+        Injector injector =
+-           Guice.createInjector(new JsTestDriverModule(flags, fileSet, modules, serverAddress));
+  
+        injector.getInstance(ActionRunner.class).runActions();
+      } catch (CmdLineException e) {
+--- 163,169 ----
+          modules.add(new PrintStreamClientModule(System.out));
+        }
+        Injector injector =
++           Guice.createInjector(new JsTestDriverModule(flags, charset, fileSet, modules, serverAddress));
+  
+        injector.getInstance(ActionRunner.class).runActions();
+      } catch (CmdLineException e) {

@@ -1,0 +1,1 @@
+jstestdriver.FileResult=function(a,c,b){this.file=a;this.success=c;this.message=b};

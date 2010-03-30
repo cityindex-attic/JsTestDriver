@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="0" hostname="dhcp-172-26-93-27.nyc.corp.google.com" name="com.google.jstestdriver.html.HtmlDocNodeFactoryTest" tests="1" time="0.087" timestamp="2010-03-27T20:50:30">
+  <properties>
+    <property name="java.vendor" value="Apple Inc." />
+    <property name="CONFIGURATIONFILE" value="jsTestDriver.conf" />
+    <property name="obj-test.dir" value="target/obj-test" />
+    <property name="lib.dir" value="lib" />
+    <property name="sun.java.launcher" value="SUN_STANDARD" />
+    <property name="jikes.class.path" value=":/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/../Classes/alt-rt.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/../Classes/charsets.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/../Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/../Classes/dt.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/../Classes/jce.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/../Classes/jconsole.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/../Classes/jsse.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/../Classes/laf.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/../Classes/management-agent.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/../Classes/ui.jar" />
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Server Compiler" />
+    <property name="os.name" value="Mac OS X" />
+    <property name="svn.tagsUrl" value="https://js-test-driver.googlecode.com/svn/tags" />
+    <property name="sun.boot.class.path" value="/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/jsfd.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Frameworks/JavaRuntimeSupport.framework/Resources/Java/JavaRuntimeSupport.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/ui.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/laf.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/sunrsasign.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/jsse.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/jce.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/charsets.jar" />
+    <property name="XMLDIRECTORY" value="target/reports/jstestdriver" />
+    <property name="javascript-resources" value="com/google/jstestdriver/javascript" />
+    <property name="javac.target" value="1.5" />
+    <property name="TESTPATH" value="." />
+    <property name="java.vm.specification.vendor" value="Sun Microsystems Inc." />
+    <property name="ant.home" value="/usr/share/ant" />
+    <property name="java.runtime.version" value="1.6.0_17-b04-248-9M3125" />
+    <property name="src-gen.dir" value="src-generated" />
+    <property name="user.name" value="corysmith" />
+    <property name="svn.trunkUrl" value="https://js-test-driver.googlecode.com/svn/trunk" />
+    <property name="awt.nativeDoubleBuffering" value="true" />
+    <property name="user.language" value="en" />
+    <property name="defaultbrowser" value="/usr/bin/firefox" />
+    <property name="sun.boot.library.path" value="/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Libraries" />
+    <property name="ant.project.name" value="JsTestDriver" />
+    <property name="java.version" value="1.6.0_17" />
+    <property name="user.timezone" value="" />
+    <property name="sun.arch.data.model" value="64" />
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+    <property name="emma.coverage.out.file" value="target/emma/test.emma" />
+    <property name="java.endorsed.dirs" value="/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/lib/endorsed" />
+    <property name="sun.cpu.isalist" value="" />
+    <property name="sun.jnu.encoding" value="MacRoman" />
+    <property name="file.encoding.pkg" value="sun.io" />
+    <property name="file.separator" value="/" />
+    <property name="java.specification.name" value="Java Platform API Specification" />
+    <property name="java.class.version" value="50.0" />
+    <property name="user.country" value="US" />
+    <property name="testability-explorer.reports.dir" value="target/reports/testability-explorer" />
+    <property name="java.home" value="/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home" />
+    <property name="java.vm.info" value="mixed mode" />
+    <property name="main-class" value="com.google.jstestdriver.JsTestDriverServer" />
+    <property name="ant.file" value="/Users/corysmith/repos/js-test-driver/JsTestDriver/build.xml" />
+    <property name="ant.file.JsTestDriver" value="/Users/corysmith/repos/js-test-driver/JsTestDriver/build.xml" />
+    <property name="os.version" value="10.5.8" />
+    <property name="path.separator" value=":" />
+    <property name="java.vm.version" value="14.3-b01-101" />
+    <property name="jstests.dir" value="src-test/com/google/jstestdriver/javascript" />
+    <property name="ant.library.dir" value="/usr/share/ant/lib" />
+    <property name="java.awt.printerjob" value="apple.awt.CPrinterJob" />
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+    <property name="src-test.dir" value="src-test" />
+    <property name="awt.toolkit" value="apple.awt.CToolkit" />
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+    <property name="test-resources" value="com/google/jstestdriver" />
+    <property name="user.home" value="/Users/corysmith" />
+    <property name="java.specification.vendor" value="Sun Microsystems Inc." />
+    <property name="SERVERADDRESS" value="http://localhost:9876" />
+    <property name="java.library.path" value=".:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java" />
+    <property name="java.vendor.url" value="http://www.apple.com/" />
+    <property name="BROWSERPATH" value="open" />
+    <property name="bin.dir" value="target/bin" />
+    <property name="java.vm.vendor" value="Apple Inc." />
+    <property name="gopherProxySet" value="false" />
+    <property name="emma-reports.dir" value="target/reports/emma" />
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
+    <property name="java.class.path" value="/Users/corysmith/repos/js-test-driver/JsTestDriver/target/bin:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/emma-2.0.5312-lib/emma.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/emma-2.0.5312-lib/emma_ant.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/antlr-3.1.3/antlr-3.1.3.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/args4j-2.0.12/args4j-2.0.12.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/google-gson-1.2.3/gson-1.2.3.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/guice/guice-2.0-no_aop.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/guice/guice-multibindings-2.0.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/jetty/jetty-6.1.19.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/jetty/jetty-util-6.1.19.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/jetty/servlet-api-2.5-20081211.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/joda-time-1.6/joda-time-1.6.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/jvyaml-0.2/lib/jvyaml.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/slf4j-1.5.6/slf4j-api-1.5.6.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/google-collect-1.0-rc2/google-collect-1.0-rc2.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/lib/junit/junit.jar:/Users/corysmith/repos/js-test-driver/JsTestDriver/target/obj-debug:/Users/corysmith/repos/js-test-driver/JsTestDriver/target/obj-test:/usr/share/java/ant-1.7.1/lib/ant-launcher.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar" />
+    <property name="ant.version" value="Apache Ant version 1.7.1 compiled on October 13 2009" />
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+    <property name="java.vm.specification.version" value="1.0" />
+    <property name="sun.os.patch.level" value="unknown" />
+    <property name="sun.cpu.endian" value="little" />
+    <property name="junit.reports.dir" value="target/reports/junit" />
+    <property name="java.io.tmpdir" value="/var/folders/zz/zzzivhrRnAmviuee++2eA++-8X+/-Tmp-/" />
+    <property name="java.vendor.url.bug" value="http://bugreport.apple.com/" />
+    <property name="mrj.build" value="9M3125" />
+    <property name="java.awt.graphicsenv" value="apple.awt.CGraphicsEnvironment" />
+    <property name="os.arch" value="x86_64" />
+    <property name="obj-debug.dir" value="target/obj-debug" />
+    <property name="java.ext.dirs" value="/Library/Java/Extensions:/System/Library/Java/Extensions:/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/lib/ext" />
+    <property name="user.dir" value="/Users/corysmith/repos/js-test-driver/JsTestDriver" />
+    <property name="mrj.version" value="1050.1.6.0_17-248" />
+    <property name="emma.coverage.out.merge" value="true" />
+    <property name="emma.dir" value="target/emma" />
+    <property name="line.separator" value="
+" />
+    <property name="jstestdriver.reports.dir" value="target/reports/jstestdriver" />
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM" />
+    <property name="basedir" value="/Users/corysmith/repos/js-test-driver/JsTestDriver" />
+    <property name="ant.java.version" value="1.6" />
+    <property name="obj.dir" value="target/obj" />
+    <property name="ant.core.lib" value="/usr/share/ant/lib/ant.jar" />
+    <property name="emma-bin.dir" value="target/bin" />
+    <property name="file.encoding" value="MacRoman" />
+    <property name="target.dir" value="target" />
+    <property name="java.specification.version" value="1.6" />
+    <property name="src.dir" value="src" />
+  </properties>
+  <testcase classname="com.google.jstestdriver.html.HtmlDocNodeFactoryTest" name="testMultipleHtmlNodes" time="0.015" />
+  <system-out><![CDATA[EMMA: collecting runtime coverage data ...
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Safari_531227_Mac_OS.assertsTest" errors="0" failures="0" tests="16" time="0.009000001">
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertTrue" time="0.0040"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertTrueWithMsg" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertFalse" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertFalseWithMsg" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertEquals" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertEqualsWithMsg" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertSame" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertSameWithMsg" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertNotSame" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertNotSameWithMsg" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertNull" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertNullWithMsg" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertNotNull" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertNotNullWithMsg" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testExpectAsserts" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.assertsTest" name="testAssertCount" time="0.0"/>
+</testsuite>

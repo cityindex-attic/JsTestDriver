@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Safari_531227_Mac_OS.TestCaseInfoTest" errors="0" failures="0" tests="4" time="0.0010">
+<testcase classname="Safari_531227_Mac_OS.TestCaseInfoTest" name="testEqualsTestCasesInfo" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.TestCaseInfoTest" name="testGetCorrectTestNames" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.TestCaseInfoTest" name="testDefaultTestRunConfiguration" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.TestCaseInfoTest" name="testTestRunConfigurationFor" time="0.0"/>
+</testsuite>

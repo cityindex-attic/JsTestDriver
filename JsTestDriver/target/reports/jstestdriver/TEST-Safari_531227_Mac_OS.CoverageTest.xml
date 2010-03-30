@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Safari_531227_Mac_OS.CoverageTest" errors="0" failures="0" tests="6" time="0.014000001">
+<testcase classname="Safari_531227_Mac_OS.CoverageTest" name="testInit" time="0.0070"/>
+<testcase classname="Safari_531227_Mac_OS.CoverageTest" name="testInitNoop" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.CoverageTest" name="testToCoveredLines" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.CoverageTest" name="testSummarizeCoverage" time="0.0020"/>
+<testcase classname="Safari_531227_Mac_OS.CoverageTest" name="testCoveredLinesToJson" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.CoverageTest" name="testCoveredLinesToProtoBuffer" time="0.0020"/>
+<system-out><![CDATA[[DEBUG] [[1,[[1,1],[3,0],[5,1]]],[2,[[2,1],[3,1],[4,1]]]]]]></system-out>
+</testsuite>

@@ -1,0 +1,11 @@
+body {
+  background-color: #6c6;
+}
+
+p {
+  text-align: center;
+}
+
+body.error {
+  background-color: #999;
+}

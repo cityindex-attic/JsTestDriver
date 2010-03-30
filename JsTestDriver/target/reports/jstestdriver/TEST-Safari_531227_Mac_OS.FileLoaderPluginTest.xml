@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Safari_531227_Mac_OS.FileLoaderPluginTest" errors="0" failures="0" tests="13" time="0.0060000005">
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnLoadJs" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnLoadJsError" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnLoadJsWindowError" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnLoadCss" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnLoadCssError" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnLoadCssWindowError" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnReadyStateChangeJs" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnReadyStateChangeJsError" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnReadyStateChangeJsWindowError" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnReadyStateChangeCss" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileLoadCssOnLoadHack" time="0.0"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnReadyStateChangeCssError" time="0.0010"/>
+<testcase classname="Safari_531227_Mac_OS.FileLoaderPluginTest" name="testFileOnReadyStateChangeCssWindowError" time="0.0"/>
+</testsuite>
