@@ -31,16 +31,16 @@ public interface HeartBeatManager {
   /**
    * Necessary pre-call to ensure the timer is started for the HeartBeat to be scheduled.
    */
-  public abstract void startTimer();
+  public void startTimer();
 
   /**
    * Cancels the {@link HeartBeat}.
    */
-  public abstract void cancelTimer();
+  public void cancelTimer();
 
   /**
    * Starts the {@link HeartBeat} for a given server, browser and session.
    */
-  public abstract void startHeartBeat(String baseUrl, String browserId, String sessionId);
+  public void startHeartBeat(String baseUrl, String browserId, String sessionId);
 
 }

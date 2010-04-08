@@ -223,11 +223,16 @@ public class CommandTask {
         return;
       }
       if (upload) {
+        float startUpload = System.currentTimeMillis();
         uploadFileSet();
+        LOGGER.debug("File upload for {} took {}s",
+            params,
+            (System.currentTimeMillis() - startUpload)/1000f);
       }
       server.post(baseUrl + "/cmd", params);
       StreamMessage streamMessage = null;
 
+      float startCommandRun = System.currentTimeMillis();
       do {
         LOGGER.debug("Fetching command {}", baseUrl + "/cmd?id=" + browserId);
         String response = server.fetch(baseUrl + "/cmd?id=" + browserId);
@@ -238,6 +243,9 @@ public class CommandTask {
         shouldPanic(resObj);
         stream.stream(resObj);
       } while (!streamMessage.isLast());
+      LOGGER.debug("Running {} took {}s",
+          params,
+          (System.currentTimeMillis() - startCommandRun)/1000f);
     } catch (Exception e) {
       throw new FailureException("Failed running " + params, e);
     } finally {

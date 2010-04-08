@@ -21,12 +21,15 @@ jstestdriver.listen = function() {
   jstestdriver.testCaseManager =
       new jstestdriver.TestCaseManager(jstestdriver.pluginRegistrar);
 
-  var testRunner = new jstestdriver.TestRunner(jstestdriver.pluginRegistrar,
-                                               function (callback){
-    callback();
-  });
+  var testRunner = new jstestdriver.TestRunner(
+      jstestdriver.pluginRegistrar,
+      jstestdriver.testBreather(jstestdriver.setTimeout,
+                                jstestdriver.TIMEOUT)
+  );
+
   jstestdriver.testCaseBuilder =
       new jstestdriver.TestCaseBuilder(jstestdriver.testCaseManager);
+
   jstestdriver.global.TestCase = jstestdriver.bind(jstestdriver.testCaseBuilder,
       jstestdriver.testCaseBuilder.TestCase);
 
@@ -55,7 +58,6 @@ jstestdriver.listen = function() {
   // legacy
   jstestdriver.testCaseManager.TestCase = jstestdriver.global.TestCase;
 
-  
   new jstestdriver.CommandExecutor(parseInt(id),
       url,
       jstestdriver.convertToJson(jstestdriver.jQuery.post),
@@ -65,7 +67,29 @@ jstestdriver.listen = function() {
 };
 
 
-jstestdriver.TIMEOUT = 500;
+/**
+ * Allows the browser to stop the test execution thread after a test when the
+ * interval requires it to.
+ * @param setTimeout {function(Function, number):null}
+ * @param interval {number}
+ * @return {function(Function):null}
+ */
+jstestdriver.testBreather = function(setTimeout, interval) {
+  var lastBreath = new Date();
+  function maybeBreathe(callback) {
+    var now = new Date();
+    if ((now - lastBreath) > interval) {
+      setTimeout(callback, 1);
+      lastBreath = now;
+    } else {
+      callback();
+    }
+  };
+  return maybeBreathe;
+};
+
+
+jstestdriver.TIMEOUT = 1000;
 
 
 jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager, testRunner,
