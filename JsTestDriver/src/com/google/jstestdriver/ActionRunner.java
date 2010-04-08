@@ -41,9 +41,12 @@ public class ActionRunner {
 
     while (iterator.hasNext()) {
       Action action = iterator.next();
+      long startAction = System.currentTimeMillis();
       logger.debug("Starting {}", action);
       action.run();
-      logger.debug("Finishing {}", action);
+      logger.debug("Finishing {} in {}s",
+                   action,
+                   (System.currentTimeMillis() - startAction)/1000f);
     }
   }
 }

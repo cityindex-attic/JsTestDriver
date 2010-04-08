@@ -37,6 +37,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
+import java.util.logging.Level;
 
 import javax.servlet.Servlet;
 
@@ -134,6 +135,9 @@ public class JsTestDriverServer extends Observable {
       YamlParser parser = new YamlParser(new DefaultPathRewriter(),
           Collections.<FileParsePostProcessor>emptySet());
       Flags flags = new FlagsParser().parseArgument(args);
+      java.util.logging.Logger rootLogger =
+          java.util.logging.Logger.getLogger(Logger.ROOT_LOGGER_NAME);
+      rootLogger.setLevel(Level.FINEST);
       File config = new File(flags.getConfig());
       List<Module> modules = Lists.newLinkedList();
       modules.add(new TestResultPrintingModule(System.out, flags.getTestOutput()));
