@@ -28,6 +28,7 @@ import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.html.HtmlDocModule;
 import com.google.jstestdriver.runner.RunnerMode;
 
+import org.kohsuke.args4j.CmdLineException;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.servlet.Context;
@@ -171,9 +172,15 @@ public class JsTestDriverServer extends Observable {
                                                 flags.getPort())));
 
       injector.getInstance(ActionRunner.class).runActions();
+    } catch (CmdLineException e){
+      System.out.println(e.getMessage());
+      System.exit(1);
+    } catch (FailureException e) {
+      System.out.println("Tests failed.");
+      System.exit(1);
     } catch (Exception e) {
-      e.printStackTrace();
       logger.debug("Error {}", e);
+      System.out.println("Unexpected Runner Condition. Use --runnerMode DEBUG for more information.");
       System.exit(1);
     }
   }
