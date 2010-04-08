@@ -29,14 +29,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class SlaveBrowser {
 
-  private static final long TIMEOUT = 15000; // 15 seconds
+  public static final long TIMEOUT = 15000; // 15 seconds
   private static final int POLL_RESPONSE_TIMEOUT = 2;
 
   private final Time time;
   private final String id;
   private final BrowserInfo browserInfo;
   private final BlockingQueue<Command> commandsToRun = new LinkedBlockingQueue<Command>();
-  private long timeout = 10;
+  private long dequeueTimeout = 10;
   private TimeUnit timeUnit = TimeUnit.SECONDS;
   private Instant lastHeartBeat;
   private Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
@@ -44,9 +44,11 @@ public class SlaveBrowser {
     new LinkedBlockingQueue<CommandResponse>();
   private Command commandRunning = null;
   private Command lastCommandDequeued;
+  private final long timeout;
 
-  public SlaveBrowser(Time time, String id, BrowserInfo browserInfo) {
+  public SlaveBrowser(Time time, String id, BrowserInfo browserInfo, long timeout) {
     this.time = time;
+    this.timeout = timeout;
     lastHeartBeat = time.now();
     this.id = id;
     this.browserInfo = browserInfo;
@@ -94,7 +96,7 @@ public class SlaveBrowser {
 
   public synchronized Command dequeueCommand() {
     try {
-      Command command = commandsToRun.poll(timeout, timeUnit);
+      Command command = commandsToRun.poll(dequeueTimeout, timeUnit);
 
       if (command != null) {
         commandRunning = command;
@@ -115,8 +117,8 @@ public class SlaveBrowser {
     return browserInfo;
   }
 
-  public void setDequeueTimeout(long timeout, TimeUnit timeUnit) {
-    this.timeout = timeout;
+  public void setDequeueTimeout(long dequeueTimeout, TimeUnit timeUnit) {
+    this.dequeueTimeout = dequeueTimeout;
     this.timeUnit = timeUnit;
   }
 
@@ -195,7 +197,7 @@ public class SlaveBrowser {
   }
 
   public boolean isAlive() {
-    return time.now().getMillis() - lastHeartBeat.getMillis() < TIMEOUT;
+    return time.now().getMillis() - lastHeartBeat.getMillis() < timeout;
   }
 
   @Override

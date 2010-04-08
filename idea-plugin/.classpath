@@ -16,11 +16,11 @@
 	<classpathentry kind="lib" path="lib/jdom-1.1/jdom-1.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jdom-1.1/jdom-1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/JsTestDriver"/>
 	<classpathentry kind="lib" path="/Users/corysmith/Downloads/idea-8.1.4-dev/redist/persistence-openapi.jar"/>
 	<classpathentry kind="lib" path="/Users/corysmith/Downloads/idea-8.1.4-dev/redist/openapi.jar"/>
 	<classpathentry kind="lib" path="/Users/corysmith/Downloads/idea-8.1.4-dev/redist/javaee-openapi.jar"/>
 	<classpathentry kind="lib" path="/Users/corysmith/Downloads/idea-8.1.4-dev/redist/extensions.jar"/>
 	<classpathentry kind="lib" path="/Users/corysmith/Downloads/idea-8.1.4/lib/idea.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jstestdriver"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

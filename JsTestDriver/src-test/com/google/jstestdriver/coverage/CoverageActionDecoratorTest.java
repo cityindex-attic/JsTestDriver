@@ -18,6 +18,7 @@ package com.google.jstestdriver.coverage;
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.Action;
 import com.google.jstestdriver.ServerStartupAction;
+import com.google.jstestdriver.SlaveBrowser;
 
 import junit.framework.TestCase;
 
@@ -30,7 +31,7 @@ public class CoverageActionDecoratorTest extends TestCase {
   public void testDecorate() throws Exception {
     CoverageReporterAction reporter = new CoverageReporterAction(null, null);
     List<Action> actions =
-      Lists.<Action>newArrayList(new ServerStartupAction(0, null, null, null, null));
+      Lists.<Action>newArrayList(new ServerStartupAction(0, null, null, null, null, SlaveBrowser.TIMEOUT));
     List<Action> actual = new CoverageActionDecorator(reporter).process(actions);
     assertEquals(2, actual.size());
     assertTrue(actual.get(0) instanceof ServerStartupAction);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Google Inc.
+ * Copyright 2010 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,22 +13,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
 
-import junit.framework.TestCase;
+package com.google.jstestdriver.guice;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.name.Names;
 
 /**
- * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
+ * Modules for enabling debug logging and statistics.
+ * @author corbinrsmith@gmail.com (Cory Smith)
+ *
  */
-public class SlaveBrowserTest extends TestCase {
+public class DebugModule extends AbstractModule {
 
-  public void testSlaveBrowserHeartBeat() throws Exception {
-    MockTime mockTime = new MockTime(0);
-    SlaveBrowser browser = new SlaveBrowser(mockTime, "1", new BrowserInfo(), SlaveBrowser.TIMEOUT);
+  private final boolean debug;
 
-    assertEquals(0L, browser.getLastHeartBeat().getMillis());
-    mockTime.add(5);
-    browser.heartBeat();
-    assertEquals(5L, browser.getLastHeartBeat().getMillis());
+  public DebugModule(boolean debug) {
+    this.debug = debug;
+  }
+
+  @Override
+  protected void configure() {
+    bind(Boolean.class).annotatedWith(Names.named("debug")).toInstance(debug);
   }
 }

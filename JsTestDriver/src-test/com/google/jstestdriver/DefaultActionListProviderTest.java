@@ -83,7 +83,7 @@ public class DefaultActionListProviderTest extends TestCase {
                                                    Set<ActionListProcessor> processors,
                                                    String testOutput, XmlPrinter xmlPrinter) {
     ActionFactory actionFactory =
-        new ActionFactory(null, Collections.<TestsPreProcessor>emptySet());
+        new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT);
     return new DefaultActionListProvider(
         actionFactory,
         null,

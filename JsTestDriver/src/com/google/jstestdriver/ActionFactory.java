@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 
 import java.util.HashMap;
@@ -39,20 +40,27 @@ public class ActionFactory {
   Map<Class<?>, List<Observer>> observers = new HashMap<Class<?>, List<Observer>>();
   private final Provider<JsTestDriverClient> clientProvider;
   private final Set<TestsPreProcessor> testPreProcessors;
-
+  private final long browserTimeout;
   @Inject
   public ActionFactory(Provider<JsTestDriverClient> clientProvider,
-                       Set<TestsPreProcessor> testPreProcessors) {
+                       Set<TestsPreProcessor> testPreProcessors,
+                       @Named("browserTimeout") long browserTimeout) {
     this.clientProvider = clientProvider;
     this.testPreProcessors = testPreProcessors;
+    this.browserTimeout = browserTimeout;
   }
 
 
   public ServerStartupAction getServerStartupAction(Integer port,
       CapturedBrowsers capturedBrowsers, FilesCache preloadedFilesCache,
       URLTranslator urlTranslator, URLRewriter urlRewriter) {
-    ServerStartupAction serverStartupAction = new ServerStartupAction(port, capturedBrowsers,
-        preloadedFilesCache, urlTranslator, urlRewriter);
+    ServerStartupAction serverStartupAction =
+        new ServerStartupAction(port,
+                                capturedBrowsers,
+                                preloadedFilesCache,
+                                urlTranslator,
+                                urlRewriter,
+                                browserTimeout);
 
     if (observers.containsKey(CapturedBrowsers.class)) {
       for (Observer o : observers.get(CapturedBrowsers.class)) {

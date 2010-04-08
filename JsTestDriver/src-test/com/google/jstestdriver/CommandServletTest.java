@@ -35,7 +35,7 @@ public class CommandServletTest extends TestCase {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     BrowserInfo browserInfo = new BrowserInfo();
     browserInfo.setId(1);
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), "1", browserInfo);
+    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), "1", browserInfo, SlaveBrowser.TIMEOUT);
 
     capturedBrowsers.addSlave(slave);
     CommandServlet servlet = new CommandServlet(capturedBrowsers, null, null, null);
@@ -47,7 +47,7 @@ public class CommandServletTest extends TestCase {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     BrowserInfo browserInfo = new BrowserInfo();
     browserInfo.setId(1);
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), "1", browserInfo);
+    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), "1", browserInfo, SlaveBrowser.TIMEOUT);
 
     capturedBrowsers.addSlave(slave);
     CommandServlet servlet =

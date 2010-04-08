@@ -88,8 +88,11 @@ public class FileSetServlet extends HttpServlet implements Observer {
   public void stopSession(String id, String sessionId, PrintWriter writer) {
     Lock lock = locks.get(id);
 
-    lock.unlock(sessionId);
-    writer.flush();
+    try {
+      lock.unlock(sessionId);
+    } finally {
+      writer.flush();
+    }
   }
 
   public void startSession(String id, PrintWriter writer) {

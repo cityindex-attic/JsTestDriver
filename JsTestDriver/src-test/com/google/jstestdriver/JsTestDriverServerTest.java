@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.util.NullStopWatch;
+
 import junit.framework.TestCase;
 
 import java.io.IOException;
@@ -33,7 +35,7 @@ public class JsTestDriverServerTest extends TestCase {
 
   private JsTestDriverServer server =
       new JsTestDriverServer(4224, new CapturedBrowsers(), new FilesCache(
-          new HashMap<String, FileInfo>()), new DefaultURLTranslator(), new DefaultURLRewriter());
+          new HashMap<String, FileInfo>()), new DefaultURLTranslator(), new DefaultURLRewriter(), SlaveBrowser.TIMEOUT);
 
   @Override
   protected void tearDown() throws Exception {
@@ -64,8 +66,8 @@ public class JsTestDriverServerTest extends TestCase {
 
   public void testListBrowsers() throws Exception {
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new DefaultFileFilter(), null, null), new LinkedHashSet<FileInfo>(),
-        "http://localhost:4224", new HttpServer());
+        new DefaultFileFilter(), null, null, new NullStopWatch()),
+        new LinkedHashSet<FileInfo>(), "http://localhost:4224", new HttpServer(), false);
 
     server.start();
     Collection<BrowserInfo> browsers = client.listBrowsers();

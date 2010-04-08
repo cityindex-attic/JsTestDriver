@@ -22,9 +22,11 @@ import com.google.inject.Module;
 import com.google.jstestdriver.config.Configuration;
 import com.google.jstestdriver.config.DefaultConfiguration;
 import com.google.jstestdriver.config.YamlParser;
+import com.google.jstestdriver.guice.DebugModule;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.html.HtmlDocModule;
+import com.google.jstestdriver.runner.RunnerMode;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
@@ -37,7 +39,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
-import java.util.logging.Level;
+import java.util.logging.LogManager;
 
 import javax.servlet.Servlet;
 
@@ -57,28 +59,34 @@ public class JsTestDriverServer extends Observable {
   private final URLRewriter urlRewriter;
   private Context context;
 
-  public JsTestDriverServer(int port, CapturedBrowsers capturedBrowsers,
-      FilesCache preloadedFilesCache, URLTranslator urlTranslator,
-      URLRewriter urlRewriter) {
+  private final long browserTimeout;
+
+  public JsTestDriverServer(int port,
+                            CapturedBrowsers capturedBrowsers,
+                            FilesCache preloadedFilesCache,
+                            URLTranslator urlTranslator,
+                            URLRewriter urlRewriter,
+                            long browserTimeout) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = preloadedFilesCache;
     this.urlTranslator = urlTranslator;
     this.urlRewriter = urlRewriter;
+    this.browserTimeout = browserTimeout;
     initJetty(this.port);
     initServlets();
   }
 
   private void initServlets() {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
-
+    // TODO(corysmith): replace this with Guice injection
     addServlet("/", new HomeServlet(capturedBrowsers));
     addServlet("/hello", new HelloServlet());
     addServlet("/heartbeat", new HeartbeatServlet(capturedBrowsers));
     addServlet("/capture", new CaptureServlet(new BrowserHunter(
-      capturedBrowsers)));
+      capturedBrowsers, browserTimeout)));
     addServlet("/runner/*", new StandaloneRunnerServlet(new BrowserHunter(
-      capturedBrowsers), filesCache, new StandaloneRunnerFilesFilterImpl(),
+      capturedBrowsers, browserTimeout), filesCache, new StandaloneRunnerFilesFilterImpl(),
       new SlaveResourceService(SlaveResourceService.RESOURCE_LOCATION)));
     addServlet("/slave/*", new SlaveResourceServlet(new SlaveResourceService(
       SlaveResourceService.RESOURCE_LOCATION)));
@@ -135,12 +143,13 @@ public class JsTestDriverServer extends Observable {
       YamlParser parser = new YamlParser(new DefaultPathRewriter(),
           Collections.<FileParsePostProcessor>emptySet());
       Flags flags = new FlagsParser().parseArgument(args);
-      java.util.logging.Logger rootLogger =
-          java.util.logging.Logger.getLogger(Logger.ROOT_LOGGER_NAME);
-      rootLogger.setLevel(Level.FINEST);
+
       File config = new File(flags.getConfig());
       List<Module> modules = Lists.newLinkedList();
       modules.add(new TestResultPrintingModule(System.out, flags.getTestOutput()));
+
+      LogManager.getLogManager().readConfiguration(
+          flags.getRunnerMode().getLogConfig());
 
       Configuration configuration = new DefaultConfiguration();
       if (flags.hasWork()) {
@@ -152,11 +161,14 @@ public class JsTestDriverServer extends Observable {
         modules.add(new HtmlDocModule()); // by default the html plugin is installed.
       }
 
+      modules.add(new DebugModule(flags.getRunnerMode() == RunnerMode.DEBUG));
+
       Injector injector = Guice.createInjector(
           new JsTestDriverModule(flags,
               configuration.getFilesList(),
               modules,
-              configuration.createServerAddress(flags.getServer(), flags.getPort())));
+              configuration.createServerAddress(flags.getServer(),
+                                                flags.getPort())));
 
       injector.getInstance(ActionRunner.class).runActions();
     } catch (Exception e) {

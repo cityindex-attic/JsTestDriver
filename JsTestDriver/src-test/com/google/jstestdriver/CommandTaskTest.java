@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 import com.google.gson.Gson;
 import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
 import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.util.NullStopWatch;
 
 import junit.framework.TestCase;
 
@@ -182,7 +183,7 @@ public class CommandTaskTest extends TestCase {
       LinkedHashSet<FileInfo> serveFiles, Map<String, String> params, FakeResponseStream stream,
       MockFileLoader fileLoader, boolean upload) {
     CommandTask task = new CommandTask(new DefaultFileFilter(), stream, files,
-        "http://localhost", server, params, new HeartBeatManagerStub(), fileLoader, upload);
+        "http://localhost", server, params, new HeartBeatManagerStub(), fileLoader, upload, new NullStopWatch());
     return task;
   }
 

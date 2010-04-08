@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.inject.Provider;
+import com.google.jstestdriver.util.NullStopWatch;
 
 import junit.framework.TestCase;
 
@@ -101,8 +102,8 @@ public class JsTestDriverClientTest extends TestCase {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+        }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
+        "http://localhost", server, false);
     FakeResponseStream stream = new FakeResponseStream();
 
     client.eval("1", stream, "cmd");
@@ -132,8 +133,8 @@ public class JsTestDriverClientTest extends TestCase {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+        }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
+        "http://localhost", server, false);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
     List<BrowserInfo> browsers = new ArrayList<BrowserInfo>(browsersCollection);
 
@@ -159,7 +160,7 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/heartbeat?id=1", "OK");
     server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
     server.expect("http://localhost/cmd?POST?{data={\"command\":\"runAllTests\","
-        + "\"parameters\":[\"false\",\"false\"]}, id=1}", "");
+        + "\"parameters\":[\"false\",\"false\",\"false\"]}, id=1}", "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
@@ -168,8 +169,8 @@ public class JsTestDriverClientTest extends TestCase {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+        }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
+        "http://localhost", server, false);
     FakeResponseStream stream = new FakeResponseStream();
 
     client.runAllTests("1", stream, false);
@@ -183,7 +184,7 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/heartbeat?id=1", "OK");
     server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
     server.expect("http://localhost/cmd?POST?{data={\"command\":\"runTests\","
-        + "\"parameters\":[\"[\\\"testCase.testFoo\\\",\\\"testCase.testBar\\\"]\",\"false\"]}, id=1}",
+        + "\"parameters\":[\"[\\\"testCase.testFoo\\\",\\\"testCase.testBar\\\"]\",\"false\",\"false\"]}, id=1}",
         "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
@@ -193,8 +194,8 @@ public class JsTestDriverClientTest extends TestCase {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server);
+        }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
+        "http://localhost", server, false);
     FakeResponseStream stream = new FakeResponseStream();
 
     ArrayList<String> tests = new ArrayList<String>();

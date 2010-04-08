@@ -43,15 +43,19 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   private final String baseUrl;
   private final Server server;
 
+  private final Boolean debug;
+
   @Inject
   public JsTestDriverClientImpl(CommandTaskFactory commandTaskFactory,
                                 @Named("fileSet") Set<FileInfo> fileSet,
                                 @Named("server") String baseUrl,
-                                Server server) {
+                                Server server,
+                                @Named("debug") Boolean debug) {
     this.commandTaskFactory = commandTaskFactory;
     this.fileSet = fileSet;
     this.baseUrl = baseUrl;
     this.server = server;
+    this.debug = debug;
   }
 
   public Collection<BrowserInfo> listBrowsers() {
@@ -84,6 +88,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
     parameters.add(String.valueOf(captureConsole));
     parameters.add("false");
+    parameters.add(debug.toString());
     JsonCommand cmd = new JsonCommand(CommandType.RUNALLTESTS, parameters);
 
     sendCommand(id, responseStream, gson.toJson(cmd), true);
@@ -101,6 +106,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
     parameters.add(gson.toJson(tests));
     parameters.add(String.valueOf(captureConsole));
+    parameters.add(debug.toString());
     JsonCommand cmd = new JsonCommand(CommandType.RUNTESTS, parameters);
 
     sendCommand(id, responseStream, gson.toJson(cmd), true);

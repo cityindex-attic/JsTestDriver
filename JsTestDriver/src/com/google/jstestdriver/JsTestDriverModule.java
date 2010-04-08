@@ -69,6 +69,7 @@ public class JsTestDriverModule extends AbstractModule {
     bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
 
     bind(FailureAccumulator.class).in(Singleton.class);
+    bind(Long.class).annotatedWith(Names.named("browserTimeout")).toInstance(SlaveBrowser.TIMEOUT);
 
     install(new FlagsModule(flags));
     install(new ActionFactoryModule());
@@ -77,12 +78,12 @@ public class JsTestDriverModule extends AbstractModule {
     for (Module module : plugins) {
       install(module);
     }
-    
+
     for (BrowserRunner runner : flags.getBrowser()) {
       Multibinder.newSetBinder(binder(),
           BrowserRunner.class).addBinding().toInstance(runner);
     }
-    
+
     bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet")).
         toProvider(FileSetProvider.class).in(Singleton.class);
     bind(Integer.class).annotatedWith(BrowserCount.class).

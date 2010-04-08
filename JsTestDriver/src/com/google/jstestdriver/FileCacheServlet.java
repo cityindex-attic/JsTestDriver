@@ -40,6 +40,7 @@ public class FileCacheServlet extends HttpServlet {
   Set<FileInfo> currentFiles = new HashSet<FileInfo>();
   private Gson gson = new Gson();
 
+  @SuppressWarnings("unused")
   @Override
   protected void doPost(HttpServletRequest req,
                         HttpServletResponse resp) throws ServletException,

@@ -23,6 +23,7 @@ import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.JsTestDriverModule;
+import com.google.jstestdriver.guice.DebugModule;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
 import com.google.jstestdriver.guice.ThreadedActionProvider;
 
@@ -46,7 +47,7 @@ public class CoverageModuleTest extends TestCase {
     flags.setBrowser(Arrays.asList("ff"));
     JsTestDriverModule jsTestDriverModule = new JsTestDriverModule(flags,
                            Collections.<FileInfo>emptySet(),
-                           Arrays.<Module>asList(coverage,printStream),
+                           Arrays.<Module>asList(coverage,printStream, new DebugModule(false)),
                            "");
     Guice.createInjector(jsTestDriverModule).getInstance(ActionRunner.class);
     List<Action> actions =

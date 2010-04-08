@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 
 import com.google.inject.Guice;
 import com.google.inject.Module;
+import com.google.jstestdriver.guice.DebugModule;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
 
 import junit.framework.TestCase;
@@ -31,6 +32,7 @@ public class JsTestDriverModuleTest extends TestCase {
   public void testGetActionRunnerWithoutXmlPrinter() throws Exception {
     FlagsImpl flags = new FlagsImpl();
     Guice.createInjector(new TestResultPrintingModule(System.out, ""),
+        new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
         Collections.<Module>emptyList(),
@@ -40,6 +42,7 @@ public class JsTestDriverModuleTest extends TestCase {
   public void testGetActionRunnerWithXmlWriter() throws Exception {
     FlagsImpl flags = new FlagsImpl();
     Guice.createInjector(new TestResultPrintingModule(System.out, "."),
+        new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
         Collections.<Module>emptyList(),

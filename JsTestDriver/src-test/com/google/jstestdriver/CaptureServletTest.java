@@ -24,7 +24,7 @@ public class CaptureServletTest extends TestCase {
 
   public void testRedirectQuirksUrl() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers));
+    CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
 
     assertEquals("/slave/1/RemoteConsoleRunnerquirks.html", servlet.service("Chrome/2.0",
         CaptureServlet.QUIRKS));
@@ -32,7 +32,7 @@ public class CaptureServletTest extends TestCase {
 
   public void testRedirectStrictUrl() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers));
+    CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
 
     assertEquals("/slave/1/RemoteConsoleRunnerstrict.html", servlet.service("Chrome/2.0",
         CaptureServlet.STRICT));

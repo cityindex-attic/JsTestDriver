@@ -57,7 +57,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    logger.debug("POST: {}", req.toString());
+    logger.trace("POST: {}", req.toString());
     service(req.getPathInfo().substring(1), req.getParameter("start"), req.getParameter("response"),
         req.getParameter("done"), resp.getWriter());
   }
@@ -99,7 +99,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
         }
         boolean isLast = Boolean.parseBoolean(done);
 
-        logger.debug("Recieved:\n done{} islast {} \n res {}", new Object[]{done, isLast, res});
+        logger.trace("Received:\n done{} islast {} \n res {}", new Object[]{done, isLast, res});
         browser.addResponse(res, isLast);
         if (!isLast) {
           writer.print(NOOP);

@@ -35,7 +35,7 @@ import java.util.Set;
 public class ActionSequenceBuilderTest extends TestCase {
 
   private LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
-  ActionFactory actionFactory = new ActionFactory(null, Collections.<TestsPreProcessor>emptySet());
+  ActionFactory actionFactory = new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT);
 
   public void testAddTestsWithRemoteServerAddress() throws Exception {
     List<String> tests = tests();
@@ -78,7 +78,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     ActionSequenceBuilder builder = new ActionSequenceBuilder(
         new ActionFactory(
             null,
-            Collections.<TestsPreProcessor> emptySet()),
+            Collections.<TestsPreProcessor> emptySet(), SlaveBrowser.TIMEOUT),
             null, null, threadedActionProvider(tests, Collections
             .<String> emptyList(), false, Collections.<String> emptyList(),
             captureConsole),
@@ -116,7 +116,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(
             new ActionFactory(null,
-                              Collections.<TestsPreProcessor>emptySet()),
+                              Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT),
             null,
             null,
             threadedActionProvider(tests, Collections.<String> emptyList(),
@@ -148,7 +148,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     boolean reset = true;
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(
-            new ActionFactory(null, Collections.<TestsPreProcessor>emptySet()),
+            new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT),
             null,
             null,
             threadedActionProvider(tests,
@@ -181,7 +181,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     boolean reset = true;
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(
-            new ActionFactory(null, Collections.<TestsPreProcessor>emptySet()),
+            new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT),
             null,
             null,
             threadedActionProvider(tests,
@@ -215,7 +215,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<String> commands = Arrays.asList("'foo'+'bar'", "1+1");
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(
-            new ActionFactory(null, Collections.<TestsPreProcessor>emptySet()),
+            new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT),
             null, null,
             threadedActionProvider(Collections.<String> emptyList(),
                                    commands,
@@ -244,7 +244,7 @@ public class ActionSequenceBuilderTest extends TestCase {
   public void testNoBrowsers() throws Exception {
     List<String> tests = tests();
     ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(new ActionFactory(null, Collections.<TestsPreProcessor>emptySet()), null, null,
+        new ActionSequenceBuilder(new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT), null, null,
             threadedActionProvider(tests, Collections.<String> emptyList(), false, Collections
                 .<String> emptyList(), false), Providers.<JsTestDriverClient> of(null), Providers
                 .<URLTranslator> of(null), Providers.<URLRewriter> of(null),

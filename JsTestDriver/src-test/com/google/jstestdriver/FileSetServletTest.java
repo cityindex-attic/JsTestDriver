@@ -40,7 +40,7 @@ public class FileSetServletTest extends TestCase {
 
   public void testAddFilesNameAndDataToMap() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    capturedBrowsers.addSlave(new SlaveBrowser(new MockTime(0), "1", new BrowserInfo()));
+    capturedBrowsers.addSlave(new SlaveBrowser(new MockTime(0), "1", new BrowserInfo(), SlaveBrowser.TIMEOUT));
     Map<String, FileInfo> files = new HashMap<String, FileInfo>(); 
     FilesCache filesCache = new FilesCache(files);
     FileSetServlet fileSetServlet =
@@ -58,7 +58,7 @@ public class FileSetServletTest extends TestCase {
     BrowserInfo browserInfo = new BrowserInfo();
 
     browserInfo.setName("firefox");
-    SlaveBrowser slave = new SlaveBrowser(new MockTime(0), "1", browserInfo);
+    SlaveBrowser slave = new SlaveBrowser(new MockTime(0), "1", browserInfo, SlaveBrowser.TIMEOUT);
 
     capturedBrowsers.addSlave(slave);
     Map<String, FileInfo> files = new HashMap<String, FileInfo>();

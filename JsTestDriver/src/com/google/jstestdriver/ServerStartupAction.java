@@ -34,15 +34,38 @@ public class ServerStartupAction implements ObservableAction {
   private final URLRewriter urlRewriter;
   private JsTestDriverServer server;
   private List<Observer> observerList = new LinkedList<Observer>();
+  private final long browserTimeout;
   
+  /**
+   * @deprecated In favor of using the constructor that defines browser timeout.
+   */
+  @Deprecated
+  public ServerStartupAction(int port,
+                             CapturedBrowsers capturedBrowsers,
+                             FilesCache preloadedFilesCache,
+                             URLTranslator urlTranslator,
+                             URLRewriter urlRewriter) {
+    this(port,
+         capturedBrowsers,
+         preloadedFilesCache,
+         urlTranslator,
+         urlRewriter,
+         SlaveBrowser.TIMEOUT);
+    
+  }
 
-  public ServerStartupAction(int port, CapturedBrowsers capturedBrowsers,
-      FilesCache preloadedFilesCache, URLTranslator urlTranslator, URLRewriter urlRewriter) {
+  public ServerStartupAction(int port,
+                             CapturedBrowsers capturedBrowsers,
+                             FilesCache preloadedFilesCache,
+                             URLTranslator urlTranslator,
+                             URLRewriter urlRewriter,
+                             long browserTimeout) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.preloadedFilesCache = preloadedFilesCache;
     this.urlTranslator = urlTranslator;
     this.urlRewriter = urlRewriter;
+    this.browserTimeout = browserTimeout;
   }
 
   public JsTestDriverServer getServer() {
@@ -53,11 +76,15 @@ public class ServerStartupAction implements ObservableAction {
     logger.info("Starting server...");
     server =
         new JsTestDriverServer(port, capturedBrowsers, preloadedFilesCache, urlTranslator,
-            urlRewriter);
+            urlRewriter, browserTimeout);
     for (Observer o : observerList) {
       server.addObserver(o);
     }
-    server.start();
+    try {
+      server.start();
+    } catch (Exception e) {
+      throw new RuntimeException("Error starting the server on " + port, e);
+    }
   }
 
   public void addObservers(List<Observer> observers) {

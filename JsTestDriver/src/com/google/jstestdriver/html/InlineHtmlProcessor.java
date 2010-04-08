@@ -37,7 +37,6 @@ public class InlineHtmlProcessor implements FileLoadPostProcessor {
   private static final Logger LOGGER = LoggerFactory.getLogger(InlineHtmlProcessor.class);
   private final HtmlDocParser parser;
   private final HtmlDocLexer lexer;
-
   @Inject
   public InlineHtmlProcessor(HtmlDocParser parser, HtmlDocLexer lexer) {
     this.parser = parser;
@@ -46,7 +45,7 @@ public class InlineHtmlProcessor implements FileLoadPostProcessor {
   
   public FileInfo process(FileInfo file) {
     try {
-      LOGGER.debug("inlining html for " + file.getFileName());
+      LOGGER.trace("inlining html for {}", file.getFileName());
       String source = file.getData();
       Writer writer = new CharArrayWriter();
       parser.parse(

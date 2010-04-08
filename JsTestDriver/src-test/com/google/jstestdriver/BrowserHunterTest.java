@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 public class BrowserHunterTest extends TestCase {
 
   public void testCaptureAndGenerateUrlQuirks() throws Exception {
-    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers());
+    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(), SlaveBrowser.TIMEOUT);
     SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version", "os");
     BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
 
@@ -35,7 +35,7 @@ public class BrowserHunterTest extends TestCase {
   }
 
   public void testCaptureAndGenerateUrlStrict() throws Exception {
-    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers());
+    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(), SlaveBrowser.TIMEOUT);
     SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version", "os");
     BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
 

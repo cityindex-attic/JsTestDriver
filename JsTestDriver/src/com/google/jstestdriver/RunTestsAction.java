@@ -32,7 +32,9 @@ public class RunTestsAction implements BrowserAction {
   private final ResponseStreamFactory responseStreamFactory;
 
   public RunTestsAction(ResponseStreamFactory responseStreamFactory,
-      List<String> tests, boolean captureConsole, Set<TestsPreProcessor> preProcessors) {
+                        List<String> tests,
+                        boolean captureConsole,
+                        Set<TestsPreProcessor> preProcessors) {
     this.responseStreamFactory = responseStreamFactory;
     this.tests = tests;
     this.captureConsole = captureConsole;
@@ -40,8 +42,8 @@ public class RunTestsAction implements BrowserAction {
   }
 
   /**
-   * @param The Browser id to execute tests in.
-   * @param The client to run tests in.
+   * @param id The Browser id to execute tests in.
+   * @param client The client to run tests in.
    */
   public void run(String id, JsTestDriverClient client) {
     List<String> testsToRun = tests;

@@ -39,6 +39,7 @@ public class PluginTest extends TestCase {
     final String name = "foo";
     final Plugin plugin = new Plugin(null, "somePath", null, null);
     assertEquals(name, plugin.getName(new ManifestLoader(){
+      @SuppressWarnings("unused")
       @Override
       public Manifest load(String jarPath) throws ManifestNotFound {
         return createManifest("jstd", "fpp", name);
@@ -56,6 +57,7 @@ public class PluginTest extends TestCase {
     final String moduleName = "moduleName";
     final Plugin plugin = new Plugin("foo", "somePath", null, null);
     assertEquals(moduleName, plugin.getModuleName(new ManifestLoader(){
+      @SuppressWarnings("unused")
       @Override
       public Manifest load(String jarPath) throws ManifestNotFound {
         return createManifest("jstd", moduleName, "foo");

@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +60,11 @@ public class CommandTask {
   private final FileLoader fileLoader;
   private final boolean upload;
 
+  private final StopWatch stopWatch;
+
   public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
       String baseUrl, Server server, Map<String, String> params, HeartBeatManager heartBeatManager,
-      FileLoader fileLoader, boolean upload) {
+      FileLoader fileLoader, boolean upload, StopWatch stopWatch) {
     this.filter = filter;
     this.stream = stream;
     this.fileSet = fileSet;
@@ -71,6 +74,7 @@ public class CommandTask {
     this.heartBeatManager = heartBeatManager;
     this.fileLoader = fileLoader;
     this.upload = upload;
+    this.stopWatch = stopWatch;
   }
 
   private String startSession() {
@@ -82,7 +86,7 @@ public class CommandTask {
         try {
           Thread.sleep(WAIT_INTERVAL);
         } catch (InterruptedException e) {
-          System.err.println("Could not create session for browser: " + browserId);
+          LOGGER.error("Could not create session for browser: " + browserId);
           return "";
         }
         sessionId = server.startSession(baseUrl, browserId);
@@ -99,7 +103,7 @@ public class CommandTask {
     String alive = server.fetch(baseUrl + "/heartbeat?id=" + params.get("id"));
 
     if (!alive.equals("OK")) {
-      System.err.println("The browser " + params.get("id") + " is not available anymore, "
+      LOGGER.error("The browser " + params.get("id") + " is not available anymore, "
           + "you might want to re-capture it");
       return false;
     }
@@ -175,13 +179,14 @@ public class CommandTask {
 
         loadFileParams.put("id", params.get("id"));
         loadFileParams.put("data", gson.toJson(cmd));
+        LOGGER.trace("Sending LOADTEST: {}", loadFileParams);
         server.post(baseUrl + "/cmd", loadFileParams);
         String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
+        LOGGER.trace("LOADTEST response: {}", response);
 
         shouldPanic(response);
-        //LoadedFiles loadedFiles = gson.fromJson(response.getResponse(), LoadedFiles.class);
         stream.stream(response);
       }
     }
@@ -222,17 +227,17 @@ public class CommandTask {
       if (!isBrowserAlive()) {
         return;
       }
+
       if (upload) {
         float startUpload = System.currentTimeMillis();
+        stopWatch.start("upload");
         uploadFileSet();
-        LOGGER.debug("File upload for {} took {}s",
-            params,
-            (System.currentTimeMillis() - startUpload)/1000f);
+        stopWatch.stop("upload");
       }
       server.post(baseUrl + "/cmd", params);
       StreamMessage streamMessage = null;
 
-      float startCommandRun = System.currentTimeMillis();
+      stopWatch.start("Command %s", params.get("data"));
       do {
         LOGGER.debug("Fetching command {}", baseUrl + "/cmd?id=" + browserId);
         String response = server.fetch(baseUrl + "/cmd?id=" + browserId);
@@ -243,9 +248,7 @@ public class CommandTask {
         shouldPanic(resObj);
         stream.stream(resObj);
       } while (!streamMessage.isLast());
-      LOGGER.debug("Running {} took {}s",
-          params,
-          (System.currentTimeMillis() - startCommandRun)/1000f);
+      stopWatch.stop("Command %s", params.get("data"));
     } catch (Exception e) {
       throw new FailureException("Failed running " + params, e);
     } finally {

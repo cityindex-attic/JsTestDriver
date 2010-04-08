@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.util.NullStopWatch;
+
 import junit.framework.TestCase;
 
 import java.util.LinkedList;
@@ -43,7 +45,7 @@ public class ActionRunnerTest extends TestCase {
     TestRanAction action =  new TestRanAction();
 
     actions.add(action);
-    ActionRunner runner = new ActionRunner(actions);
+    ActionRunner runner = new ActionRunner(actions, new NullStopWatch());
 
     runner.runActions();
     assertTrue(action.actionRan());

@@ -40,7 +40,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
   public void testGetDataFromJsPuppetServer() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo());
+    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
     String data = "hello";
 
     slave.createCommand(data);
@@ -54,7 +54,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
   public void testSettingResponseForACommand() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo());
+    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
 
     browsers.addSlave(slave);
     BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
@@ -80,7 +80,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
   public void testSimulatePollTimeoutDequeueNullCommand() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo());
+    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
 
     slave.setDequeueTimeout(0L, TimeUnit.NANOSECONDS);
     browsers.addSlave(slave);
@@ -94,7 +94,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
     MockTime time = new MockTime(42L);
-    SlaveBrowser slave = new SlaveBrowser(time, id, new BrowserInfo());
+    SlaveBrowser slave = new SlaveBrowser(time, id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
     String data = "hello";
 
     slave.createCommand(data);
@@ -117,7 +117,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
   public void testDoNotGetCommandIfNotLastResponse() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo());
+    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
 
     browsers.addSlave(slave);
     BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
@@ -142,7 +142,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
   public void testFilesLoadedAreAddedToTheBrowserFileSet() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo());
+    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
 
     browsers.addSlave(slave);
     BrowserQueryResponseServlet servlet =

@@ -25,6 +25,7 @@ import org.kohsuke.args4j.Option;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.browser.CommandLineBrowserRunner;
+import com.google.jstestdriver.runner.RunnerMode;
 
 /**
  * FlagsParser for the JsTestDriver.
@@ -46,6 +47,7 @@ public class FlagsImpl implements Flags {
   private List<String> dryRunFor = new ArrayList<String>();
   @Argument
   private List<String> arguments = new ArrayList<String>();
+  private RunnerMode runnerMode = RunnerMode.QUIET;
 
   @Option(name="--port", usage="The port on which to start the JsTestDriver server")
   public void setPort(Integer port) {
@@ -156,7 +158,7 @@ public class FlagsImpl implements Flags {
   }
 
   @Option(name="--dryRunFor", usage="Outputs the number of tests that are going to be run as well" +
-  		" as their names for a set of expressions or all to see all the tests")
+          " as their names for a set of expressions or all to see all the tests")
   public void setDryRunFor(List<String> dryRunFor) {
     this.dryRunFor = dryRunFor;
   }
@@ -164,9 +166,19 @@ public class FlagsImpl implements Flags {
   public List<String> getDryRunFor() {
     return dryRunFor;
   }
-  
+
   public  boolean hasWork() {
     return getTests().size() > 0 || getReset() || !getArguments().isEmpty() ||
         getPreloadFiles() || !getDryRunFor().isEmpty();
+  }
+
+  @Option(name="--runnerMode",
+          usage="Sets the mode for a runner: DEBUG, PROFILE, QUIET")
+  public void setRunnerMode(String mode) {
+    runnerMode = RunnerMode.valueOf(mode);
+  }
+
+  public RunnerMode getRunnerMode() {
+    return runnerMode;
   }
 }

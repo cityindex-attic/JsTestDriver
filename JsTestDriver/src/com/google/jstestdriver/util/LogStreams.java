@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Google Inc.
+ * Copyright 2010 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,11 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.util;
 
-/**
- * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
- */
-public interface Action {
-  void run();
+import java.io.File;
+import java.io.InputStream;
+
+public class LogStreams {
+
+  public InputStream getDebugLogConfiguration(File basePath) {
+    return null;
+  }
+
+  public InputStream getNormalLogConfiguration() {
+    return null;
+  }
 }

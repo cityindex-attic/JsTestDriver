@@ -89,7 +89,7 @@ jstestdriver.testBreather = function(setTimeout, interval) {
 };
 
 
-jstestdriver.TIMEOUT = 1000;
+jstestdriver.TIMEOUT = 500;
 
 
 jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager, testRunner,
@@ -126,6 +126,7 @@ jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager, t
   this.testsDone_ = [];
   this.sentOn_ = -1;
   this.done_ = false;
+  this.debug_ = false;
 };
 
 
@@ -278,6 +279,7 @@ jstestdriver.CommandExecutor.prototype.onFileLoadedRunnerMode = function(status)
 jstestdriver.CommandExecutor.prototype.runAllTests = function(args) {
   var captureConsole = args[0];
   var runnerMode = args[1] == "true" ? true : false;
+  this.debug_ = Boolean(args[2]);
 
   this.runTestCases_(this.__testCaseManager.getDefaultTestRunsConfiguration(),
       captureConsole == "true" ? true : false, runnerMode);
@@ -287,6 +289,7 @@ jstestdriver.CommandExecutor.prototype.runAllTests = function(args) {
 jstestdriver.CommandExecutor.prototype.runTests = function(args) {
   var expressions = jsonParse('{"expressions":' + args[0] + '}').expressions;
   var captureConsole = args[1];
+  this.debug_ = Boolean(args[2]);
 
   this.runTestCases_(this.__testCaseManager.getTestRunsConfigurationFor(expressions),
       captureConsole == "true" ? true : false, false);
@@ -370,7 +373,7 @@ jstestdriver.CommandExecutor.prototype.sendTestResults_ = function() {
 
 jstestdriver.CommandExecutor.prototype.onTestDone_ = function(result) {
   this.addTestResult(result);
-  if ((result.result == 'error' || result.log != '') && this.sentOn_ == -1) {
+  if ((result.result == 'error' || result.log != '' || this.debug_) && this.sentOn_ == -1) {
     this.sendTestResults_();
   }
 };

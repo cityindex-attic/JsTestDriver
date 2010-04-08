@@ -33,7 +33,7 @@ public class HomeServletTest extends TestCase {
     browserInfo.setName("browser");
     browserInfo.setOs("OS");
     browserInfo.setVersion("1.0");
-    SlaveBrowser slave = new SlaveBrowser(new MockTime(0), "1", browserInfo);
+    SlaveBrowser slave = new SlaveBrowser(new MockTime(0), "1", browserInfo, SlaveBrowser.TIMEOUT);
 
     capturedBrowsers.addSlave(slave);
     HomeServlet servlet = new HomeServlet(capturedBrowsers);

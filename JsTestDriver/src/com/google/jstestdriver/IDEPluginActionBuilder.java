@@ -126,7 +126,9 @@ public class IDEPluginActionBuilder {
       install(new FlagsModule(flags));
       bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("originalFileSet"))
           .toInstance(fileSet);
+      bind(Long.class).annotatedWith(Names.named("browserTimeout")).toInstance(SlaveBrowser.TIMEOUT);
       bind(String.class).annotatedWith(Names.named("server")).toInstance(serverAddress);
+      bind(Boolean.class).annotatedWith(Names.named("debug")).toInstance(Boolean.FALSE);
 
       bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
 

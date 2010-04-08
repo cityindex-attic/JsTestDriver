@@ -29,7 +29,7 @@ import java.util.TimerTask;
 
 // TODO(jeremiele): Fill in the javadoc.
 /**
- * The java portion of a browser HeartBeat.
+ * The client portion of the browser heartbeat.
  * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
@@ -61,9 +61,10 @@ class HeartBeat extends TimerTask {
       connection = (HttpURLConnection) new URL(url).openConnection();
 
       connection.connect();
+      String result = toString(connection.getInputStream());
       if (logger.isDebugEnabled()) {
         logger.debug("Client Heatbeat: {}",
-                     toString(connection.getInputStream()));
+                     result);
       }
     } catch (MalformedURLException e) {
       throw new RuntimeException(e);

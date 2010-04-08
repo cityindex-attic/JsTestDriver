@@ -35,7 +35,7 @@ public class StandaloneRunnerServletTest extends TestCase {
     FilesCache cache = new FilesCache(files);
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     StandaloneRunnerServlet runnerServlet =
-        new StandaloneRunnerServlet(new BrowserHunter(capturedBrowsers), cache,
+        new StandaloneRunnerServlet(new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT), cache,
             new StandaloneRunnerFilesFilterImpl(), new SlaveResourceService(""));
     runnerServlet.service("Chrome/2.0", "/runner", "1");
     SlaveBrowser slaveBrowser = capturedBrowsers.getBrowser("1");

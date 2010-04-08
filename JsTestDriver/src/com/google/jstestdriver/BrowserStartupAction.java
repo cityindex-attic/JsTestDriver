@@ -30,6 +30,10 @@ import com.google.jstestdriver.browser.BrowserRunner;
  * Starts a list of browsers when run.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+/**
+ * @author corysmith@google.com (Your Name Here)
+ *
+ */
 public class BrowserStartupAction implements Action, Observer {
 
   private static final Logger logger =

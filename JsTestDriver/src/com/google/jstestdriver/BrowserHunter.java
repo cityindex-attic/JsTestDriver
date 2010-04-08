@@ -31,8 +31,11 @@ public class BrowserHunter {
 
   private final CapturedBrowsers capturedBrowsers;
 
-  public BrowserHunter(CapturedBrowsers capturedBrowsers) {
-    this.capturedBrowsers = capturedBrowsers;    
+  private final long browserTimeout;
+
+  public BrowserHunter(CapturedBrowsers capturedBrowsers, long browserTimeout) {
+    this.capturedBrowsers = capturedBrowsers;
+    this.browserTimeout = browserTimeout;
   }
 
   public SlaveBrowser captureBrowser(String name, String version, String os) {
@@ -50,7 +53,8 @@ public class BrowserHunter {
     browserInfo.setName(name);
     browserInfo.setVersion(version);
     browserInfo.setOs(os);
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, browserInfo);
+    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(),
+                                          id, browserInfo, browserTimeout);
 
     capturedBrowsers.addSlave(slave);
     logger.info("Browser Captured: {} version {} ({})", new Object[] {name, version, id});
