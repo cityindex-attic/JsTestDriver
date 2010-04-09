@@ -15,26 +15,28 @@ you need to set it up and tear it down in each test.
 
 */
 (function() {
-   
+
+	var QUnitTestCase;
+
     window.module = function(name, lifecycle) {
         QUnitTestCase = TestCase(name);
-		QUnitTestCase.tearDown = function() {};
-
-        if (lifecycle) {
-            QUnitTestCase.prototype.setUp = lifecycle.setup || function() {};
-            QUnitTestCase.tearDown = lifecycle.teardown || function() {};
-        }
+        QUnitTestCase.prototype.lifecycle = lifecycle || {};
     };
     
-    window.test = function(name, test) {
-		var tearDown = QUnitTestCase.tearDown;
-        QUnitTestCase.prototype['test ' + name] = function() {
-			try {
-				test();
-			} catch(ex) {
-				throw(ex);
-			} finally {
-				tearDown();
+    window.test = function(name, expected, test) {
+    	QUnitTestCase.prototype['test ' + name] = function() {
+        	if(this.lifecycle.setup) {
+        		this.lifecycle.setup();
+        	}
+       		if(expected.constructor === Number) {
+       			expectAsserts(expected);	
+       		} else {
+       			test = expected;
+       		}
+       		test.call(this.lifecycle);
+       		
+			if(this.lifecycle.teardown) {
+				this.lifecycle.teardown();
 			}
 		};
     };

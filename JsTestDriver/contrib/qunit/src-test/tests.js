@@ -18,6 +18,11 @@ test('OK true succeeds', function() {
 	ok(true);
 });
 
+test('Test with expected defined as 2nd param', 1, function(){
+	ok(true);
+});
+
+
 // test('OK false fails', function() {
 // 	ok(false);
 // });
@@ -81,22 +86,29 @@ module('DOM');
 module('Lifecycle', {
   setup: function() {
     ok(true, "once extra assert per test");
+    this.mockString = "some string";
   },
   teardown: function() {
 	ok(true, "and one extra assert after each test");
 	window.testGlobal = 1;
+	equals(this.mockString, "some string");
+	this.mockString = "some other string";
   }
 });
 
 test('Setup and Teardown are run, and can contain assertions', function() {
-	expect(2);
+	expect(3);
 });
 
-module('Lifecycle', {});
+test("Things assigned to this in setup are available in test", function() {
+	equals(this.mockString, "some string");
+});
 
-test('', function() {
+module('Empty Lifecycle', {});
+
+test('tests still run successfully even if Setup and Teardown are undefined', function() {
 	expect(1);
-	ok(true, 'tests still run successfully even if Setup and Teardown are undefined');
+	ok(true);
 });
 
 // test('Teardown still run even with exception (must run next test to check)', function() {

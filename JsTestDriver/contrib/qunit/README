@@ -1,7 +1,7 @@
 QUnit to JS Test Driver adapter
 ===============================
 
-Version: 1.0.3
+Version: 1.1.0
 Author: Karl O'Keeffe (karl@monket.net, http://monket.net)
 Blog post introduction: http://monket.net/blog/2009/06/new-qunit-to-js-test-driver-adapter/
 http://code.google.com/p/js-test-driver/source/browse/#svn/trunk/JsTestDriver/contrib/qunit

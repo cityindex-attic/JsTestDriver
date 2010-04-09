@@ -1,3 +1,12 @@
+1.1.0
+-----
+
+Variables set on the 'this' object within are now available within setup, teardown, and the tests themselves.
+
+The test function now supports the optional second parameter of the expected number of assertions.
+
+Thanks to anotherhero for this patch.
+
 1.0.3
 -----
 
