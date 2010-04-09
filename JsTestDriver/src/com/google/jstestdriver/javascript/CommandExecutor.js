@@ -127,6 +127,7 @@ jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager, t
   this.sentOn_ = -1;
   this.done_ = false;
   this.debug_ = false;
+  this.outgoingRequests_ = 0;
 };
 
 
@@ -340,7 +341,8 @@ jstestdriver.CommandExecutor.prototype.stopTestInterval_ = function() {
 
 
 jstestdriver.CommandExecutor.prototype.onDataSent_ = function() {
-  if (this.done_) {
+  this.outgoingRequests_--;
+  if (this.done_ && this.outgoingRequests_ == 0) {
     this.sendTestResultsOnComplete_();
   } else if (this.sentOn_ != -1) {
     var elapsed = new Date().getTime() - this.sentOn_;
@@ -366,6 +368,7 @@ jstestdriver.CommandExecutor.prototype.sendTestResults_ = function() {
 
     this.testsDone_ = [];
     this.sentOn_ = new Date().getTime();
+    this.outgoingRequests_++;
     this.__sendRequest(this.__url, data, this.boundOnDataSent);
   }
 };
@@ -402,7 +405,9 @@ jstestdriver.CommandExecutor.prototype.sendTestResultsOnComplete_ = function() {
 
 jstestdriver.CommandExecutor.prototype.onComplete_ = function() {
   this.done_ = true;
-  this.sendTestResultsOnComplete_();
+  if (this.outgoingRequests_ == 0) {
+    this.sendTestResultsOnComplete_();
+  }
 };
 
 

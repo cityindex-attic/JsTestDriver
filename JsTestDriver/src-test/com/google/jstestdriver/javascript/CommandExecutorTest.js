@@ -245,3 +245,29 @@ commandExecutorTest.prototype.testCallPluginOnTestResultAdded = function() {
   assertEquals('Runner reset.', data.response.response);
 };
 */
+
+commandExecutorTest.prototype.testLastRunPacketIsAlwaysSentLast = function() {
+  var pluginRegistrar = {
+    processTestResult: function(_testResult) {
+    }
+  };
+  var finalData = [];
+  var executor = new jstestdriver.CommandExecutor(1, "/url", function(_url, _data, _callback)  {
+    finalData.push(_data);
+  }, null, null, pluginRegistrar);
+
+  executor.startTestInterval_ = function() {};
+  executor.stopTestInterval_ = function() {};
+  executor.boundOnTestDone({ result: 'success', log: '' });
+  executor.boundSendTestResults();
+  executor.boundOnDataSent();
+  executor.boundOnTestDone({ result: 'success', log: '' });
+  executor.boundSendTestResults();
+  executor.boundOnComplete();
+  assertEquals(2, finalData.length);
+  assertFalse(finalData[0].done);
+  assertFalse(finalData[1].done);
+  executor.boundOnDataSent();
+  assertEquals(3, finalData.length);
+  assertTrue(finalData[2].done);
+};
