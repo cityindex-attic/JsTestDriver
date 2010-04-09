@@ -1,6 +1,6 @@
 /*
 QUnitAdapter
-Version: 1.0.3
+Version: 1.1.0
 
 Run qunit tests using JS Test Driver
 
@@ -15,6 +15,10 @@ you need to set it up and tear it down in each test.
 
 */
 (function() {
+
+	if(!(window.equiv)) {
+		throw new Error("QUnitAdapter.js - Unable to find equiv function. Ensure you have added equiv.js to the load section of your jsTestDriver.conf");
+	}
 
 	var QUnitTestCase;
 
