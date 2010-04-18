@@ -149,6 +149,8 @@ public class CommandTask {
     if (postResult.length() > 0) {
       Collection<FileInfo> filesToUpload =
           gson.fromJson(postResult, new TypeToken<Collection<FileInfo>>() {}.getType());
+      // should reset if the files are the same, because there could be other files on
+      // the server.
       boolean shouldReset = sameFiles(filesToUpload, fileSet);
       Set<FileInfo> finalFilesToUpload = new LinkedHashSet<FileInfo>();
 

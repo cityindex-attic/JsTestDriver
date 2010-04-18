@@ -33,6 +33,11 @@ public class LogConfigBuilder {
     configLines.add(className + ".level=SEVERE");
     return this;
   }
+  
+  public LogConfigBuilder warn(String className) {
+    configLines.add(className + ".level=WARNING");
+    return this;
+  }
 
   public LogConfigBuilder info(String className) {
     configLines.add(className + ".level=INFO");

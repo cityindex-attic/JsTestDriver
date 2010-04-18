@@ -41,8 +41,8 @@ public enum RunnerMode {
             .severe("org.mortbay")),
   QUIET(new LogConfigBuilder()
             .useFileHandler()
-            .severe("com.google.javascript.jstestdriver")
-            .severe("com.google.jstestdriver")
+            .warn("com.google.javascript.jstestdriver")
+            .warn("com.google.jstestdriver")
             .severe("org.mortbay"));
 
   private final LogConfigBuilder configBuilder;

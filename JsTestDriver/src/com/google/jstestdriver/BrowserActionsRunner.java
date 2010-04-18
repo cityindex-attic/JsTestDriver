@@ -46,7 +46,7 @@ public class BrowserActionsRunner implements Action {
     int browsersNumber = browsers.size();
 
     if (browsersNumber == 0) {
-      throw new FailureException("No browsers were captured, nothing to run...");
+      throw new RuntimeException("No browsers were captured, nothing to run...");
     }
     CountDownLatch latch = new CountDownLatch(browsersNumber);
 
@@ -69,10 +69,10 @@ public class BrowserActionsRunner implements Action {
         future.get();
       } catch (InterruptedException e) {
         // TODO(corysmith): fix the error reporting to be more useful.
-        throw new FailureException("Failure during run", e);
+        throw new RuntimeException("Failure during run", e);
       } catch (ExecutionException e) {
         // TODO(corysmith): fix the error reporting to be more useful.
-        throw new FailureException("Failure during run", e);
+        throw new RuntimeException("Failure during run", e);
       }
     }
   }
