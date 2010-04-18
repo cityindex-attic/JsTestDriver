@@ -57,7 +57,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    logger.trace("POST: {}", req.toString());
+    logger.trace("Browser Query Post:\n{}\n", req.toString());
     service(req.getPathInfo().substring(1), req.getParameter("start"), req.getParameter("response"),
         req.getParameter("done"), resp.getWriter());
   }
@@ -90,16 +90,14 @@ public class BrowserQueryResponseServlet extends HttpServlet {
             }
             browser.addFiles(fileInfos);
             if (errorFiles.size() > 0) {
-              // call it a full reset, becuase we don't know what the state in
-              // the browser is.
-              browser.resetFileSet();
-              //browser.removeFiles(errorFiles);
+              browser.removeFiles(errorFiles);
             }
           }
         }
         boolean isLast = Boolean.parseBoolean(done);
 
-        logger.trace("Received:\n done{} islast {} \n res {}", new Object[]{done, isLast, res});
+        logger.trace("Received:\n done: {} \n islast: {} \n res:\n {}\n",
+                     new Object[]{done, isLast, res});
         browser.addResponse(res, isLast);
         if (!isLast) {
           writer.print(NOOP);

@@ -10,7 +10,10 @@ public class LogConfigBuilder {
 
   public LogConfigBuilder useFileHandler() {
     handlers.add("java.util.logging.FileHandler");
-    configLines.add("java.util.logging.FileHandler.pattern=%t/jstd-%u.log");
+    configLines.add("java.util.logging.FileHandler.pattern=%t/jstd-" +
+                    System.currentTimeMillis() +
+                    ".log");
+    configLines.add("java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter");
     configLines.add("java.util.logging.FileHandler.level=ALL");
     return this;
   }

@@ -116,6 +116,39 @@ TestRunnerPluginTest.prototype.testClearBody = function() {
 };
 
 
+TestRunnerPluginTest.prototype.testClearBodyError = function() {
+  var clearBodyCalled = false;
+  var fakeDate = function() {};
+  
+  fakeDate.prototype.getTime = function() {
+    return 0;
+  };
+  
+  var clearBodyError = new Error("body not there");
+  
+  var testRunnerPlugin = new jstestdriver.plugins.TestRunnerPlugin(fakeDate,
+          function() { throw clearBodyError; });
+  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
+  var testCaseClass = testCaseBuilder.TestCase('test');
+  
+  testCaseClass.prototype.testFoo = function() {};
+  var testRunConfiguration = new jstestdriver.TestRunConfiguration(
+          testCaseManager.getTestCasesInfo()[0], new Array('testFoo'));
+  
+  var result = null;
+  function captureResult(actualResult) {
+    result = actualResult;
+  }
+
+  testRunnerPlugin.runTestConfiguration(testRunConfiguration, captureResult, function() {});
+
+  assertNotNull(result);
+  assertEquals("error", result.result);
+  assertEquals(JSON.stringify(clearBodyError), result.message);
+};
+
+
 TestRunnerPluginTest.prototype.testWrongTest = function() {
   var fakeDate = function() {};
 

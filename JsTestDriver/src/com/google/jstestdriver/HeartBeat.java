@@ -62,7 +62,7 @@ class HeartBeat extends TimerTask {
 
       connection.connect();
       String result = toString(connection.getInputStream());
-      if (logger.isDebugEnabled()) {
+      if (result.length() > 0) {
         logger.debug("Client Heatbeat: {}",
                      result);
       }

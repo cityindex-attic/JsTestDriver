@@ -180,7 +180,7 @@ public class JsTestDriverServer extends Observable {
       System.exit(1);
     } catch (Exception e) {
       logger.debug("Error {}", e);
-      System.out.println("Unexpected Runner Condition. Use --runnerMode DEBUG for more information.");
+      System.out.println("Unexpected Runner Condition: " + e.getMessage() + "\n Use --runnerMode DEBUG for more information.");
       System.exit(1);
     }
   }

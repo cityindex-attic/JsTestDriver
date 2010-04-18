@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -30,15 +33,19 @@ import java.util.Map;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class HttpServer implements Server {
+  private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
   public String fetch(String url) {
     HttpURLConnection connection = null;
+    logger.trace("Fetching {}", url);
 
     try {
       connection = (HttpURLConnection) new URL(url).openConnection();
 
       connection.connect();
-      return toString(connection.getInputStream());
+      String response = toString(connection.getInputStream());
+      logger.trace("Fetch response {}", response);
+      return response;
     } catch (MalformedURLException e) {
       throw new RuntimeException(e);
     } catch (IOException e) {
@@ -65,6 +72,7 @@ public class HttpServer implements Server {
     HttpURLConnection connection = null;
 
     try {
+      logger.trace("Post url:{} \nParams:\n{} \n", url, params);
       String paramsString = convertParamsToString(params);
 
       connection = (HttpURLConnection) new URL(url).openConnection();
@@ -79,7 +87,9 @@ public class HttpServer implements Server {
       oWriter.write(paramsString);
       oWriter.close();
       connection.connect();
-      return toString(connection.getInputStream());
+      String response = toString(connection.getInputStream());
+      logger.trace("Post response:\n{}", response);
+      return response;
     } catch (IOException e) {
       throw new RuntimeException(e);
     } finally {

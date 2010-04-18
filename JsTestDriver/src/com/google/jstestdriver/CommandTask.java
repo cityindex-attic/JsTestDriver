@@ -121,8 +121,14 @@ public class CommandTask {
 
   private void shouldPanic(Response response) {
     if (response.getResponseType() == ResponseType.BROWSER_PANIC) {
-      LOGGER.error(response.getResponse());
-      throw new RuntimeException(response.getResponse());
+      BrowserPanic panic = gson.fromJson(response.getResponse(),
+                                         response.getResponseType().type);
+      RuntimeException exception =
+          new RuntimeException("Browser lost: " + panic.getBrowserInfo());
+      LOGGER.error("Browser not found: {}\n Exception: {}",
+                   response.getResponse(),
+                   exception);
+      throw exception;
     }
   }
 
@@ -150,7 +156,7 @@ public class CommandTask {
 
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
-
+        
         shouldPanic(response);
         finalFilesToUpload.addAll(filesToUpload);
       } else {
@@ -223,13 +229,14 @@ public class CommandTask {
 
       if (!sessionId.equals("")) {
         heartBeatManager.startHeartBeat(baseUrl, browserId, sessionId);
+      } else {
+        throw new FailureException("Can't start a session on the server!" + params);
       }
       if (!isBrowserAlive()) {
-        return;
+        throw new FailureException("Browser not found: " + params);
       }
 
       if (upload) {
-        float startUpload = System.currentTimeMillis();
         stopWatch.start("upload");
         uploadFileSet();
         stopWatch.stop("upload");
@@ -239,9 +246,7 @@ public class CommandTask {
 
       stopWatch.start("Command %s", params.get("data"));
       do {
-        LOGGER.debug("Fetching command {}", baseUrl + "/cmd?id=" + browserId);
         String response = server.fetch(baseUrl + "/cmd?id=" + browserId);
-
         streamMessage = gson.fromJson(response, StreamMessage.class);
         Response resObj = streamMessage.getResponse();
 

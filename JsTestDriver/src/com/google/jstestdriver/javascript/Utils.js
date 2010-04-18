@@ -69,9 +69,13 @@ jstestdriver.convertToJson = function(delegate) {
 
 
 jstestdriver.bind = function(context, func) {
-  return function() {
+  function bound() {
     return func.apply(context, arguments);
   };
+  bound.toString = function() {
+    return "bound: " + context + " to: " + func;
+  }
+  return bound;
 };
 
 

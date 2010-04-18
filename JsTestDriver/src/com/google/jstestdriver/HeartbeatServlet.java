@@ -53,13 +53,13 @@ public class HeartbeatServlet extends HttpServlet {
         LOGGER.debug("heartbeat " + browser);
         if (!browser.isAlive()) {
           //capturedBrowsers.removeSlave(id);
-          writer.write("DEAD");
+          writer.write("DEAD:" + browser.getBrowserInfo());
         } else {
           writer.write("OK");
         }
       } else {
         LOGGER.debug("heartbeat " + id + "with no browser.");
-        writer.write("DEAD");
+        writer.write("DEAD: can't find browser.");
       }
     } else {
       LOGGER.debug("no heartbeat, no browser.");

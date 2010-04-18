@@ -173,7 +173,7 @@ public class FlagsImpl implements Flags {
   }
 
   @Option(name="--runnerMode",
-          usage="Sets the logging mode for a runner: DEBUG, PROFILE, QUIET")
+          usage="Sets the logging mode for a test run: DEBUG, DEBUG_QUIET, PROFILE, QUIET")
   public void setRunnerMode(String mode) {
     runnerMode = RunnerMode.valueOf(mode);
   }

@@ -37,62 +37,65 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTestConfiguration = function(
 jstestdriver.plugins.TestRunnerPlugin.prototype.runTest = function(testCaseName, testCase,
     testName) {
   var testCaseInstance;
-
   try {
-    testCaseInstance = new testCase();
-  } catch (e) {
-    return new jstestdriver.TestResult(testCaseName, testName, 'error',
-        testCaseName + ' is not a test case', '', 0);
-  }
-  var start = new this.dateObj_().getTime();
-
-  jstestdriver.expectedAssertCount = -1;
-  jstestdriver.assertCount = 0;
-  var res = 'passed';
-  var msg = '';
-
-  try {
-    if (testCaseInstance.setUp) {
-      testCaseInstance.setUp();
+    try {
+      testCaseInstance = new testCase();
+    } catch (e) {
+      return new jstestdriver.TestResult(testCaseName, testName, 'error',
+          testCaseName + ' is not a test case', '', 0);
     }
-    if (!(testName in testCaseInstance)) {
-      var err = new Error(testName + ' not found in ' + testCaseName);
-
-      err.name = 'AssertError';
-      throw err;
-    }
-    testCaseInstance[testName]();
-    if (jstestdriver.expectedAssertCount != -1 &&
-        jstestdriver.expectedAssertCount != jstestdriver.assertCount) {
-      var err = new Error("Expected '" +
-          jstestdriver.expectedAssertCount +
-          "' asserts but '" +
-          jstestdriver.assertCount +
-          "' encountered.");
-
-      err.name = 'AssertError';
-      throw err;
-    }
-  } catch (e) {
-
-    // We use the global here because of a circular dependency. The isFailure plugin should be
-    // refactored.
-    res = jstestdriver.pluginRegistrar.isFailure(e) ? 'failed' : 'error';
-    msg = JSON.stringify(e);
-  }
-  try {
-    if (testCaseInstance.tearDown) {
-      testCaseInstance.tearDown();
-    }
-  } catch (e) {
-    if (res == 'passed' && msg == '') {
-      res = 'error';
+    var start = new this.dateObj_().getTime();
+  
+    jstestdriver.expectedAssertCount = -1;
+    jstestdriver.assertCount = 0;
+    var res = 'passed';
+    var msg = '';
+  
+    try {
+      if (testCaseInstance.setUp) {
+        testCaseInstance.setUp();
+      }
+      if (!(testName in testCaseInstance)) {
+        var err = new Error(testName + ' not found in ' + testCaseName);
+        err.name = 'AssertError';
+        throw err;
+      }
+      testCaseInstance[testName]();
+      if (jstestdriver.expectedAssertCount != -1 &&
+          jstestdriver.expectedAssertCount != jstestdriver.assertCount) {
+        var err = new Error("Expected '" +
+            jstestdriver.expectedAssertCount +
+            "' asserts but '" +
+            jstestdriver.assertCount +
+            "' encountered.");
+  
+        err.name = 'AssertError';
+        throw err;
+      }
+    } catch (e) {
+  
+      // We use the global here because of a circular dependency. The isFailure plugin should be
+      // refactored.
+      res = jstestdriver.pluginRegistrar.isFailure(e) ? 'failed' : 'error';
       msg = JSON.stringify(e);
     }
+    try {
+      if (testCaseInstance.tearDown) {
+        testCaseInstance.tearDown();
+      }
+      this.clearBody_();
+    } catch (e) {
+      if (res == 'passed' && msg == '') {
+        res = 'error';
+        msg = JSON.stringify(e);
+      }
+    }
+    var end = new this.dateObj_().getTime();
+    return new jstestdriver.TestResult(testCaseName, testName, res, msg,
+            jstestdriver.console.getLog(), end - start);  
+  } catch (e) {
+    return new jstestdriver.TestResult(testCaseName, testName,
+            'error', 'Unexpected runner error: ' + JSON.stringify(e),
+            jstestdriver.console.getLog(), 0);
   }
-  this.clearBody_();
-  var end = new this.dateObj_().getTime();
-
-  return new jstestdriver.TestResult(testCaseName, testName, res, msg,
-      jstestdriver.console.getLog(), end - start);  
 };

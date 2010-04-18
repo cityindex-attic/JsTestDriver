@@ -13,12 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.TestRunner = function(pluginRegistrar, testRunBreaker) {
+jstestdriver.TestRunner = function(pluginRegistrar, testBreather) {
   this.pluginRegistrar_ = pluginRegistrar;
-  var self = this;
-  this.boundOnTestRunConfigurationComplete = function() {
-    testRunBreaker(jstestdriver.bind(self,
-                                     self.onTestRunConfigurationComplete_));
+
+  var runNextConfiguration_ =
+      jstestdriver.bind(this,
+                        this.runNextConfiguration_);
+
+  this.boundRunNextConfiguration_ = function() {
+    testBreather(runNextConfiguration_);
   };
 };
 
@@ -29,23 +32,7 @@ jstestdriver.TestRunner.prototype.runTests = function(testRunsConfiguration, onT
   this.onTestDone_ = onTestDone;
   this.onComplete_ = onComplete;
   this.captureConsole_ = captureConsole;
-  if (this.testRunsConfiguration_.length > 0) {
-    this.runTestConfiguration_(this.testRunsConfiguration_.shift());
-  } else {
-    this.finish_();
-  }
-};
-
-
-jstestdriver.TestRunner.prototype.runTestConfiguration_ = function(testRunConfiguration) {
-  if (this.captureConsole_) {
-    this.overrideConsole_();
-  }
-  this.pluginRegistrar_.runTestConfiguration(testRunConfiguration, this.onTestDone_,
-      this.boundOnTestRunConfigurationComplete);
-  if (this.captureConsole_) {
-    this.resetConsole_();
-  }  
+  this.runNextConfiguration_();
 };
 
 
@@ -60,9 +47,20 @@ jstestdriver.TestRunner.prototype.finish_ = function() {
 };
 
 
-jstestdriver.TestRunner.prototype.onTestRunConfigurationComplete_ = function() {
+jstestdriver.TestRunner.prototype.runNextConfiguration_ = function() {
   if (this.testRunsConfiguration_.length > 0) {
-    this.runTestConfiguration_(this.testRunsConfiguration_.shift());
+    if (this.captureConsole_) {
+      this.overrideConsole_();
+    }
+
+    this.pluginRegistrar_.runTestConfiguration(
+        this.testRunsConfiguration_.shift(),
+        this.onTestDone_,
+        this.boundRunNextConfiguration_);
+
+    if (this.captureConsole_) {
+      this.resetConsole_();
+    }
   } else {
     this.finish_();
   }

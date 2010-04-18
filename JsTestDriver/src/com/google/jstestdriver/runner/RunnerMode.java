@@ -27,6 +27,11 @@ public enum RunnerMode {
             .finest("com.google.javascript.jstestdriver")
             .finest("com.google.jstestdriver")
             .severe("org.mortbay")),
+  DEBUG_QUIET(new LogConfigBuilder()
+            .useFileHandler()
+            .finest("com.google.javascript.jstestdriver")
+            .finest("com.google.jstestdriver")
+            .severe("org.mortbay")),
   PROFILE(new LogConfigBuilder()
             .useFileHandler()
             .useConsoleHandler()
