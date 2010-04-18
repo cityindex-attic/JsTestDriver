@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.browser.BrowserPanicException;
 import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
@@ -119,15 +120,21 @@ public class CommandTask {
     return new FileSource("/test/" + info.getFileName(), info.getTimestamp());
   }
 
-  private void shouldPanic(Response response) {
+  /**
+   * @param response The response that might be a panic.
+   * @param during A string that indicates when the browser paniced.
+   */
+  private void shouldPanic(Response response, String during) {
     if (response.getResponseType() == ResponseType.BROWSER_PANIC) {
       BrowserPanic panic = gson.fromJson(response.getResponse(),
                                          response.getResponseType().type);
-      RuntimeException exception =
-          new RuntimeException("Browser lost: " + panic.getBrowserInfo());
-      LOGGER.error("Browser not found: {}\n Exception: {}",
-                   response.getResponse(),
-                   exception);
+      BrowserPanicException exception =
+          new BrowserPanicException(panic.getBrowserInfo(),
+                                    during);
+      LOGGER.error("Browser not found : {}\n during: {} \n Exception: {}",
+                   new Object[]{response.getResponse(),
+                                during,
+                                exception});
       throw exception;
     }
   }
@@ -152,12 +159,13 @@ public class CommandTask {
         resetParams.put("id", params.get("id"));
         resetParams.put("data", gson.toJson(cmd));
         server.post(baseUrl + "/cmd", resetParams);
-        String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
 
+        LOGGER.trace("Starting File Upload Refresh.");
+        String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
-        
-        shouldPanic(response);
+        shouldPanic(response, "File upload reset");
+
         finalFilesToUpload.addAll(filesToUpload);
       } else {
         for (FileInfo file : filesToUpload) {
@@ -192,7 +200,7 @@ public class CommandTask {
         Response response = message.getResponse();
         LOGGER.trace("LOADTEST response: {}", response);
 
-        shouldPanic(response);
+        shouldPanic(response, "Loading files into the browser.");
         stream.stream(response);
       }
     }
@@ -250,7 +258,7 @@ public class CommandTask {
         streamMessage = gson.fromJson(response, StreamMessage.class);
         Response resObj = streamMessage.getResponse();
 
-        shouldPanic(resObj);
+        shouldPanic(resObj, "execution of command");
         stream.stream(resObj);
       } while (!streamMessage.isLast());
       stopWatch.stop("Command %s", params.get("data"));

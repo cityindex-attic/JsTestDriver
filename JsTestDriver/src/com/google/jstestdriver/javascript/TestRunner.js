@@ -26,8 +26,18 @@ jstestdriver.TestRunner = function(pluginRegistrar, testBreather) {
 };
 
 
-jstestdriver.TestRunner.prototype.runTests = function(testRunsConfiguration, onTestDone,
-    onComplete, captureConsole) {
+/**
+ * Runs all TestRunConfigurations.
+ * @param {Array.<TestRunConfiguration>} testRunsConfiguration Configurations to
+ *      run. This array willl be modified...
+ * @param {function(jstestdriver.TestResult):null} onTestDone
+ * 
+ */
+jstestdriver.TestRunner.prototype.runTests = function(testRunsConfiguration,
+                                                      onTestDone,
+                                                      onComplete,
+                                                      captureConsole) {
+
   this.testRunsConfiguration_ = testRunsConfiguration;
   this.onTestDone_ = onTestDone;
   this.onComplete_ = onComplete;
@@ -48,21 +58,22 @@ jstestdriver.TestRunner.prototype.finish_ = function() {
 
 
 jstestdriver.TestRunner.prototype.runNextConfiguration_ = function() {
-  if (this.testRunsConfiguration_.length > 0) {
-    if (this.captureConsole_) {
-      this.overrideConsole_();
-    }
-
-    this.pluginRegistrar_.runTestConfiguration(
-        this.testRunsConfiguration_.shift(),
-        this.onTestDone_,
-        this.boundRunNextConfiguration_);
-
-    if (this.captureConsole_) {
-      this.resetConsole_();
-    }
-  } else {
+  if (this.testRunsConfiguration_.length == 0) {
     this.finish_();
+    return;
+  }
+
+  if (this.captureConsole_) {
+    this.overrideConsole_();
+  }
+
+  this.pluginRegistrar_.runTestConfiguration(
+      this.testRunsConfiguration_.shift(),
+      this.onTestDone_,
+      this.boundRunNextConfiguration_);
+
+  if (this.captureConsole_) {
+    this.resetConsole_();
   }
 }
 
@@ -87,4 +98,45 @@ jstestdriver.TestRunner.prototype.resetConsole_ = function() {
   console.info = this.logInfo_;
   console.warn = this.logWarn_;
   console.error = this.logError_;  
+};
+
+
+
+/**
+ * A map to manage the state of running TestCases.
+ */
+jstestdriver.TestRunner.TestCaseMap = function() {
+  this.testCases_ = {};
+};
+
+
+/**
+ * Start a TestCase.
+ * @param {String} testCaseName The name of the test case to start.
+ */
+jstestdriver.TestRunner.TestCaseMap.prototype.startCase = function(testCaseName) {
+  this.testCases_[testCaseName] = true;
+};
+
+
+/**
+ * Stops a TestCase.
+ * @param {String} testCaseName The name of the test case to stop.
+ */
+jstestdriver.TestRunner.TestCaseMap.prototype.stopCase = function(testCaseName) {
+  this.testCases_[testCaseName] = false;
+};
+
+
+/**
+ * Indicates if there are still cases running.
+ * @param {String} testCaseName The name of the test case to stop.
+ */
+jstestdriver.TestRunner.TestCaseMap.prototype.hasActiveCases = function() {
+  for (var testCase in this.testCases_) {
+    if (this.testCases_.hasOwnProperty(testCase) && this.testCases_[testCase]) {
+      return true;
+    }
+  }
+  return false;
 };

@@ -91,7 +91,7 @@ jstestdriver.testBreather = function(setTimeout, interval) {
 
 jstestdriver.TIMEOUT = 500;
 
-
+// TODO(corysmith): Extract the network streaming logic form the Executor logic.
 jstestdriver.CommandExecutor = function(id, url, sendRequest, testCaseManager, testRunner,
     pluginRegistrar) {
   this.__id = id;

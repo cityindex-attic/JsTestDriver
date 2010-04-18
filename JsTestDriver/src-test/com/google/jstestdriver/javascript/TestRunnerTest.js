@@ -56,3 +56,12 @@ TestRunnerTest.prototype.testRunTests = function() {
   assertEquals(4, testRunsConfigurationThatRan.length);
   assertTrue(onCompleteCalled);
 };
+
+
+TestRunnerTest.prototype.testTestCaseMap = function() {
+  var map = new jstestdriver.TestRunner.TestCaseMap();
+  map.startCase('foo');
+  assertTrue(map.hasActiveCases());
+  map.stopCase('foo');
+  assertFalse(map.hasActiveCases());
+};
