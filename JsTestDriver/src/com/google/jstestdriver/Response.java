@@ -25,6 +25,7 @@ import java.util.Collection;
  * The Response from the browser by way of the server.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+// TODO(corysmith): move to the protocol package
 public class Response {
   
   public static enum ResponseType {
@@ -35,6 +36,7 @@ public class Response {
     RESET_RESULT(null),
     BROWSER_PANIC(BrowserPanic.class),
     UNKNOWN(null),
+    BROWSER_READY(null),
     COMMAND_RESULT(null);
 
     public final Type type;

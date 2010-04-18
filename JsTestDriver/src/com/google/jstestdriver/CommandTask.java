@@ -82,8 +82,8 @@ public class CommandTask {
     String browserId = params.get("id");
     String sessionId = server.startSession(baseUrl, browserId);
 
-    if (sessionId.equals("FAILED")) {
-      while (sessionId.equals("FAILED")) {
+    if ("FAILED".equals(sessionId)) {
+      while ("FAILED".equals(sessionId)) {
         try {
           Thread.sleep(WAIT_INTERVAL);
         } catch (InterruptedException e) {
@@ -237,7 +237,7 @@ public class CommandTask {
     try {
       sessionId = startSession();
 
-      if (!sessionId.equals("")) {
+      if (!"".equals(sessionId)) {
         heartBeatManager.startHeartBeat(baseUrl, browserId, sessionId);
       } else {
         throw new FailureException("Can't start a session on the server!" + params);

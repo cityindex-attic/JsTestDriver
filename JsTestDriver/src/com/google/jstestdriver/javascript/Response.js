@@ -26,7 +26,8 @@ jstestdriver.RESPONSE_TYPES = {
   TEST_RESULT: 'TEST_RESULT',
   TEST_QUERY_RESULT: 'TEST_QUERY_RESULT',
   RESET_RESULT: 'RESET_RESULT',
-  COMMAND_RESULT: 'COMMAND_RESULT'
+  COMMAND_RESULT: 'COMMAND_RESULT',
+  BROWSER_READY: 'BROWSER_READY'
 };
 
 
@@ -37,17 +38,20 @@ jstestdriver.RESPONSE_TYPES = {
  * @param {jstestdriver.RESPONSE_TYPES} type The type of the response.
  * @param {String} response The serialized contents of the response.
  * @param {jstestdriver.BrowserInfo} browser The browser information. 
+ * @param {Boolean} start Is this the first response from the browser.
  */
-jstestdriver.Response = function(type, response, browser) {
+jstestdriver.Response = function(type, response, browser, start) {
   this.type = type;
   this.response = response;
   this.browser = browser;
+  if (start) {
+    this.start = true;
+  }
 };
 
 
 
 /**
- * Correlates to {com.google.jstestdriver.CommandResponse}.
  * @param {String} done Indicates if this is the last streamed message.
  * @param {jstestdriver.Response} response The response.
  */
@@ -66,3 +70,14 @@ jstestdriver.BrowserInfo = function(id) {
   this.id = id;
 };
 
+
+/**
+ * Coincides with java class com.google.jstestdriver.protocol.BrowserLog.
+ * @param {Number} level 1-5, the level of the message.
+ */
+jstestdriver.BrowserLog = function(level, source, message, browser) {
+  this.level = level;
+  this.source = source;
+  this.message = message;
+  this.browser = browser;
+}

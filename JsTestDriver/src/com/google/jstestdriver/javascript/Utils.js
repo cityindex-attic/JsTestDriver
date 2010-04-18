@@ -58,13 +58,19 @@ jstestdriver.formatString = function() {
 
 
 jstestdriver.convertToJson = function(delegate) {
-  return function(url, data, callback) {
-    var modifiedData = {};
-    for (var key in data) {
-      modifiedData[key] = JSON.stringify(data[key]);
-    }
-    delegate(url, modifiedData, callback);
+  var serialize = jstestdriver.parameterSerialize
+  return function(url, data, callback, type) {
+    delegate(url, serialize(data), callback, type);
   };
+};
+
+
+jstestdriver.parameterSerialize = function(data) {
+  var modifiedData = {};
+  for (var key in data) {
+    modifiedData[key] = JSON.stringify(data[key]);
+  }
+  return modifiedData;
 };
 
 

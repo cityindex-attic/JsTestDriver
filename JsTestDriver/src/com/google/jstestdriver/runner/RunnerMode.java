@@ -39,6 +39,11 @@ public enum RunnerMode {
             .severe("com.google.javascript.jstestdriver")
             .severe("com.google.jstestdriver")
             .severe("org.mortbay")),
+  INFO(new LogConfigBuilder()
+            .useConsoleHandler()
+            .info("com.google.javascript.jstestdriver")
+            .info("com.google.jstestdriver")
+            .severe("org.mortbay")),
   QUIET(new LogConfigBuilder()
             .useFileHandler()
             .warn("com.google.javascript.jstestdriver")

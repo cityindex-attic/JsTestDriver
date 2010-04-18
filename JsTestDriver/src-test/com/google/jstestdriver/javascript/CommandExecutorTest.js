@@ -13,39 +13,53 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-var commandExecutorTest = jstestdriver.testCaseManager.TestCase('commandExecutorTest'); 
+var CommandExecutorTest = jstestdriver.testCaseManager.TestCase('CommandExecutorTest'); 
 
-commandExecutorTest.prototype.testExtractIdFromUrl =  function() {
+CommandExecutorTest.prototype.testExtractIdFromUrl =  function() {
   assertEquals(1, jstestdriver.extractId("http://server:123/slave/1/RemoteConsoleRunner.html"));
 };
 
 
-commandExecutorTest.prototype.testFetchCommandNoLibsSendResponseLoop = function() {
-  var data;
-  var callback;
-  var url;
-  var executor = new jstestdriver.CommandExecutor(1, "/Q1", function (_url, _data, _callback){
-    url = _url;
-    callback = _callback;
-    data = _data;
-  }, null);
-
-  executor.listen();
-  assertNotNull(callback);
-  assertEquals("/Q1?start", url);
-
-  var lastCallback = callback;
-  callback(JSON.stringify({ 'command': 'execute', 'parameters': [ '1' ] }));
-  assertEquals(1, data.response.response);
-  assertEquals(lastCallback, callback);
-
-  callback(JSON.stringify({ 'command': 'execute', 'parameters': [ '2' ] }));
-  assertEquals(2, data.response.response);
-  assertEquals(lastCallback, callback);
+CommandExecutorTest.prototype.setUp = function() {
+  var posts = this.posts = [];
+  this.streamingService = new jstestdriver.StreamingService("/Q1",
+          function(){ return 1; },
+          function (url, data, callback, type){
+    posts.push({
+      url : url,
+      data : data,
+      callback : callback,
+      type : type
+    });
+  });
 };
 
 
-commandExecutorTest.prototype.testConvertJsToJson = function() {
+CommandExecutorTest.prototype.testFetchCommandNoLibsSendResponseLoop = function() {
+
+  var executor = new jstestdriver.CommandExecutor(1,
+          this.streamingService, null, null, null);
+  executor.registerCommand('execute', executor, executor.execute);
+
+  executor.listen();
+  var listenPost = this.posts.pop();
+  assertNotNull(listenPost.callback);
+  assertEquals("/Q1", listenPost.url);
+  assertTrue(listenPost.data.response.start);
+
+  listenPost.callback(JSON.stringify({ 'command': 'execute', 'parameters': [ '1' ] }));
+  var executePostOne = this.posts.pop();
+  assertEquals("\"1\"", executePostOne.data.response.response);
+  assertEquals(listenPost.callback, executePostOne.callback);
+
+  executePostOne.callback(JSON.stringify({ 'command': 'execute', 'parameters': [ '2' ] }));
+  var executePostTwo = this.posts.pop();
+  assertEquals("\"2\"", executePostTwo.data.response.response);
+  assertEquals(listenPost.callback, executePostTwo.callback);
+};
+
+
+CommandExecutorTest.prototype.testConvertJsToJson = function() {
   var callback = {};
   var jquery =  function(_url, _data, _callback) {
     assertEquals("url", _url);
@@ -56,27 +70,27 @@ commandExecutorTest.prototype.testConvertJsToJson = function() {
 };
 
 
-commandExecutorTest.prototype.testHandleDisconnectionByServer = function() {
+CommandExecutorTest.prototype.testHandleDisconnectionByServer = function() {
   var url;
   var data;
   var callback;
   var called = 0;
-  var executor = new jstestdriver.CommandExecutor(1, "/query/1", function(_url, _data, _callback) {
-    url = _url;
-    data = _data;
-    callback = _callback;
-    called++;
-  }, null);
+  var executor = new jstestdriver.CommandExecutor(1, 
+                                                  this.streamingService,
+                                                  null,
+                                                  null,
+                                                  null);
   executor.listen();
-  callback('noop');
-  assertEquals("/query/1", url);
-  assertSame(null, data);
-  assertNotNull(callback);
-  assertEquals(2, called);
+  var listenPost = this.posts.pop();
+  listenPost.callback('noop');
+  var noopPost = this.posts.pop();
+  assertEquals("/Q1", noopPost.url);
+  assertEquals({"done":true,"response":null}, noopPost.data);
+  assertNotNull(noopPost.callback);
 };
 
 
-//commandExecutorTest.prototype.testLoadLibsSendResponse = function() {
+//CommandExecutorTest.prototype.testLoadLibsSendResponse = function() {
 //  var data;
 //  var callback;
 //  var url;
@@ -97,8 +111,12 @@ commandExecutorTest.prototype.testHandleDisconnectionByServer = function() {
 //};
 
 
-commandExecutorTest.prototype.testEvaluateGoodAndBadCommand = function() {
-  var executor = new jstestdriver.CommandExecutor(1, "/Q1", function (_url, _data, _callback){}, null);
+CommandExecutorTest.prototype.testEvaluateGoodAndBadCommand = function() {
+  var executor = new jstestdriver.CommandExecutor(1, 
+                                                  this.streamingService,
+                                                  null,
+                                                  null,
+                                                  null);
   var res = executor.evaluateCommand('1+2');
 
   assertEquals(res, 3);
@@ -107,7 +125,7 @@ commandExecutorTest.prototype.testEvaluateGoodAndBadCommand = function() {
 };
 
 
-/*commandExecutorTest.prototype.testRunAllTestsForTestCase = function() {
+/*CommandExecutorTest.prototype.testRunAllTestsForTestCase = function() {
   var called = 0;
   var testCalled = false;
   var fakeDate = function() {};
@@ -131,7 +149,7 @@ commandExecutorTest.prototype.testEvaluateGoodAndBadCommand = function() {
 };*/
 
 
-/*commandExecutorTest.prototype.testRunOneTest = function() {
+/*CommandExecutorTest.prototype.testRunOneTest = function() {
   var fakeDate = function() {};
 
   fakeDate.prototype.getTime = function() {
@@ -155,25 +173,12 @@ commandExecutorTest.prototype.testEvaluateGoodAndBadCommand = function() {
 };
 */
 
-
-/*commandExecutorTest.prototype.testResetPage = function() {
-  var data;
-  var callback;
-  var executor = new jstestdriver.CommandExecutor(1, "/Q1", function (_url, _data, _callback) {
-    data = _data;
-    callback = _callback;
-  }, null);
-  var called = false;
-
-  executor.reset();
-  assertEquals('Runner reset.', data.response.response);
-  assertSame(callback, executor.refresh);
-};
-*/
-
-commandExecutorTest.prototype.testRemoveScriptTags = function() {
-  var executor = new jstestdriver.CommandExecutor(1, "/Q1", function (_url, _data, _callback) {
-  }, null, null, null);
+CommandExecutorTest.prototype.testRemoveScriptTags = function() {
+  var executor = new jstestdriver.CommandExecutor(1, 
+                                                  this.streamingService,
+                                                  null,
+                                                  null,
+                                                  null);
   var files = [];
   var dom = new jstestdriver.MockDOM();
   var head = dom.createElement('head');
@@ -187,24 +192,7 @@ commandExecutorTest.prototype.testRemoveScriptTags = function() {
 };
 
 
-commandExecutorTest.prototype.testRegisterCommandAndUseIt = function() {
-  var data;
-  var executor = new jstestdriver.CommandExecutor(1, "/Q1", function (_url, _data, _callback) {
-    data = _data;
-  }, null);
-  var called = false;
-  var arg = '';
-
-  executor.registerCommand('coolFunction', function(arg_) { called = true; arg = arg_; });
-  assertEquals('Command coolFunction registered.', data.response.response);
-  assertNotNull(executor.coolFunction);
-  executor.coolFunction('cool');
-  assertEquals('cool', arg);
-  assertTrue(called);
-};
-
-
-commandExecutorTest.prototype.testCallPluginOnTestResultAdded = function() {
+CommandExecutorTest.prototype.testCallPluginOnTestResultAdded = function() {
   var expected = new jstestdriver.TestResult("testsuite", "foo", "passed", "", [], 1, {
     foo : 1
   });
@@ -216,11 +204,12 @@ commandExecutorTest.prototype.testCallPluginOnTestResultAdded = function() {
   
   var registrar = new jstestdriver.PluginRegistrar();
   registrar.register(tmpPlugin);
-  
-  var dataSent = null;
-  var executor = new jstestdriver.CommandExecutor(1, "/Q1", function (_url, _data, _callback) {
-    dataSent = _data;
-  }, null, null, registrar);
+
+  var executor = new jstestdriver.CommandExecutor(1, 
+          this.streamingService,
+          null,
+          null,
+          registrar);
   
   var result = new jstestdriver.TestResult(expected.testCaseName,
                                            expected.testName,
@@ -230,44 +219,28 @@ commandExecutorTest.prototype.testCallPluginOnTestResultAdded = function() {
                                            expected.time,
                                            {});
   executor.addTestResult(result);
-  executor.boundSendTestResults();
-  assertNotNull(dataSent);
-  assertEquals(JSON.stringify([expected]), eval(dataSent.response).response);
+  executor.sendTestResults();
+  var resultPost = this.posts.pop();
+  assertNotNull(resultPost);
+  assertEquals(JSON.stringify([expected]), eval(resultPost.data.response).response);
 };
 
-/*commandExecutorTest.prototype.testParseJsonAndRunTheRightMethod = function() {
-  var data;
-  var executor = new jstestdriver.CommandExecutor(1, "/Q1", function (_url, _data, _callback) {
-    data = _data;
-  }, null);
+CommandExecutorTest.prototype.testParseJsonAndRunTheRightMethod = function() {
+  var executor = new jstestdriver.CommandExecutor(1, 
+          this.streamingService,
+          null,
+          null,
+          null);
 
-  executor.executeCommand(JSON.stringify({ 'command': 'reset', 'parameters': [] }));
-  assertEquals('Runner reset.', data.response.response);
-};
-*/
-
-commandExecutorTest.prototype.testLastRunPacketIsAlwaysSentLast = function() {
-  var pluginRegistrar = {
-    processTestResult: function(_testResult) {
+  var command = {
+    fooRang : false,
+    'foo' : function(params) {
+    this.fooRang = params;
     }
   };
-  var finalData = [];
-  var executor = new jstestdriver.CommandExecutor(1, "/url", function(_url, _data, _callback)  {
-    finalData.push(_data);
-  }, null, null, pluginRegistrar);
-
-  executor.startTestInterval_ = function() {};
-  executor.stopTestInterval_ = function() {};
-  executor.boundOnTestDone({ result: 'success', log: '' });
-  executor.boundSendTestResults();
-  executor.boundOnDataSent();
-  executor.boundOnTestDone({ result: 'success', log: '' });
-  executor.boundSendTestResults();
-  executor.boundOnComplete();
-  assertEquals(2, finalData.length);
-  assertFalse(finalData[0].done);
-  assertFalse(finalData[1].done);
-  executor.boundOnDataSent();
-  assertEquals(3, finalData.length);
-  assertTrue(finalData[2].done);
+  executor.registerCommand("foo", command, command.foo);
+  executor.executeCommand(JSON.stringify({ 'command': 'foo', 'parameters': ['bar'] }));
+  assertEquals('bar', command.fooRang[0]);
 };
+
+

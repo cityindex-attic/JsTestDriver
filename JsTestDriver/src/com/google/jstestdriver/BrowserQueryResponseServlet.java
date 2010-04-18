@@ -17,18 +17,23 @@ package com.google.jstestdriver;
 
 import com.google.gson.Gson;
 import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -47,6 +52,9 @@ public class BrowserQueryResponseServlet extends HttpServlet {
   private final CapturedBrowsers browsers;
   private final URLTranslator urlTranslator;
   private final ForwardingMapper forwardingMapper;
+  // TODO(corysmith): factor out a streaming session class. 
+  private final ConcurrentMap<SlaveBrowser, List<String>> streamedResponses =
+    new ConcurrentHashMap<SlaveBrowser, List<String>>();
 
   public BrowserQueryResponseServlet(CapturedBrowsers browsers, URLTranslator urlTranslator,
       ForwardingMapper forwardingMapper) {
@@ -58,16 +66,37 @@ public class BrowserQueryResponseServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     logger.trace("Browser Query Post:\n{}\n", req.toString());
-    service(req.getPathInfo().substring(1), req.getParameter("start"), req.getParameter("response"),
-        req.getParameter("done"), resp.getWriter());
+    service(req.getPathInfo().substring(1),
+            req.getParameter("start"),
+            req.getParameter("response"),
+            req.getParameter("done"),
+            req.getParameter("responseId"),
+            resp.getWriter());
   }
 
-  public void service(String id, String start, String response, String done, PrintWriter writer) {
+  public void service(String id,
+                      String start,
+                      String response,
+                      String done,
+                      String responseId,
+                      PrintWriter writer) {
     SlaveBrowser browser = browsers.getBrowser(id);
 
     if (browser != null) {
+      boolean isLast = Boolean.parseBoolean(done);
+      serviceBrowser(start, response, isLast, responseId, writer, browser);
+    } else {
+      logger.warn("Unknown browser {}", id);
+    }
+    writer.flush();
+  }
+
+  private void serviceBrowser(String start, String response, Boolean done, String responseId,
+      PrintWriter writer, SlaveBrowser browser) {
+    {
+      addResponseId(responseId, browser);
       browser.heartBeat();
-      if (response != null && browser.isCommandRunning()) {
+      if (response != null && !"null".equals(response) && browser.isCommandRunning()) {
         Response res = gson.fromJson(response, Response.class);
 
         if (res.getResponseType() == ResponseType.FILE_LOAD_RESULT) {
@@ -94,17 +123,23 @@ public class BrowserQueryResponseServlet extends HttpServlet {
             }
           }
         }
-        boolean isLast = Boolean.parseBoolean(done);
 
-        logger.trace("Received:\n done: {} \n islast: {} \n res:\n {}\n",
-                     new Object[]{done, isLast, res});
-        browser.addResponse(res, isLast);
-        if (!isLast) {
-          writer.print(NOOP);
-          writer.flush();
-          return;
-        }
+        logger.trace("Received:\n done: {} \n res:\n {}\n",
+                     new Object[]{done, res});
+        browser.addResponse(res, done);
       }
+      logger.debug("Got responseId: {} is done? {}", responseId, done);
+      if (!done) { // we are still streaming, so we respond with the streaming acknowledge.
+        // this is independent of receiving an actual response.
+        writer.print(
+            gson.toJson(
+                new BrowserStreamAcknowledged(streamedResponses.get(browser))));
+        writer.flush();
+        return;
+      } else {
+        streamedResponses.clear();
+      }
+
       Command command = null;
 
       if (start != null) {
@@ -125,6 +160,15 @@ public class BrowserQueryResponseServlet extends HttpServlet {
       }
       writer.print(command != null ? command.getCommand() : NOOP);
     }
-    writer.flush();
+  }
+
+  private void addResponseId(String responseId, SlaveBrowser browser) {
+    if (!streamedResponses.containsKey(browser)) {
+      streamedResponses.put(browser, new CopyOnWriteArrayList<String>());
+    }
+    if (responseId == null) {
+      return;
+    }
+    streamedResponses.get(browser).add(responseId);
   }
 }

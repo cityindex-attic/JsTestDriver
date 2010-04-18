@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 /**
+ * Contains a serialized command to be sent to the browser.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class Command {

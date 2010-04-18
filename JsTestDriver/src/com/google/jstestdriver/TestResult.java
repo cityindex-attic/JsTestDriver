@@ -22,6 +22,7 @@ import java.util.Map;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+// TODO(corysmith): move to protocol package.
 public class TestResult {
 
   public enum Result {

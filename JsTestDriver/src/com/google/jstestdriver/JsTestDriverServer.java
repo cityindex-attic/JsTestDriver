@@ -27,6 +27,7 @@ import com.google.jstestdriver.guice.TestResultPrintingModule;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.html.HtmlDocModule;
 import com.google.jstestdriver.runner.RunnerMode;
+import com.google.jstestdriver.servlet.BrowserLoggingServlet;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.mortbay.jetty.Server;
@@ -97,6 +98,7 @@ public class JsTestDriverServer extends Observable {
       urlTranslator, forwardingMapper));
     addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesCache));
     addServlet("/cache", new FileCacheServlet());
+    addServlet("/log", new BrowserLoggingServlet());
     addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/forward/*", new ForwardingServlet(forwardingMapper,
       "localhost", port));

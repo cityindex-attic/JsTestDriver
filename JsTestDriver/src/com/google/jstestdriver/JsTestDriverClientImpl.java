@@ -88,7 +88,8 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
     parameters.add(String.valueOf(captureConsole));
     parameters.add("false");
-    parameters.add(debug.toString());
+    parameters.add(debug ? "1":""); // The json serialization of 0,
+    // false as strings evals to true on the js side. so, "" it is.
     JsonCommand cmd = new JsonCommand(CommandType.RUNALLTESTS, parameters);
 
     sendCommand(id, responseStream, gson.toJson(cmd), true);
@@ -106,7 +107,8 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
     parameters.add(gson.toJson(tests));
     parameters.add(String.valueOf(captureConsole));
-    parameters.add(debug.toString());
+    parameters.add(debug ? "1":""); // The json serialization of 0,
+    // false as strings evals to true on the js side. so, "" it is.
     JsonCommand cmd = new JsonCommand(CommandType.RUNTESTS, parameters);
 
     sendCommand(id, responseStream, gson.toJson(cmd), true);

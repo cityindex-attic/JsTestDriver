@@ -104,6 +104,8 @@ public class HttpServer implements Server {
     StringBuilder sb = new StringBuilder();
     Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
 
+    // TODO(corysmith): WTF? Figure out what's going on....
+    
     if (iterator.hasNext()) {
       Map.Entry<String, String> entry = iterator.next();
 

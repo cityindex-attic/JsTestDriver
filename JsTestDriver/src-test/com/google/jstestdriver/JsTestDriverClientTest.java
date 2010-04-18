@@ -160,7 +160,7 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/heartbeat?id=1", "OK");
     server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
     server.expect("http://localhost/cmd?POST?{data={\"command\":\"runAllTests\","
-        + "\"parameters\":[\"false\",\"false\",\"false\"]}, id=1}", "");
+        + "\"parameters\":[\"false\",\"false\",\"\"]}, id=1}", "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
@@ -184,7 +184,7 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/heartbeat?id=1", "OK");
     server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
     server.expect("http://localhost/cmd?POST?{data={\"command\":\"runTests\","
-        + "\"parameters\":[\"[\\\"testCase.testFoo\\\",\\\"testCase.testBar\\\"]\",\"false\",\"false\"]}, id=1}",
+        + "\"parameters\":[\"[\\\"testCase.testFoo\\\",\\\"testCase.testBar\\\"]\",\"false\",\"\"]}, id=1}",
         "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
@@ -206,29 +206,4 @@ public class JsTestDriverClientTest extends TestCase {
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }
-
-  /*
-   * public void testRegisterCommand() throws Exception { MockServer server =
-   * new MockServer();
-   * 
-   * server.expect("http://localhost/cmd?listBrowsers", "[" +
-   * "{\"id\":1, \"name\":\"name0\", \"version\":\"ver0\", \"os\":\"os0\"}]");
-   * server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
-   * server
-   * .expect("http://localhost/cmd?POST?{data={\"command\":\"registerCommand\","
-   * + "\"parameters\":[\"cool\",\"function() {}\"]}, id=1}", "");
-   * server.expect("http://localhost/cmd?id=1",
-   * "{\"response\":{\"response\":\"Command cool registered.\"," +
-   * "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
-   * + "\"last\":true}"); JsPuppetClient client = new JsPuppetClientImpl(new
-   * LinkedHashSet<FileInfo>(), "http://localhost", server);
-   * FakeResponseStreamFactory factory = new FakeResponseStreamFactory();
-   * FakeResponseStream stream = new FakeResponseStream();
-   * 
-   * factory.setResponseStream(stream); client.registerCommand("1", factory,
-   * "cool", "function() {}");
-   * 
-   * assertEquals("Command cool registered.",
-   * stream.getResponse().getResponse()); }
-   */
 }

@@ -38,7 +38,7 @@ public class SlaveBrowser {
   private final BlockingQueue<Command> commandsToRun = new LinkedBlockingQueue<Command>();
   private long dequeueTimeout = 10;
   private TimeUnit timeUnit = TimeUnit.SECONDS;
-  private Instant lastHeartBeat;
+  private volatile Instant lastHeartBeat;
   private Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
   private final BlockingQueue<CommandResponse> responses =
     new LinkedBlockingQueue<CommandResponse>();

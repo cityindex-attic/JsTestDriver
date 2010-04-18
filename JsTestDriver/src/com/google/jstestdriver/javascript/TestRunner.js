@@ -52,7 +52,6 @@ jstestdriver.TestRunner.prototype.finish_ = function() {
   this.onTestDone_ = null;
   this.onComplete_ = null;
   this.captureConsole_ = false;
-
   onComplete();
 };
 

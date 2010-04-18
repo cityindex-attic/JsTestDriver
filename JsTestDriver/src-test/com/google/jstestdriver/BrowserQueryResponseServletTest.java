@@ -17,11 +17,13 @@ package com.google.jstestdriver;
 
 import com.google.gson.Gson;
 import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
 
 import junit.framework.TestCase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,7 +49,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browsers.addSlave(slave);
     BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
 
-    servlet.service(id, null, null, null, writer);
+    servlet.service(id, null, null, "true", null, writer);
     assertEquals(data, out.toString());
   }
 
@@ -72,7 +74,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browserInfo.setOs("OS");
     browserInfo.setVersion("version");
     response.setBrowser(browserInfo);
-    servlet.service(id, null, gson.toJson(response), "true", writer);
+    servlet.service(id, null, gson.toJson(response), "true", null, writer);
     assertEquals("BrowserCommand", out.toString());
     assertEquals(response, slave.getResponse().getResponse());
   }
@@ -86,7 +88,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browsers.addSlave(slave);
     BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
 
-    servlet.service(id, null, null, null, writer);
+    servlet.service(id, null, null, "true", null, writer);
     assertEquals("noop", out.toString());
   }
 
@@ -101,7 +103,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browsers.addSlave(slave);
     BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
 
-    servlet.service(id, null, null, null, writer);
+    servlet.service(id, null, null, null, null, writer);
     assertEquals(42L, slave.getLastHeartBeat().getMillis());
   }
 
@@ -110,7 +112,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     BrowserQueryResponseServlet servlet =
         new BrowserQueryResponseServlet(capturedBrowsers, null, null);
 
-    servlet.service("1", null, "response", "", writer);
+    servlet.service("1", null, "response", "true", null, writer);
     assertEquals(0, out.toString().length());
   }
 
@@ -135,8 +137,9 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browserInfo.setOs("OS");
     browserInfo.setVersion("version");
     response.setBrowser(browserInfo);
-    servlet.service(id, null, gson.toJson(response), null, writer);
-    assertEquals("noop", out.toString());    
+    servlet.service(id, null, gson.toJson(response), "", null, writer);
+    assertEquals(new Gson().toJson(new BrowserStreamAcknowledged(Collections.<String>emptyList())),
+        out.toString());
   }
 
   public void testFilesLoadedAreAddedToTheBrowserFileSet() throws Exception {
@@ -159,7 +162,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
     response.setType(ResponseType.FILE_LOAD_RESULT.name());
     response.setResponse(gson.toJson(new LoadedFiles(fileResults)));
-    servlet.service("1", null, gson.toJson(response), "", writer);
+    servlet.service("1", null, gson.toJson(response), "", null, writer);
 
     Set<FileInfo> fileInfos = slave.getFileSet();
 
