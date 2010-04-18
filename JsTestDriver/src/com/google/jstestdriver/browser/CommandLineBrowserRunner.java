@@ -58,6 +58,10 @@ public class CommandLineBrowserRunner implements BrowserRunner {
     }
   }
 
+  public int getTimeout() {
+    return 30;
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;

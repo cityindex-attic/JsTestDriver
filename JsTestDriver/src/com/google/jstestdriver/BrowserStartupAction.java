@@ -30,10 +30,6 @@ import com.google.jstestdriver.browser.BrowserRunner;
  * Starts a list of browsers when run.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-/**
- * @author corysmith@google.com (Your Name Here)
- *
- */
 public class BrowserStartupAction implements Action, Observer {
 
   private static final Logger logger =
@@ -53,10 +49,14 @@ public class BrowserStartupAction implements Action, Observer {
   public void run() {
     try {
       String url = String.format("%s/capture", serverAddress);
+      int timeout = 30;
       for (BrowserRunner browser : browsers) {
         browser.startBrowser(url);
+        if (browser.getTimeout() > timeout) {
+          timeout = browser.getTimeout();
+        }
       }
-      if (!latch.await(30, TimeUnit.SECONDS)) {
+      if (!latch.await(timeout, TimeUnit.SECONDS)) {
         long count = latch.getCount();
 
         if (count < browsers.size()) {

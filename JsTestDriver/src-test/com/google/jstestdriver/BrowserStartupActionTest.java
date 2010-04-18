@@ -31,7 +31,7 @@ public class BrowserStartupActionTest extends TestCase {
 
   public void testProcessRun() throws Exception {
     CountDownLatchFake latch = new CountDownLatchFake(1, false, true);
-    final FakeBrowser browser = new FakeBrowser();
+    final FakeBrowser browser = new FakeBrowser(300);
     
     final String serverAddress = "http://foo:8080";
     
@@ -43,17 +43,64 @@ public class BrowserStartupActionTest extends TestCase {
 
     assertTrue(browser.started);
     assertEquals(serverAddress + "/capture", browser.serverAddress);
+    assertEquals(browser.getTimeout(), latch.getTimeoutPassed());
   }
   
+  public void testProcessRunLongestTimeout() throws Exception {
+    CountDownLatchFake latch = new CountDownLatchFake(1, false, true);
+    final FakeBrowser browserOne = new FakeBrowser(300);
+    final FakeBrowser browserTwo = new FakeBrowser(900);
+    
+    final String serverAddress = "http://foo:8080";
+    
+    final BrowserStartupAction action =
+      new BrowserStartupAction(Sets.<BrowserRunner>newHashSet(browserOne,
+                                                              browserTwo),
+          serverAddress, latch);
+    
+    action.run();
+    
+    assertTrue(browserOne.started);
+    assertTrue(browserTwo.started);
+    assertEquals(serverAddress + "/capture", browserOne.serverAddress);
+    assertEquals(serverAddress + "/capture", browserTwo.serverAddress);
+    assertEquals(browserTwo.getTimeout(), latch.getTimeoutPassed());
+  }
+  
+  public void testProcessRunLongestTimeoutReverseOrder() throws Exception {
+    CountDownLatchFake latch = new CountDownLatchFake(1, false, true);
+    final FakeBrowser browserOne = new FakeBrowser(300);
+    final FakeBrowser browserTwo = new FakeBrowser(900);
+    
+    final String serverAddress = "http://foo:8080";
+    
+    final BrowserStartupAction action =
+      new BrowserStartupAction(Sets.<BrowserRunner>newHashSet(browserTwo,
+                                                              browserOne),
+          serverAddress, latch);
+    
+    action.run();
+    
+    assertTrue(browserOne.started);
+    assertTrue(browserTwo.started);
+    assertEquals(serverAddress + "/capture", browserOne.serverAddress);
+    assertEquals(serverAddress + "/capture", browserTwo.serverAddress);
+    assertEquals(browserTwo.getTimeout(), latch.getTimeoutPassed());
+  }
+
   public void testProcessStartFailure() throws Exception {
     CountDownLatchFake latch = new CountDownLatchFake(1, false, true);
-    final FakeBrowser browser = new FakeBrowser();
+    final FakeBrowser browser = new FakeBrowser(300);
     final BrowserRunner errorBrowser = new BrowserRunner() {
-      
+
       public void stopBrowser() {
       }
-      
+
       public void startBrowser(String serverAddress) {
+      }
+
+      public int getTimeout() {
+        return 300;
       }
     };
     
@@ -64,12 +111,17 @@ public class BrowserStartupActionTest extends TestCase {
       latch);
     
     action.run();
-    
+
   }
 
   private final class FakeBrowser implements BrowserRunner {
     public String serverAddress;
     public boolean started;
+    private final int timeout;
+
+    public FakeBrowser(int timeout) {
+      this.timeout = timeout;
+    }
 
     public void stopBrowser() {
       started = false;
@@ -79,12 +131,17 @@ public class BrowserStartupActionTest extends TestCase {
       this.serverAddress = serverAddress;
       started = true;
     }
+
+    public int getTimeout() {
+      return timeout;
+    }
   }
 
 
   static class CountDownLatchFake extends CountDownLatch{
     private final boolean awaitResponse;
     private int count;
+    private long timeoutPassed;
 
     public CountDownLatchFake(int count, boolean wait, boolean awaitResponse) {
       super(0);
@@ -94,7 +151,12 @@ public class BrowserStartupActionTest extends TestCase {
 
     @Override
     public boolean await(long timeoutPassed, TimeUnit unit) {
+      this.timeoutPassed = timeoutPassed;
       return awaitResponse;
+    }
+
+    public long getTimeoutPassed() {
+      return timeoutPassed;
     }
 
     @Override
@@ -105,7 +167,6 @@ public class BrowserStartupActionTest extends TestCase {
     @Override
     public void countDown() {
       count--;
-      //super.countDown();
     }
   }
 }
