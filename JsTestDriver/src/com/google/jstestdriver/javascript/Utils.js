@@ -142,3 +142,10 @@ jstestdriver.appendHtml = function(htmlString, owningDocument) {
   var node = jstestdriver.toHtml(htmlString, owningDocument);
   jstestdriver.jQuery(owningDocument.body).append(node);
 };
+
+
+/**
+ * @return {Number} The ms since the epoch.
+ */
+jstestdriver.now = function() { return new Date().getTime();}
+

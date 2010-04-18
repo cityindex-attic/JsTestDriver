@@ -60,7 +60,7 @@ jstestdriver.listen = function() {
 
   var streamingService = new jstestdriver.StreamingService(
     url,
-    function() { return new Date().getTime();},
+    jstestdriver.now,
     jstestdriver.convertToJson(jstestdriver.jQuery.post));
   
   var executor = jstestdriver.executor =
@@ -68,7 +68,8 @@ jstestdriver.listen = function() {
                                        streamingService,
                                        jstestdriver.testCaseManager,
                                        testRunner,
-                                       jstestdriver.pluginRegistrar);
+                                       jstestdriver.pluginRegistrar,
+                                       jstestdriver.now);
 
   executor.registerCommand('execute', executor, executor.execute);
   executor.registerCommand('runAllTests', executor, executor.runAllTests);
@@ -123,7 +124,8 @@ jstestdriver.CommandExecutor = function(id,
                                         streamingService,
                                         testCaseManager,
                                         testRunner,
-                                        pluginRegistrar) {
+                                        pluginRegistrar,
+                                        now) {
   this.__id = id;
   this.streamingService_ = streamingService;
   this.__testCaseManager = testCaseManager;
@@ -143,6 +145,8 @@ jstestdriver.CommandExecutor = function(id,
   this.commandMap_ = {};
   this.testsDone_ = [];
   this.debug_ = false;
+  this.now_ = now;
+  this.lastTestResultsSent_ = 0;
 };
 
 
@@ -304,6 +308,7 @@ jstestdriver.CommandExecutor.prototype.runTests = function(args) {
 jstestdriver.CommandExecutor.prototype.runTestCases_ = function(testRunsConfiguration,
     captureConsole, runnerMode) {
   if (!runnerMode) {
+    this.lastTestResultsSent_ = this.now_();
     this.__testRunner.runTests(testRunsConfiguration,
                                this.boundOnTestDone,
                                this.boundOnComplete,
@@ -346,9 +351,15 @@ jstestdriver.CommandExecutor.prototype.sendTestResults = function() {
 };
 
 
+//TODO(corysmith): refactor the testsDone collection into a separate object.
 jstestdriver.CommandExecutor.prototype.onTestDone_ = function(result) {
   this.addTestResult(result);
-  if ((result.result == 'error' || result.log != '' || this.debug_)) {
+  var elapsed = this.now_() - this.lastTestResultsSent_;
+  if ((result.result == 'error' ||
+       result.log != '' ||
+       this.debug_ ||
+       elapsed > jstestdriver.TIMEOUT)) {
+    this.lastTestResultsSent_ = this.now_();
     this.sendTestResults();
   }
 };
