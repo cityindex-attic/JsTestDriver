@@ -369,11 +369,10 @@ private final void promoteEOL(ParserRuleReturnScope rule)
 	Token lt = input.LT(1);
 	int la = lt.getType();
 	
-	// We only need to promote an EOL when the current token is offending (not a SEMIC, EOF, RBRACE, EOL or MultiLineComment).
-	// EOL and MultiLineComment are not offending as they're already promoted in a previous call to this method.
+	// We only need to promote an EOL when the current token is offending (not a SEMIC, EOF, RBRACE, EOL).
+	// EOL is not offending as it's already promoted in a previous call to this method.
 	// Promoting an EOL means switching it from off channel to on channel.
-	// A MultiLineComment gets promoted when it contains an EOL.
-	if (!(la == SEMIC || la == EOF || la == RBRACE || la == EOL || la == MultiLineComment))
+	if (!(la == SEMIC || la == EOF || la == RBRACE || la == EOL ))
 	{
 		// Start on the possition before the current token and scan backwards off channel tokens until the previous on channel token.
 		for (int ix = lt.getTokenIndex() - 1; ix > 0; ix--)
@@ -384,7 +383,7 @@ private final void promoteEOL(ParserRuleReturnScope rule)
 				// On channel token found: stop scanning.
 				break;
 			}
-			else if (lt.getType() == EOL || (lt.getType() == MultiLineComment && lt.getText().matches("/.*\r\n|\r|\n")))
+			else if (lt.getType() == EOL )
 			{
 				// We found our EOL: promote the token to on channel, position the input on it and reset the rule start.
 				lt.setChannel(Token.DEFAULT_CHANNEL);
@@ -495,7 +494,7 @@ EOL
 // $<	Comments (7.4)
 
 MultiLineComment
-	: '/*' ( options { greedy = false; } : . )* '*/' 
+	: '/*' ( options { greedy = false; } : . )* '*/' { $channel = HIDDEN; }
 	;
 
 SingleLineComment
@@ -845,7 +844,7 @@ primaryExpression
 	;
 
 arrayLiteral
-	: lb=LBRACK ( arrayItem ( COMMA arrayItem )* )? RBRACK
+	: lb=LBRACK ( arrayItem ( COMMA (arrayItem)? )* )? RBRACK
 	-> ^( ARRAY[$lb, "ARRAY"] arrayItem* )
 	;
 
@@ -1141,7 +1140,7 @@ In the following situations an ECMA 3 parser should auto insert absent but gramm
 
 The RBRACE is handled by matching it but not consuming it.
 The EOF needs no further handling because it is not consumed by default.
-The EOL situation is handled by promoting the EOL or MultiLineComment with an EOL present from off channel to on channel
+The EOL situation is handled by promoting the EOL from off channel to on channel
 and thus making it parseable instead of handling it as white space. This promoting is done in the action promoteEOL.
 */
 semic
@@ -1155,7 +1154,7 @@ semic
 	: SEMIC
 	| EOF
 	| RBRACE { input.rewind(marker); }
-	| EOL | MultiLineComment // (with EOL in it)
+	| EOL
 	;
 
 /*
@@ -1528,7 +1527,6 @@ options
 }
 	: { input.LA(1) == FUNCTION }? functionDeclaration
 	| statement
-	| multiLineComment 
 	;
 
 // $>
