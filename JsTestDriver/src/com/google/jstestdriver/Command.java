@@ -35,4 +35,17 @@ public class Command {
   public String toString() {
     return String.format("command= %s", command);
   }
+
+  @Override
+  public int hashCode() {
+    return 31 + ((command == null) ? 0 : command.hashCode());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Command)) { return false;}
+    Command other = (Command) obj;
+    return command == null ? other.command == null : command.equals(other.command);
+  }
+  
 }

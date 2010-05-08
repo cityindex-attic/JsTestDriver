@@ -212,7 +212,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     Set<FileInfo> fileInfos = slave.getFileSet();
     
     assertEquals("Command is not in the approriate state to deal with race condition.",
-        gson.toJson(resetCommand), gson.toJson(slave.getCommandRunning()));
+        new Command(gson.toJson(resetCommand)), slave.getCommandRunning());
 
     assertEquals(0, fileInfos.size());
   }
