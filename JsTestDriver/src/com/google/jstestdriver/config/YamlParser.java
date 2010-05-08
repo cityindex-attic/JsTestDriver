@@ -18,18 +18,11 @@ package com.google.jstestdriver.config;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.PathResolver;
-import com.google.jstestdriver.PathRewriter;
 import com.google.jstestdriver.Plugin;
-import com.google.jstestdriver.hooks.FileParsePostProcessor;
 
-import org.apache.oro.io.GlobFilenameFilter;
-import org.apache.oro.text.GlobCompiler;
 import org.jvyaml.YAML;
 
-import java.io.File;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -43,20 +36,8 @@ import java.util.Set;
  * @author corysmith@google.com (Cory Smith)
  */
 public class YamlParser {
-
-  private final PathRewriter pathRewriter;
-
-  private final PathResolver pathResolver = new PathResolver();
-
-  private final Set<FileParsePostProcessor> processors;
-
-  public YamlParser(PathRewriter pathRewriter, Set<FileParsePostProcessor> processors) {
-    this.pathRewriter = pathRewriter;
-    this.processors = processors;
-  }
-
   @SuppressWarnings("unchecked")
-  public Configuration parse(File basePath, Reader configReader) {
+  public Configuration parse(Reader configReader) {
     Map<Object, Object> data = (Map<Object, Object>) YAML.load(configReader);
     Set<FileInfo> resolvedFilesLoad = new LinkedHashSet<FileInfo>();
     Set<FileInfo> resolvedFilesExclude = new LinkedHashSet<FileInfo>();
@@ -66,33 +47,34 @@ public class YamlParser {
     Set<FileInfo> filesList = Sets.newLinkedHashSet();
 
     if (data.containsKey("load")) {
-      resolvedFilesLoad.addAll(resolveFiles(basePath, (List<String>) data
+      resolvedFilesLoad.addAll(createFileInfos((List<String>) data
         .get("load"), false));
     }
     if (data.containsKey("exclude")) {
-      resolvedFilesExclude.addAll(resolveFiles(basePath, (List<String>) data
+      resolvedFilesExclude.addAll(createFileInfos((List<String>) data
         .get("exclude"), false));
     }
     if (data.containsKey("server")) {
       server = (String) data.get("server");
     }
     if (data.containsKey("plugin")) {
-      for (Map<String, String> value : (List<Map<String, String>>) data
-        .get("plugin")) {
-        plugins.add(new Plugin(value.get("name"), value.get("jar"), value
-          .get("module"), createArgsList(value.get("args"))));
+      for (Map<String, String> value :
+          (List<Map<String, String>>) data.get("plugin")) {
+        plugins.add(new Plugin(value.get("name"), value.get("jar"),
+            value.get("module"), createArgsList(value.get("args"))));
       }
     }
     if (data.containsKey("serve")) {
-      Set<FileInfo> resolvedServeFiles = resolveFiles(basePath,
-        (List<String>) data.get("serve"), true);
+      Set<FileInfo> resolvedServeFiles = createFileInfos((List<String>) data.get("serve"),
+        true);
       resolvedFilesLoad.addAll(resolvedServeFiles);
     }
-    filesList.addAll(consolidatePatches(resolvedFilesLoad));
-    filesList.removeAll(resolvedFilesExclude);
-    return new ParsedConfiguration(filesList, plugins, server);
+    
+    return new ParsedConfiguration(resolvedFilesLoad,
+                                   resolvedFilesExclude,
+                                   plugins,
+                                   server);
   }
-
 
   private List<String> createArgsList(String args) {
     if (args == null) {
@@ -107,77 +89,20 @@ public class YamlParser {
     return argsList;
   }
 
-  private Set<FileInfo> consolidatePatches(Set<FileInfo> resolvedFilesLoad) {
-    Set<FileInfo> consolidated = new LinkedHashSet<FileInfo>(resolvedFilesLoad.size());
-    FileInfo currentNonPatch = null;
-    for (FileInfo fileInfo : resolvedFilesLoad) {
-      if (fileInfo.isPatch()) {
-        if (currentNonPatch == null) {
-          throw new IllegalStateException("Patch " + fileInfo
-            + " without a core file to patch");
-        }
-        currentNonPatch.addPatch(fileInfo);
-      } else {
-        consolidated.add(fileInfo);
-        currentNonPatch = fileInfo;
-      }
-    }
-    return consolidated;
-  }
-
-  private Set<FileInfo> resolveFiles(File basePath, List<String> files,
-      boolean serveOnly) {
+  private Set<FileInfo> createFileInfos(List<String> files, boolean serveOnly) {
     if (files != null) {
-      Set<FileInfo> resolvedFiles = new LinkedHashSet<FileInfo>();
+      Set<FileInfo> fileInfos = new LinkedHashSet<FileInfo>();
 
       for (String f : files) {
-        // TODO(corysmith): Replace path rewriter with hooks.
-        f = pathRewriter.rewrite(f);
         boolean isPatch = f.startsWith("patch");
 
         if (isPatch) {
           String[] tokens = f.split(" ", 2);
-
           f = tokens[1].trim();
         }
-        if (f.startsWith("http://") || f.startsWith("https://")) {
-          resolvedFiles.add(new FileInfo(f, -1, false, false, null));
-        } else {
-          File file = basePath != null
-            ? new File(basePath.getAbsoluteFile(), f) : new File(f);
-          File testFile = file.getAbsoluteFile();
-          File dir = testFile.getParentFile().getAbsoluteFile();
-          final String pattern = file.getName();
-          String[] filteredFiles = dir.list(new GlobFilenameFilter(pattern,
-            GlobCompiler.DEFAULT_MASK | GlobCompiler.CASE_INSENSITIVE_MASK));
-
-          if (filteredFiles == null || filteredFiles.length == 0) {
-            String error = "The patterns/paths "
-              + f
-              + " used in the configuration"
-              + " file didn't match any file, the files patterns/paths need to be relative to"
-              + " the configuration file.";
-
-            System.err.println(error);
-            throw new RuntimeException(error);
-          }
-          Arrays.sort(filteredFiles, String.CASE_INSENSITIVE_ORDER);
-
-          for (String filteredFile : filteredFiles) {
-            String resolvedFilePath = pathResolver.resolvePath(dir
-              .getAbsolutePath().replaceAll("\\\\", "/")
-              + "/" + filteredFile.replaceAll("\\\\", "/"));
-            File resolvedFile = new File(resolvedFilePath);
-
-            resolvedFiles.add(new FileInfo(resolvedFilePath, resolvedFile
-              .lastModified(), isPatch, serveOnly, null));
-          }
-        }
+        fileInfos.add(new FileInfo(f, -1, isPatch, serveOnly, null));
       }
-      for (FileParsePostProcessor processor : processors) {
-        resolvedFiles = processor.process(resolvedFiles);
-      }
-      return resolvedFiles;
+      return fileInfos;
     }
     return Collections.emptySet();
   }

@@ -16,6 +16,7 @@
 package com.google.jstestdriver.config;
 
 import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
 
 import java.util.Collections;
@@ -43,5 +44,9 @@ public class DefaultConfiguration implements Configuration{
       throw new RuntimeException("Oh Snap! No server defined!");
     }
     return String.format("http://%s:%d", "127.0.0.1", port);
+  }
+
+  public Configuration resolvePaths(PathResolver resolver) {
+    return this;
   }
 }

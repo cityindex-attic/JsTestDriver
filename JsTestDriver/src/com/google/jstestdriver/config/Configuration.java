@@ -16,6 +16,7 @@
 package com.google.jstestdriver.config;
 
 import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
 
 import java.util.List;
@@ -34,5 +35,6 @@ public interface Configuration {
   public abstract String createServerAddress(String flagValue, int port);
 
   public abstract List<Plugin> getPlugins();
-
+  
+  public Configuration resolvePaths(PathResolver resolver);
 }

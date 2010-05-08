@@ -41,6 +41,7 @@ public class ActionFactory {
   private final Provider<JsTestDriverClient> clientProvider;
   private final Set<TestsPreProcessor> testPreProcessors;
   private final long browserTimeout;
+
   @Inject
   public ActionFactory(Provider<JsTestDriverClient> clientProvider,
                        Set<TestsPreProcessor> testPreProcessors,
@@ -49,7 +50,6 @@ public class ActionFactory {
     this.testPreProcessors = testPreProcessors;
     this.browserTimeout = browserTimeout;
   }
-
 
   public ServerStartupAction getServerStartupAction(Integer port,
       CapturedBrowsers capturedBrowsers, FilesCache preloadedFilesCache,

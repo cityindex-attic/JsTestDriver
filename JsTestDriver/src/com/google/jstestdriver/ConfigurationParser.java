@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.common.collect.Lists;
+import com.google.jstestdriver.hooks.FileParsePostProcessor;
 
 import org.apache.oro.io.GlobFilenameFilter;
 import org.apache.oro.text.GlobCompiler;
@@ -49,12 +50,13 @@ public class ConfigurationParser {
   private String server = "";
   private List<Plugin> plugins = new LinkedList<Plugin>();
 
-  private PathResolver pathResolver = new PathResolver();
+  private PathResolver pathResolver;
 
   public ConfigurationParser(File basePath, Reader configReader, PathRewriter pathRewriter) {
     this.basePath = basePath;
     this.configReader = configReader;
     this.pathRewriter = pathRewriter;
+    pathResolver = new PathResolver(basePath, pathRewriter, Collections.<FileParsePostProcessor>emptySet());
   }
 
   @SuppressWarnings("unchecked")

@@ -141,7 +141,7 @@ public class JsTestDriverServer extends Observable {
     STARTED, STOPPED
   }
 
-  public static void main(String[] args) {
+  /*public static void main(String[] args) {
     try {
       YamlParser parser = new YamlParser(new DefaultPathRewriter(),
           Collections.<FileParsePostProcessor>emptySet());
@@ -185,5 +185,5 @@ public class JsTestDriverServer extends Observable {
       System.out.println("Unexpected Runner Condition: " + e.getMessage() + "\n Use --runnerMode DEBUG for more information.");
       System.exit(1);
     }
-  }
+  }*/
 }

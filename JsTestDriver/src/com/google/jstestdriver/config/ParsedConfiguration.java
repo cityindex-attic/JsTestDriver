@@ -16,28 +16,36 @@
 package com.google.jstestdriver.config;
 
 import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
  * Represents a parsed configuration.
+ *
  * @author corysmith@google.com (Cory Smith)
  */
 public class ParsedConfiguration implements Configuration {
   private final Set<FileInfo> filesList;
   private final String server;
   private final List<Plugin> plugins;
+  private final Set<FileInfo> excludedFiles;
 
-  public ParsedConfiguration(Set<FileInfo> filesList, List<Plugin> plugins, String server) {
+  public ParsedConfiguration(Set<FileInfo> filesList, Set<FileInfo> excludedFiles,
+      List<Plugin> plugins, String server) {
     this.filesList = filesList;
+    this.excludedFiles = excludedFiles;
     this.plugins = plugins;
     this.server = server;
   }
 
   public Set<FileInfo> getFilesList() {
-    return filesList;
+    Set<FileInfo> finalList = new LinkedHashSet<FileInfo>(filesList);
+    finalList.removeAll(excludedFiles);
+    return finalList;
   }
 
   public List<Plugin> getPlugins() {
@@ -55,5 +63,10 @@ public class ParsedConfiguration implements Configuration {
       throw new RuntimeException("Oh Snap! No server defined!");
     }
     return String.format("http://%s:%d", "127.0.0.1", port);
+  }
+
+  public Configuration resolvePaths(PathResolver resolver) {
+    return new ParsedConfiguration(resolver.resolve(filesList),
+        resolver.resolve(excludedFiles), plugins, server);
   }
 }

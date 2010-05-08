@@ -4,7 +4,7 @@
   <property name="src-test.dir" value="src-test" />
   <property name="src-gen.dir" value="src-generated" />
   <property name="lib.dir" value="lib" />
-  <property name="main-class" value="com.google.jstestdriver.JsTestDriverServer" />
+  <property name="main-class" value="com.google.jstestdriver.JsTestDriver" />
   <property name="javascript-resources" value="com/google/jstestdriver/javascript" />
   <property name="test-resources" value="com/google/jstestdriver" />
   <property name="target.dir" value="target" />
