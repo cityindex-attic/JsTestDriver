@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.jstestdriver.Response.ResponseType;
 import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
@@ -49,7 +50,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browsers.addSlave(slave);
     BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
 
-    servlet.service(id, null, null, "true", null, writer);
+    servlet.service(id, null, "true", null, writer);
     assertEquals(data, out.toString());
   }
 
@@ -74,7 +75,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browserInfo.setOs("OS");
     browserInfo.setVersion("version");
     response.setBrowser(browserInfo);
-    servlet.service(id, null, gson.toJson(response), "true", null, writer);
+    servlet.service(id, gson.toJson(response), "true", null, writer);
     assertEquals("BrowserCommand", out.toString());
     assertEquals(response, slave.getResponse().getResponse());
   }
@@ -88,7 +89,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browsers.addSlave(slave);
     BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
 
-    servlet.service(id, null, null, "true", null, writer);
+    servlet.service(id, null, "true", null, writer);
     assertEquals("noop", out.toString());
   }
 
@@ -103,7 +104,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browsers.addSlave(slave);
     BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
 
-    servlet.service(id, null, null, null, null, writer);
+    servlet.service(id, null, null, null, writer);
     assertEquals(42L, slave.getLastHeartBeat().getMillis());
   }
 
@@ -112,7 +113,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     BrowserQueryResponseServlet servlet =
         new BrowserQueryResponseServlet(capturedBrowsers, null, null);
 
-    servlet.service("1", null, "response", "true", null, writer);
+    servlet.service("1", "response", "true", null, writer);
     assertEquals(0, out.toString().length());
   }
 
@@ -137,7 +138,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browserInfo.setOs("OS");
     browserInfo.setVersion("version");
     response.setBrowser(browserInfo);
-    servlet.service(id, null, gson.toJson(response), "", null, writer);
+    servlet.service(id, gson.toJson(response), "", null, writer);
     assertEquals(new Gson().toJson(new BrowserStreamAcknowledged(Collections.<String>emptyList())),
         out.toString());
   }
@@ -162,7 +163,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
     response.setType(ResponseType.FILE_LOAD_RESULT.name());
     response.setResponse(gson.toJson(new LoadedFiles(fileResults)));
-    servlet.service("1", null, gson.toJson(response), "", null, writer);
+    servlet.service("1", gson.toJson(response), "", null, writer);
 
     Set<FileInfo> fileInfos = slave.getFileSet();
 
@@ -183,5 +184,30 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
     assertEquals("filename3.js", info3.getFileName());
     assertEquals(789, info3.getTimestamp());
+  }
+  
+  public void testResetClearsTheBrowserFileSet() throws Exception {
+    CapturedBrowsers browsers = new CapturedBrowsers();
+    String id = "1";
+    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
+    
+    browsers.addSlave(slave);
+    BrowserQueryResponseServlet servlet =
+      new BrowserQueryResponseServlet(browsers, new DefaultURLTranslator(), new ForwardingMapper());
+    
+    slave.addFiles(Lists.newArrayList(new FileInfo()));
+    Response response = new Response();
+    response.setType(ResponseType.RESET_RESULT.name());
+    response.setResponse("Runner reset.");
+    response.setBrowser(new BrowserInfo());
+    
+    slave.createCommand("awaitingResponse");
+    slave.dequeueCommand();
+    
+    servlet.service(id, gson.toJson(response), "", null, writer);
+    
+    Set<FileInfo> fileInfos = slave.getFileSet();
+    
+    assertEquals(0, fileInfos.size());
   }
 }

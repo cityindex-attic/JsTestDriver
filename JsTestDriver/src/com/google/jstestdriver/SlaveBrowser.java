@@ -139,7 +139,7 @@ public class SlaveBrowser {
     return fileSet;
   }
 
-  public void resetFileSet() {
+  public synchronized void resetFileSet() {
     fileSet.clear();
   }
 
@@ -151,7 +151,7 @@ public class SlaveBrowser {
     }
   }
 
-  public void addResponse(Response response, boolean isLast) {
+  public synchronized void addResponse(Response response, boolean isLast) {
     if (isLast) {
       commandRunning = null;
     }
@@ -170,7 +170,7 @@ public class SlaveBrowser {
     return commandRunning;
   }
 
-  public void removeFiles(Collection<FileSource> errorFiles) {
+  public synchronized void removeFiles(Collection<FileSource> errorFiles) {
     Set<FileInfo> filesInfoToRemove = new LinkedHashSet<FileInfo>();
 
     for (FileSource f : errorFiles) {

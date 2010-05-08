@@ -16,7 +16,6 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
-import com.google.jstestdriver.Response.ResponseType;
 import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
 
 import org.slf4j.Logger;
@@ -65,9 +64,14 @@ public class BrowserQueryResponseServlet extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    logger.trace("Browser Query Post:\n{}\n", req.toString());
+    logger.trace("Browser Query Post:\n\tpath:{}\n\tresponse:{}\n\tdone:{}\n\tresponseId:{}",
+        new Object[] {
+          req.getPathInfo().substring(1),
+          req.getParameter("response"),
+          req.getParameter("done"),
+          req.getParameter("responseId")
+        });
     service(req.getPathInfo().substring(1),
-            req.getParameter("start"),
             req.getParameter("response"),
             req.getParameter("done"),
             req.getParameter("responseId"),
@@ -75,7 +79,6 @@ public class BrowserQueryResponseServlet extends HttpServlet {
   }
 
   public void service(String id,
-                      String start,
                       String response,
                       String done,
                       String responseId,
@@ -84,24 +87,25 @@ public class BrowserQueryResponseServlet extends HttpServlet {
 
     if (browser != null) {
       boolean isLast = Boolean.parseBoolean(done);
-      serviceBrowser(start, response, isLast, responseId, writer, browser);
+      serviceBrowser(response, isLast, responseId, writer, browser);
     } else {
       logger.warn("Unknown browser {}", id);
     }
     writer.flush();
   }
 
-  private void serviceBrowser(String start, String response, Boolean done, String responseId,
-      PrintWriter writer, SlaveBrowser browser) {
-    {
-      addResponseId(responseId, browser);
-      browser.heartBeat();
-      if (response != null && !"null".equals(response) && browser.isCommandRunning()) {
-        Response res = gson.fromJson(response, Response.class);
-
-        if (res.getResponseType() == ResponseType.FILE_LOAD_RESULT) {
-          LoadedFiles loadedFiles = gson.fromJson(res.getResponse(),
-                                                  res.getGsonType());
+  private void serviceBrowser(String response, Boolean done, String responseId, PrintWriter writer,
+      SlaveBrowser browser) {
+    addResponseId(responseId, browser);
+    browser.heartBeat();
+    Command command = null;
+    if (response != null && !"null".equals(response) && browser.isCommandRunning()) {
+      Response res = gson.fromJson(response, Response.class);
+      // TODO (corysmith): Replace this with polymorphism,
+      // using the response type to create dispoable actions.
+      switch (res.getResponseType()) {
+        case FILE_LOAD_RESULT:
+          LoadedFiles loadedFiles = gson.fromJson(res.getResponse(), res.getGsonType());
           Collection<FileResult> allLoadedFiles = loadedFiles.getLoadedFiles();
           if (!allLoadedFiles.isEmpty()) {
             LinkedHashSet<FileInfo> fileInfos = new LinkedHashSet<FileInfo>();
@@ -122,44 +126,43 @@ public class BrowserQueryResponseServlet extends HttpServlet {
               browser.removeFiles(errorFiles);
             }
           }
-        }
+          break;
+        // reset the browsers fileset.
+        case RESET_RESULT:
+          Command commandRunning = browser.getCommandRunning();
 
-        logger.trace("Received:\n done: {} \n res:\n {}\n",
-                     new Object[]{done, res});
-        browser.addResponse(res, done);
-      }
-      logger.debug("Got responseId: {} is done? {}", responseId, done);
-      if (!done) { // we are still streaming, so we respond with the streaming acknowledge.
-        // this is independent of receiving an actual response.
-        writer.print(
-            gson.toJson(
-                new BrowserStreamAcknowledged(streamedResponses.get(browser))));
-        writer.flush();
-        return;
-      } else {
-        streamedResponses.clear();
-      }
+          if (commandRunning != null) {
+            JsonCommand jsonCommand = gson.fromJson(commandRunning.getCommand(), JsonCommand.class);
 
-      Command command = null;
-
-      if (start != null) {
-        browser.resetFileSet();
-        urlTranslator.clear();
-        forwardingMapper.clear();
-        Command commandRunning = browser.getCommandRunning();
-
-        if (commandRunning != null) {
-          JsonCommand jsonCommand = gson.fromJson(commandRunning.getCommand(), JsonCommand.class);
-
-          if (jsonCommand.getCommand().equals(JsonCommand.CommandType.RESET.getCommand())) {
-            command = browser.getLastDequeuedCommand();
+            if (jsonCommand.getCommand().equals(JsonCommand.CommandType.RESET.getCommand())) {
+              command = browser.getLastDequeuedCommand();
+            }
           }
-        }
-      } else {
-        command = browser.dequeueCommand();
+        //$FALL-THROUGH$
+        case BROWSER_READY:
+          browser.resetFileSet();
+          urlTranslator.clear();
+          forwardingMapper.clear();
+          break;
       }
-      writer.print(command != null ? command.getCommand() : NOOP);
+      logger.trace("Received:\n done: {} \n res:\n {}\n", new Object[] {done, res});
+      browser.addResponse(res, done);
     }
+    logger.debug("Got responseId: {} is done? {}", responseId, done);
+    // TODO(corysmith): Refactoring the streaming into a separate layer.
+    if (!done) { // we are still streaming, so we respond with the streaming
+                 // acknowledge.
+      // this is independent of receiving an actual response.
+      writer.print(gson.toJson(new BrowserStreamAcknowledged(streamedResponses.get(browser))));
+      writer.flush();
+      return;
+    } else {
+      streamedResponses.clear();
+    }
+    if(command == null) {
+     command = browser.dequeueCommand();
+    }
+    writer.print(command != null ? command.getCommand() : NOOP);
   }
 
   private void addResponseId(String responseId, SlaveBrowser browser) {

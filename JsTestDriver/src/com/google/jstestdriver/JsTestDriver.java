@@ -93,6 +93,7 @@ public class JsTestDriver {
       System.exit(1);
     } catch (Exception e) {
       logger.debug("Error {}", e);
+      e.printStackTrace();
       System.out.println("Unexpected Runner Condition: " + e.getMessage() + "\n Use --runnerMode DEBUG for more information.");
       System.exit(1);
     }
@@ -130,6 +131,12 @@ public class JsTestDriver {
     return getConfigPath(cmdLineFlags).getParentFile();
   }
 
+  /**
+   * An extremely simple flag object. It only support the name and the value
+   * as a simple string, or as a boolean.
+   * @author corysmith@google.com (Cory Smith)
+   *
+   */
   public static class CmdLineFlag {
     public final String flag;
     public final String value;
@@ -155,6 +162,11 @@ public class JsTestDriver {
     }
   }
 
+  /**
+   * Poorman's flag parser. This will take a String[] and translate it into a
+   * List<CmdLineFlags>, a very lightweight representation of flag objects.
+   * @author corysmith@google.com (Cory Smith)
+   */
   public static class CmdLineFlagsFactory {
     public List<CmdLineFlag> create(String[] args) {
       CmdLineFlagIterator iterator = new CmdLineFlagIterator(args);
@@ -165,6 +177,11 @@ public class JsTestDriver {
       return flags;
     }
 
+    /**
+     * Iterates over an array of String[] returning CmdLineFlags object. Poor
+     * mans flag parser, really. This is used to extract flags as a precursor 
+     * until we can use the heavy weight flag parsing machinery.
+     */
     private static class CmdLineFlagIterator implements Iterator<CmdLineFlag> {
       private final String[] args;
       private int pos = 0;
@@ -175,7 +192,6 @@ public class JsTestDriver {
 
       public boolean hasNext() {
         while (pos < args.length) {
-          System.out.println(pos);
           if (args[pos].startsWith("--")) {
             return true;
           }
@@ -187,14 +203,14 @@ public class JsTestDriver {
       public CmdLineFlag next() {
         int current = pos++;
         int next = pos;
-        if (next > args.length || args[next].startsWith("--")) {
+        if (next >= args.length || args[next].startsWith("--")) {
           if (args[current].contains("=")) {
             String[] flagValue = args[current].split("=");
             return new CmdLineFlag(flagValue[0], flagValue[1]);
           }
           return new CmdLineFlag(args[current], null);
         }
-        pos++; // consume the next because its the value.
+        pos++; // consume the next because it's the value.
         return new CmdLineFlag(args[current], args[next]);
       }
 
