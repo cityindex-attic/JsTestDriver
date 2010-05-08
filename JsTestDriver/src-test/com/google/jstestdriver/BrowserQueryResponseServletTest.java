@@ -17,6 +17,7 @@ package com.google.jstestdriver;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.Response.ResponseType;
 import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
 
@@ -200,14 +201,19 @@ public class BrowserQueryResponseServletTest extends TestCase {
     response.setType(ResponseType.RESET_RESULT.name());
     response.setResponse("Runner reset.");
     response.setBrowser(new BrowserInfo());
-    
-    slave.createCommand("awaitingResponse");
+
+    JsonCommand resetCommand = new JsonCommand(CommandType.RESET,
+        Collections.<String> emptyList());
+    slave.createCommand(gson.toJson(resetCommand));
     slave.dequeueCommand();
-    
+
     servlet.service(id, gson.toJson(response), "", null, writer);
-    
+
     Set<FileInfo> fileInfos = slave.getFileSet();
     
+    assertEquals("Command is not in the approriate state to deal with race condition.",
+        gson.toJson(resetCommand), gson.toJson(slave.getCommandRunning()));
+
     assertEquals(0, fileInfos.size());
   }
 }
