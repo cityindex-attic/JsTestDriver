@@ -19,26 +19,28 @@ import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.jstestdriver.config.CmdFlags;
+import com.google.jstestdriver.config.CmdLineFlagsFactory;
 import com.google.jstestdriver.config.Configuration;
 import com.google.jstestdriver.config.DefaultConfiguration;
+import com.google.jstestdriver.config.Initializer;
+import com.google.jstestdriver.config.InitializeModule;
 import com.google.jstestdriver.config.YamlParser;
-import com.google.jstestdriver.guice.DebugModule;
-import com.google.jstestdriver.guice.TestResultPrintingModule;
-import com.google.jstestdriver.hooks.FileParsePostProcessor;
-import com.google.jstestdriver.html.HtmlDocModule;
-import com.google.jstestdriver.runner.RunnerMode;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.logging.LogManager;
 
 public class JsTestDriver {
+
   private static final Logger logger =
       LoggerFactory.getLogger(JsTestDriver.class);
 
@@ -46,44 +48,31 @@ public class JsTestDriver {
     try {
       // pre-parse parsing... These are the flags
       // that must be dealt with before we parse the flags.
+      CmdFlags cmdLineFlags = new CmdLineFlagsFactory().create(args);
+      final File basePath = cmdLineFlags.getBasePath();
+      List<Plugin> cmdLinePlugins = cmdLineFlags.getPlugins();
 
-      List<CmdLineFlag> cmdLineFlags = new CmdLineFlagsFactory().create(args);
-      File basePath = getBasePath(cmdLineFlags);
-      File config = getConfigPath(cmdLineFlags);
-      List<Plugin> cmdLinePlugins = getPlugins(cmdLineFlags);
+      final PluginLoader pluginLoader = new PluginLoader();
 
-      YamlParser parser = new YamlParser();
-      Flags flags = new FlagsParser().parseArgument(args);
+      // load all the command line plugins.
+      final List<Module> pluginModules = pluginLoader.load(cmdLinePlugins);
+      List<Module> initializeModules =
+          Lists.newLinkedList(pluginModules);
 
-      PathResolver pathResolver =
-          new PathResolver(basePath,
-              new DefaultPathRewriter(),
-              Collections.<FileParsePostProcessor>emptySet());
-      List<Module> modules = Lists.newLinkedList();
-
+      // configure loggin before we start seriously processing.
       LogManager.getLogManager().readConfiguration(
-          flags.getRunnerMode().getLogConfig());
+          cmdLineFlags.getRunnerMode().getLogConfig());
 
-      Configuration configuration = new DefaultConfiguration();
-      if (flags.hasWork()) {
-        if (!config.exists()) {
-          throw new RuntimeException("Config file doesn't exist: " + flags.getConfig());
-        }
-        configuration = parser.parse(new java.io.FileReader(config));
-        modules.addAll(new PluginLoader().load(pathResolver.resolve(configuration.getPlugins())));
-        modules.add(new HtmlDocModule()); // by default the html plugin is installed.
-      }
+      Configuration configuration = getConfiguration(cmdLineFlags.getConfigPath());
+      initializeModules.add(new InitializeModule(pluginLoader, basePath));
+      Injector initializeInjector = Guice.createInjector(initializeModules);
 
-      modules.add(new TestResultPrintingModule(System.out, flags.getTestOutput()));
-      modules.add(new DebugModule(flags.getRunnerMode() == RunnerMode.DEBUG));
+      final List<Module> actionRunnerModules =
+          initializeInjector.getInstance(Initializer.class)
+              .initialize(pluginModules, configuration,
+                  cmdLineFlags.getRunnerMode(), cmdLineFlags.getUnusedFlagsAsArgs());
 
-      Injector injector = Guice.createInjector(
-          new JsTestDriverModule(flags,
-              configuration.resolvePaths(pathResolver).getFilesList(),
-              modules,
-              configuration.createServerAddress(flags.getServer(),
-                                                flags.getPort())));
-
+      Injector injector = Guice.createInjector(actionRunnerModules);
       injector.getInstance(ActionRunner.class).runActions();
     } catch (CmdLineException e){
       System.out.println(e.getMessage());
@@ -99,124 +88,22 @@ public class JsTestDriver {
     }
   }
 
-  private static List<Plugin> getPlugins(List<CmdLineFlag> cmdLineFlags) {
-    for (CmdLineFlag cmdLineFlag : cmdLineFlags) {
-      if ("--plugins".equals(cmdLineFlag.flag)) {
-        List<Plugin> plugins = Lists.newLinkedList();
-        for (String pluginPath : cmdLineFlag.valuesList()) {
-          plugins.add(
-              new Plugin(null, pluginPath, null, Collections.<String>emptyList()));
-        }
-        return plugins;
-      }
-    }
-    return Collections.<Plugin>emptyList();
-  }
-
-  private static File getConfigPath(List<CmdLineFlag> cmdLineFlags) {
-    for (CmdLineFlag cmdLineFlag : cmdLineFlags) {
-      if ("--config".equals(cmdLineFlag.flag)) {
-        return new File(cmdLineFlag.safeValue());
-      }
-    }
-    return new File("jsTestDriver.conf");
-  }
-
-  private static File getBasePath(List<CmdLineFlag> cmdLineFlags) {
-    for (CmdLineFlag cmdLineFlag : cmdLineFlags) {
-      if ("--basePath".equals(cmdLineFlag.flag)) {
-        return new File(cmdLineFlag.safeValue());
-      }
-    }
-    return getConfigPath(cmdLineFlags).getParentFile();
-  }
-
   /**
-   * An extremely simple flag object. It only support the name and the value
-   * as a simple string, or as a boolean.
-   * @author corysmith@google.com (Cory Smith)
-   *
+   * Creates a configuration from the path, by reading and parsing it.
+   * Or, it will return a DefaultConfiguration, if the path is null.
+   * 
    */
-  public static class CmdLineFlag {
-    public final String flag;
-    public final String value;
-
-    public CmdLineFlag(String flag, String value) {
-      this.flag = flag;
-      this.value = value;
+  private static Configuration getConfiguration(File config)
+      throws FileNotFoundException {
+    final YamlParser configParser = new YamlParser();
+    Configuration configuration = new DefaultConfiguration();
+    if (config != null) {
+      if (!config.exists()) {
+        throw new RuntimeException("Config file doesn't exist: " + config.getAbsolutePath());
+      }
+      configuration = configParser.parse(new InputStreamReader(new FileInputStream(config),
+          Charset.defaultCharset()));
     }
-
-    public String safeValue() {
-      return value == null ? "" : value;
-    }
-
-    public List<String> valuesList() {
-      if (value == null) {
-        return Collections.<String>emptyList();
-      }
-      List<String> values =  Lists.<String>newLinkedList();
-      for (String string : value.split(",")) {
-        values.add(string);
-      }
-      return values;
-    }
-  }
-
-  /**
-   * Poorman's flag parser. This will take a String[] and translate it into a
-   * List<CmdLineFlags>, a very lightweight representation of flag objects.
-   * @author corysmith@google.com (Cory Smith)
-   */
-  public static class CmdLineFlagsFactory {
-    public List<CmdLineFlag> create(String[] args) {
-      CmdLineFlagIterator iterator = new CmdLineFlagIterator(args);
-      List<CmdLineFlag> flags = Lists.newLinkedList();
-      while (iterator.hasNext()) {
-        flags.add(iterator.next());
-      }
-      return flags;
-    }
-
-    /**
-     * Iterates over an array of String[] returning CmdLineFlags object. Poor
-     * mans flag parser, really. This is used to extract flags as a precursor 
-     * until we can use the heavy weight flag parsing machinery.
-     */
-    private static class CmdLineFlagIterator implements Iterator<CmdLineFlag> {
-      private final String[] args;
-      private int pos = 0;
-
-      public CmdLineFlagIterator(String[] args) {
-        this.args = args;
-      }
-
-      public boolean hasNext() {
-        while (pos < args.length) {
-          if (args[pos].startsWith("--")) {
-            return true;
-          }
-          pos++;
-        }
-        return false;
-      }
-
-      public CmdLineFlag next() {
-        int current = pos++;
-        int next = pos;
-        if (next >= args.length || args[next].startsWith("--")) {
-          if (args[current].contains("=")) {
-            String[] flagValue = args[current].split("=");
-            return new CmdLineFlag(flagValue[0], flagValue[1]);
-          }
-          return new CmdLineFlag(args[current], null);
-        }
-        pos++; // consume the next because it's the value.
-        return new CmdLineFlag(args[current], args[next]);
-      }
-
-      public void remove() {
-        throw new UnsupportedOperationException();
-      }
-    }
+    return configuration;
   }
 }

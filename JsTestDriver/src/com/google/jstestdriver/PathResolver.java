@@ -17,6 +17,7 @@ package com.google.jstestdriver;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
 
 import org.apache.oro.io.GlobFilenameFilter;
@@ -42,7 +43,7 @@ public class PathResolver {
   private final File basePath;
 
   @Inject
-  public PathResolver(File basePath,
+  public PathResolver(@Named("basePath") File basePath,
       PathRewriter pathRewriter, Set<FileParsePostProcessor> processors) {
     this.basePath = basePath;
     this.pathRewriter = pathRewriter;

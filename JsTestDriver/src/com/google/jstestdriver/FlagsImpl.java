@@ -38,6 +38,7 @@ public class FlagsImpl implements Flags {
   private String testOutput = "";
   private Set<BrowserRunner> browser = Sets.newHashSet();
   private boolean reset;
+  private long browserTimeout = SlaveBrowser.TIMEOUT;
   private String config = "jsTestDriver.conf";
   private List<String> tests = new ArrayList<String>();
   private boolean displayHelp = false;
@@ -167,18 +168,16 @@ public class FlagsImpl implements Flags {
     return dryRunFor;
   }
 
-  public  boolean hasWork() {
-    return getTests().size() > 0 || getReset() || !getArguments().isEmpty() ||
-        getPreloadFiles() || !getDryRunFor().isEmpty();
-  }
-
-  @Option(name="--runnerMode",
-          usage="Sets the logging mode for a test run: DEBUG, DEBUG_QUIET, PROFILE, QUIET")
-  public void setRunnerMode(String mode) {
-    runnerMode = RunnerMode.valueOf(mode);
-  }
-
   public RunnerMode getRunnerMode() {
     return runnerMode;
+  }
+  
+  @Option(name="--browserTimeout", usage="The ms before a browser is declared dead.")
+  public void setBrowserTimeout(long browserTimeout) {
+    this.browserTimeout = browserTimeout;
+  }
+
+  public long getBrowserTimeout() {
+    return browserTimeout;
   }
 }

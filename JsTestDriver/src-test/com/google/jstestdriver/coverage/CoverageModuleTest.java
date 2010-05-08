@@ -15,9 +15,10 @@
  */
 package com.google.jstestdriver.coverage;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.Module;
 import com.google.jstestdriver.Action;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.FileInfo;
@@ -35,26 +36,29 @@ import java.util.List;
 
 /**
  * Smoke test. If you see smoke, it failed.
+ *
  * @author corysmith@google.com (Cory Smith)
  *
  */
 public class CoverageModuleTest extends TestCase {
   public void testGetActionRunner() throws Exception {
-    CoverageModule coverage = new CoverageModule(Collections.<String>emptyList());
+    CoverageModule coverage = new CoverageModule(Collections.<String> emptyList());
     TestResultPrintingModule printStream = new TestResultPrintingModule(System.out, "");
     FlagsImpl flags = new FlagsImpl();
     flags.setTests(Arrays.asList("test"));
     flags.setBrowser(Arrays.asList("ff"));
-    JsTestDriverModule jsTestDriverModule = new JsTestDriverModule(flags,
-                           Collections.<FileInfo>emptySet(),
-                           Arrays.<Module>asList(coverage,printStream, new DebugModule(false)),
-                           "");
-    Guice.createInjector(jsTestDriverModule).getInstance(ActionRunner.class);
-    List<Action> actions =
-        Guice.createInjector(jsTestDriverModule).getInstance(new Key<List<Action>>(){});
+    JsTestDriverModule jsTestDriverModule =
+        new JsTestDriverModule(flags, Collections.<FileInfo> emptySet(), "");
+
+    final Injector injector = Guice.createInjector(Lists.newArrayList(coverage, printStream,
+        new DebugModule(false), jsTestDriverModule));
+
+    injector.getInstance(ActionRunner.class);
+
+    List<Action> actions = injector.getInstance(new Key<List<Action>>() {});
+
     assertTrue(actions.get(actions.size() - 1) instanceof CoverageReporterAction);
-    assertTrue(
-        Guice.createInjector(jsTestDriverModule).getInstance(
-            ThreadedActionProvider.class) instanceof CoverageThreadedActionProvider);
+    assertTrue(injector
+        .getInstance(ThreadedActionProvider.class) instanceof CoverageThreadedActionProvider);
   }
 }

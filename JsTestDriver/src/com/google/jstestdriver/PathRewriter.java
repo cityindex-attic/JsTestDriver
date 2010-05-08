@@ -15,11 +15,13 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.ImplementedBy;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  *
  */
+@ImplementedBy(DefaultPathRewriter.class)
 public interface PathRewriter {
-
   public String rewrite(String path);
 }

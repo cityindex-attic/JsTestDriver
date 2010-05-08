@@ -24,6 +24,11 @@ public class Plugin {
     this.args = args;
   }
 
+  /**
+   * This is accessor for the plugin name, used to identify the plugin.
+   * It can be read either from the configuration file, or from the 
+   * jar manifest.
+   */
   public String getName(ManifestLoader manifestLoader) {
     if (name == null) {
       try {
@@ -36,10 +41,12 @@ public class Plugin {
     return name;
   }
 
+  /** The path to the jar containing the plugin.*/
   public String getPathToJar() {
     return pathToJar;
   }
 
+  /** The fully qualified class path of the plugins module. Exclusive of the plugin-initializer.*/
   public String getModuleName(ManifestLoader manifestLoader) {
     if (moduleName == null) {
       try {
@@ -50,6 +57,16 @@ public class Plugin {
       }
     }
     return moduleName;
+  }
+
+  /** The fully qualified name of the PluginInitializer class. Exclusive of the plugin-module. */
+  public String getInitializerName(ManifestLoader manifestLoader) {
+    try {
+      Manifest manifest = manifestLoader.load(pathToJar);
+      return manifest.getAttributes("jstd").getValue("plugin-initializer");
+    } catch (ManifestNotFound e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public List<String> getArgs() {

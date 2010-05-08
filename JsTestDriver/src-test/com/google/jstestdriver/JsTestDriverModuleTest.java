@@ -35,7 +35,6 @@ public class JsTestDriverModuleTest extends TestCase {
         new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
-        Collections.<Module>emptyList(),
         "http://foo")).getInstance(ActionRunner.class);
   }
 
@@ -45,7 +44,6 @@ public class JsTestDriverModuleTest extends TestCase {
         new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
-        Collections.<Module>emptyList(),
         "http://foo")).getInstance(ActionRunner.class);
   }
 }

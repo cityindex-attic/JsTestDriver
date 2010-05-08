@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Module;
+import com.google.jstestdriver.util.ManifestLoader;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -22,9 +25,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.google.inject.Module;
-import com.google.jstestdriver.util.ManifestLoader;
 
 /**
  * Handles the loading of Plugins from the filesystem.

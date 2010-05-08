@@ -20,7 +20,6 @@ package com.google.jstestdriver;
  *
  */
 public class DefaultPathRewriter implements PathRewriter {
-
   public String rewrite(String path) {
     return path;
   }

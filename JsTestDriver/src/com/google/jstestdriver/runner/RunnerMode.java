@@ -26,37 +26,43 @@ public enum RunnerMode {
             .useConsoleHandler()
             .finest("com.google.javascript.jstestdriver")
             .finest("com.google.jstestdriver")
-            .severe("org.mortbay")),
+            .severe("org.mortbay"), true),
   DEBUG_QUIET(new LogConfigBuilder()
             .useFileHandler()
             .finest("com.google.javascript.jstestdriver")
             .finest("com.google.jstestdriver")
-            .severe("org.mortbay")),
+            .severe("org.mortbay"), true),
   PROFILE(new LogConfigBuilder()
             .useFileHandler()
             .useConsoleHandler()
             .info("com.google.jstestdriver.util.StopWatch")
             .severe("com.google.javascript.jstestdriver")
             .severe("com.google.jstestdriver")
-            .severe("org.mortbay")),
+            .severe("org.mortbay"), false),
   INFO(new LogConfigBuilder()
             .useConsoleHandler()
             .info("com.google.javascript.jstestdriver")
             .info("com.google.jstestdriver")
-            .severe("org.mortbay")),
+            .severe("org.mortbay"), false),
   QUIET(new LogConfigBuilder()
             .useFileHandler()
             .warn("com.google.javascript.jstestdriver")
             .warn("com.google.jstestdriver")
-            .severe("org.mortbay"));
+            .severe("org.mortbay"), false);
 
   private final LogConfigBuilder configBuilder;
+  private final boolean isDebug;
 
-  private RunnerMode(LogConfigBuilder configBuilder) {
+  private RunnerMode(LogConfigBuilder configBuilder, boolean isDebug) {
     this.configBuilder = configBuilder;
+    this.isDebug = isDebug;
   }
   
   public InputStream getLogConfig() {
     return new ByteArrayInputStream(configBuilder.build().getBytes());
+  }
+
+  public boolean isDebug() {
+    return isDebug;
   }
 }

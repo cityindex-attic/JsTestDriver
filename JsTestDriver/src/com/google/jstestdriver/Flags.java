@@ -17,7 +17,6 @@ package com.google.jstestdriver;
 
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.guice.GuiceBinding;
-import com.google.jstestdriver.runner.RunnerMode;
 
 import java.util.List;
 import java.util.Set;
@@ -59,13 +58,11 @@ public interface Flags {
   @GuiceBinding(name="preloadFiles")
   public boolean getPreloadFiles();
 
-  @GuiceBinding(name="runnerMode")
-  public RunnerMode getRunnerMode();
-
   @GuiceBinding(name="dryRunFor", parameterizedType = String.class)
   public List<String> getDryRunFor();
   
+  @GuiceBinding(name="browserTimeout")
+  public long getBrowserTimeout();
+  
   public boolean getDisplayHelp();
-
-  public boolean hasWork();
 }

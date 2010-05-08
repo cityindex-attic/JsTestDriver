@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Google Inc.
+ * Copyright 2010 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,37 +19,26 @@ import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Represents a parsed configuration.
+ * A configuration were all the paths have been resolved.
+ * @author corbinrsmith@gmail.com (Cory Smith)
  *
- * @author corysmith@google.com (Cory Smith)
  */
-public class ParsedConfiguration implements Configuration {
-  private final Set<FileInfo> filesList;
-  private final String server;
-  private final List<Plugin> plugins;
-  private final Set<FileInfo> excludedFiles;
+public class ResolvedConfiguration implements Configuration {
 
-  public ParsedConfiguration(Set<FileInfo> filesList, Set<FileInfo> excludedFiles,
-      List<Plugin> plugins, String server) {
+  private final Set<FileInfo> filesList;
+  private final List<Plugin> plugins;
+  private final String server;
+
+  public ResolvedConfiguration(Set<FileInfo> filesList,
+                               List<Plugin> plugins,
+                               String server) {
     this.filesList = filesList;
-    this.excludedFiles = excludedFiles;
     this.plugins = plugins;
     this.server = server;
-  }
-
-  public Set<FileInfo> getFilesList() {
-    Set<FileInfo> finalList = new LinkedHashSet<FileInfo>(filesList);
-    finalList.removeAll(excludedFiles);
-    return finalList;
-  }
-
-  public List<Plugin> getPlugins() {
-    return plugins;
   }
 
   public String createServerAddress(String flagValue, int port) {
@@ -65,10 +54,15 @@ public class ParsedConfiguration implements Configuration {
     return String.format("http://%s:%d", "127.0.0.1", port);
   }
 
+  public Set<FileInfo> getFilesList() {
+    return filesList;
+  }
+
+  public List<Plugin> getPlugins() {
+    return plugins;
+  }
+
   public Configuration resolvePaths(PathResolver resolver) {
-    Set<FileInfo> resolvedFiles = resolver.resolve(filesList);
-    Set<FileInfo> resolvedExcluded = resolver.resolve(excludedFiles);
-    resolvedFiles.removeAll(resolvedExcluded);
-    return new ResolvedConfiguration(resolvedFiles, resolver.resolve(plugins), server);
+    return this;
   }
 }
