@@ -5,19 +5,20 @@ package com.google.jstestdriver.config;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Module;
+import com.google.inject.name.Named;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.FlagsParser;
 import com.google.jstestdriver.JsTestDriverModule;
 import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.PluginLoader;
 import com.google.jstestdriver.guice.DebugModule;
-import com.google.jstestdriver.guice.TestResultPrintingModule;
 import com.google.jstestdriver.hooks.PluginInitializer;
 import com.google.jstestdriver.html.HtmlDocModule;
 import com.google.jstestdriver.runner.RunnerMode;
 
 import org.kohsuke.args4j.CmdLineException;
 
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Set;
 
@@ -31,16 +32,19 @@ public class Initializer {
   private final PathResolver pathResolver;
   private final FlagsParser flagsParser;
   private final Set<PluginInitializer> initializers;
+  private final PrintStream outputStream;
 
   @Inject
   public Initializer(PluginLoader pluginLoader,
                      PathResolver pathResolver,
                      FlagsParser flagsParser,
-                     Set<PluginInitializer> initializers) {
+                     Set<PluginInitializer> initializers,
+                     @Named("outputStream") PrintStream outputStream) {
     this.pluginLoader = pluginLoader;
     this.pathResolver = pathResolver;
     this.flagsParser = flagsParser;
     this.initializers = initializers;
+    this.outputStream = outputStream;
     
   }
 
@@ -63,13 +67,13 @@ public class Initializer {
     }
 
     modules.add(new HtmlDocModule()); // by default the html plugin is installed.
-    modules.add(new TestResultPrintingModule(System.out,
-        flags.getTestOutput()));
     modules.add(new DebugModule(runnerMode.isDebug()));
-    modules.add(new JsTestDriverModule(flags,
-        resolvedConfiguration.resolvePaths(pathResolver).getFilesList(),
-        resolvedConfiguration.createServerAddress(flags.getServer(),
-            flags.getPort())));
+    modules.add(
+        new JsTestDriverModule(flags,
+            resolvedConfiguration.getFilesList(),
+            resolvedConfiguration.createServerAddress(flags.getServer(),
+                flags.getPort()),
+            outputStream));
     return modules;
   }
 }

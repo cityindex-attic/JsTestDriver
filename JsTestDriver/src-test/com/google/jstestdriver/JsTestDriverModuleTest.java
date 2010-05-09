@@ -31,19 +31,19 @@ import java.util.Collections;
 public class JsTestDriverModuleTest extends TestCase {
   public void testGetActionRunnerWithoutXmlPrinter() throws Exception {
     FlagsImpl flags = new FlagsImpl();
-    Guice.createInjector(new TestResultPrintingModule(System.out, ""),
+    Guice.createInjector(new TestResultPrintingModule(""),
         new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
-        "http://foo")).getInstance(ActionRunner.class);
+        "http://foo", System.out)).getInstance(ActionRunner.class);
   }
 
   public void testGetActionRunnerWithXmlWriter() throws Exception {
     FlagsImpl flags = new FlagsImpl();
-    Guice.createInjector(new TestResultPrintingModule(System.out, "."),
+    Guice.createInjector(new TestResultPrintingModule("."),
         new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
-        "http://foo")).getInstance(ActionRunner.class);
+        "http://foo", System.out)).getInstance(ActionRunner.class);
   }
 }

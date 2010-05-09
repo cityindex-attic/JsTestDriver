@@ -15,12 +15,16 @@
  */
 package com.google.jstestdriver.idea.ui;
 
-import com.google.jstestdriver.Flags;
-
-import javax.swing.*;
-import java.awt.*;
 import static java.awt.BorderLayout.NORTH;
 import static java.awt.BorderLayout.SOUTH;
+import static java.text.MessageFormat.format;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
@@ -30,8 +34,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import static java.text.MessageFormat.format;
 import java.util.ResourceBundle;
+
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -48,8 +58,9 @@ public class InfoPanel extends JPanel {
     }
   }
 
-  public InfoPanel(Flags flags, ResourceBundle messageBundle) {
-    final String serverUrl = format("http://{0}:{1,number,###}/capture", getHostName(), flags.getPort());
+  @Inject
+  public InfoPanel(@Named("port") int port , ResourceBundle messageBundle) {
+    final String serverUrl = format("http://{0}:{1,number,###}/capture", getHostName(), port);
     final String captureMsg = format(messageBundle.getString("captureLabel"));
 
     setLayout(new BorderLayout());

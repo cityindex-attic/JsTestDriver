@@ -43,12 +43,12 @@ import java.util.List;
 public class CoverageModuleTest extends TestCase {
   public void testGetActionRunner() throws Exception {
     CoverageModule coverage = new CoverageModule(Collections.<String> emptyList());
-    TestResultPrintingModule printStream = new TestResultPrintingModule(System.out, "");
+    TestResultPrintingModule printStream = new TestResultPrintingModule("");
     FlagsImpl flags = new FlagsImpl();
     flags.setTests(Arrays.asList("test"));
     flags.setBrowser(Arrays.asList("ff"));
     JsTestDriverModule jsTestDriverModule =
-        new JsTestDriverModule(flags, Collections.<FileInfo> emptySet(), "");
+        new JsTestDriverModule(flags, Collections.<FileInfo> emptySet(), "", System.out);
 
     final Injector injector = Guice.createInjector(Lists.newArrayList(coverage, printStream,
         new DebugModule(false), jsTestDriverModule));

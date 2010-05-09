@@ -15,11 +15,14 @@
  */
 package com.google.jstestdriver.output;
 
+import com.google.inject.ImplementedBy;
+
 /**
  * Prints the XML test results.
  *
  * @author alexeagle@google.com (Alex Eagle)
  */
+@ImplementedBy(XmlPrinterImpl.class)
 public interface XmlPrinter {
   void writeXmlReportFiles();
 }

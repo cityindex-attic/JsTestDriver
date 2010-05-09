@@ -32,7 +32,7 @@ public class FlagsTest extends TestCase {
 
   public void testFlagsAreSet() throws Exception {
     Flags flags;
-    FlagsParser parser = new FlagsParser();
+    FlagsParser parser = new Args4jFlagsParser();
 
     try {
       flags = parser.parseArgument(new String[] { "--port", "1234", "--server", "http://localhost:1234" });
@@ -68,7 +68,7 @@ public class FlagsTest extends TestCase {
 
   public void testDefaultFlagsAreSet() throws Exception {
     Flags flags;
-    FlagsParser parser = new FlagsParser();
+    FlagsParser parser = new Args4jFlagsParser();
 
     try {
       flags = parser.parseArgument(new String[]{"--browser", "foo"});

@@ -28,6 +28,7 @@ import com.google.inject.name.Names;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.guice.FlagsModule;
 
+import java.io.PrintStream;
 import java.lang.annotation.Retention;
 import java.util.List;
 import java.util.Set;
@@ -43,19 +44,24 @@ public class JsTestDriverModule extends AbstractModule {
   private final Flags flags;
   private final Set<FileInfo> fileSet;
   private final String serverAddress;
+  private final PrintStream outputStream;
 
   public JsTestDriverModule(Flags flags,
                             Set<FileInfo> fileSet,
-                            String serverAddress) {
+                            String serverAddress,
+                            PrintStream outputStream) {
     this.flags = flags;
     this.fileSet = fileSet;
     this.serverAddress = serverAddress;
+    this.outputStream = outputStream;
   }
 
   @BindingAnnotation @Retention(RUNTIME) public @interface BrowserCount{}
 
   @Override
   protected void configure() {
+    bind(PrintStream.class)
+         .annotatedWith(Names.named("outputStream")).toInstance(outputStream);
     bind(String.class)
          .annotatedWith(Names.named("server")).toInstance(serverAddress);
 

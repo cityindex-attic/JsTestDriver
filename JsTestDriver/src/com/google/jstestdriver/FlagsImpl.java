@@ -173,7 +173,7 @@ public class FlagsImpl implements Flags {
   }
   
   @Option(name="--browserTimeout", usage="The ms before a browser is declared dead.")
-  public void setBrowserTimeout(long browserTimeout) {
+  public void setBrowserTimeout(Long browserTimeout) {
     this.browserTimeout = browserTimeout;
   }
 

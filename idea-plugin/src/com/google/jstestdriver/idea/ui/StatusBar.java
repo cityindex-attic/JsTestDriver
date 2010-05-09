@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver.idea.ui;
 
+import com.google.inject.Inject;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.JsTestDriverServer;
 
@@ -62,6 +63,7 @@ public class StatusBar extends JPanel implements Observer {
   private JLabel label;
   private final ResourceBundle messageBundle;
 
+  @Inject
   public StatusBar(Status status, ResourceBundle messageBundle) {
     label = new JLabel();
     add(label);

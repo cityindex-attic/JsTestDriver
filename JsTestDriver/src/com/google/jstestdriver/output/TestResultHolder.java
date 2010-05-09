@@ -7,6 +7,7 @@ import static com.google.common.collect.Multimaps.synchronizedMultimap;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Multimap;
+import com.google.inject.Singleton;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.FileResult;
 import com.google.jstestdriver.TestResult;
@@ -21,6 +22,7 @@ import java.util.HashMap;
  * It should be bound as a Singleton to be sure the data is shared between these classes.
  * @author alexeagle@google.com (Alex Eagle)
  */
+@Singleton
 public class TestResultHolder implements TestResultListener {
   private final Multimap<BrowserInfo, TestResult> results;
 

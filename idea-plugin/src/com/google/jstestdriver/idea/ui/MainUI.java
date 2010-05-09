@@ -15,36 +15,41 @@
  */
 package com.google.jstestdriver.idea.ui;
 
+import static com.google.inject.multibindings.Multibinder.newSetBinder;
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.NORTH;
+import static java.awt.BorderLayout.SOUTH;
+
+import com.google.common.collect.Lists;
+import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.multibindings.Multibinder;
 import com.google.jstestdriver.ActionFactory;
 import com.google.jstestdriver.ActionRunner;
+import com.google.jstestdriver.Args4jFlagsParser;
 import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.ConfigurationParser;
-import com.google.jstestdriver.DefaultPathRewriter;
-import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
-import com.google.jstestdriver.FlagsParser;
-import com.google.jstestdriver.JsTestDriverModule;
+import com.google.jstestdriver.JsTestDriver;
+import com.google.jstestdriver.PluginLoader;
 import com.google.jstestdriver.ServerStartupAction;
-import com.google.jstestdriver.guice.TestResultPrintingModule;
+import com.google.jstestdriver.config.CmdFlags;
+import com.google.jstestdriver.config.CmdLineFlagsFactory;
+import com.google.jstestdriver.config.Configuration;
+import com.google.jstestdriver.config.InitializeModule;
+import com.google.jstestdriver.config.Initializer;
+import com.google.jstestdriver.guice.TestResultPrintingModule.TestResultPrintingInitializer;
+import com.google.jstestdriver.hooks.PluginInitializer;
 
 import org.apache.commons.logging.LogFactory;
 import org.kohsuke.args4j.CmdLineException;
 import org.mortbay.log.Slf4jLog;
 
 import java.awt.BorderLayout;
-import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.NORTH;
-import static java.awt.BorderLayout.SOUTH;
-import java.io.File;
-import java.io.Reader;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,33 +66,41 @@ import javax.swing.JSplitPane;
  */
 public class MainUI {
 
+  private final class UiInitializer implements PluginInitializer {
+    @Override
+    public Module initializeModule(Flags flags, Configuration config) {
+      return new Module() {
+        @Override
+        public void configure(Binder binder) {
+          binder.bind(ResourceBundle.class).toInstance(messageBundle);
+          binder.bind(StatusBar.Status.class).toInstance(StatusBar.Status.NOT_RUNNING);
+        }
+      };
+    }
+  }
+
   private static final String JCL_LOG_CONFIG_ATTR = "org.apache.commons.logging.Log";
   private static final String JETTY_LOG_CLASS_PROP = "org.mortbay.log.class";
   private static final String JCL_SIMPLELOG_SHOWLOGNAME = "org.apache.commons.logging.simplelog.showlogname";
   private static final String JCL_SIMPLELOG_SHOW_SHORT_LOGNAME = "org.apache.commons.logging.simplelog.showShortLogname";
   private final ResourceBundle messageBundle;
-  private final Flags flags;
   private LogPanel logPanel;
   private StatusBar statusBar;
   private CapturedBrowsersPanel capturedBrowsersPanel;
   private JPanel infoPanel;
   private final Logger logger = Logger.getLogger(MainUI.class.getCanonicalName());
+  private final CmdFlags preparsedFlags;
 
-  public MainUI(Flags flags, ResourceBundle bundle) {
-    this.flags = flags;
+  public MainUI(CmdFlags preparsedFlags, ResourceBundle bundle) {
+    this.preparsedFlags = preparsedFlags;
     this.messageBundle = bundle;
   }
 
   public static void main(String[] args) {
-    try {
-      Flags flags = new FlagsParser().parseArgument(args);
-      configureLogging();
-      ResourceBundle bundle = ResourceBundle.getBundle("com.google.jstestdriver.ui.messages");
-      new MainUI(flags, bundle).startUI();
-    } catch (CmdLineException e) {
-      // exit naturally, if the flags suck.
-      System.err.println(e.getMessage());
-    }
+    CmdFlags preparsedFlags = new CmdLineFlagsFactory().create(args);
+    configureLogging();
+    ResourceBundle bundle = ResourceBundle.getBundle("com.google.jstestdriver.ui.messages");
+    new MainUI(preparsedFlags, bundle).startUI();
   }
 
   private static void configureLogging() {
@@ -101,45 +114,34 @@ public class MainUI {
   }
 
   private void startUI() {
-    statusBar = new StatusBar(StatusBar.Status.NOT_RUNNING, messageBundle);
-    logPanel = new LogPanel();
-    capturedBrowsersPanel = new CapturedBrowsersPanel();
-    infoPanel = new InfoPanel(flags, messageBundle);
-    LogPanelLog.LogPanelHolder.setLogPanel(logPanel);
-
     try {
-      File config = new File(flags.getConfig());
-      Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
-      // TODO(corysmith): move the handling of the serverAddress into a configuration class that
-      // returns an appropriate module configuration.
-      String serverAddress = null;
-      if (flags.hasWork()) {
-        if (!config.exists()) {
-          throw new RuntimeException("Config file doesn't exist: " + flags.getConfig());
+      // TODO(corysmith): Fix the set up to have an injection class and proper arrangements for listening.
+      final Configuration configuration = JsTestDriver.getConfiguration(preparsedFlags.getConfigPath());
+      List<Module> initializeModules = Lists.newLinkedList();
+      initializeModules.add(
+          new InitializeModule(new PluginLoader(), preparsedFlags.getBasePath(), new Args4jFlagsParser()));
+      initializeModules.add(new Module() {
+        public void configure(Binder binder) {
+          final Multibinder<PluginInitializer> initBinder = newSetBinder(binder, PluginInitializer.class);
+          initBinder.addBinding().to(TestResultPrintingInitializer.class);
+          initBinder.addBinding().toInstance(new UiInitializer());
         }
-        Reader configReader = new java.io.FileReader(flags.getConfig());
-        ConfigurationParser configParser = new ConfigurationParser(config.getParentFile(),
-            configReader, new DefaultPathRewriter());
+      });
+      final Injector initializeInjector = Guice.createInjector(initializeModules);
 
-        configParser.parse();
-        fileSet = configParser.getFilesList();
-        serverAddress = configParser.getServer();
-      }
-      serverAddress = flags.getServer() != null ? flags.getServer() : serverAddress;
-      if (serverAddress == null || serverAddress.length() == 0) {
-        if (flags.getPort() == -1) {
-          throw new RuntimeException("Oh Snap! No server defined!");
-        }
-        serverAddress = String.format("http://%s:%d", "127.0.0.1", flags.getPort());
-      }
-      List<Module> modules = new LinkedList<Module>();
+      final List<Module> actionRunnerModules =
+          initializeInjector.getInstance(Initializer.class)
+              .initialize(Collections.<Module>emptyList(), configuration, preparsedFlags.getRunnerMode(),
+                          preparsedFlags.getUnusedFlagsAsArgs());
 
-      Injector injector =
-        Guice.createInjector(new TestResultPrintingModule(System.out, flags.getTestOutput()),
-            new JsTestDriverModule(flags,
-                                   fileSet,
-                                   modules,
-                                   serverAddress));
+      final Injector injector = Guice.createInjector(actionRunnerModules);
+
+      statusBar = injector.getInstance(StatusBar.class);
+      logPanel = injector.getInstance(LogPanel.class);
+      capturedBrowsersPanel = injector.getInstance(CapturedBrowsersPanel.class);
+      LogPanelLog.LogPanelHolder.setLogPanel(logPanel);
+      infoPanel =injector.getInstance(InfoPanel.class);
+
       ActionFactory actionFactory = injector.getInstance(ActionFactory.class);
       actionFactory.registerListener(ServerStartupAction.class, statusBar);
       actionFactory.registerListener(CapturedBrowsers.class, statusBar);

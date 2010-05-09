@@ -6,6 +6,7 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
+import com.google.jstestdriver.FlagsParser;
 import com.google.jstestdriver.PluginLoader;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.hooks.PluginInitializer;
@@ -24,15 +25,19 @@ import java.io.PrintStream;
 final public class InitializeModule implements Module {
   private final PluginLoader pluginLoader;
   private final File basePath;
+  private final FlagsParser flagsParser;
 
-  public InitializeModule(PluginLoader pluginLoader, File basePath) {
+  public InitializeModule(PluginLoader pluginLoader, File basePath, FlagsParser flagsParser) {
     this.pluginLoader = pluginLoader;
     this.basePath = basePath;
+    this.flagsParser = flagsParser;
   }
 
   public void configure(Binder binder) {
     Multibinder.newSetBinder(binder, FileParsePostProcessor.class);
     Multibinder.newSetBinder(binder, PluginInitializer.class);
+
+    binder.bind(FlagsParser.class).toInstance(flagsParser);
     binder.bind(PrintStream.class).annotatedWith(
         Names.named("outputStream")).toInstance(System.out);
     binder.bind(PluginLoader.class).toInstance(pluginLoader);

@@ -49,7 +49,11 @@ public class CmdFlags {
         return new File(cmdLineFlag.safeValue());
       }
     }
-    return new File("./jsTestDriver.conf");
+    final File defaultConfig = new File("./jsTestDriver.conf");
+    if (defaultConfig.exists()) {
+      return defaultConfig;
+    }
+    return null;
   }
 
   public File getBasePath() throws IOException {

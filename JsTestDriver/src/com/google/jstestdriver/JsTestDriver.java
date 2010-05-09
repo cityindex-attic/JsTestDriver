@@ -16,9 +16,11 @@
 package com.google.jstestdriver;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.multibindings.Multibinder;
 import com.google.jstestdriver.config.CmdFlags;
 import com.google.jstestdriver.config.CmdLineFlagsFactory;
 import com.google.jstestdriver.config.Configuration;
@@ -26,6 +28,8 @@ import com.google.jstestdriver.config.DefaultConfiguration;
 import com.google.jstestdriver.config.Initializer;
 import com.google.jstestdriver.config.InitializeModule;
 import com.google.jstestdriver.config.YamlParser;
+import com.google.jstestdriver.guice.TestResultPrintingModule.TestResultPrintingInitializer;
+import com.google.jstestdriver.hooks.PluginInitializer;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.slf4j.Logger;
@@ -41,8 +45,7 @@ import java.util.logging.LogManager;
 
 public class JsTestDriver {
 
-  private static final Logger logger =
-      LoggerFactory.getLogger(JsTestDriver.class);
+  private static final Logger logger = LoggerFactory.getLogger(JsTestDriver.class);
 
   public static void main(String[] args) {
     try {
@@ -52,29 +55,34 @@ public class JsTestDriver {
       final File basePath = cmdLineFlags.getBasePath();
       List<Plugin> cmdLinePlugins = cmdLineFlags.getPlugins();
 
+      // configure logging before we start seriously processing.
+      LogManager.getLogManager().readConfiguration(cmdLineFlags.getRunnerMode().getLogConfig());
+
       final PluginLoader pluginLoader = new PluginLoader();
 
       // load all the command line plugins.
       final List<Module> pluginModules = pluginLoader.load(cmdLinePlugins);
-      List<Module> initializeModules =
-          Lists.newLinkedList(pluginModules);
+      List<Module> initializeModules = Lists.newLinkedList(pluginModules);
 
-      // configure loggin before we start seriously processing.
-      LogManager.getLogManager().readConfiguration(
-          cmdLineFlags.getRunnerMode().getLogConfig());
 
       Configuration configuration = getConfiguration(cmdLineFlags.getConfigPath());
-      initializeModules.add(new InitializeModule(pluginLoader, basePath));
+      initializeModules.add(new InitializeModule(pluginLoader, basePath, new Args4jFlagsParser()));
+      initializeModules.add(new Module() {
+        public void configure(Binder binder) {
+          Multibinder.newSetBinder(binder,
+              PluginInitializer.class).addBinding().to(TestResultPrintingInitializer.class);
+        }
+      });
       Injector initializeInjector = Guice.createInjector(initializeModules);
 
       final List<Module> actionRunnerModules =
           initializeInjector.getInstance(Initializer.class)
-              .initialize(pluginModules, configuration,
-                  cmdLineFlags.getRunnerMode(), cmdLineFlags.getUnusedFlagsAsArgs());
+              .initialize(pluginModules, configuration, cmdLineFlags.getRunnerMode(),
+                  cmdLineFlags.getUnusedFlagsAsArgs());
 
       Injector injector = Guice.createInjector(actionRunnerModules);
       injector.getInstance(ActionRunner.class).runActions();
-    } catch (CmdLineException e){
+    } catch (CmdLineException e) {
       System.out.println(e.getMessage());
       System.exit(1);
     } catch (FailureException e) {
@@ -83,18 +91,18 @@ public class JsTestDriver {
     } catch (Exception e) {
       logger.debug("Error {}", e);
       e.printStackTrace();
-      System.out.println("Unexpected Runner Condition: " + e.getMessage() + "\n Use --runnerMode DEBUG for more information.");
+      System.out.println("Unexpected Runner Condition: " + e.getMessage()
+          + "\n Use --runnerMode DEBUG for more information.");
       System.exit(1);
     }
   }
 
   /**
-   * Creates a configuration from the path, by reading and parsing it.
-   * Or, it will return a DefaultConfiguration, if the path is null.
-   * 
+   * Creates a configuration from the path, by reading and parsing it. Or, it
+   * will return a DefaultConfiguration, if the path is null.
+   *
    */
-  private static Configuration getConfiguration(File config)
-      throws FileNotFoundException {
+  public static Configuration getConfiguration(File config) throws FileNotFoundException {
     final YamlParser configParser = new YamlParser();
     Configuration configuration = new DefaultConfiguration();
     if (config != null) {

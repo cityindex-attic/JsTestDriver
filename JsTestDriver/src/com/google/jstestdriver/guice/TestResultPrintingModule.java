@@ -18,19 +18,19 @@ package com.google.jstestdriver.guice;
 import static com.google.inject.multibindings.Multibinder.newSetBinder;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
-import com.google.inject.name.Names;
 import com.google.jstestdriver.DefaultResponseStreamFactory;
+import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.ResponseStreamFactory;
+import com.google.jstestdriver.config.Configuration;
+import com.google.jstestdriver.hooks.PluginInitializer;
 import com.google.jstestdriver.output.DefaultListener;
 import com.google.jstestdriver.output.MultiTestResultListener;
 import com.google.jstestdriver.output.TestResultHolder;
 import com.google.jstestdriver.output.TestResultListener;
-import com.google.jstestdriver.output.XmlPrinter;
-import com.google.jstestdriver.output.XmlPrinterImpl;
 
-import java.io.PrintStream;
 
 /**
  * Configuration for outputting test results. If a testOutput flag was
@@ -41,17 +41,21 @@ import java.io.PrintStream;
  */
 public class TestResultPrintingModule extends AbstractModule {
 
-  private final PrintStream out;
+  // TODO(corysmith): Figure out if this is the right approach.
+  public static class TestResultPrintingInitializer implements PluginInitializer {
+    public Module initializeModule(Flags flags, Configuration config) {
+      return new TestResultPrintingModule(flags.getTestOutput());
+    }
+  }
+
   private final String testOutput;
 
-  public TestResultPrintingModule(PrintStream out, String testOutput) {
-    this.out = out;
+  public TestResultPrintingModule(String testOutput) {
     this.testOutput = testOutput;
   }
 
   @Override
   protected void configure() {
-    bind(PrintStream.class).annotatedWith(Names.named("outputStream")).toInstance(out);
     Multibinder<TestResultListener> testResultListeners =
         newSetBinder(binder(), TestResultListener.class);
 
@@ -59,10 +63,9 @@ public class TestResultPrintingModule extends AbstractModule {
       testResultListeners.addBinding().to(TestResultHolder.class).in(Singleton.class);
     }
     testResultListeners.addBinding().to(DefaultListener.class).in(Singleton.class);
-    bind(TestResultHolder.class).in(Singleton.class);
+
     bind(TestResultListener.class).to(MultiTestResultListener.class);
     newSetBinder(binder(),
         ResponseStreamFactory.class).addBinding().to(DefaultResponseStreamFactory.class);
-    bind(XmlPrinter.class).to(XmlPrinterImpl.class);
   }
 }
