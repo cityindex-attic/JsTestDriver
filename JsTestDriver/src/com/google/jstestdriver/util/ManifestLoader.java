@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.zip.ZipException;
 
 /**
  * Simple loader for retrieving manifests form jar files.
@@ -37,16 +38,18 @@ public class ManifestLoader {
   }
 
   public Manifest load(String jarPath) throws ManifestNotFound{
+    final File jarFile = new File(jarPath);
     try {
-      JarFile jar = new JarFile(new File(jarPath));
+      JarFile jar = new JarFile(jarFile);
       Manifest manifest = jar.getManifest();
       if (manifest == null) {
-        throw new ManifestNotFound("Could not load manifest from jar:" + jarPath);
+        throw new ManifestNotFound("Could not load manifest from jar:" + jarPath + " " + jarFile.getAbsolutePath());
       }
       return manifest;
     } catch (IOException e) {
-      throw new ManifestNotFound("Could not load manifest from jar:" + jarPath,
+      throw new ManifestNotFound("Could not load manifest from jar:" + jarPath + " " + jarFile.getAbsolutePath(),
                                  e);
     }
+    
   }
 }

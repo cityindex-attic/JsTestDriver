@@ -117,7 +117,7 @@ public class Plugin {
   }
 
   /** A factory method to return a new plugin with a new path. */
-  public Plugin getPluginFromPath(String resolvePath) {
-    return new Plugin(name, resolvePath, moduleName, args);
+  public Plugin getPluginFromPath(String resolvedPath) {
+    return new Plugin(name, resolvedPath, moduleName, args);
   }
 }

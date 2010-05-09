@@ -16,12 +16,13 @@ import java.util.Set;
  * A collection of CmdLinFlags with convenience methods for the preparsable
  * flags: config, plugins, and basePath. It is used to allow the initialization
  * system to have plugins that draw from the flags and the configuration.
+ *
  * @author corbinrsmith@gmail.com (Cory Smith)
  *
  */
 public class CmdFlags {
   private static final Set<String> PREPARSE_FLAGS =
-    ImmutableSet.of("--plugins", "--config", "--basePath", "--runnerMode");
+      ImmutableSet.of("--plugins", "--config", "--basePath", "--runnerMode");
 
   private final List<CmdLineFlag> flags;
 
@@ -29,40 +30,64 @@ public class CmdFlags {
     this.flags = flags;
   }
 
-  public List<Plugin> getPlugins() {
+  public List<Plugin> getPlugins() throws IOException {
     for (CmdLineFlag cmdLineFlag : flags) {
       if ("--plugins".equals(cmdLineFlag.flag)) {
         List<Plugin> plugins = Lists.newLinkedList();
         for (String pluginPath : cmdLineFlag.valuesList()) {
-          plugins.add(
-              new Plugin(null, pluginPath, null, Collections.<String>emptyList()));
+          plugins.add(new Plugin(null, new File(getBasePath(), pluginPath).getAbsolutePath(), null,
+              Collections.<String> emptyList()));
         }
         return plugins;
       }
     }
-    return Collections.<Plugin>emptyList();
+    return Collections.<Plugin> emptyList();
   }
 
-  public File getConfigPath() {
+  private String getConfigPathNoDefault() {
     for (CmdLineFlag cmdLineFlag : flags) {
       if ("--config".equals(cmdLineFlag.flag)) {
-        return new File(cmdLineFlag.safeValue());
+        return cmdLineFlag.safeValue();
       }
-    }
-    final File defaultConfig = new File("./jsTestDriver.conf");
-    if (defaultConfig.exists()) {
-      return defaultConfig;
     }
     return null;
   }
 
-  public File getBasePath() throws IOException {
+  private String getBasePathNoDefault() throws IOException {
     for (CmdLineFlag cmdLineFlag : flags) {
       if ("--basePath".equals(cmdLineFlag.flag)) {
-        return new File(cmdLineFlag.safeValue()).getCanonicalFile();
+        return new File(cmdLineFlag.safeValue()).getCanonicalPath();
       }
     }
-    final File parentFile = getConfigPath().getParentFile();
+    return null;
+  }
+
+  public File getConfigPath() throws IOException {
+    String configPath = getConfigPathNoDefault();
+    String basePath = getBasePathNoDefault();
+
+    File defaultConfig = basePath == null ?
+        new File("jsTestDriver.conf") :
+        new File(new File(basePath), "jsTestDriver.conf");
+
+    if (configPath == null) {
+      return defaultConfig.exists() ? defaultConfig : null;
+    }
+    return basePath == null ?
+        new File(configPath) :
+        new File(new File(basePath), configPath);
+  }
+
+  public File getBasePath() throws IOException {
+    final String basePath = getBasePathNoDefault();
+    if (basePath != null) {
+
+    }
+    final String configPath = getConfigPathNoDefault();
+    if (configPath == null) {
+      return new File(".").getCanonicalFile();
+    }
+    final File parentFile = new File(configPath).getParentFile();
     if (parentFile != null) {
       return parentFile.getCanonicalFile();
     }
