@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.Gson;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,8 @@ public class HeartbeatServlet extends HttpServlet {
   private static final Logger LOGGER = LoggerFactory.getLogger(HeartbeatServlet.class);
 
   private final CapturedBrowsers capturedBrowsers;
+  
+  private final Gson gson = new Gson();
 
   public HeartbeatServlet(CapturedBrowsers capturedBrowsers) {
     this.capturedBrowsers = capturedBrowsers;
@@ -53,7 +57,7 @@ public class HeartbeatServlet extends HttpServlet {
         LOGGER.debug("heartbeat " + browser);
         if (!browser.isAlive()) {
           //capturedBrowsers.removeSlave(id);
-          writer.write("DEAD:" + browser.getBrowserInfo());
+          writer.write("DEAD:" + gson.toJson(browser.getBrowserInfo()));
         } else {
           writer.write("OK");
         }

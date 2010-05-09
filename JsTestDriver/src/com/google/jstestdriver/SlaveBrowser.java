@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import static java.lang.String.format;
+
 import org.joda.time.Instant;
 
 import java.util.Collection;
@@ -202,6 +204,7 @@ public class SlaveBrowser {
 
   @Override
   public String toString() {
-    return "SlaveBrowser(browserInfo=" + browserInfo + ", id=" + id + ")";
+    return format("SlaveBrowser(browserInfo={},\nid={},\nsinceLastCheck={})",
+        browserInfo, id, time.now().getMillis() - lastHeartBeat.getMillis());
   }  
 }

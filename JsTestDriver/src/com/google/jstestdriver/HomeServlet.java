@@ -64,16 +64,9 @@ public class HomeServlet extends HttpServlet {
       } else {
         writer.write("Currently waiting...<br/>");
       }
-      writer.write("<p>");
-      writer.write("Loaded files:<ul>");
-      for (FileInfo fileInfo : browser.getFileSet()) {
-        writer.write("<li>");
-        writer.write(fileInfo.getFileName());
-        writer.write("</li>");
-      }
-      writer.write("</ul>");
+      writer.write("</p>");
     }
-    writer.write("</p></body></html>");
+    writer.write("</body></html>");
     writer.flush();
   }
 }

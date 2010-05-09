@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import static java.lang.String.format;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.JsonCommand.CommandType;
@@ -100,15 +102,16 @@ public class CommandTask {
     server.stopSession(baseUrl, params.get("id"), sessionId);
   }
 
-  private boolean isBrowserAlive() {
+  /**
+   * Throws an exception if the expected browser is not available for this task.
+   */
+  private void checkBrowser() {
     String alive = server.fetch(baseUrl + "/heartbeat?id=" + params.get("id"));
 
     if (!alive.equals("OK")) {
-      LOGGER.error("The browser " + params.get("id") + " is not available anymore, "
-          + "you might want to re-capture it");
-      return false;
+      throw new FailureException(
+          format("Browser is not available\n {} \nfor\n {}", alive, params));
     }
-    return true;
   }
 
   // TODO(corysmith): remove this function once FileInfo is used exclusively.
@@ -242,9 +245,7 @@ public class CommandTask {
       } else {
         throw new FailureException("Can't start a session on the server!" + params);
       }
-      if (!isBrowserAlive()) {
-        throw new FailureException("Browser not found: " + params);
-      }
+      checkBrowser();
 
       if (upload) {
         stopWatch.start("upload");
@@ -264,8 +265,6 @@ public class CommandTask {
         stream.stream(resObj);
       } while (!streamMessage.isLast());
       stopWatch.stop("Command %s", params.get("data"));
-    } catch (Exception e) {
-      throw new FailureException("Failed running " + params, e);
     } finally {
       stream.finish();
       heartBeatManager.cancelTimer();
