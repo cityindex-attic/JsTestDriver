@@ -10,6 +10,7 @@ import com.google.jstestdriver.FlagsParser;
 import com.google.jstestdriver.PluginLoader;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.hooks.PluginInitializer;
+import com.google.jstestdriver.runner.RunnerMode;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -26,17 +27,20 @@ final public class InitializeModule implements Module {
   private final PluginLoader pluginLoader;
   private final File basePath;
   private final FlagsParser flagsParser;
+  private final RunnerMode runnerMode;
 
-  public InitializeModule(PluginLoader pluginLoader, File basePath, FlagsParser flagsParser) {
+  public InitializeModule(PluginLoader pluginLoader, File basePath, FlagsParser flagsParser, RunnerMode runnerMode) {
     this.pluginLoader = pluginLoader;
     this.basePath = basePath;
     this.flagsParser = flagsParser;
+    this.runnerMode = runnerMode;
   }
 
   public void configure(Binder binder) {
     Multibinder.newSetBinder(binder, FileParsePostProcessor.class);
     Multibinder.newSetBinder(binder, PluginInitializer.class);
 
+    binder.bind(RunnerMode.class).toInstance(runnerMode);
     binder.bind(FlagsParser.class).toInstance(flagsParser);
     binder.bind(PrintStream.class).annotatedWith(
         Names.named("outputStream")).toInstance(System.out);

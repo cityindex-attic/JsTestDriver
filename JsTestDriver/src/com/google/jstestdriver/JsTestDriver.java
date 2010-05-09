@@ -66,11 +66,12 @@ public class JsTestDriver {
 
 
       Configuration configuration = getConfiguration(cmdLineFlags.getConfigPath());
-      initializeModules.add(new InitializeModule(pluginLoader, basePath, new Args4jFlagsParser()));
+      initializeModules.add(new InitializeModule(pluginLoader, basePath, new Args4jFlagsParser(),
+          cmdLineFlags.getRunnerMode()));
       initializeModules.add(new Module() {
         public void configure(Binder binder) {
-          Multibinder.newSetBinder(binder,
-              PluginInitializer.class).addBinding().to(TestResultPrintingInitializer.class);
+          Multibinder.newSetBinder(binder, PluginInitializer.class).addBinding()
+              .to(TestResultPrintingInitializer.class);
         }
       });
       Injector initializeInjector = Guice.createInjector(initializeModules);

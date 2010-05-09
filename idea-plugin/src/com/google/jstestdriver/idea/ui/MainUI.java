@@ -41,6 +41,7 @@ import com.google.jstestdriver.config.InitializeModule;
 import com.google.jstestdriver.config.Initializer;
 import com.google.jstestdriver.guice.TestResultPrintingModule.TestResultPrintingInitializer;
 import com.google.jstestdriver.hooks.PluginInitializer;
+import com.google.jstestdriver.runner.RunnerMode;
 
 import org.apache.commons.logging.LogFactory;
 import org.kohsuke.args4j.CmdLineException;
@@ -119,7 +120,10 @@ public class MainUI {
       final Configuration configuration = JsTestDriver.getConfiguration(preparsedFlags.getConfigPath());
       List<Module> initializeModules = Lists.newLinkedList();
       initializeModules.add(
-          new InitializeModule(new PluginLoader(), preparsedFlags.getBasePath(), new Args4jFlagsParser()));
+          new InitializeModule(new PluginLoader(),
+              preparsedFlags.getBasePath(),
+              new Args4jFlagsParser(),
+              preparsedFlags.getRunnerMode()));
       initializeModules.add(new Module() {
         public void configure(Binder binder) {
           final Multibinder<PluginInitializer> initBinder = newSetBinder(binder, PluginInitializer.class);
