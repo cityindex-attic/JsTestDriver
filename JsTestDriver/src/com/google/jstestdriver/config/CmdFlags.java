@@ -81,7 +81,7 @@ public class CmdFlags {
   public File getBasePath() throws IOException {
     final String basePath = getBasePathNoDefault();
     if (basePath != null) {
-
+      return new File(basePath);
     }
     final String configPath = getConfigPathNoDefault();
     if (configPath == null) {
