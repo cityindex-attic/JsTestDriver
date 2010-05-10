@@ -15,7 +15,11 @@
  */
 package com.google.jstestdriver;
 
+import static com.google.inject.multibindings.Multibinder.newSetBinder;
+
+import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.jstestdriver.hooks.PluginInitializer;
 import com.google.jstestdriver.util.ManifestLoader;
 
 import java.lang.reflect.Constructor;
@@ -33,6 +37,18 @@ import java.util.List;
  */
 public class PluginLoader {
 
+  public static class InitializerModule implements Module {
+    private final Class<PluginInitializer> initializer;
+
+    public InitializerModule(Class<PluginInitializer> initializer) {
+      this.initializer = initializer;
+    }
+
+    public void configure(Binder binder) {
+      newSetBinder(binder, PluginInitializer.class).addBinding().to(initializer);
+    }
+  }
+
   final ManifestLoader manifestLoader = new ManifestLoader();
   /**
    * For each plugin, the specified jar is loaded, then the specified class is
@@ -40,7 +56,6 @@ public class PluginLoader {
    * 
    * @return a list of {@code Module}
    */
-  @SuppressWarnings("unchecked")
   public List<Module> load(List<Plugin> plugins) {
     List<Module> modules = new LinkedList<Module>();
     for (Plugin plugin : plugins) {
@@ -50,10 +65,9 @@ public class PluginLoader {
         URLClassLoader urlClassLoader = new URLClassLoader(
             new URL[] { new URL("jar:file:" + plugin.getPathToJar() + "!/") },
             getClass().getClassLoader());
-        String moduleName = plugin.getModuleName(manifestLoader);
-        Class<?> module = Class.forName(moduleName, true, urlClassLoader);
+        Class<?> module = getPluginMainClass(plugin, urlClassLoader);
 
-        modules.add(getModuleInstance(plugin, (Class<Module>) module));
+        modules.add(getModuleInstance(plugin, module));
       } catch (MalformedURLException e) {
         throw new RuntimeException(e);
       } catch (ClassNotFoundException e) {
@@ -63,16 +77,39 @@ public class PluginLoader {
     return modules;
   }
 
-  private Module getModuleInstance(Plugin plugin, Class<Module> module) {
+  // TODO(corysmith): Look for the elegant solution, or
+  // just deprecate leading with a module.
+  private Class<?> getPluginMainClass(Plugin plugin, URLClassLoader urlClassLoader)
+      throws ClassNotFoundException {
+    final String moduleName = plugin.getModuleName(manifestLoader);
+    if (moduleName != null && moduleName.length() > 0) {
+      return  Class.forName(moduleName, true, urlClassLoader);
+    }
+    final String initializerName = plugin.getInitializerName(manifestLoader);
+    if (initializerName != null && initializerName.length() > 0) {
+      return Class.forName(initializerName, true, urlClassLoader);
+    }
+    throw new IllegalArgumentException("Cannot determine main class for "
+        + plugin.getName(manifestLoader) +
+        " please see http://code.google.com/p/js-test-driver/wiki/Plugins#mainclass.");
+  }
+
+  @SuppressWarnings("unchecked")
+  private Module getModuleInstance(Plugin plugin, Class<?> mainClass) {
     try {
-      Constructor<Module> argsConstructor = module.getConstructor(List.class);
+      if (PluginInitializer.class.isAssignableFrom(mainClass)) {
+        return new InitializerModule((Class<PluginInitializer>)mainClass);
+      }
+
+      Constructor<Module> argsConstructor =
+          ((Class<Module>)mainClass).getConstructor(List.class);
 
       return argsConstructor.newInstance(plugin.getArgs());
     } catch (SecurityException e) {
       throw new RuntimeException(e);
     } catch (NoSuchMethodException e) {
       try {
-        return ((Class<? extends Module>) module).newInstance();
+        return ((Class<Module>) mainClass).newInstance();
       } catch (InstantiationException e1) {
         throw new RuntimeException(e1);
       } catch (IllegalAccessException e1) {

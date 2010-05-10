@@ -42,6 +42,7 @@ public class ForwardingServlet extends ProxyServlet.Transparent {
     this.forwardingMapper = forwardingMapper;
   }
 
+  @SuppressWarnings("unused")
   @Override
   public void service(ServletRequest req, ServletResponse resp) throws ServletException,
       IOException {

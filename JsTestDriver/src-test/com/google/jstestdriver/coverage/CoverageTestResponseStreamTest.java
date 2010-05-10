@@ -22,9 +22,11 @@ import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.TestResultGenerator;
 
 import junit.framework.TestCase;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class CoverageTestResponseStreamTest extends TestCase {
     CoverageAccumulator accumulator = new CoverageAccumulator();
     String browserId = "firefox";
     CoverageTestResponseStream stream = new CoverageTestResponseStream(
-      browserId, accumulator);
+      browserId, accumulator, new TestResultGenerator(new File("")));
 
     Response response = new Response();
     response.setType(ResponseType.TEST_RESULT.name());
@@ -64,7 +66,7 @@ public class CoverageTestResponseStreamTest extends TestCase {
     CoverageAccumulator coverageReporter = new CoverageAccumulator();
     String browserId = "firefox";
     CoverageTestResponseStream stream = new CoverageTestResponseStream(
-      browserId, null);
+      browserId, null, new TestResultGenerator(new File("")));
     
     Response response = new Response();
     response.setType(ResponseType.TEST_RESULT.name());

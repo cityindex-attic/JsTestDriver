@@ -29,7 +29,8 @@ final public class InitializeModule implements Module {
   private final FlagsParser flagsParser;
   private final RunnerMode runnerMode;
 
-  public InitializeModule(PluginLoader pluginLoader, File basePath, FlagsParser flagsParser, RunnerMode runnerMode) {
+  public InitializeModule(PluginLoader pluginLoader, File basePath, FlagsParser flagsParser,
+      RunnerMode runnerMode) {
     this.pluginLoader = pluginLoader;
     this.basePath = basePath;
     this.flagsParser = flagsParser;
@@ -42,11 +43,9 @@ final public class InitializeModule implements Module {
 
     binder.bind(RunnerMode.class).toInstance(runnerMode);
     binder.bind(FlagsParser.class).toInstance(flagsParser);
-    binder.bind(PrintStream.class).annotatedWith(
-        Names.named("outputStream")).toInstance(System.out);
+    binder.bind(PrintStream.class).annotatedWith(Names.named("outputStream"))
+        .toInstance(System.out);
     binder.bind(PluginLoader.class).toInstance(pluginLoader);
-    binder.bind(File.class)
-        .annotatedWith(Names.named("basePath"))
-        .toInstance(basePath);
+    binder.bind(File.class).annotatedWith(Names.named("basePath")).toInstance(basePath);
   }
 }

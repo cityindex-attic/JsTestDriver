@@ -24,13 +24,11 @@ import java.util.List;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class FailureParser {
-
   private final Gson gson = new Gson();
 
-  private final List<String> stack = new LinkedList<String>();
-  private String message = "";
-
-  public void parse(String failure) {
+  public Failure parse(String failure) {
+    final List<String> stack = new LinkedList<String>();
+    String message = "";
     try {
       JsException exception = gson.fromJson(failure, JsException.class);
 
@@ -46,13 +44,25 @@ public class FailureParser {
     } catch (Exception e) {
       message = failure;
     }
+    return new Failure(message, stack);
   }
 
-  public String getMessage() {
-    return message;
+  public static class Failure {
+    private final List<String> stack;
+    private final String message;
+
+    public Failure(String message, List<String> stack) {
+      this.message = message;
+      this.stack = stack;
+    }
+
+    public String getMessage() {
+      return message;
+    }
+
+    public List<String> getStack() {
+      return stack;
+    }
   }
 
-  public List<String> getStack() {
-    return stack;
-  }
 }

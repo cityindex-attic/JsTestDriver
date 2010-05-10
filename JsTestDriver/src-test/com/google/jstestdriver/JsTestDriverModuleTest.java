@@ -17,12 +17,12 @@
 package com.google.jstestdriver;
 
 import com.google.inject.Guice;
-import com.google.inject.Module;
 import com.google.jstestdriver.guice.DebugModule;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
 
 import junit.framework.TestCase;
 
+import java.io.File;
 import java.util.Collections;
 
 /**
@@ -35,7 +35,7 @@ public class JsTestDriverModuleTest extends TestCase {
         new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
-        "http://foo", System.out)).getInstance(ActionRunner.class);
+        "http://foo", System.out, new File(""))).getInstance(ActionRunner.class);
   }
 
   public void testGetActionRunnerWithXmlWriter() throws Exception {
@@ -44,6 +44,6 @@ public class JsTestDriverModuleTest extends TestCase {
         new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
-        "http://foo", System.out)).getInstance(ActionRunner.class);
+        "http://foo", System.out, new File(""))).getInstance(ActionRunner.class);
   }
 }

@@ -30,6 +30,7 @@ import com.google.jstestdriver.guice.ThreadedActionProvider;
 
 import junit.framework.TestCase;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +49,7 @@ public class CoverageModuleTest extends TestCase {
     flags.setTests(Arrays.asList("test"));
     flags.setBrowser(Arrays.asList("ff"));
     JsTestDriverModule jsTestDriverModule =
-        new JsTestDriverModule(flags, Collections.<FileInfo> emptySet(), "", System.out);
+        new JsTestDriverModule(flags, Collections.<FileInfo> emptySet(), "", System.out, new File(""));
 
     final Injector injector = Guice.createInjector(Lists.newArrayList(coverage, printStream,
         new DebugModule(false), jsTestDriverModule));

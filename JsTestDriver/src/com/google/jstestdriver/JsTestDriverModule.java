@@ -28,6 +28,7 @@ import com.google.inject.name.Names;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.guice.FlagsModule;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.lang.annotation.Retention;
 import java.util.List;
@@ -45,15 +46,18 @@ public class JsTestDriverModule extends AbstractModule {
   private final Set<FileInfo> fileSet;
   private final String serverAddress;
   private final PrintStream outputStream;
+  private final File basePath;
 
   public JsTestDriverModule(Flags flags,
                             Set<FileInfo> fileSet,
                             String serverAddress,
-                            PrintStream outputStream) {
+                            PrintStream outputStream,
+                            File basePath) {
     this.flags = flags;
     this.fileSet = fileSet;
     this.serverAddress = serverAddress;
     this.outputStream = outputStream;
+    this.basePath = basePath;
   }
 
   @BindingAnnotation @Retention(RUNTIME) public @interface BrowserCount{}
@@ -71,6 +75,8 @@ public class JsTestDriverModule extends AbstractModule {
     bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
 
     bind(FailureAccumulator.class).in(Singleton.class);
+
+    bind(File.class).annotatedWith(Names.named("basePath")).toInstance(basePath);
 
     install(new FlagsModule(flags));
     install(new ActionFactoryModule());

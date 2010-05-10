@@ -56,7 +56,7 @@ public class HeartbeatServlet extends HttpServlet {
       if (browser != null) {
         LOGGER.debug("heartbeat " + browser);
         if (!browser.isAlive()) {
-          //capturedBrowsers.removeSlave(id);
+          capturedBrowsers.removeSlave(id);
           writer.write("DEAD:" + gson.toJson(browser.getBrowserInfo()));
         } else {
           writer.write("OK");

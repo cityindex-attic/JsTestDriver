@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.ResponseStreamFactory;
+import com.google.jstestdriver.TestResultGenerator;
 
 /**
  * Wraps the DefaultResponseStreamFactory so that coverage results can be retrieved from every test.
@@ -28,10 +29,13 @@ import com.google.jstestdriver.ResponseStreamFactory;
 public class CoverageResponseStreamFactory implements ResponseStreamFactory {
   static final ResponseStream NULL_RESPONSE_STREAM = new NullResponseStream();
   private final CoverageAccumulator coverageAccumulator;
+  private final TestResultGenerator testResultGenerator;
 
   @Inject
-  public CoverageResponseStreamFactory(CoverageAccumulator coverageAccumulator) {
+  public CoverageResponseStreamFactory(CoverageAccumulator coverageAccumulator,
+                                       TestResultGenerator testResultGenerator) {
     this.coverageAccumulator = coverageAccumulator;
+    this.testResultGenerator = testResultGenerator;
   }
 
   public ResponseStream getDryRunActionResponseStream() {
@@ -47,7 +51,8 @@ public class CoverageResponseStreamFactory implements ResponseStreamFactory {
   }
 
   public ResponseStream getRunTestsActionResponseStream(String browserId) {
-    return new CoverageTestResponseStream(browserId, coverageAccumulator);
+    return new CoverageTestResponseStream(browserId, coverageAccumulator,
+        testResultGenerator);
   }
 
   /**

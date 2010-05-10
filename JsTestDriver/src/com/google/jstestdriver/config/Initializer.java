@@ -18,6 +18,7 @@ import com.google.jstestdriver.runner.RunnerMode;
 
 import org.kohsuke.args4j.CmdLineException;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Set;
@@ -33,18 +34,21 @@ public class Initializer {
   private final FlagsParser flagsParser;
   private final Set<PluginInitializer> initializers;
   private final PrintStream outputStream;
+  private final File basePath;
 
   @Inject
   public Initializer(PluginLoader pluginLoader,
                      PathResolver pathResolver,
                      FlagsParser flagsParser,
                      Set<PluginInitializer> initializers,
-                     @Named("outputStream") PrintStream outputStream) {
+                     @Named("outputStream") PrintStream outputStream,
+                     @Named("basePath") File basePath) {
     this.pluginLoader = pluginLoader;
     this.pathResolver = pathResolver;
     this.flagsParser = flagsParser;
     this.initializers = initializers;
     this.outputStream = outputStream;
+    this.basePath = basePath;
     
   }
 
@@ -63,7 +67,8 @@ public class Initializer {
     modules.addAll(pluginLoader.load(resolvedConfiguration.getPlugins()));
 
     for (PluginInitializer initializer : initializers) {
-      modules.add(initializer.initializeModule(flags, resolvedConfiguration));
+      final Module module = initializer.initializeModule(flags, resolvedConfiguration);
+      modules.add(module);
     }
 
     modules.add(new HtmlDocModule()); // by default the html plugin is installed.
@@ -73,7 +78,8 @@ public class Initializer {
             resolvedConfiguration.getFilesList(),
             resolvedConfiguration.createServerAddress(flags.getServer(),
                 flags.getPort()),
-            outputStream));
+            outputStream,
+            basePath));
     return modules;
   }
 }

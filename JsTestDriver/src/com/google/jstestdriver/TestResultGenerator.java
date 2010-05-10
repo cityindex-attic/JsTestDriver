@@ -16,9 +16,14 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.FailureParser.Failure;
 import com.google.jstestdriver.Response.ResponseType;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -34,39 +39,62 @@ public class TestResultGenerator {
 
   private final Gson gson = new Gson();
   
+  private final FailureParser failureParser = new FailureParser();
+
+  private final File basePath;
+  
+  public TestResultGenerator(@Named("basePath") File basePath) {
+    this.basePath = basePath;
+  }
+
+  /** Define a real base path and use the other constructor. */
+  @Deprecated
+  public TestResultGenerator() {
+    this.basePath = new File("");
+  }
+
   /**
-   * Loads the test results from the gson and response, sets the browser info on each result and
-   * returns it.
-   * 
+   * Loads the test results from the gson and response, sets the browser info on
+   * each result and returns it.
+   *
    * @param response The response object
-   * @return a {@link Collection} of {@link TestResult} with accurate {@link BrowserInfo} set.
+   * @return a {@link Collection} of {@link TestResult} with accurate
+   *         {@link BrowserInfo} set.
    */
   public Collection<TestResult> getTestResults(Response response) {
-    // TODO(corysmith): Remove the check when all the ide plugins have been updated.
-    if (response.getResponseType() != ResponseType.TEST_RESULT) {
-      return Collections.<TestResult>emptyList();
-    }
-
-    Collection<TestResult> results = gson.fromJson(response.getResponse(),
-        new TypeToken<Collection<TestResult>>() {}.getType());
-
-    for (TestResult result : results) {
-      BrowserInfo browserInfo = response.getBrowser();
-
-      result.setBrowserInfo(browserInfo);
-      FailureParser failureParser = new FailureParser();
-
-      failureParser.parse(result.getMessage());
-      result.setParsedMessage(failureParser.getMessage());
-      List<String> stackTrace = failureParser.getStack();
-      StringBuilder sb = new StringBuilder();
-
-      for (String l : stackTrace) {
-        sb.append(l);
-        sb.append(NEW_LINE);
+    try {
+      final String basePathString = basePath.getCanonicalPath();
+      // TODO(corysmith): Remove the check when all the ide plugins have been
+      // updated.
+      if (response.getResponseType() != ResponseType.TEST_RESULT) {
+        return Collections.<TestResult> emptyList();
       }
-      result.setStack(sb.toString());
+
+      Collection<TestResult> results = gson.fromJson(response.getResponse(),
+          new TypeToken<Collection<TestResult>>() {}.getType());
+
+      for (TestResult result : results) {
+        BrowserInfo browserInfo = response.getBrowser();
+
+        result.setBrowserInfo(browserInfo);
+
+        final Failure failure = failureParser.parse(result.getMessage());
+        result.setParsedMessage(failure.getMessage());
+        List<String> stackTrace = failure.getStack();
+        StringBuilder sb = new StringBuilder();
+
+        for (String l : stackTrace) {
+          int offset = l.indexOf(basePathString);
+          sb.append(l.substring(offset > -1 ? offset + basePathString.length() : 0));
+          sb.append(NEW_LINE);
+        }
+        result.setStack(sb.toString());
+      }
+      return results;
+    } catch (JsonParseException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
-    return results;
   }
 }

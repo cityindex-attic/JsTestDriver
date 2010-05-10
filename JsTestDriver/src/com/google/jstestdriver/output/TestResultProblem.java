@@ -15,24 +15,22 @@
  */
 package com.google.jstestdriver.output;
 
-import com.google.jstestdriver.FailureParser;
 import com.google.jstestdriver.TestResult;
 
 import java.io.PrintStream;
-import java.util.List;
 
 /**
  * The impl of Problem for TestResults. Used by the default reporting outputstream 
  * to format TestResult failures and errors.
- * @author corysmith@google.com (Your Name Here)
+ * @author corbinrsmith@gmail.com (Cory Smith)
  *
  */
-class TestResultProblem implements Problem{
+class TestResultProblem implements Problem {
   private final TestResult testResult;
+  private static String NEW_LINE = System.getProperty("line.separator");
 
   public TestResultProblem(TestResult testResult) {
     this.testResult = testResult;
-    
   }
 
   public void print(PrintStream out, boolean verbose) {
@@ -55,32 +53,21 @@ class TestResultProblem implements Problem{
   }
 
   private void printProblem(PrintStream out, TestResult testResult) {
-    FailureParser parser = new FailureParser();
-
-    parser.parse(testResult.getMessage());
-    String message = parser.getMessage();
-    List<String> stack = parser.getStack();
-    String formattedStack = "";
-
-    if (stack.size() > 0) {
-      StringBuilder sb = new StringBuilder();
-
-      for (String line : stack) {
-        sb.append(DefaultListener.NEW_LINE + "      " + line);
-      }
-      formattedStack = sb.toString();
+    final StringBuilder formattedStack = new StringBuilder(NEW_LINE);
+    for (String line : testResult.getStack().split(NEW_LINE)) {
+      formattedStack.append("      ").append(line).append(NEW_LINE);
     }
     out.println(String.format("    %s.%s %s (%.2f ms): %s%s",
                               testResult.getTestCaseName(),
                               testResult.getTestName(),
                               testResult.getResult(),
                               testResult.getTime(),
-                              message,
-                              formattedStack));
+                              testResult.getParsedMessage(),
+                              formattedStack.toString()));
   }
 
   private void printTestLog(PrintStream out, TestResult testResult) {
-    String[] logLines = testResult.getLog().split("\n");
+    String[] logLines = testResult.getLog().split(NEW_LINE);
 
     for (String line : logLines) {
       out.println("      " + line);

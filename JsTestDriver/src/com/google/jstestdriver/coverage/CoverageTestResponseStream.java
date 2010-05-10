@@ -35,12 +35,14 @@ public class CoverageTestResponseStream implements ResponseStream {
   public static final String COVERAGE_DATA_KEY = "linesCovered";
   private final String browserId;
   private final CoverageAccumulator accumulator;
-  private final TestResultGenerator generator = new TestResultGenerator();
+  private final TestResultGenerator generator;
   private final FileCoverageDeserializer deserializer = new FileCoverageDeserializer();
-  
-  public CoverageTestResponseStream(String browserId, CoverageAccumulator coverageReporter) {
+
+  public CoverageTestResponseStream(String browserId, CoverageAccumulator coverageReporter,
+      TestResultGenerator generator) {
     this.browserId = browserId;
     this.accumulator = coverageReporter;
+    this.generator = generator;
   }
 
   public void finish() {
