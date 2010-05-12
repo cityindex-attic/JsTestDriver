@@ -24,6 +24,7 @@ import org.apache.oro.io.GlobFilenameFilter;
 import org.apache.oro.text.GlobCompiler;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -117,14 +118,16 @@ public class PathResolver {
           GlobCompiler.DEFAULT_MASK | GlobCompiler.CASE_INSENSITIVE_MASK));
 
         if (filteredFiles == null || filteredFiles.length == 0) {
-          String error = "The patterns/paths "
-            + f
-            + " used in the configuration"
-            + " file didn't match any file, the files patterns/paths need to be relative to"
-            + " the configuration file.";
-
-          System.err.println(error);
-          throw new RuntimeException(error);
+          try {
+            String error = "The patterns/paths "
+              + f + " (" + dir + ") "
+              + " used in the configuration"
+              + " file didn't match any file, the files patterns/paths need to"
+              + " be relative " + basePath.getCanonicalPath();
+            throw new RuntimeException(error);
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
         }
         Arrays.sort(filteredFiles, String.CASE_INSENSITIVE_ORDER);
 
