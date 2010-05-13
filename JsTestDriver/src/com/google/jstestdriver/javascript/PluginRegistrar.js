@@ -59,6 +59,9 @@ jstestdriver.PluginRegistrar.GET_TEST_RUN_CONFIGURATIONS = 'getTestRunsConfigura
 
 
 jstestdriver.PluginRegistrar.prototype.register = function(plugin) {
+  if (!plugin.name) {
+    throw new Error("Plugins must define a name.");
+  }
   var index = this.getIndexOfPlugin_(plugin.name);
   var howMany = 1;
 
