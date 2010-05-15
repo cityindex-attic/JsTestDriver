@@ -98,7 +98,7 @@ public class BrowserActionsRunner implements Action {
     } finally {
       executor.shutdown();
     }
-    logger.trace("Finished BrowserActions {}.", actions);
+    logger.debug("Finished BrowserActions {}.", actions);
     if (!exceptions.isEmpty()) {
       throw new TestErrors("Failures during test run.", exceptions);
     }

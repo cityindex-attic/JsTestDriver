@@ -83,6 +83,7 @@ public class JsTestDriver {
 
       Injector injector = Guice.createInjector(actionRunnerModules);
       injector.getInstance(ActionRunner.class).runActions();
+      logger.info("Finished action run.");
     } catch (CmdLineException e) {
       System.out.println(e.getMessage());
       System.exit(1);

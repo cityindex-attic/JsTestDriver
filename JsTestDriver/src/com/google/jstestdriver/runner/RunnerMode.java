@@ -30,8 +30,8 @@ public enum RunnerMode {
   DEBUG_BATCH(new LogConfigBuilder()
             .useFileHandler()
             .useConsoleHandler()
-            .finest("com.google.javascript.jstestdriver")
-            .finest("com.google.jstestdriver")
+            .fine("com.google.javascript.jstestdriver")
+            .fine("com.google.jstestdriver")
             .severe("org.mortbay"), false),
   DEBUG_QUIET(new LogConfigBuilder()
             .useFileHandler()

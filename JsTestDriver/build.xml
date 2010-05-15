@@ -498,7 +498,7 @@
       <arg value="--testOutput" />
       <arg value="${XMLDIRECTORY}"/>
       <arg value="--runnerMode" />
-      <arg value="DEBUG_BATCH"/>
+      <arg value="INFO"/>
     </java>
   </target>
 

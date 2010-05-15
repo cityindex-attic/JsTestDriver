@@ -52,9 +52,9 @@ public class ActionRunner {
     while (iterator.hasNext()) {
       Action action = iterator.next();
       stopWatch.start(action.toString());
-      logger.trace("Running {}", action);
+      logger.info("Running {}", action);
       action.run();
-      logger.trace("Finished {}", action);
+      logger.info("Finished {}", action);
       stopWatch.stop(action.toString());
     }
 
