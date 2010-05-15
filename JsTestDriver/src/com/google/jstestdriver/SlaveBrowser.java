@@ -204,7 +204,7 @@ public class SlaveBrowser {
 
   @Override
   public String toString() {
-    return format("SlaveBrowser(browserInfo={},\nid={},\nsinceLastCheck={})",
+    return format("SlaveBrowser(browserInfo=%s,\nid=%s,\nsinceLastCheck=%s)",
         browserInfo, id, time.now().getMillis() - lastHeartBeat.getMillis());
   }  
 }
