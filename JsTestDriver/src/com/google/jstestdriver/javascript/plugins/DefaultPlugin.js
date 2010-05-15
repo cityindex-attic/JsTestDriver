@@ -24,7 +24,7 @@ jstestdriver.plugins.DefaultPlugin = function(fileLoaderPlugin,
 };
 
 
-jstestdriver.plugins.DefaultPlugin.protoype.name = 'defaultPlugin';
+jstestdriver.plugins.DefaultPlugin.prototype.name = 'defaultPlugin';
 
 
 jstestdriver.plugins.DefaultPlugin.prototype.loadSource = function(file, onSourceLoaded) {

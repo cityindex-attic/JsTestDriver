@@ -20,6 +20,7 @@ TestRunnerTest.prototype.testRunTests = function() {
   var pluginRegistrar = new jstestdriver.PluginRegistrar();
   var testRunsConfigurationThatRan = [];
   pluginRegistrar.register({
+    name : "testPlugin",
     runTestConfiguration: function(testRunConfig, onTestDone, onTestRunConfigurationComplete) {
       testRunsConfigurationThatRan.push(testRunConfig);
       onTestRunConfigurationComplete();

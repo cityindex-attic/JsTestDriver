@@ -197,7 +197,9 @@ CommandExecutorTest.prototype.testCallPluginOnTestResultAdded = function() {
     foo : 1
   });
 
-  var tmpPlugin = {};
+  var tmpPlugin = {
+    name : "tmpPlugin"
+  };
   tmpPlugin[jstestdriver.PluginRegistrar.PROCESS_TEST_RESULT] = function(result) {
     result.data = expected.data;
   }
