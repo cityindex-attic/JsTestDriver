@@ -112,6 +112,7 @@ public class JsTestDriverServer extends Observable {
       server.start();
       setChanged();
       notifyObservers(Event.STARTED);
+      logger.debug("Starting the server.");
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -123,6 +124,7 @@ public class JsTestDriverServer extends Observable {
       server.stop();
       setChanged();
       notifyObservers(Event.STOPPED);
+      logger.debug("Stopped the server.");
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
