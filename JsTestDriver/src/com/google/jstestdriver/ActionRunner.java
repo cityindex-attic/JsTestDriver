@@ -21,6 +21,7 @@ import com.google.jstestdriver.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ public class ActionRunner {
       LoggerFactory.getLogger(StopWatch.class);
   private static final Logger logger =
     LoggerFactory.getLogger(ActionRunner.class);
+
   private final List<Action> actions;
 
   private final StopWatch stopWatch;
@@ -52,11 +54,17 @@ public class ActionRunner {
       stopWatch.start(action.toString());
       logger.trace("Running {}", action);
       action.run();
+      logger.trace("Finished {}", action);
       stopWatch.stop(action.toString());
     }
 
     Writer writer = new StringWriter();
     stopWatch.print(writer);
+    try {
+      writer.flush();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     stopWatchLogger.info(writer.toString());
   }
 }

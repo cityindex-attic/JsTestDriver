@@ -21,6 +21,9 @@ import com.google.inject.name.Named;
 import com.google.jstestdriver.browser.BrowserManagedRunner;
 import com.google.jstestdriver.browser.BrowserRunner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +40,7 @@ import java.util.concurrent.TimeoutException;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class BrowserActionsRunner implements Action {
+  private static final Logger logger = LoggerFactory.getLogger(BrowserActionsRunner.class);
 
   private final JsTestDriverClient client;
   private final List<BrowserAction> actions;
@@ -59,6 +63,7 @@ public class BrowserActionsRunner implements Action {
   }
 
   public void run() {
+    logger.trace("Starting BrowserActions {}.", actions);
     Collection<BrowserInfo> browsers = client.listBrowsers();
     if (browsers.size() == 0 && browserRunners.size() == 0 && actions.size() > 0) {
       throw new RuntimeException("No browsers available, yet actions requested. " +
@@ -93,6 +98,7 @@ public class BrowserActionsRunner implements Action {
     } finally {
       executor.shutdown();
     }
+    logger.trace("Finished BrowserActions {}.", actions);
     if (!exceptions.isEmpty()) {
       throw new TestErrors("Failures during test run.", exceptions);
     }
