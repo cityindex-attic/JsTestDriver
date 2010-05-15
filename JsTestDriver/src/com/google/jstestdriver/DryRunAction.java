@@ -54,11 +54,13 @@ public class DryRunAction implements BrowserAction {
     this.expressions = expressions;
   }
 
-  public void run(String id, JsTestDriverClient client) {
+  public ResponseStream run(String id, JsTestDriverClient client) {
+    final ResponseStream responseStream = responseStreamFactory.getDryRunActionResponseStream();
     if (expressions.size() == 1 && expressions.get(0).equals("all")) {
-      client.dryRun(id, responseStreamFactory.getDryRunActionResponseStream());
+      client.dryRun(id, responseStream);
     } else {
-      client.dryRunFor(id, responseStreamFactory.getDryRunActionResponseStream(), expressions);
+      client.dryRunFor(id, responseStream, expressions);
     }
+    return responseStream;
   }
 }

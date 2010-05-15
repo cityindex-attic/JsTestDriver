@@ -20,5 +20,5 @@ package com.google.jstestdriver;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public interface BrowserAction {
-  public void run(String id, JsTestDriverClient client);
+  public ResponseStream run(String id, JsTestDriverClient client);
 }

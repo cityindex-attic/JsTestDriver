@@ -50,7 +50,9 @@ public class ResetAction implements BrowserAction {
     this.responseStreamFactory = responseStreamFactory;
   }
 
-  public void run(String id, JsTestDriverClient client) {
-    client.reset(id, responseStreamFactory.getResetActionResponseStream());
+  public ResponseStream run(String id, JsTestDriverClient client) {
+    final ResponseStream responseStream = responseStreamFactory.getResetActionResponseStream();
+    client.reset(id, responseStream);
+    return responseStream;
   }
 }

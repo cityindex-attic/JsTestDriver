@@ -45,7 +45,7 @@ public class RunTestsAction implements BrowserAction {
    * @param id The Browser id to execute tests in.
    * @param client The client to run tests in.
    */
-  public void run(String id, JsTestDriverClient client) {
+  public ResponseStream run(String id, JsTestDriverClient client) {
     List<String> testsToRun = tests;
     for (TestsPreProcessor preProcessor : preProcessors) {
       // makes sure that the preProcessor doesn't modify the base test list
@@ -60,6 +60,7 @@ public class RunTestsAction implements BrowserAction {
     } else if (testsToRun.size() > 0) {
       client.runTests(id, runTestsActionResponseStream, testsToRun, captureConsole);
     }
+    return runTestsActionResponseStream;
   }
 
   public List<String> getTests() {

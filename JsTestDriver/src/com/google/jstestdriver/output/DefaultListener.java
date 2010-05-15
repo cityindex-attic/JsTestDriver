@@ -16,27 +16,29 @@
 package com.google.jstestdriver.output;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.FileResult;
 import com.google.jstestdriver.RunData;
 import com.google.jstestdriver.TestResult;
-import com.google.jstestdriver.JsTestDriverModule.BrowserCount;
 
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+@Singleton
 public class DefaultListener implements TestResultListener {
 
   static final String NEW_LINE = System.getProperty("line.separator");
 
   private final PrintStream out;
-  private final AtomicInteger browsers;
+
+  private final AtomicBoolean finished = new AtomicBoolean(false);
   private final boolean verbose;
   private final Map<String, RunData> browsersRunData = new ConcurrentHashMap<String, RunData>();
   private final AtomicInteger lineColumn = new AtomicInteger(0);
@@ -48,10 +50,8 @@ public class DefaultListener implements TestResultListener {
 
   @Inject
   public DefaultListener(@Named("outputStream") PrintStream out,
-                         @BrowserCount Provider<Integer> browserCountProvider,
                          @Named("verbose") boolean verbose) {
     this.out = out;
-    this.browsers = new AtomicInteger(browserCountProvider.get());
     this.verbose = verbose;
   }
 
@@ -60,13 +60,16 @@ public class DefaultListener implements TestResultListener {
   }
 
   public void finish() {
-    if (browsers.decrementAndGet() == 0) {
+    // TODO(corysmith): Remove when refactoring the action to produce results objects
+    // that can be composited into a full result.
+    // right now it can be called multiple times. :P
+    if (!finished.getAndSet(true)) {
       printSummary(out);
       for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
         RunData data = entry.getValue();
-
+  
         printBrowserSummary(out, entry.getKey(), data);
-
+  
         for (Problem problem : data.getProblems()) {
           problem.print(out, verbose);
         }

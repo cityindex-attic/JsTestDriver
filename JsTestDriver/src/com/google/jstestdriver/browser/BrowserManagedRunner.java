@@ -3,6 +3,7 @@ package com.google.jstestdriver.browser;
 import com.google.jstestdriver.BrowserActionRunner;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.JsTestDriverClient;
+import com.google.jstestdriver.ResponseStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author corbinrsmith@gmail.com (Corbin Smith)
  *
  */
-public class BrowserManagedRunner implements Callable<Boolean> {
+public class BrowserManagedRunner implements Callable<ResponseStream> {
   private static final Logger logger =
       LoggerFactory.getLogger(BrowserManagedRunner.class);
 
@@ -35,7 +36,7 @@ public class BrowserManagedRunner implements Callable<Boolean> {
     this.browserActionRunner = browserActionRunner;
   }
 
-  public Boolean call() throws Exception {
+  public ResponseStream call() throws Exception {
     String url = String.format("%s/capture?id=%s", serverAddress, browserId);
     runner.startBrowser(url);
     long timeOut = TimeUnit.MILLISECONDS.convert(runner.getTimeout(), TimeUnit.SECONDS);

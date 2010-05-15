@@ -45,7 +45,7 @@ import java.util.Set;
  */
 public class CommandTask {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(CommandTask.class);
+  private static final Logger logger = LoggerFactory.getLogger(CommandTask.class);
 
   private static final List<String> EMPTY_ARRAYLIST = new ArrayList<String>();
   private static final long WAIT_INTERVAL = 500L;
@@ -89,7 +89,7 @@ public class CommandTask {
         try {
           Thread.sleep(WAIT_INTERVAL);
         } catch (InterruptedException e) {
-          LOGGER.error("Could not create session for browser: " + browserId);
+          logger.error("Could not create session for browser: " + browserId);
           return "";
         }
         sessionId = server.startSession(baseUrl, browserId);
@@ -134,7 +134,7 @@ public class CommandTask {
       BrowserPanicException exception =
           new BrowserPanicException(panic.getBrowserInfo(),
                                     during);
-      LOGGER.error("Browser not found : {}\n during: {} \n Exception: {}",
+      logger.error("Browser not found : {}\n during: {} \n Exception: {}",
                    new Object[]{response.getResponse(),
                                 during,
                                 exception});
@@ -165,7 +165,7 @@ public class CommandTask {
         resetParams.put("data", gson.toJson(cmd));
         server.post(baseUrl + "/cmd", resetParams);
 
-        LOGGER.trace("Starting File Upload Refresh.");
+        logger.trace("Starting File Upload Refresh.");
         String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
@@ -198,12 +198,12 @@ public class CommandTask {
 
         loadFileParams.put("id", params.get("id"));
         loadFileParams.put("data", gson.toJson(cmd));
-        LOGGER.trace("Sending LOADTEST: {}", loadFileParams);
+        logger.trace("Sending LOADTEST: {}", loadFileParams);
         server.post(baseUrl + "/cmd", loadFileParams);
         String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
-        LOGGER.trace("LOADTEST response: {}", response);
+        logger.trace("LOADTEST response: {}", response);
 
         shouldPanic(response, "Loading files into the browser.");
         stream.stream(response);
@@ -247,15 +247,18 @@ public class CommandTask {
       }
       checkBrowser();
 
+      logger.debug("Starting upload for {}", browserId);
       if (upload) {
         stopWatch.start("upload");
         uploadFileSet();
         stopWatch.stop("upload");
       }
+      logger.debug("Finished upload for {}", browserId);
       server.post(baseUrl + "/cmd", params);
       StreamMessage streamMessage = null;
 
       stopWatch.start("Command %s", params.get("data"));
+      logger.debug("Starting {} for {}", params.get("data"), browserId);
       do {
         String response = server.fetch(baseUrl + "/cmd?id=" + browserId);
         streamMessage = gson.fromJson(response, StreamMessage.class);
@@ -266,9 +269,9 @@ public class CommandTask {
       } while (!streamMessage.isLast());
       stopWatch.stop("Command %s", params.get("data"));
     } finally {
-      stream.finish();
       heartBeatManager.cancelTimer();
       stopSession(sessionId);
+      logger.debug("finished {} for {}", params.get("data"), browserId);
     }
   }
 

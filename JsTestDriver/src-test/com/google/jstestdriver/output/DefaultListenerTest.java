@@ -35,7 +35,7 @@ public class DefaultListenerTest extends TestCase {
   private PrintStream out = new PrintStream(buf, true);
 
   public void testEachPassedTestPrintsDotEorFFailuresOnClose() throws Exception {
-    DefaultListener printer = new DefaultListener(out, Providers.of(1), false);
+    DefaultListener printer = new DefaultListener(out, false);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
@@ -56,7 +56,7 @@ public class DefaultListenerTest extends TestCase {
   }
 
   public void testEachTestPrintsDotAndWrapsLongLine() throws Exception {
-    DefaultListener printer = new DefaultListener(out, Providers.of(1), false);
+    DefaultListener printer = new DefaultListener(out, false);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
@@ -72,7 +72,7 @@ public class DefaultListenerTest extends TestCase {
   }
 
   public void testNotVerbosePassAndLog() throws Exception {
-    DefaultListener printer = new DefaultListener(out, Providers.of(1), false);
+    DefaultListener printer = new DefaultListener(out, false);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
@@ -88,7 +88,7 @@ public class DefaultListenerTest extends TestCase {
   }
 
   public void testVerbosePassAndLog() throws Exception {
-    DefaultListener printer = new DefaultListener(out, Providers.of(1), true);
+    DefaultListener printer = new DefaultListener(out, true);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
@@ -105,7 +105,7 @@ public class DefaultListenerTest extends TestCase {
 
   public void testNotVerbosePassFailErrorAndLog() throws Exception {
 
-    DefaultListener printer = new DefaultListener(out, Providers.of(1), false);
+    DefaultListener printer = new DefaultListener(out, false);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
@@ -144,7 +144,7 @@ public class DefaultListenerTest extends TestCase {
   }
 
   public void testVerbosePassFailErrorAndLog() throws Exception {
-    DefaultListener printer = new DefaultListener(out, Providers.of(1), true);
+    DefaultListener printer = new DefaultListener(out, true);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");

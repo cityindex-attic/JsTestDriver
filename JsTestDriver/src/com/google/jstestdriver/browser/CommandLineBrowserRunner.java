@@ -44,6 +44,7 @@ public class CommandLineBrowserRunner implements BrowserRunner {
       process = processFactory.start(browserPath, serverAddress);
     } catch (IOException e) {
       logger.error("Could not start: {} because {}", browserPath, e.toString());
+      throw new RuntimeException(e);
     }
   }
 

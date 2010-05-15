@@ -51,8 +51,10 @@ public class EvalAction implements BrowserAction {
     }
   }
 
-  public void run(String id, JsTestDriverClient client) {
-    client.eval(id, responseStreamFactory.getEvalActionResponseStream(), getCmd());
+  public ResponseStream run(String id, JsTestDriverClient client) {
+    final ResponseStream responseStream = responseStreamFactory.getEvalActionResponseStream();
+    client.eval(id, responseStream, getCmd());
+    return responseStream;
   }
 
   public String getCmd() {

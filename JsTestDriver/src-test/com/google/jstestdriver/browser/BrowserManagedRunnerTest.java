@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.jstestdriver.BrowserActionRunner;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.FakeJsTestDriverClient;
+import com.google.jstestdriver.ResponseStream;
 
 import junit.framework.TestCase;
 
@@ -47,8 +48,8 @@ public class BrowserManagedRunnerTest extends TestCase {
     }
     
     @Override
-    public Boolean call() {
-      return true;
+    public ResponseStream call() {
+      return null;
     }
   }
   

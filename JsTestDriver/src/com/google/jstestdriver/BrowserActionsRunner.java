@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -32,7 +33,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Executes each {@link BrowserAction} on each browser.
@@ -72,21 +72,22 @@ public class BrowserActionsRunner implements Action {
     }
     // TODO(corysmith): Change the threaded action runner to
     // return useful information about a run.
-    List<Callable<Boolean>> runners = Lists.newLinkedList();
+    List<Callable<ResponseStream>> runners = Lists.newLinkedList();
     for (BrowserInfo browserInfo : browsers) {
       runners.add(new BrowserActionRunner(browserInfo.getId().toString(), client, actions));
     }
     for (BrowserRunner runner : browserRunners) {
       String browserId = client.getNextBrowserId();
-      runners.add(new BrowserManagedRunner(runner, browserId, serverAddress,
-          client, new BrowserActionRunner(browserId, client, actions)));
+      runners.add(new BrowserManagedRunner(runner, browserId, serverAddress, client,
+          new BrowserActionRunner(browserId, client, actions)));
     }
     List<Throwable> exceptions = Lists.newLinkedList();
+    final List<ResponseStream> streams = Lists.newLinkedList();
     try {
-      final List<Future<Boolean>> results = executor.invokeAll(runners);
-      for (Future<Boolean> result : results) {
+      final List<Future<ResponseStream>> results = executor.invokeAll(runners);
+      for (Future<ResponseStream> result : results) {
           try {
-            result.get(testTimeout, TimeUnit.SECONDS);
+            streams.add(result.get(testTimeout, TimeUnit.SECONDS));
           } catch (ExecutionException e) {
             exceptions.add(e.getCause());
           } catch (Exception e) {
@@ -102,6 +103,11 @@ public class BrowserActionsRunner implements Action {
     logger.debug("Finished BrowserActions {}.", actions);
     if (!exceptions.isEmpty()) {
       throw new TestErrors("Failures during test run.", exceptions);
+    }
+    // TODO(corysmith):Remove this when there is a better way to return results
+    // of a list of actions.
+    for (ResponseStream stream : streams) {
+      stream.finish();
     }
   }
 

@@ -67,7 +67,7 @@ public class AggregatingResponseStreamFactory implements ResponseStreamFactory {
     return new AggregatingResponseStream(streams);
   }
 
-  static class AggregatingResponseStream implements ResponseStream {
+  public static class AggregatingResponseStream implements ResponseStream {
 
     private final List<ResponseStream> streams;
 
