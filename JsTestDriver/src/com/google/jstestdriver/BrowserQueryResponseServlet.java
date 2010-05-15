@@ -148,15 +148,15 @@ public class BrowserQueryResponseServlet extends HttpServlet {
       //logger.trace("Received:\n done: {} \n res:\n {}\n", new Object[] {done, res});
       browser.addResponse(res, done);
     }
+    if (responseId == null || "".equals(responseId)) {
+      logger.debug("Checking for done on {} recieved {}", browser, streamedResponses.get(browser));
+    }
     //logger.debug("Got responseId: {} is done? {}", responseId, done);
     // TODO(corysmith): Refactoring the streaming into a separate layer.
     if (!done) { // we are still streaming, so we respond with the streaming
                  // acknowledge.
       // this is independent of receiving an actual response.
       writer.print(gson.toJson(new BrowserStreamAcknowledged(streamedResponses.get(browser))));
-      if (responseId == null || "".equals(responseId)) {
-        logger.debug("Checking for done on {} recieved {}", browser, streamedResponses.get(browser));
-      }
       writer.flush();
       return;
     } else {
