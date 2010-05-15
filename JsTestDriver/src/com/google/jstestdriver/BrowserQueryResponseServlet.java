@@ -102,7 +102,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
     if (response != null && !"null".equals(response) && browser.isCommandRunning()) {
       Response res = gson.fromJson(response, Response.class);
       // TODO (corysmith): Replace this with polymorphism,
-      // using the response type to create dispoable actions.
+      // using the response type to create disposable actions.
       switch (res.getResponseType()) {
         case FILE_LOAD_RESULT:
           LoadedFiles loadedFiles = gson.fromJson(res.getResponse(), res.getGsonType());
@@ -145,15 +145,18 @@ public class BrowserQueryResponseServlet extends HttpServlet {
           forwardingMapper.clear();
           break;
       }
-      logger.trace("Received:\n done: {} \n res:\n {}\n", new Object[] {done, res});
+      //logger.trace("Received:\n done: {} \n res:\n {}\n", new Object[] {done, res});
       browser.addResponse(res, done);
     }
-    logger.debug("Got responseId: {} is done? {}", responseId, done);
+    //logger.debug("Got responseId: {} is done? {}", responseId, done);
     // TODO(corysmith): Refactoring the streaming into a separate layer.
     if (!done) { // we are still streaming, so we respond with the streaming
                  // acknowledge.
       // this is independent of receiving an actual response.
       writer.print(gson.toJson(new BrowserStreamAcknowledged(streamedResponses.get(browser))));
+      if (responseId == null || "".equals(responseId)) {
+        logger.debug("Checking for done on {} recieved {}", browser, streamedResponses.get(browser));
+      }
       writer.flush();
       return;
     } else {
@@ -169,7 +172,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
     if (!streamedResponses.containsKey(browser)) {
       streamedResponses.put(browser, new CopyOnWriteArrayList<String>());
     }
-    if (responseId == null) {
+    if (responseId == null || "".equals(responseId)) {
       return;
     }
     streamedResponses.get(browser).add(responseId);
