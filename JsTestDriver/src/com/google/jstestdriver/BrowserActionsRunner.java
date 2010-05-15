@@ -96,7 +96,8 @@ public class BrowserActionsRunner implements Action {
     } catch (InterruptedException e) {
       exceptions.add(e);
     } finally {
-      executor.shutdown();
+      // something isn't working....
+      executor.shutdownNow();
     }
     logger.debug("Finished BrowserActions {}.", actions);
     if (!exceptions.isEmpty()) {
