@@ -26,6 +26,6 @@ public interface BrowserRunner {
   /** Shuts down the browser. */
   public void stopBrowser();
   
-  /** The amount of time needed for this browser to start up. */
+  /** The seconds needed for this browser to start up. */
   public int getTimeout();
 }

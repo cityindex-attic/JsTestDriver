@@ -32,7 +32,7 @@ import java.util.List;
  * 
  * @author corysmith
  */
-public class DefaultThreadedActionProvider implements ThreadedActionProvider {
+public class DefaultBrowserActionProvider implements BrowserActionProvider {
   private final ActionFactory actionFactory;
   private final boolean reset;
   private final List<String> dryRunFor;
@@ -42,7 +42,7 @@ public class DefaultThreadedActionProvider implements ThreadedActionProvider {
   private final boolean captureConsole;
 
   @Inject
-  public DefaultThreadedActionProvider(ActionFactory actionFactory,
+  public DefaultBrowserActionProvider(ActionFactory actionFactory,
       ResponseStreamFactory responseStreamFactory,
       @Named("reset") boolean reset,
       @Named("dryRunFor") List<String> dryRunFor,

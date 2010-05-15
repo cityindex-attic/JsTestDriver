@@ -26,6 +26,8 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.config.DefaultConfiguration;
+import com.google.jstestdriver.guice.BrowserActionProvider;
 import com.google.jstestdriver.guice.FlagsModule;
 
 import java.io.File;
@@ -33,6 +35,8 @@ import java.io.PrintStream;
 import java.lang.annotation.Retention;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Guice module for configuring JsTestDriver.
@@ -47,17 +51,29 @@ public class JsTestDriverModule extends AbstractModule {
   private final String serverAddress;
   private final PrintStream outputStream;
   private final File basePath;
+  private final long testSuiteTimeout;
 
   public JsTestDriverModule(Flags flags,
-                            Set<FileInfo> fileSet,
-                            String serverAddress,
-                            PrintStream outputStream,
-                            File basePath) {
+      Set<FileInfo> fileSet,
+      String serverAddress,
+      PrintStream outputStream,
+      File basePath) {
+    this(flags, fileSet, serverAddress, outputStream, basePath,
+         DefaultConfiguration.DEFAULT_TEST_TIMEOUT);
+  }
+
+  public JsTestDriverModule(Flags flags,
+      Set<FileInfo> fileSet,
+      String serverAddress,
+      PrintStream outputStream,
+      File basePath,
+      long testSuiteTimeout) {
     this.flags = flags;
     this.fileSet = fileSet;
     this.serverAddress = serverAddress;
     this.outputStream = outputStream;
     this.basePath = basePath;
+    this.testSuiteTimeout = testSuiteTimeout;
   }
 
   @BindingAnnotation @Retention(RUNTIME) public @interface BrowserCount{}
@@ -73,8 +89,12 @@ public class JsTestDriverModule extends AbstractModule {
         .toInstance(fileSet);
 
     bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
+    bind(new TypeLiteral<List<BrowserAction>>(){}).toProvider(BrowserActionProvider.class);
+    bind(ExecutorService.class).toInstance(Executors.newScheduledThreadPool(10));
 
     bind(FailureAccumulator.class).in(Singleton.class);
+
+    bind(Long.class).annotatedWith(Names.named("testSuiteTimeout")).toInstance(testSuiteTimeout);
 
     bind(File.class).annotatedWith(Names.named("basePath")).toInstance(basePath);
 

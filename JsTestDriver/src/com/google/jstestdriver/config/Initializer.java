@@ -79,7 +79,7 @@ public class Initializer {
             resolvedConfiguration.createServerAddress(flags.getServer(),
                 flags.getPort()),
             outputStream,
-            basePath));
+            basePath, 2 * 60 * 60));
     return modules;
   }
 }

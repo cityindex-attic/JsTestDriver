@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 
 
 /**
@@ -28,31 +27,25 @@ import java.util.concurrent.CountDownLatch;
  */
 // TODO(corysmith): Work out a better return value.
 public class BrowserActionRunner implements Callable<Boolean> {
-  private static final Logger logger = LoggerFactory.getLogger(BrowserActionRunner.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(BrowserActionRunner.class);
 
   private final String id;
   private final JsTestDriverClient client;
-  private final CountDownLatch latch;
   private final List<BrowserAction> actions;
 
   public BrowserActionRunner(String id,
-                             JsTestDriverClient client,
-                             CountDownLatch latch,
-                             List<BrowserAction> actions) {
+                               JsTestDriverClient client,
+                               List<BrowserAction> actions) {
     this.id = id;
     this.client = client;
-    this.latch = latch;
     this.actions = actions;
   }
 
   public Boolean call() {
-    try {
-      for (BrowserAction action : actions) {
-        logger.debug("Running BrowserAction {}", action);
-        action.run(id, client);
-      }
-    } finally {
-      latch.countDown();
+    for (BrowserAction action : actions) {
+      logger.debug("Running BrowserAction {}", action);
+      action.run(id, client);
     }
     return true;
   }

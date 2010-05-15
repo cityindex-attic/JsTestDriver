@@ -27,7 +27,7 @@ import java.util.List;
  * it in Guice to provide your own {@link BrowserAction} sequences.
  * @author corysmith@google.com (Cory Smith)
  */
-@ImplementedBy(DefaultThreadedActionProvider.class)
-public interface ThreadedActionProvider extends Provider<List<BrowserAction>>{
+@ImplementedBy(DefaultBrowserActionProvider.class)
+public interface BrowserActionProvider extends Provider<List<BrowserAction>>{
   public abstract List<BrowserAction> get();
 }

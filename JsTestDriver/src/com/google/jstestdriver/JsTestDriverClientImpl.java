@@ -63,6 +63,10 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
         new TypeToken<Collection<BrowserInfo>>() {}.getType());
   }
 
+  public String getNextBrowserId() {
+    return server.fetch(baseUrl + "/cmd?nextBrowserId");
+  }
+
   private void sendCommand(String id, ResponseStream stream, String cmd, boolean uploadFiles) {
     Map<String, String> params = new LinkedHashMap<String, String>();
 
@@ -127,5 +131,5 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     JsonCommand cmd = new JsonCommand(CommandType.DRYRUNFOR, parameters);
 
     sendCommand(id, responseStream, gson.toJson(cmd), true);
-  }  
+  }
 }

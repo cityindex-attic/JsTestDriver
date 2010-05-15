@@ -43,6 +43,7 @@ public class YamlParser {
     Set<FileInfo> resolvedFilesExclude = new LinkedHashSet<FileInfo>();
 
     String server = "";
+    long timeOut = 0;
     List<Plugin> plugins = Lists.newLinkedList();
     Set<FileInfo> filesList = Sets.newLinkedHashSet();
 
@@ -70,10 +71,15 @@ public class YamlParser {
       resolvedFilesLoad.addAll(resolvedServeFiles);
     }
     
+    if (data.containsKey("timeout")) {
+      timeOut = Long.parseLong((String)data.get("timeout"));
+    }
+
     return new ParsedConfiguration(resolvedFilesLoad,
                                    resolvedFilesExclude,
                                    plugins,
-                                   server);
+                                   server,
+                                   timeOut);
   }
 
   private List<String> createArgsList(String args) {

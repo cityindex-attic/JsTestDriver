@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.browser.BrowserReaper;
 import com.google.jstestdriver.servlet.BrowserLoggingServlet;
 
 import org.mortbay.jetty.Server;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Observable;
+import java.util.Timer;
 
 import javax.servlet.Servlet;
 
@@ -45,6 +47,8 @@ public class JsTestDriverServer extends Observable {
   private Context context;
 
   private final long browserTimeout;
+
+  private Timer timer;
 
   public JsTestDriverServer(int port,
                             CapturedBrowsers capturedBrowsers,
@@ -102,6 +106,9 @@ public class JsTestDriverServer extends Observable {
 
   public void start() {
     try {
+      // TODO(corysmith): Move this to the constructor when we are injecting everything.
+      timer = new Timer(true);
+      timer.schedule(new BrowserReaper(capturedBrowsers), 3000, 3000);
       server.start();
       setChanged();
       notifyObservers(Event.STARTED);
@@ -112,6 +119,7 @@ public class JsTestDriverServer extends Observable {
 
   public void stop() {
     try {
+      timer.cancel();
       server.stop();
       setChanged();
       notifyObservers(Event.STOPPED);

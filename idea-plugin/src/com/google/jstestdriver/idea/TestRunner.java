@@ -15,22 +15,22 @@
  */
 package com.google.jstestdriver.idea;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.name.Names;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.DefaultPathRewriter;
 import com.google.jstestdriver.DryRunInfo;
 import com.google.jstestdriver.IDEPluginActionBuilder;
+import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.PluginLoader;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultGenerator;
-import com.google.jstestdriver.Plugin;
-import com.google.jstestdriver.PluginLoader;
-import com.google.inject.Module;
-import com.google.inject.AbstractModule;
-import com.google.inject.name.Names;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,7 +40,6 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.ConnectException;
 import java.net.SocketException;
 import java.util.Arrays;
 import java.util.List;

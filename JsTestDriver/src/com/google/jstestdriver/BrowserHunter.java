@@ -46,19 +46,36 @@ public class BrowserHunter {
     return String.format(REMOTE_CONSOLE_RUNNER, id, mode);
   }
 
-  public SlaveBrowser captureBrowser(String id, String name, String version, String os) {
+  /**
+   * Begins tracking a browser intheCpaturedBrowsers collection.
+   * @param rawId
+   * @param name
+   * @param version
+   * @param os
+   * @return
+   */
+  public SlaveBrowser captureBrowser(String rawId, String name, String version, String os) {
+
     BrowserInfo browserInfo = new BrowserInfo();
 
-    browserInfo.setId(Integer.valueOf(id));
+    final Integer id = parseBrowserId(rawId);
+    browserInfo.setId(id);
     browserInfo.setName(name);
     browserInfo.setVersion(version);
     browserInfo.setOs(os);
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(),
-                                          id, browserInfo, browserTimeout);
+    SlaveBrowser slave =
+        new SlaveBrowser(new TimeImpl(), id.toString(), browserInfo, browserTimeout);
 
     capturedBrowsers.addSlave(slave);
     logger.info("Browser Captured: {} version {} ({})", new Object[] {name, version, id});
     return slave;
+  }
+
+  private Integer parseBrowserId(String id) {
+    if (id == null) {
+      return Integer.parseInt(capturedBrowsers.getUniqueId());
+    }
+    return Integer.valueOf(id);
   }
 
   public boolean isBrowserCaptured(String id) {

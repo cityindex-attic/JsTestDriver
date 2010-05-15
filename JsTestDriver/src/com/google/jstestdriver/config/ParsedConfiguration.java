@@ -33,13 +33,15 @@ public class ParsedConfiguration implements Configuration {
   private final String server;
   private final List<Plugin> plugins;
   private final Set<FileInfo> excludedFiles;
+  private final long testTimeout;
 
   public ParsedConfiguration(Set<FileInfo> filesList, Set<FileInfo> excludedFiles,
-      List<Plugin> plugins, String server) {
+      List<Plugin> plugins, String server, long testTimeout) {
     this.filesList = filesList;
     this.excludedFiles = excludedFiles;
     this.plugins = plugins;
     this.server = server;
+    this.testTimeout = testTimeout;
   }
 
   public Set<FileInfo> getFilesList() {
@@ -69,6 +71,11 @@ public class ParsedConfiguration implements Configuration {
     Set<FileInfo> resolvedFiles = resolver.resolve(filesList);
     Set<FileInfo> resolvedExcluded = resolver.resolve(excludedFiles);
     resolvedFiles.removeAll(resolvedExcluded);
-    return new ResolvedConfiguration(resolvedFiles, resolver.resolve(plugins), server);
+    return new ResolvedConfiguration(resolvedFiles, resolver.resolve(plugins), server,
+        testTimeout);
+  }
+
+  public long getTestSuiteTimeout() {
+    return testTimeout;
   }
 }

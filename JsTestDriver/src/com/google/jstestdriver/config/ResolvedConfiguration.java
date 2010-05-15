@@ -32,13 +32,16 @@ public class ResolvedConfiguration implements Configuration {
   private final Set<FileInfo> filesList;
   private final List<Plugin> plugins;
   private final String server;
+  private final long testSuiteTimeout;
 
   public ResolvedConfiguration(Set<FileInfo> filesList,
                                List<Plugin> plugins,
-                               String server) {
+                               String server,
+                               long testSuiteTimeout) {
     this.filesList = filesList;
     this.plugins = plugins;
     this.server = server;
+    this.testSuiteTimeout = testSuiteTimeout;
   }
 
   public String createServerAddress(String flagValue, int port) {
@@ -64,5 +67,9 @@ public class ResolvedConfiguration implements Configuration {
 
   public Configuration resolvePaths(PathResolver resolver) {
     return this;
+  }
+
+  public long getTestSuiteTimeout() {
+    return testSuiteTimeout > 0 ? testSuiteTimeout : DefaultConfiguration.DEFAULT_TEST_TIMEOUT;
   }
 }

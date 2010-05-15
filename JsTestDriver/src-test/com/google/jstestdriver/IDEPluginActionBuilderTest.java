@@ -89,8 +89,8 @@ public class IDEPluginActionBuilderTest extends TestCase {
                      @Override
                      protected void configure() {
                        bind(Server.class).to(MyServer.class);
-                       bind(XmlPrinter.class).to(XmlPrinterImpl.class);                       
-                       bind(TestResultListener.class).toProvider(Providers.<TestResultListener>of(null));                       
+                       bind(XmlPrinter.class).to(XmlPrinterImpl.class);
+                       bind(TestResultListener.class).toProvider(Providers.<TestResultListener>of(null));
                      }
                    });
     builder.addAllTests();

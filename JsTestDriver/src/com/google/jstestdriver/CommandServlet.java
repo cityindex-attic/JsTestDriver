@@ -58,6 +58,8 @@ public class CommandServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     if (req.getParameter("listBrowsers") != null) {
       resp.getWriter().write(listBrowsers());
+    } else if (req.getParameter("nextBrowserId") != null) {
+      resp.getWriter().write(capturedBrowsers.getUniqueId());
     } else {
       streamResponse(req.getParameter("id"), resp.getWriter());
     }

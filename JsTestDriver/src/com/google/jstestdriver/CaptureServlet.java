@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * "Captures" a browser by redirecting it to RemoteConsoleRunner url, and adds
+ * it to the CapturedBrowsers collection.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class CaptureServlet extends HttpServlet {
@@ -40,16 +42,17 @@ public class CaptureServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     String mode = req.getParameter(STRICT) != null ? STRICT : QUIRKS;
+    String id = req.getParameter("id");
 
-    resp.sendRedirect(service(req.getHeader("User-Agent"), mode));
+    resp.sendRedirect(service(req.getHeader("User-Agent"), mode, id));
   }
 
-  public String service(String userAgent, String mode) {
+  public String service(String userAgent, String mode, String id) {
     UserAgentParser parser = new UserAgentParser();
 
     parser.parse(userAgent);
     SlaveBrowser slaveBrowser =
-      browserHunter.captureBrowser(parser.getName(), parser.getVersion(), parser.getOs());
+      browserHunter.captureBrowser(id, parser.getName(), parser.getVersion(), parser.getOs());
 
     return browserHunter.getCaptureUrl(slaveBrowser.getId(), mode);
   }

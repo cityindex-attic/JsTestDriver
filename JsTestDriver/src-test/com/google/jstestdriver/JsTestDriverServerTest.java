@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.Gson;
 import com.google.jstestdriver.util.NullStopWatch;
 
 import junit.framework.TestCase;
@@ -33,8 +34,9 @@ import java.util.Observer;
  */
 public class JsTestDriverServerTest extends TestCase {
 
+  private CapturedBrowsers browsers = new CapturedBrowsers();
   private JsTestDriverServer server =
-      new JsTestDriverServer(4224, new CapturedBrowsers(), new FilesCache(
+      new JsTestDriverServer(4224, browsers, new FilesCache(
           new HashMap<String, FileInfo>()), new DefaultURLTranslator(), new DefaultURLRewriter(), SlaveBrowser.TIMEOUT);
 
   @Override
@@ -62,6 +64,23 @@ public class JsTestDriverServerTest extends TestCase {
     server.start();
     URL url = new URL("http://localhost:4224/slave/XXX/HeartbeatClientquirks.html");
     assertTrue(read(url.openStream()).length() > 0);
+  }
+  
+  public void testCapture() throws Exception {
+    final Gson gson = new Gson();
+    server.start();
+    URL captureUrl = new URL("http://localhost:4224/capture");
+    assertTrue(read(captureUrl.openStream()).length() > 0);
+    assertEquals(1, browsers.getBrowsers().size());
+    assertEquals(1, browsers.getBrowsers().get(0).getId().intValue());
+  }
+  
+  public void testCaptureWithId() throws Exception {
+    server.start();
+    URL captureUrl = new URL("http://localhost:4224/capture?id=5");
+    assertTrue(read(captureUrl.openStream()).length() > 0);
+    assertEquals(1, browsers.getBrowsers().size());
+    assertEquals(5, browsers.getBrowsers().get(0).getId().intValue());
   }
 
   public void testListBrowsers() throws Exception {

@@ -22,12 +22,16 @@ import com.google.inject.Module;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
+import com.google.jstestdriver.config.DefaultConfiguration;
+import com.google.jstestdriver.guice.BrowserActionProvider;
 import com.google.jstestdriver.guice.FlagsModule;
 import com.google.jstestdriver.html.HtmlDocModule;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * A builder for IDE's to use. Minimizes the surface area of the API which needs to
@@ -133,6 +137,12 @@ public class IDEPluginActionBuilder {
 
       // TODO(corysmith): Change this to an actual class, so that we can JITI it.
       bind(ResponseStreamFactory.class).toInstance(responseStreamFactory);
+      
+      bind(new TypeLiteral<List<BrowserAction>>(){}).toProvider(BrowserActionProvider.class);
+      bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool());
+
+      bind(Long.class).annotatedWith(
+          Names.named("testSuiteTimeout")).toInstance(DefaultConfiguration.DEFAULT_TEST_TIMEOUT);
 
       for (Module module : modules) {
         install(module);

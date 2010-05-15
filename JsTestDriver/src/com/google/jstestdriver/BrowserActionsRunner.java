@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -16,16 +16,24 @@
 package com.google.jstestdriver;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.browser.BrowserManagedRunner;
+import com.google.jstestdriver.browser.BrowserRunner;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Executes each {@link BrowserAction} on each browser.
+ *
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class BrowserActionsRunner implements Action {
@@ -33,47 +41,60 @@ public class BrowserActionsRunner implements Action {
   private final JsTestDriverClient client;
   private final List<BrowserAction> actions;
   private final ExecutorService executor;
+  private final Set<BrowserRunner> browserRunners;
+  private final String serverAddress;
+  private final long testTimeout;
 
+  @Inject
   public BrowserActionsRunner(JsTestDriverClient client, List<BrowserAction> actions,
-      ExecutorService executor) {
+      ExecutorService executor, Set<BrowserRunner> browserRunners,
+      @Named("server") String serverAddress,
+      @Named("testSuiteTimeout") long testTimeout) {
     this.client = client;
     this.actions = actions;
     this.executor = executor;
+    this.browserRunners = browserRunners;
+    this.serverAddress = serverAddress;
+    this.testTimeout = testTimeout;
   }
 
   public void run() {
     Collection<BrowserInfo> browsers = client.listBrowsers();
-    int browsersNumber = browsers.size();
-
-    if (browsersNumber == 0) {
-      throw new RuntimeException("No browsers were captured, nothing to run...");
+    if (browsers.size() == 0 && browserRunners.size() == 0 && actions.size() > 0) {
+      throw new RuntimeException("No browsers available, yet actions requested. " +
+          "If running against a persistent server please capture browsers. "+
+          "Otherwise, ensure that browsers are defined.");
     }
-    CountDownLatch latch = new CountDownLatch(browsersNumber);
-
     // TODO(corysmith): Change the threaded action runner to
     // return useful information about a run.
-    List<Future<Boolean>> futures = Lists.newLinkedList();
+    List<Callable<Boolean>> runners = Lists.newLinkedList();
     for (BrowserInfo browserInfo : browsers) {
-      futures.add(executor.submit(
-          new BrowserActionRunner(browserInfo.getId().toString(),
-          client, latch, actions)));
+      runners.add(new BrowserActionRunner(browserInfo.getId().toString(), client, actions));
     }
-    executor.shutdown();
+    for (BrowserRunner runner : browserRunners) {
+      String browserId = client.getNextBrowserId();
+      runners.add(new BrowserManagedRunner(runner, browserId, serverAddress,
+          client, new BrowserActionRunner(browserId, client, actions)));
+    }
+    List<Throwable> exceptions = Lists.newLinkedList();
     try {
-      latch.await();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-    for (Future<Boolean> future : futures) {
-      try {
-        future.get();
-      } catch (InterruptedException e) {
-        // TODO(corysmith): fix the error reporting to be more useful.
-        throw new RuntimeException("Failure during run", e);
-      } catch (ExecutionException e) {
-        // TODO(corysmith): fix the error reporting to be more useful.
-        throw new RuntimeException("Failure during run", e);
+      final List<Future<Boolean>> results = executor.invokeAll(runners);
+      for (Future<Boolean> result : results) {
+          try {
+            result.get(testTimeout, TimeUnit.SECONDS);
+          } catch (ExecutionException e) {
+            exceptions.add(e.getCause());
+          } catch (TimeoutException e) {
+            exceptions.add(e);
+          }
       }
+    } catch (InterruptedException e) {
+      exceptions.add(e);
+    } finally {
+      executor.shutdown();
+    }
+    if (!exceptions.isEmpty()) {
+      throw new TestErrors("Failures during test run.", exceptions);
     }
   }
 

@@ -15,12 +15,10 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.util.Providers;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.browser.CommandLineBrowserRunner;
-import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 import com.google.jstestdriver.output.PrintXmlTestResultsAction;
@@ -46,42 +44,23 @@ public class DefaultActionListProviderTest extends TestCase {
 
   public void testParseFlagsAndCreateActionQueue() throws Exception {
     DefaultActionListProvider parser =
-        createProvider(browsers, 9876, null, false, Collections.<String> emptyList(), Collections
+        createProvider(9876, false, Collections.<String> emptyList(), Collections
             .<ActionListProcessor> emptySet(), "", null);
     List<Action> actions = parser.get();
 
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
-    expectedActions.add(BrowserStartupAction.class);
+    expectedActions.add(BrowserActionsRunner.class);
     expectedActions.add(FailureCheckerAction.class);
     assertSequence(expectedActions, actions);
-    assertEquals(browsers, findAction(actions, BrowserStartupAction.class).getBrowsers());
-  }
-  
-  public void testProcessCreateActionQueue() throws Exception {
-    final List<Action> expectedActions = Lists.<Action>newArrayList(
-        new BrowserShutdownAction(null));
-
-    final Set<ActionListProcessor> processors =
-        Sets.<ActionListProcessor>newHashSet(new ActionListProcessor() {
-      public List<Action> process(List<Action> actions) {
-        assertEquals(browsers, findAction(actions, BrowserStartupAction.class).getBrowsers());
-        return expectedActions;
-      }
-    });
-
-    DefaultActionListProvider parser =
-        createProvider(browsers, 9876, null, false, Collections.<String> emptyList(), processors, "", null);
-    assertSame(expectedActions,parser.get());
   }
 
-  private DefaultActionListProvider createProvider(Set<BrowserRunner> browsers,
-                                                   int port,
-                                                   String serverAddress,
+  private DefaultActionListProvider createProvider(int port,
                                                    boolean reset,
                                                    List<String> tests,
                                                    Set<ActionListProcessor> processors,
-                                                   String testOutput, XmlPrinter xmlPrinter) {
+                                                   String testOutput,
+                                                   XmlPrinter xmlPrinter) {
     ActionFactory actionFactory =
         new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT);
     return new DefaultActionListProvider(
@@ -89,28 +68,24 @@ public class DefaultActionListProviderTest extends TestCase {
         null,
         tests,
         Collections.<String>emptyList(),
-        browsers,
         reset,
         Collections.<String>emptyList(),
         false,
         port,
         Collections.<FileInfo>emptySet(),
-        serverAddress,
         testOutput,
         null,
-        new DefaultThreadedActionProvider(actionFactory, null, reset, Collections
-            .<String> emptyList(), false, tests, Collections.<String> emptyList()),
-        Providers.<JsTestDriverClient>of(null),
-        Providers.<URLTranslator>of(null), Providers.<URLRewriter>of(null),
-        new FailureAccumulator(),
-        processors,
+        new BrowserActionsRunner(null, null, null, null, null, 0),
+        Providers.<URLTranslator>of(null),
+        Providers.<URLRewriter>of(null),
+        new FailureAccumulator(), processors,
         xmlPrinter);
   }
 
   public void testParseWithServerAndReset() throws Exception {
     String serverAddress = "http://otherserver:8989";
     DefaultActionListProvider parser =
-        createProvider(browsers, -1, serverAddress, true, Collections
+        createProvider(-1, true, Collections
             .<String> emptyList(), Collections.<ActionListProcessor>emptySet(), "", null);
 
     FlagsImpl flags = new FlagsImpl();
@@ -119,73 +94,40 @@ public class DefaultActionListProviderTest extends TestCase {
     flags.setReset(true);
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
-    expectedActions.add(BrowserStartupAction.class);
     expectedActions.add(BrowserActionsRunner.class);
-    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
 
     List<Action> actions = parser.get();
     assertSequence(expectedActions, actions);
-
-    BrowserActionsRunner action = findAction(actions, BrowserActionsRunner.class);
-    assertEquals(1, action.getActions().size());
-    BrowserAction threadedAction = action.getActions().get(0);
-    assertTrue("Expected ResetAction, found " + threadedAction,
-        threadedAction instanceof ResetAction);
   }
 
-  public void testParseFlagsWithServer() throws Exception {
-    List<String> browserPaths = new ArrayList<String>();
-    browserPaths.add("browser");
-    browserPaths.add("browser2");
-    String serverAddress = "http://otherserver:8989";
-    DefaultActionListProvider parser =
-        createProvider(browsers, -1, serverAddress, false, Collections.<String> emptyList(),
-            Collections.<ActionListProcessor> emptySet(), "", null);
-
-    List<Action> actions = parser.get();
-
-    BrowserStartupAction action = findAction(actions, BrowserStartupAction.class);
-    assertNotNull("Server action not created", action);
-    assertEquals(serverAddress, action.getServerAddress());
-  }
 
   public void testParseFlagsAndCreateTestActions() throws Exception {
     List<String> tests = Arrays.asList("foo.testBar");
     DefaultActionListProvider parser =
-        createProvider(browsers, 9876, null, false, tests, Collections
+        createProvider(9876, false, tests, Collections
             .<ActionListProcessor> emptySet(), "", null);
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
-    expectedActions.add(BrowserStartupAction.class);
     expectedActions.add(BrowserActionsRunner.class);
-    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
 
     List<Action> actions = parser.get();
     assertSequence(expectedActions, actions);
-
-    BrowserActionsRunner testRunner = findAction(actions, BrowserActionsRunner.class);
-    assertNotNull("Test action not found", testRunner);
-    assertEquals(1, testRunner.getActions().size());
-    assertTrue(testRunner.getActions().get(0) instanceof RunTestsAction);
-    assertEquals(tests, ((RunTestsAction) testRunner.getActions().get(0)).getTests());
   }
 
   public void testXmlTestResultsActionIsAddedIfTestOutputFolderIsSet() throws Exception {
     List<String> tests = Arrays.asList("foo.testBar");
     DefaultActionListProvider parser =
-        createProvider(browsers, 9876, null, false, tests, Collections
+        createProvider(9876, false, tests, Collections
             .<ActionListProcessor> emptySet(), ".", new XmlPrinterImpl(null, null));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
-    expectedActions.add(BrowserStartupAction.class);
     expectedActions.add(BrowserActionsRunner.class);
     expectedActions.add(PrintXmlTestResultsAction.class);
-    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
 
@@ -200,14 +142,5 @@ public class DefaultActionListProviderTest extends TestCase {
       actual.add(action.getClass());
     }
     assertEquals(expectedActions, actual);
-  }
-
-  private <T extends Action> T findAction(List<Action> actions, Class<T> type) {
-    for (Action action: actions) {
-      if (type.isInstance(action)) {
-        return type.cast(action);
-      }
-    }
-    return null;
   }
 }

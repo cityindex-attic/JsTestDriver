@@ -51,7 +51,9 @@ public class HomeServlet extends HttpServlet {
     writer.write("<html><head><title>JsTestDriver</title></head><body>");
     writer.write("<a href=\"/capture\">Capture This Browser</a><br/>");
     writer.write("<a href=\"/capture?strict\">Capture This Browser in strict mode</a><br/>");
-    writer.write("<p><strong>Captured Browsers:</strong></p>");
+    writer.write("<p><strong>Captured Browsers: (");
+    writer.write(String.valueOf(capturedBrowsers.getSlaveBrowsers().size()));
+    writer.write(")</strong></p>");
     for (SlaveBrowser browser : capturedBrowsers.getSlaveBrowsers()) {
       writer.write("<p>");
       BrowserInfo info = browser.getBrowserInfo();
@@ -65,6 +67,7 @@ public class HomeServlet extends HttpServlet {
         writer.write("Currently waiting...<br/>");
       }
       writer.write("</p>");
+      writer.flush();
     }
     writer.write("</body></html>");
     writer.flush();

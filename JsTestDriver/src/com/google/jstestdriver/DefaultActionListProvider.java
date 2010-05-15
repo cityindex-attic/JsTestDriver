@@ -15,18 +15,16 @@
  */
 package com.google.jstestdriver;
 
-import java.util.List;
-import java.util.Set;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.guice.ThreadedActionProvider;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.output.XmlPrinter;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Provides a sequence of actions from a large number of arguments.
@@ -41,22 +39,19 @@ public class DefaultActionListProvider implements ActionListProvider {
   private final FileLoader fileLoader;
   private final List<String> tests;
   private final List<String> arguments;
-  private final Set<BrowserRunner> browsers;
   private final boolean reset;
   private final List<String> dryRunFor;
   private final int port;
-  private final String server;
   private final boolean preloadFiles;
   private final Set<FileInfo> fileSet;
   private final String testOutput;
   private final ResponseStreamFactory responseStreamFactory;
-  private final ThreadedActionProvider threadedActionProvider;
-  private final Provider<JsTestDriverClient> clientProvider;
   private final Provider<URLTranslator> urlTranslatorProvider;
   private final Provider<URLRewriter> urlRewriterProvider;
   private final FailureAccumulator accumulator;
   private final Set<ActionListProcessor> processors;
   private final XmlPrinter xmlPrinter;
+  private final BrowserActionsRunner browserActionsRunner;
 
   // TODO(corysmith): Refactor this. Currently in a temporary,
   //  make dependencies visible to aid refactoring state.
@@ -66,17 +61,14 @@ public class DefaultActionListProvider implements ActionListProvider {
       FileLoader fileLoader,
       @Named("tests") List<String> tests,
       @Named("arguments") List<String> arguments,
-      Set<BrowserRunner> browsers,
       @Named("reset") boolean reset,
       @Named("dryRunFor") List<String> dryRunFor,
       @Named("preloadFiles") boolean preloadFiles,
       @Named("port") int port,
       @Named("fileSet") Set<FileInfo> fileSet,
-      @Named("server") String server,
       @Named("testOutput") String testOutput,
       ResponseStreamFactory responseStreamFactory,
-      ThreadedActionProvider threadedActionProvider,
-      Provider<JsTestDriverClient> clientProvider,
+      BrowserActionsRunner browserActionsRunner,
       Provider<URLTranslator> urlTranslatorProvider,
       Provider<URLRewriter> urlRewriterProvider,
       FailureAccumulator accumulator,
@@ -86,17 +78,14 @@ public class DefaultActionListProvider implements ActionListProvider {
     this.fileLoader = fileLoader;
     this.tests = tests;
     this.arguments = arguments;
-    this.browsers = browsers;
     this.reset = reset;
     this.dryRunFor = dryRunFor;
     this.preloadFiles = preloadFiles;
     this.port = port;
     this.fileSet = fileSet;
-    this.server = server;
     this.testOutput = testOutput;
     this.responseStreamFactory = responseStreamFactory;
-    this.threadedActionProvider = threadedActionProvider;
-    this.clientProvider = clientProvider;
+    this.browserActionsRunner = browserActionsRunner;
     this.urlTranslatorProvider = urlTranslatorProvider;
     this.urlRewriterProvider = urlRewriterProvider;
     this.accumulator = accumulator;
@@ -110,23 +99,19 @@ public class DefaultActionListProvider implements ActionListProvider {
         new ActionSequenceBuilder(actionFactory,
                                   fileLoader,
                                   responseStreamFactory,
-                                  threadedActionProvider,
-                                  clientProvider,
+                                  browserActionsRunner,
                                   urlTranslatorProvider,
                                   urlRewriterProvider,
                                   accumulator);
     builder.usingFiles(fileSet, preloadFiles)
            .addTests(tests)
            .addCommands(arguments)
-           .onBrowsers(browsers)
            .reset(reset)
            .asDryRunFor(dryRunFor)
-           .withLocalServerPort(port)
-           .withRemoteServer(server);
+           .withLocalServerPort(port);
     if (testOutput.length() > 0) {
       builder.printingResultsWhenFinished(xmlPrinter);
     }
-           
     List<Action> actions = builder.build();
     for (ActionListProcessor processor : processors) {
       actions = processor.process(actions);

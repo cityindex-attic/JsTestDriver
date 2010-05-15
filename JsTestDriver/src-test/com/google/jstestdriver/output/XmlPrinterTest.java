@@ -35,6 +35,7 @@ public class XmlPrinterTest extends TestCase {
   TestResult safariPassed1 =
       new TestResult(safari, passed.toString(), "", "", "testCase2", "test4", 4.0f);
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     tempFile = createTempFile(getName(), "tmp");

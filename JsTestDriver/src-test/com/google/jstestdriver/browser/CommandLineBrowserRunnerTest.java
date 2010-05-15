@@ -32,6 +32,7 @@ public class CommandLineBrowserRunnerTest extends TestCase {
   private final class FakeProcessFactory implements ProcessFactory {
     public List<ProcessStub> processStubs = Lists.newLinkedList();
 
+    @SuppressWarnings("unused")
     public Process start(String... commands) throws IOException {
       ProcessStub processStub = new ProcessStub(commands);
       processStubs.add(processStub);

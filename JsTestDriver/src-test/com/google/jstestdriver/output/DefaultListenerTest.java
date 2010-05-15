@@ -41,17 +41,18 @@ public class DefaultListenerTest extends TestCase {
     browser.setName("TB");
     browser.setVersion("1");
     browser.setOs("os");
-    printer.onTestComplete(new TestResult(browser, "passed", "", "", "A", "d", 1));
-    printer.onTestComplete(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(testResult(browser, "passed", "", "", "A", "d", 1));
+    printer.onTestComplete(testResult(browser, "failed", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "", "B", "e", 2));
-    printer.onTestComplete(new TestResult(browser, "error", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(testResult(browser, "error", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "", "C", "f", 3));
     printer.finish();
     assertEquals(".FE" + NEW_LINE +
         "Total 3 tests (Passed: 1; Fails: 1; Errors: 1) (6.00 ms)" + NEW_LINE +
         "  TB 1 os: Run 3 tests (Passed: 1; Fails: 1; Errors 1) (6.00 ms)" + NEW_LINE +
-        "    B.e failed (2.00 ms): abc" + NEW_LINE +
-        "    C.f error (3.00 ms): abc" + NEW_LINE, buf.toString());
+        "    B.e failed (2.00 ms): abc" + NEW_LINE + "      stack" + NEW_LINE + NEW_LINE +
+        "    C.f error (3.00 ms): abc" + NEW_LINE + "      stack" + NEW_LINE + NEW_LINE,
+        buf.toString());
   }
 
   public void testEachTestPrintsDotAndWrapsLongLine() throws Exception {
@@ -77,7 +78,7 @@ public class DefaultListenerTest extends TestCase {
     browser.setName("TB");
     browser.setVersion("1");
     browser.setOs("os");
-    printer.onTestComplete(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
+    printer.onTestComplete(testResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
     printer.finish();
     assertEquals("." + NEW_LINE +
         "Total 1 tests (Passed: 1; Fails: 0; Errors: 0) (1.00 ms)" + NEW_LINE +
@@ -93,7 +94,7 @@ public class DefaultListenerTest extends TestCase {
     browser.setName("TB");
     browser.setVersion("1");
     browser.setOs("os");
-    printer.onTestComplete(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
+    printer.onTestComplete(testResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
     printer.finish();
     assertEquals("[PASSED] A.d" + NEW_LINE +
         "  [LOG] some log" + NEW_LINE +
@@ -103,16 +104,17 @@ public class DefaultListenerTest extends TestCase {
   }
 
   public void testNotVerbosePassFailErrorAndLog() throws Exception {
+
     DefaultListener printer = new DefaultListener(out, Providers.of(1), false);
     BrowserInfo browser = new BrowserInfo();
 
     browser.setName("TB");
     browser.setVersion("1");
     browser.setOs("os");
-    printer.onTestComplete(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
-    printer.onTestComplete(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(testResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
+    printer.onTestComplete(testResult(browser, "failed", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "[LOG] failed log", "B", "e", 2));
-    printer.onTestComplete(new TestResult(browser, "error", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(testResult(browser, "error", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "[LOG] error log", "C", "f", 3));
     printer.finish();
     assertEquals(".FE" + NEW_LINE +
@@ -121,9 +123,24 @@ public class DefaultListenerTest extends TestCase {
         "    A.d passed (1.00 ms)" + NEW_LINE +
         "      [LOG] some log" + NEW_LINE +
         "    B.e failed (2.00 ms): abc" + NEW_LINE +
+        "      stack" + NEW_LINE + NEW_LINE +
         "      [LOG] failed log" + NEW_LINE +
         "    C.f error (3.00 ms): abc" + NEW_LINE +
+        "      stack" + NEW_LINE + NEW_LINE +
         "      [LOG] error log" + NEW_LINE, buf.toString());
+  }
+  
+  private TestResult testResult(BrowserInfo browser, String result, String message, String log,
+      String testCaseName, String testName, float time) {
+    final TestResult testResult =
+      new TestResult(browser, result, message, log, testCaseName, testName, time);
+    if (!"passed".equals(result)) {
+      final JsException exception = gson.fromJson(message, JsException.class);
+      
+      testResult.setParsedMessage(exception.getMessage());
+      testResult.setStack(exception.getStack());
+    }
+    return testResult;
   }
 
   public void testVerbosePassFailErrorAndLog() throws Exception {
@@ -133,10 +150,10 @@ public class DefaultListenerTest extends TestCase {
     browser.setName("TB");
     browser.setVersion("1");
     browser.setOs("os");
-    printer.onTestComplete(new TestResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
-    printer.onTestComplete(new TestResult(browser, "failed", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(testResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
+    printer.onTestComplete(testResult(browser, "failed", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "[LOG] failed log", "B", "e", 2));
-    printer.onTestComplete(new TestResult(browser, "error", gson.toJson(new JsException("name", "abc",
+    printer.onTestComplete(testResult(browser, "error", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "[LOG] error log", "C", "f", 3));
     printer.finish();
     assertEquals("[PASSED] A.d" + NEW_LINE +
@@ -148,6 +165,8 @@ public class DefaultListenerTest extends TestCase {
         "Total 3 tests (Passed: 1; Fails: 1; Errors: 1) (6.00 ms)" + NEW_LINE +
         "  TB 1 os: Run 3 tests (Passed: 1; Fails: 1; Errors 1) (6.00 ms)" + NEW_LINE +
         "    B.e failed (2.00 ms): abc" + NEW_LINE +
-        "    C.f error (3.00 ms): abc" + NEW_LINE, buf.toString());
+        "      stack" + NEW_LINE + NEW_LINE +
+        "    C.f error (3.00 ms): abc" + NEW_LINE +
+        "      stack" + NEW_LINE + NEW_LINE , buf.toString());
   }
 }

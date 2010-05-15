@@ -23,7 +23,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.ResponseStreamFactory;
-import com.google.jstestdriver.guice.ThreadedActionProvider;
+import com.google.jstestdriver.guice.BrowserActionProvider;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
@@ -62,7 +62,7 @@ public class CoverageModule extends AbstractModule {
     bind(new TypeLiteral<Set<String>>(){})
       .annotatedWith(new CoverageImpl("coverageExcludes")).toInstance(Sets.newHashSet(excludes));
     // TODO(corysmith): Remove this when there is a correct separation of phases.
-    bind(ThreadedActionProvider.class).to(CoverageThreadedActionProvider.class);
+    bind(BrowserActionProvider.class).to(CoverageThreadedActionProvider.class);
   }
 
   /** Lets me bind to annotations with arguments, namespaced to the Coverage plugin.*/

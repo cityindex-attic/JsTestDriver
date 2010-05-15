@@ -35,7 +35,7 @@ public class JsTestDriverModuleTest extends TestCase {
         new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
-        "http://foo", System.out, new File(""))).getInstance(ActionRunner.class);
+        "http://foo", System.out, new File(""), 2 * 60 * 60)).getInstance(ActionRunner.class);
   }
 
   public void testGetActionRunnerWithXmlWriter() throws Exception {
@@ -44,6 +44,6 @@ public class JsTestDriverModuleTest extends TestCase {
         new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
-        "http://foo", System.out, new File(""))).getInstance(ActionRunner.class);
+        "http://foo", System.out, new File(""), 2 * 60 * 60)).getInstance(ActionRunner.class);
   }
 }

@@ -15,19 +15,15 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Provider;
+import com.google.jstestdriver.output.PrintXmlTestResultsAction;
+import com.google.jstestdriver.output.XmlPrinter;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-
-import com.google.common.collect.Sets;
-import com.google.inject.Provider;
-import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.output.PrintXmlTestResultsAction;
-import com.google.jstestdriver.output.XmlPrinter;
 
 /**
  * A builder for creating a sequence of {@link Action}s to be run by the
@@ -39,64 +35,39 @@ public class ActionSequenceBuilder {
 
   private final ActionFactory actionFactory;
   private final FileLoader fileLoader;
-  private final Provider<List<BrowserAction>> threadedActionProvider;
-  private final Provider<JsTestDriverClient> clientProvider;
   private final Provider<URLTranslator> urlTranslatorProvider;
   private final Provider<URLRewriter> urlRewriterProvider;
   private final FailureAccumulator accumulator;
-
-  private Set<BrowserRunner> browsers = Sets.newHashSet();
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
   private HashMap<String, FileInfo> files = new LinkedHashMap<String, FileInfo>();
   private Set<FileInfo> fileSet;
   private int localServerPort = -1;
   private boolean preloadFiles = false;
-  private String remoteServerAddress;
   private boolean reset;
   private List<String> tests = new LinkedList<String>();
   private List<String> dryRunFor = new LinkedList<String>();
   private List<String> commands = new LinkedList<String>();
   private XmlPrinter xmlPrinter;
+  private final BrowserActionsRunner browserActionsRunner;
 
   /**
    * Begins the building of an action sequence.
    * 
-   * @param threadedActionProvider
-   *          TODO
-   * @param clientProvider
-   *          TODO
    * @param accumulator 
    */
   public ActionSequenceBuilder(ActionFactory actionFactory,
                                FileLoader fileLoader,
                                ResponseStreamFactory responseStreamFactory,
-                               Provider<List<BrowserAction>> threadedActionProvider,
-                               Provider<JsTestDriverClient> clientProvider,
+                               BrowserActionsRunner browserActionsRunner,
                                Provider<URLTranslator> urlTranslatorProvider,
                                Provider<URLRewriter> urlRewriterProvider,
                                FailureAccumulator accumulator) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
-    this.threadedActionProvider = threadedActionProvider;
-    this.clientProvider = clientProvider;
+    this.browserActionsRunner = browserActionsRunner;
     this.urlTranslatorProvider = urlTranslatorProvider;
     this.urlRewriterProvider = urlRewriterProvider;
     this.accumulator = accumulator;
-  }
-
-  /** Add the Browser startup and shutdown actions to the actions stack. */
-  private void addBrowserControlActions(List<Action> actions) {
-    if (!browsers.isEmpty()) {
-      BrowserStartupAction browserStartupAction =
-          new BrowserStartupAction(browsers,
-                                   remoteServerAddress,
-                                   new CountDownLatch(browsers.size()));
-      capturedBrowsers.addObserver(browserStartupAction);
-      actions.add(0, browserStartupAction);
-      if (!leaveServerRunning()) {
-        actions.add(new BrowserShutdownAction(browsers));
-      }
-    }
   }
 
   /**
@@ -139,21 +110,12 @@ public class ActionSequenceBuilder {
   /** Creates and returns a sequence of actions. */
   public List<Action> build() {
     List<Action> actions = new LinkedList<Action>();
-
-    JsTestDriverClient client = clientProvider.get();
-
-    List<BrowserAction> browserActions = threadedActionProvider.get();
-
-    if (!browserActions.isEmpty()) {
-      actions.add(new BrowserActionsRunner(client, browserActions, Executors
-          .newCachedThreadPool()));
-    }
+    actions.add(browserActionsRunner);
     if (xmlPrinter != null) {
       actions.add(new PrintXmlTestResultsAction(xmlPrinter));
     }
 
     // wrap the actions with the setup/teardown actions.
-    addBrowserControlActions(actions);
     if (needToStartServer()) {
       addServerActions(actions, leaveServerRunning());
     }
@@ -168,15 +130,6 @@ public class ActionSequenceBuilder {
 
   private boolean needToStartServer() {
     return localServerPort != -1;
-  }
-
-  /**
-   * Indicates a list of browsers that the actions should be executed in. This
-   * is required.
-   */
-  public ActionSequenceBuilder onBrowsers(Set<BrowserRunner> browsers) {
-    this.browsers.addAll(browsers);
-    return this;
   }
 
   /**
@@ -207,14 +160,6 @@ public class ActionSequenceBuilder {
    */
   public ActionSequenceBuilder withLocalServerPort(int localServerPort) {
     this.localServerPort = localServerPort;
-    return this;
-  }
-
-  /**
-   * Defines a remote server to run against.
-   */
-  public ActionSequenceBuilder withRemoteServer(String serverAddress) {
-    this.remoteServerAddress = serverAddress;
     return this;
   }
 

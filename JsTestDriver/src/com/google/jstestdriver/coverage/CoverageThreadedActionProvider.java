@@ -6,22 +6,22 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.jstestdriver.ResetAction;
 import com.google.jstestdriver.BrowserAction;
-import com.google.jstestdriver.guice.DefaultThreadedActionProvider;
-import com.google.jstestdriver.guice.ThreadedActionProvider;
+import com.google.jstestdriver.guice.DefaultBrowserActionProvider;
+import com.google.jstestdriver.guice.BrowserActionProvider;
 
 /**
  * Temporary class that ensures the browser is reset 
  * @author corysmith
  *
  */
-public class CoverageThreadedActionProvider implements ThreadedActionProvider {
+public class CoverageThreadedActionProvider implements BrowserActionProvider {
 
   private final ResetAction reset;
-  private final DefaultThreadedActionProvider provider;
+  private final DefaultBrowserActionProvider provider;
 
   @Inject
   public CoverageThreadedActionProvider(ResetAction reset,
-                                        DefaultThreadedActionProvider provider
+                                        DefaultBrowserActionProvider provider
                                         ) {
     this.reset = reset;
     this.provider = provider;

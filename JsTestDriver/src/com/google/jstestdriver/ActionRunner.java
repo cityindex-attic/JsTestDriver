@@ -33,7 +33,7 @@ public class ActionRunner {
   private static final Logger stopWatchLogger =
       LoggerFactory.getLogger(StopWatch.class);
   private static final Logger logger =
-    LoggerFactory.getLogger(StopWatch.class);
+    LoggerFactory.getLogger(ActionRunner.class);
   private final List<Action> actions;
 
   private final StopWatch stopWatch;

@@ -41,4 +41,6 @@ public interface JsTestDriverClient {
   public void dryRun(String id, ResponseStream responseStream);
 
   public void dryRunFor(String id, ResponseStream responseStream, List<String> expressions);
+
+  public String getNextBrowserId();
 }

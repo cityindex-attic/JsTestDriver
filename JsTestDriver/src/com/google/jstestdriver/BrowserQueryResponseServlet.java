@@ -99,7 +99,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
     addResponseId(responseId, browser);
     browser.heartBeat();
     Command command = null;
-    if (response != null && !"null".equals(response) && browser.isCommandRunning()) {
+    if (isResponseValid(response) && browser.isCommandRunning()) {
       Response res = gson.fromJson(response, Response.class);
       // TODO (corysmith): Replace this with polymorphism,
       // using the response type to create disposable actions.
@@ -148,10 +148,15 @@ public class BrowserQueryResponseServlet extends HttpServlet {
       //logger.trace("Received:\n done: {} \n res:\n {}\n", new Object[] {done, res});
       browser.addResponse(res, done);
     }
-    if (responseId == null || "".equals(responseId)) {
-      logger.debug("Checking for done on {} recieved {}", browser, streamedResponses.get(browser));
+    if (isResponseIdValid(responseId) && !done && !isResponseValid(response)) {
+      logger.debug("Streaming query for ids {} from {}", streamedResponses.get(browser), browser);
     }
-    //logger.debug("Got responseId: {} is done? {}", responseId, done);
+    // TODO(corysmith): What do we do?
+    if (!isResponseValid(response) && done && browser.isCommandRunning()) {
+      logger.error("Streaming ending, but no response sent for {} while running {}",
+          browser,
+          browser.getCommandRunning());
+    }
     // TODO(corysmith): Refactoring the streaming into a separate layer.
     if (!done) { // we are still streaming, so we respond with the streaming
                  // acknowledge.
@@ -168,13 +173,21 @@ public class BrowserQueryResponseServlet extends HttpServlet {
     writer.print(command != null ? command.getCommand() : NOOP);
   }
 
+  private boolean isResponseValid(String response) {
+    return response != null && !"null".equals(response) && response.length() > 0;
+  }
+
   private void addResponseId(String responseId, SlaveBrowser browser) {
     if (!streamedResponses.containsKey(browser)) {
       streamedResponses.put(browser, new CopyOnWriteArrayList<String>());
     }
-    if (responseId == null || "".equals(responseId)) {
+    if (isResponseIdValid(responseId)) {
       return;
     }
     streamedResponses.get(browser).add(responseId);
+  }
+
+  private boolean isResponseIdValid(String responseId) {
+    return responseId == null || "".equals(responseId);
   }
 }

@@ -33,6 +33,6 @@ public class MockTime implements Time {
   }
 
   public void add(long i) {
-    instant = instant.plus(5);
+    instant = instant.plus(i);
   }
 }

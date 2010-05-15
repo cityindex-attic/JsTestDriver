@@ -26,7 +26,7 @@ import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.JsTestDriverModule;
 import com.google.jstestdriver.guice.DebugModule;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
-import com.google.jstestdriver.guice.ThreadedActionProvider;
+import com.google.jstestdriver.guice.BrowserActionProvider;
 
 import junit.framework.TestCase;
 
@@ -49,7 +49,7 @@ public class CoverageModuleTest extends TestCase {
     flags.setTests(Arrays.asList("test"));
     flags.setBrowser(Arrays.asList("ff"));
     JsTestDriverModule jsTestDriverModule =
-        new JsTestDriverModule(flags, Collections.<FileInfo> emptySet(), "", System.out, new File(""));
+        new JsTestDriverModule(flags, Collections.<FileInfo> emptySet(), "", System.out, new File(""), 2 * 60 * 60);
 
     final Injector injector = Guice.createInjector(Lists.newArrayList(coverage, printStream,
         new DebugModule(false), jsTestDriverModule));
@@ -60,6 +60,6 @@ public class CoverageModuleTest extends TestCase {
 
     assertTrue(actions.get(actions.size() - 1) instanceof CoverageReporterAction);
     assertTrue(injector
-        .getInstance(ThreadedActionProvider.class) instanceof CoverageThreadedActionProvider);
+        .getInstance(BrowserActionProvider.class) instanceof CoverageThreadedActionProvider);
   }
 }

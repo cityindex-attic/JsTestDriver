@@ -28,6 +28,8 @@ import java.util.Set;
  */
 public class DefaultConfiguration implements Configuration{
 
+  public static final long DEFAULT_TEST_TIMEOUT = 2 * 60 * 60;
+
   public Set<FileInfo> getFilesList() {
     return Collections.<FileInfo>emptySet();
   }
@@ -48,5 +50,9 @@ public class DefaultConfiguration implements Configuration{
 
   public Configuration resolvePaths(PathResolver resolver) {
     return this;
+  }
+
+  public long getTestSuiteTimeout() {
+    return DEFAULT_TEST_TIMEOUT; // two hours. Should be enough to debug.
   }
 }

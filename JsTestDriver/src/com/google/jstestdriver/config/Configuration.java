@@ -25,16 +25,21 @@ import java.util.Set;
 
 
 /**
- * @author corysmith@google.com (Cory Smith)
- *
+ * The interface for configuration files.
+ * @author corbinsmith@gmail.com (Cory Smith)
  */
 public interface Configuration {
 
-  public abstract Set<FileInfo> getFilesList();
+  public Set<FileInfo> getFilesList();
 
-  public abstract String createServerAddress(String flagValue, int port);
+  public String createServerAddress(String flagValue, int port);
 
-  public abstract List<Plugin> getPlugins();
+  /** A list of plugin from the configuration file. */
+  public List<Plugin> getPlugins();
   
+  /** The total length of time a test should take to run.*/
+  public long getTestSuiteTimeout();
+  
+  /** Resolves all wildcard paths and places them in a new configuration. */
   public Configuration resolvePaths(PathResolver resolver);
 }
