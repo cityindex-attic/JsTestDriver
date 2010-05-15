@@ -89,7 +89,7 @@ public class BrowserActionsRunner implements Action {
             result.get(testTimeout, TimeUnit.SECONDS);
           } catch (ExecutionException e) {
             exceptions.add(e.getCause());
-          } catch (TimeoutException e) {
+          } catch (Exception e) {
             exceptions.add(e);
           }
       }

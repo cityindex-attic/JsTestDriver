@@ -35,8 +35,8 @@ public class BrowserActionRunner implements Callable<Boolean> {
   private final List<BrowserAction> actions;
 
   public BrowserActionRunner(String id,
-                               JsTestDriverClient client,
-                               List<BrowserAction> actions) {
+                             JsTestDriverClient client,
+                             List<BrowserAction> actions) {
     this.id = id;
     this.client = client;
     this.actions = actions;
