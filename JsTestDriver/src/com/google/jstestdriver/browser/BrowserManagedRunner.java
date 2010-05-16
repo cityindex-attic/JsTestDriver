@@ -50,7 +50,9 @@ public class BrowserManagedRunner implements Callable<ResponseStream> {
             + runner.getTimeout());
       }
     }
-    return browserActionRunner.call();
+    final ResponseStream responseStream = browserActionRunner.call();
+    runner.stopBrowser();
+    return responseStream;
   }
 
   private boolean isBrowserCaptured(String browserId, JsTestDriverClient client) {
