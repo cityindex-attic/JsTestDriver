@@ -181,6 +181,9 @@ public class DefaultListener implements TestResultListener {
 
   public void onFileLoad(String browser, FileResult fileResult) {
     if (fileResult.isSuccess()) {
+      if (verbose) {
+        out.println(browser + " loaded " + fileResult.getFileSource().getFileSrc());
+      }
       return;
     }
     RunData runData = currentRunData(browser);

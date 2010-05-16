@@ -499,6 +499,7 @@
       <arg value="${XMLDIRECTORY}"/>
       <arg value="--runnerMode" />
       <arg value="DEBUG_BATCH"/>
+      <arg value="--verbose" />
     </java>
   </target>
 
