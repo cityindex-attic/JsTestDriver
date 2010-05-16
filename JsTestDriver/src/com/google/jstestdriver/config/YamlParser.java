@@ -1,5 +1,4 @@
 /*
- * Copyright 2009 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -45,7 +44,6 @@ public class YamlParser {
     String server = "";
     long timeOut = 0;
     List<Plugin> plugins = Lists.newLinkedList();
-    Set<FileInfo> filesList = Sets.newLinkedHashSet();
 
     if (data.containsKey("load")) {
       resolvedFilesLoad.addAll(createFileInfos((List<String>) data
@@ -72,7 +70,7 @@ public class YamlParser {
     }
     
     if (data.containsKey("timeout")) {
-      timeOut = Long.parseLong((String)data.get("timeout"));
+      timeOut = (Long)data.get("timeout");
     }
 
     return new ParsedConfiguration(resolvedFilesLoad,
