@@ -165,11 +165,12 @@ public class CommandTask {
         resetParams.put("data", gson.toJson(cmd));
         server.post(baseUrl + "/cmd", resetParams);
 
-        logger.trace("Starting File Upload Refresh.");
+        logger.debug("Starting File Upload Refresh for {}", params.get("id"));
         String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
         shouldPanic(response, "File upload reset");
+        logger.debug("Finished File Upload Refresh for {}", params.get("id"));
 
         finalFilesToUpload.addAll(filesToUpload);
       } else {
@@ -198,12 +199,12 @@ public class CommandTask {
 
         loadFileParams.put("id", params.get("id"));
         loadFileParams.put("data", gson.toJson(cmd));
-        logger.trace("Sending LOADTEST: {}", loadFileParams);
+        logger.debug("Sending LOADTEST for {}", params.get("id"));
         server.post(baseUrl + "/cmd", loadFileParams);
         String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + params.get("id"));
         StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
         Response response = message.getResponse();
-        logger.trace("LOADTEST response: {}", response);
+        logger.debug("LOADTEST finished for ({}) {}", params.get("id"), response.getBrowser());
 
         shouldPanic(response, "Loading files into the browser.");
         stream.stream(response);
