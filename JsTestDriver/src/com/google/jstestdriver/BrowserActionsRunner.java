@@ -15,17 +15,7 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import com.google.jstestdriver.browser.BrowserManagedRunner;
-import com.google.jstestdriver.browser.BrowserRunner;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -33,6 +23,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.browser.BrowserManagedRunner;
+import com.google.jstestdriver.browser.BrowserRunner;
 
 /**
  * Executes each {@link BrowserAction} on each browser.
@@ -47,7 +47,7 @@ public class BrowserActionsRunner implements Action {
   private final ExecutorService executor;
   private final Set<BrowserRunner> browserRunners;
   private final String serverAddress;
-  private final long testTimeout;
+  private final long testSuiteTimeout;
 
   @Inject
   public BrowserActionsRunner(JsTestDriverClient client, List<BrowserAction> actions,
@@ -59,7 +59,7 @@ public class BrowserActionsRunner implements Action {
     this.executor = executor;
     this.browserRunners = browserRunners;
     this.serverAddress = serverAddress;
-    this.testTimeout = testTimeout;
+    this.testSuiteTimeout = testTimeout;
   }
 
   public void run() {
@@ -83,19 +83,22 @@ public class BrowserActionsRunner implements Action {
     }
     List<Throwable> exceptions = Lists.newLinkedList();
     final List<ResponseStream> streams = Lists.newLinkedList();
+    long currentTimeout = testSuiteTimeout;
     try {
       final List<Future<ResponseStream>> results = executor.invokeAll(runners);
       for (Future<ResponseStream> result : results) {
           try {
-            streams.add(result.get(testTimeout, TimeUnit.SECONDS));
+            streams.add(result.get(currentTimeout, TimeUnit.SECONDS));
           } catch (ExecutionException e) {
             exceptions.add(e.getCause());
+          } catch(TimeoutException e) {
+            currentTimeout = 0; //one timeout, skip the rest.¯
           } catch (Exception e) {
             exceptions.add(e);
           }
       }
     } catch (InterruptedException e) {
-      exceptions.add(e);
+      throw new RuntimeException(e);
     } finally {
       // something isn't working....
       executor.shutdownNow();
