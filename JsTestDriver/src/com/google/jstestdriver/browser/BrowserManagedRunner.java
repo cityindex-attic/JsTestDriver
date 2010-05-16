@@ -39,20 +39,22 @@ public class BrowserManagedRunner implements Callable<ResponseStream> {
   public ResponseStream call() throws Exception {
     String url = String.format("%s/capture?id=%s", serverAddress, browserId);
     runner.startBrowser(url);
-    long timeOut = TimeUnit.MILLISECONDS.convert(runner.getTimeout(), TimeUnit.SECONDS);
-    long start = System.currentTimeMillis();
-    // TODO(corysmith): replace this with a stream from the client on browser
-    // updates.
-    while (!isBrowserCaptured(browserId, client)) {
-      Thread.sleep(50);
-      if (System.currentTimeMillis() - start > timeOut) {
-        throw new RuntimeException("Could not start browser " + runner + " in "
-            + runner.getTimeout());
+    try {
+      long timeOut = TimeUnit.MILLISECONDS.convert(runner.getTimeout(), TimeUnit.SECONDS);
+      long start = System.currentTimeMillis();
+      // TODO(corysmith): replace this with a stream from the client on browser
+      // updates.
+      while (!isBrowserCaptured(browserId, client)) {
+        Thread.sleep(50);
+        if (System.currentTimeMillis() - start > timeOut) {
+          throw new RuntimeException("Could not start browser " + runner + " in "
+              + runner.getTimeout());
+        }
       }
+      return browserActionRunner.call();
+    } finally {
+      runner.stopBrowser();
     }
-    final ResponseStream responseStream = browserActionRunner.call();
-    runner.stopBrowser();
-    return responseStream;
   }
 
   private boolean isBrowserCaptured(String browserId, JsTestDriverClient client) {
