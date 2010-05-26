@@ -23,6 +23,9 @@ jstestdriver.TestCaseInfo = function(testCaseName, template, opt_type) {
 jstestdriver.TestCaseInfo.DEFAULT_TYPE = 'default';
 
 
+jstestdriver.TestCaseInfo.ASYNC_TYPE = 'async';
+
+
 jstestdriver.TestCaseInfo.prototype.getType = function() {
   return this.type_;
 };

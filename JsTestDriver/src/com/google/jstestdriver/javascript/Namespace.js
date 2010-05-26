@@ -16,6 +16,7 @@
 jstestdriver = {};
 jstestdriver.global = this;
 jstestdriver.plugins = {};
+jstestdriver.plugins.async = {};
 
 jstestdriver.SERVER_URL = "/query/";
 

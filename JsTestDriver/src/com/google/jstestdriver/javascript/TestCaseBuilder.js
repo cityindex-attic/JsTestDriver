@@ -18,11 +18,11 @@ jstestdriver.TestCaseBuilder = function(testCaseManager) {
 };
 
 
-jstestdriver.TestCaseBuilder.prototype.TestCase = function(testCaseName, proto) {
+jstestdriver.TestCaseBuilder.prototype.TestCase = function(testCaseName, opt_proto, opt_type) {
   var testCaseClass = function() {};
 
-  if (proto) {
-    testCaseClass.prototype = proto;
+  if (opt_proto) {
+    testCaseClass.prototype = opt_proto;
   }
   if (typeof testCaseClass.prototype.setUp == 'undefined') {
     testCaseClass.prototype.setUp = function() {};
@@ -30,6 +30,11 @@ jstestdriver.TestCaseBuilder.prototype.TestCase = function(testCaseName, proto) 
   if (typeof testCaseClass.prototype.tearDown == 'undefined') {
     testCaseClass.prototype.tearDown = function() {};
   }
-  this.testCaseManager_.add(new jstestdriver.TestCaseInfo(testCaseName, testCaseClass));
+  this.testCaseManager_.add(new jstestdriver.TestCaseInfo(testCaseName, testCaseClass, opt_type));
   return testCaseClass;
+};
+
+
+jstestdriver.TestCaseBuilder.prototype.AsyncTestCase = function(testCaseName, opt_proto) {
+  return this.TestCase(testCaseName, opt_proto, jstestdriver.TestCaseInfo.ASYNC_TYPE);
 };

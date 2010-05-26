@@ -33,6 +33,9 @@ jstestdriver.listen = function() {
   jstestdriver.global.TestCase = jstestdriver.bind(jstestdriver.testCaseBuilder,
       jstestdriver.testCaseBuilder.TestCase);
 
+  jstestdriver.global.AsyncTestCase = jstestdriver.bind(jstestdriver.testCaseBuilder,
+      jstestdriver.testCaseBuilder.AsyncTestCase);
+
   // default plugin
   var scriptLoader = new jstestdriver.plugins.ScriptLoader(window, document,
         jstestdriver.testCaseManager);
@@ -54,6 +57,15 @@ jstestdriver.listen = function() {
           testRunnerPlugin,
           new jstestdriver.plugins.AssertsPlugin(),
           new jstestdriver.plugins.TestCaseManagerPlugin()));
+
+
+
+  jstestdriver.pluginRegistrar.register(
+      new jstestdriver.plugins.async.AsyncTestRunnerPlugin(Date, function() {
+        jstestdriver.jQuery('body').children().remove();
+        jstestdriver.jQuery(document).unbind();
+        jstestdriver.jQuery(document).die();
+      }));
 
   // legacy
   jstestdriver.testCaseManager.TestCase = jstestdriver.global.TestCase;
