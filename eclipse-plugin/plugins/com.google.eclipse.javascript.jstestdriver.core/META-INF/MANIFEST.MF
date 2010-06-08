@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JS Test Driver Core
 Bundle-SymbolicName: com.google.eclipse.javascript.jstestdriver.core;singleton:=true
-Bundle-Version: 1.1.1.b
+Bundle-Version: 1.1.1.d
 Bundle-Vendor: GOOGLE
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -19,6 +19,7 @@ Export-Package: com.google.common.base,
  com.google.jstestdriver,
  com.google.jstestdriver.config,
  com.google.jstestdriver.guice,
- com.google.jstestdriver.hooks
+ com.google.jstestdriver.hooks,
+ com.google.jstestdriver.runner
 Bundle-ClassPath: lib/JsTestDriver.jar,
  .
