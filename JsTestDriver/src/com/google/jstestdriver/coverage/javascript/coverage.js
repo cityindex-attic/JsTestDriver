@@ -254,16 +254,25 @@ var coverage = (function() {
 
   InstrumentedTestCaseRunner.prototype.processResults = function(result) {
     var self = this;
-    this.setTimeout(function(){
-      var summary = self.processCoverage();
-      self.setTimeout(function() {
-        result.data[COVERAGE_DATA_KEY] = summary.toProtoBuffer();
+    // only process coverage at the end of the line.
+    if (this.resultIterator.hasNext()) {
+      result.data[COVERAGE_DATA_KEY] = '[]';
+      this.setTimeout(function() {
+        self.onTestDone(result);
+        self.setTimeout(self.boundRun, 1);
+      }, 1);
+    } else {
+      this.setTimeout(function(){
+        var summary = self.processCoverage();
         self.setTimeout(function() {
-          self.onTestDone(result);
-          self.setTimeout(self.boundRun, 1);
+          result.data[COVERAGE_DATA_KEY] = summary.toProtoBuffer();
+          self.setTimeout(function() {
+            self.onTestDone(result);
+            self.setTimeout(self.boundRun, 1);
+          }, 1);
         }, 1);
       }, 1);
-    }, 1);
+    }
   }
 
   /** */
