@@ -15,6 +15,18 @@
  */
 package com.google.jstestdriver.idea;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
@@ -32,22 +44,10 @@ import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultGenerator;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Run JSTD in its own process, and stream messages to a server that lives in the IDEA process,
  * which will update the UI with our results.
- * 
+ *
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class TestRunner {
@@ -136,8 +136,8 @@ public class TestRunner {
       FileReader fileReader = new FileReader(settingsFile);
       ConfigurationParser configurationParser = new ConfigurationParser(baseDirectory, fileReader,
           new DefaultPathRewriter());
-      IDEPluginActionBuilder builder =
-          new IDEPluginActionBuilder(configurationParser, serverURL, responseStreamFactory);
+      IDEPluginActionBuilder builder = new IDEPluginActionBuilder(
+      		configurationParser, serverURL, responseStreamFactory, baseDirectory);
       builder.install(new AbstractModule() {
         @Override
         protected void configure() {
