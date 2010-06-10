@@ -15,13 +15,7 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
-import com.google.jstestdriver.JsonCommand.CommandType;
-import com.google.jstestdriver.util.NullStopWatch;
-
-import junit.framework.TestCase;
-
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +25,13 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
+
+import com.google.gson.Gson;
+import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
+import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.util.NullStopWatch;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -122,9 +123,9 @@ public class CommandTaskTest extends TestCase {
         + "\"last\":true}");
     server.expect(baseUrl
         + "fileSet?POST?{id=1, data="
-        + gson.toJson(Arrays.asList(new FileInfo(loadInfo.getFileName(), loadInfo.getTimestamp(),
+        + gson.toJson(Arrays.asList(new FileInfo(loadInfo.getFilePath(), loadInfo.getTimestamp(),
             loadInfo.isPatch(), loadInfo.isServeOnly(), loadInfoContents), new FileInfo(serveInfo
-            .getFileName(), serveInfo.getTimestamp(), serveInfo.isPatch(), serveInfo.isServeOnly(),
+            .getFilePath(), serveInfo.getTimestamp(), serveInfo.isPatch(), serveInfo.isServeOnly(),
             serveInfoContents))) + "}", "");
 
     String url = baseUrl
@@ -183,7 +184,9 @@ public class CommandTaskTest extends TestCase {
       LinkedHashSet<FileInfo> serveFiles, Map<String, String> params, FakeResponseStream stream,
       MockFileLoader fileLoader, boolean upload) {
     CommandTask task = new CommandTask(new DefaultFileFilter(), stream, files,
-        "http://localhost", server, params, new HeartBeatManagerStub(), fileLoader, upload, new NullStopWatch());
+        "http://localhost", new File(System.getProperty("java.io.tmpdir")),
+        server, params, new HeartBeatManagerStub(),
+        fileLoader, upload, new NullStopWatch());
     return task;
   }
 
@@ -194,12 +197,13 @@ public class CommandTaskTest extends TestCase {
       expected.put(file, contents);
     }
 
-    public List<FileInfo> loadFiles(Collection<FileInfo> filesToLoad, boolean shouldReset) {
+    public List<FileInfo> loadFiles(
+    		Collection<FileInfo> filesToLoad, File basePath, boolean shouldReset) {
       List<FileInfo> loaded = new LinkedList<FileInfo>();
       for (FileInfo info : filesToLoad) {
         assertTrue("File " + info + " was not found in " + expected.keySet(), expected
             .containsKey(info));
-        loaded.add(new FileInfo(info.getFileName(), info.getTimestamp(), info.isPatch(), info
+        loaded.add(new FileInfo(info.getFilePath(), info.getTimestamp(), info.isPatch(), info
             .isServeOnly(), expected.get(info)));
       }
       return loaded;

@@ -16,16 +16,17 @@
 
 package com.google.jstestdriver;
 
-import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
-
-import junit.framework.TestCase;
-
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
+import junit.framework.TestCase;
+
+import com.google.jstestdriver.hooks.FileLoadPostProcessor;
+import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 
 public class ProcessingFileLoaderTest extends TestCase {
 
@@ -53,7 +54,7 @@ public class ProcessingFileLoaderTest extends TestCase {
     }
 
     public String readFile(String file) {
-      assertEquals(info.getFileName(), file);
+      assertEquals(info.getAbsoluteFileName(new File(".")), file);
       return infoData;
     }
   }
@@ -98,18 +99,18 @@ public class ProcessingFileLoaderTest extends TestCase {
     final FileInfo info = new FileInfo("foo.js", 1234, false, true, null);
     final String infoData = "foobar";
     final boolean shouldReset = false;
-    List<FileInfo> actual = new ProcessingFileLoader(new MockFileFilter(shouldReset, infoData), new FileReader() {
-
-      public String readFile(String file) {
-        assertEquals(info.getFileName(), file);
-        return infoData;
-      }
-
-    }, Collections.<FileLoadPostProcessor> emptySet(), Collections
-        .<FileLoadPreProcessor> emptySet()).loadFiles(Collections.singleton(info), shouldReset);
+		List<FileInfo> actual = new ProcessingFileLoader(new MockFileFilter(shouldReset, infoData),
+				new FileReader() {
+					public String readFile(String file) {
+						assertEquals(info.getAbsoluteFileName(new File(".")), file);
+						return infoData;
+					}
+				}, Collections.<FileLoadPostProcessor> emptySet(),
+				Collections.<FileLoadPreProcessor> emptySet()).loadFiles(
+						Collections.singleton(info), new File("."), shouldReset);
 
     assertEquals(infoData + "filtered", actual.get(0).getData());
-    assertEquals(info.getFileName(), actual.get(0).getFileName());
+    assertEquals(info.getFilePath(), actual.get(0).getFilePath());
     assertEquals(info.getTimestamp(), actual.get(0).getTimestamp());
     assertEquals(info.isServeOnly(), actual.get(0).isServeOnly());
   }
@@ -123,7 +124,7 @@ public class ProcessingFileLoaderTest extends TestCase {
     FileLoadPostProcessor processor = new FileLoadPostProcessor() {
       public FileInfo process(FileInfo file) {
         assertEquals(infoData + "filtered", file.getData());
-        assertEquals(info.getFileName(), file.getFileName());
+        assertEquals(info.getFilePath(), file.getFilePath());
         assertEquals(info.getTimestamp(), file.getTimestamp());
         assertEquals(info.isServeOnly(), file.isServeOnly());
         return expected;
@@ -131,8 +132,9 @@ public class ProcessingFileLoaderTest extends TestCase {
     };
 
     List<FileInfo> actual = new ProcessingFileLoader(new MockFileFilter(shouldReset, infoData),
-        new FileReaderStub(infoData, info), Collections.singleton(processor), Collections.<FileLoadPreProcessor> emptySet()).loadFiles(
-        Collections.singleton(info), shouldReset);
+        new FileReaderStub(infoData, info), Collections.singleton(processor),
+        Collections.<FileLoadPreProcessor> emptySet()).loadFiles(
+            Collections.singleton(info), new File("."), shouldReset);
 
     assertEquals(expected, actual.get(0));
   }
@@ -145,7 +147,8 @@ public class ProcessingFileLoaderTest extends TestCase {
     final String patchData = "patchbar";
     final boolean shouldReset = false;
     MockFileReader mockFileReader = new MockFileReader();
-    mockFileReader.expected(info.getFileName(), infoData).expected(patch.getFileName(), patchData);
+    mockFileReader.expected(info.getAbsoluteFileName(new File(".")), infoData)
+        .expected(patch.getAbsoluteFileName(new File(".")), patchData);
     List<FileInfo> actual = new ProcessingFileLoader(new JsTestDriverFileFilter() {
 
       public String filterFile(String content, boolean reload) {
@@ -158,11 +161,12 @@ public class ProcessingFileLoaderTest extends TestCase {
         throw new UnsupportedOperationException("not expected");
       }
 
-    }, mockFileReader, Collections.<FileLoadPostProcessor> emptySet(), Collections
-        .<FileLoadPreProcessor> emptySet()).loadFiles(Collections.singleton(info), shouldReset);
+    }, mockFileReader, Collections.<FileLoadPostProcessor> emptySet(),
+        Collections.<FileLoadPreProcessor> emptySet()).loadFiles(
+        		Collections.singleton(info), new File("."), shouldReset);
 
     assertEquals(infoData + "filtered" + patchData, actual.get(0).getData());
-    assertEquals(info.getFileName(), actual.get(0).getFileName());
+    assertEquals(info.getFilePath(), actual.get(0).getFilePath());
     assertEquals(info.getTimestamp(), actual.get(0).getTimestamp());
     assertEquals(info.isServeOnly(), actual.get(0).isServeOnly());
   }
@@ -172,10 +176,10 @@ public class ProcessingFileLoaderTest extends TestCase {
     final boolean shouldReset = false;
     List<FileInfo> actual = new ProcessingFileLoader(null, null, Collections
         .<FileLoadPostProcessor> emptySet(), Collections.<FileLoadPreProcessor> emptySet())
-        .loadFiles(Collections.singleton(info), shouldReset);
+        .loadFiles(Collections.singleton(info), new File("."), shouldReset);
 
     assertEquals("", actual.get(0).getData());
-    assertEquals(info.getFileName(), actual.get(0).getFileName());
+    assertEquals(info.getFilePath(), actual.get(0).getFilePath());
     assertEquals(info.getTimestamp(), actual.get(0).getTimestamp());
     assertEquals(info.isServeOnly(), actual.get(0).isServeOnly());
   }
@@ -186,30 +190,30 @@ public class ProcessingFileLoaderTest extends TestCase {
     final FileInfo addedInfo = new FileInfo("addedfoo.js", 12434, false, false, null);
     final String addedData = "foobar";
     final boolean shouldReset = false;
-    
+
     FileLoadPreProcessor preProcessor = new FileLoadPreProcessor(){
       public List<FileInfo> process(List<FileInfo> files) {
         files.add(addedInfo);
         return new LinkedList<FileInfo>(files);
       }
     };
-    
+
     MockFileReader reader = new MockFileReader();
-    reader.expected(info.getFileName(), infoData);
-    reader.expected(addedInfo.getFileName(), addedData);
+    reader.expected(info.getAbsoluteFileName(new File(".")), infoData);
+    reader.expected(addedInfo.getAbsoluteFileName(new File(".")), addedData);
     List<FileInfo> actual = new ProcessingFileLoader(new MockFileFilter(shouldReset, infoData),
         reader,
         Collections.<FileLoadPostProcessor> emptySet(),
         Collections.singleton(preProcessor))
-    .loadFiles(Collections.singleton(info), shouldReset);
+            .loadFiles(Collections.singleton(info), new File("."), shouldReset);
 
     assertEquals(infoData + "filtered", actual.get(0).getData());
-    assertEquals(info.getFileName(), actual.get(0).getFileName());
+    assertEquals(info.getFilePath(), actual.get(0).getFilePath());
     assertEquals(info.getTimestamp(), actual.get(0).getTimestamp());
     assertEquals(info.isServeOnly(), actual.get(0).isServeOnly());
 
     assertEquals(addedData + "filtered", actual.get(1).getData());
-    assertEquals(addedInfo.getFileName(), actual.get(1).getFileName());
+    assertEquals(addedInfo.getFilePath(), actual.get(1).getFilePath());
     assertEquals(addedInfo.getTimestamp(), actual.get(1).getTimestamp());
     assertEquals(addedInfo.isServeOnly(), actual.get(1).isServeOnly());
   }

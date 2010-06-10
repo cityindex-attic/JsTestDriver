@@ -38,9 +38,9 @@ public class RelativePathConverterTest extends TestCase {
     List<FileInfo> relativePaths = relativePathConverter.convert();
 
     assertEquals(4, relativePaths.size());
-    assertEquals("adirectory/afile.js", relativePaths.get(0).getFileName());
-    assertEquals("myfile.js", relativePaths.get(1).getFileName());
-    assertEquals("hehe/hihi/hoho/againafile.js", relativePaths.get(2).getFileName());
-    assertEquals("meuh/coin/quack/woof/notagain.js", relativePaths.get(3).getFileName());
+    assertEquals("adirectory/afile.js", relativePaths.get(0).getFilePath());
+    assertEquals("myfile.js", relativePaths.get(1).getFilePath());
+    assertEquals("hehe/hihi/hoho/againafile.js", relativePaths.get(2).getFilePath());
+    assertEquals("meuh/coin/quack/woof/notagain.js", relativePaths.get(3).getFilePath());
   }
 }

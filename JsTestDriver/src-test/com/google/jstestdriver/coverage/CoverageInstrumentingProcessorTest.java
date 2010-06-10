@@ -31,7 +31,7 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
   public void testInstrument() throws Exception {
     FileInfo fileInfo = new FileInfo("foo.js", 0, true, false, "var a = 1;");
     String expected = "decorated";
-    Code code = new Code(fileInfo.getFileName(),
+    Code code = new Code(fileInfo.getFilePath(),
                          fileInfo.getData());
     CoverageAccumulator accumulator = new CoverageAccumulator();
     FileInfo decorated =
@@ -39,7 +39,7 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
                                          Collections.<String>emptySet(),
                                          accumulator).process(fileInfo);
     assertEquals(expected, decorated.getData());
-    assertEquals(fileInfo.getFileName(), decorated.getFileName());
+    assertEquals(fileInfo.getFilePath(), decorated.getFilePath());
     assertEquals(fileInfo.getTimestamp(), decorated.getTimestamp());
     assertEquals(fileInfo.isServeOnly(), decorated.isServeOnly());
   }
@@ -51,7 +51,7 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
     FileInfo remote = new FileInfo("https://foobar", 0, true, false, null);
     CoverageInstrumentingProcessor processor =
         new CoverageInstrumentingProcessor(null,
-            Sets.<String>newHashSet(excluded.getFileName()), null);
+            Sets.<String>newHashSet(excluded.getFilePath()), null);
     assertSame(lcov, processor.process(lcov));
     assertSame(serveOnly, processor.process(serveOnly));
     assertSame(remote, processor.process(remote));

@@ -47,19 +47,19 @@ public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
   }
 
   public FileInfo process(FileInfo file) {
-    if (file.getFileName().contains("LCOV.js") || !file.canLoad()
-      || file.isServeOnly() || excludes.contains(file.getFileName())) {
+    if (file.getFilePath().contains("LCOV.js") || !file.canLoad()
+      || file.isServeOnly() || excludes.contains(file.getFilePath())) {
       return file;
     }
     long start = System.currentTimeMillis();
-    InstrumentedCode decorated = decorator.instrument(new Code(file.getFileName(),
+    InstrumentedCode decorated = decorator.instrument(new Code(file.getFilePath(),
                                                       file.getData()));
     LOGGER.debug(String.format("Instrumented %s in %ss",
-        file.getFileName(),
+        file.getFilePath(),
         (System.currentTimeMillis() - start)/1000.0
     ));
     decorated.writeInitialLines(accumulator);
-    return new FileInfo(file.getFileName(),
+    return new FileInfo(file.getFilePath(),
                         file.getTimestamp(),
                         file.isPatch(),
                         file.isServeOnly(),

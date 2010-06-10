@@ -15,6 +15,13 @@
  */
 package com.google.jstestdriver;
 
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -26,12 +33,6 @@ import com.google.jstestdriver.config.DefaultConfiguration;
 import com.google.jstestdriver.guice.BrowserActionProvider;
 import com.google.jstestdriver.guice.FlagsModule;
 import com.google.jstestdriver.html.HtmlDocModule;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * A builder for IDE's to use. Minimizes the surface area of the API which needs to
@@ -49,12 +50,14 @@ public class IDEPluginActionBuilder {
   private final LinkedList<Module> modules = new LinkedList<Module>();
   private boolean reset = false;
   private List<String> dryRunFor = new LinkedList<String>();
+  private File basePath;
 
   public IDEPluginActionBuilder(ConfigurationParser configParser, String serverAddress,
-      ResponseStreamFactory responseStreamFactory) {
+      ResponseStreamFactory responseStreamFactory, File basePath) {
     this.configParser = configParser;
     this.serverAddress = serverAddress;
     this.responseStreamFactory = responseStreamFactory;
+    this.basePath = basePath;
   }
 
 
@@ -93,6 +96,7 @@ public class IDEPluginActionBuilder {
       reset,
       dryRunFor,
       serverAddress != null ? serverAddress : configParser.getServer(),
+      basePath,
       configParser.getFilesList(),
       responseStreamFactory));
 
@@ -105,18 +109,20 @@ public class IDEPluginActionBuilder {
     private final boolean reset;
     private final List<String> dryRunFor;
     private final String serverAddress;
+    private final File basePath;
     private final Set<FileInfo> fileSet;
     private final ResponseStreamFactory responseStreamFactory;
     private final LinkedList<Module> modules;
 
     public ConfigurationModule(LinkedList<Module> modules, List<String> tests,
-        boolean reset, List<String> dryRunFor, String serverAddress,
+        boolean reset, List<String> dryRunFor, String serverAddress, File basePath,
         Set<FileInfo> fileSet, ResponseStreamFactory responseStreamFactory) {
       this.modules = modules;
       this.tests = tests;
       this.reset = reset;
       this.dryRunFor = dryRunFor;
       this.serverAddress = serverAddress;
+      this.basePath = basePath;
       this.fileSet = fileSet;
       this.responseStreamFactory = responseStreamFactory;
     }
@@ -137,7 +143,7 @@ public class IDEPluginActionBuilder {
 
       // TODO(corysmith): Change this to an actual class, so that we can JITI it.
       bind(ResponseStreamFactory.class).toInstance(responseStreamFactory);
-      
+      bind(File.class).annotatedWith(Names.named("basePath")).toInstance(new File("."));
       bind(new TypeLiteral<List<BrowserAction>>(){}).toProvider(BrowserActionProvider.class);
       bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool());
 

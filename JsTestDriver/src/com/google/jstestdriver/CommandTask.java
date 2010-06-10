@@ -17,16 +17,6 @@ package com.google.jstestdriver;
 
 import static java.lang.String.format;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.jstestdriver.JsonCommand.CommandType;
-import com.google.jstestdriver.Response.ResponseType;
-import com.google.jstestdriver.browser.BrowserPanicException;
-import com.google.jstestdriver.util.StopWatch;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,10 +27,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.browser.BrowserPanicException;
+import com.google.jstestdriver.util.StopWatch;
+
 /**
  * Handles the communication of a command to the JsTestDriverServer from the
  * JsTestDriverClient.
- * 
+ *
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class CommandTask {
@@ -57,6 +57,7 @@ public class CommandTask {
   private final ResponseStream stream;
   private final Set<FileInfo> fileSet;
   private final String baseUrl;
+  private final File basePath;
   private final Server server;
   private final Map<String, String> params;
   private final HeartBeatManager heartBeatManager;
@@ -66,12 +67,13 @@ public class CommandTask {
   private final StopWatch stopWatch;
 
   public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
-      String baseUrl, Server server, Map<String, String> params, HeartBeatManager heartBeatManager,
-      FileLoader fileLoader, boolean upload, StopWatch stopWatch) {
+      String baseUrl, File basePath, Server server, Map<String, String> params,
+      HeartBeatManager heartBeatManager, FileLoader fileLoader, boolean upload, StopWatch stopWatch) {
     this.filter = filter;
     this.stream = stream;
     this.fileSet = fileSet;
     this.baseUrl = baseUrl;
+    this.basePath = basePath;
     this.server = server;
     this.params = params;
     this.heartBeatManager = heartBeatManager;
@@ -117,10 +119,10 @@ public class CommandTask {
   // TODO(corysmith): remove this function once FileInfo is used exclusively.
   // Hate static crap.
   public static FileSource fileInfoToFileSource(FileInfo info) {
-    if (info.getFileName().startsWith("http://")) {
-      return new FileSource(info.getFileName(), info.getTimestamp());
+    if (info.getFilePath().startsWith("http://")) {
+      return new FileSource(info.getFilePath(), info.getTimestamp());
     }
-    return new FileSource("/test/" + info.getFileName(), info.getTimestamp());
+    return new FileSource("/test/" + info.getFilePath(), info.getTimestamp());
   }
 
   /**
@@ -178,7 +180,7 @@ public class CommandTask {
           finalFilesToUpload.addAll(findDependencies(file));
         }
       }
-      List<FileInfo> loadedfiles = fileLoader.loadFiles(finalFilesToUpload, shouldReset);
+      List<FileInfo> loadedfiles = fileLoader.loadFiles(finalFilesToUpload, basePath, shouldReset);
       Map<String, String> uploadFileParams = new LinkedHashMap<String, String>();
 
       uploadFileParams.put("id", params.get("id"));
@@ -216,7 +218,7 @@ public class CommandTask {
     List<FileInfo> deps = new LinkedList<FileInfo>();
 
     // TODO(jeremiele): replace filter with a plugin
-    for (String fileName : filter.resolveFilesDeps(file.getFileName())) {
+    for (String fileName : filter.resolveFilesDeps(file.getFilePath())) {
       deps.add(new FileInfo(fileName, new File(fileName).lastModified(), false, false, null));
     }
     return deps;

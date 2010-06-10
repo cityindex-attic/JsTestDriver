@@ -15,20 +15,21 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.Provider;
-import com.google.jstestdriver.output.PrintXmlTestResultsAction;
-import com.google.jstestdriver.output.XmlPrinter;
-
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Provider;
+import com.google.jstestdriver.output.PrintXmlTestResultsAction;
+import com.google.jstestdriver.output.XmlPrinter;
+
 /**
  * A builder for creating a sequence of {@link Action}s to be run by the
  * ActionRunner.
- * 
+ *
  * @author corysmith
  */
 public class ActionSequenceBuilder {
@@ -49,11 +50,12 @@ public class ActionSequenceBuilder {
   private List<String> commands = new LinkedList<String>();
   private XmlPrinter xmlPrinter;
   private final BrowserActionsRunner browserActionsRunner;
+  private final File basePath;
 
   /**
    * Begins the building of an action sequence.
-   * 
-   * @param accumulator 
+   *
+   * @param accumulator
    */
   public ActionSequenceBuilder(ActionFactory actionFactory,
                                FileLoader fileLoader,
@@ -61,13 +63,15 @@ public class ActionSequenceBuilder {
                                BrowserActionsRunner browserActionsRunner,
                                Provider<URLTranslator> urlTranslatorProvider,
                                Provider<URLRewriter> urlRewriterProvider,
-                               FailureAccumulator accumulator) {
+                               FailureAccumulator accumulator,
+                               File basePath) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.browserActionsRunner = browserActionsRunner;
     this.urlTranslatorProvider = urlTranslatorProvider;
     this.urlRewriterProvider = urlRewriterProvider;
     this.accumulator = accumulator;
+    this.basePath = basePath;
   }
 
   /**
@@ -76,8 +80,8 @@ public class ActionSequenceBuilder {
    */
   private void addServerActions(List<Action> actions, boolean leaveServerRunning) {
     if (preloadFiles) {
-      for (FileInfo file : fileLoader.loadFiles(fileSet, true)) {
-        files.put(file.getFileName(), file);
+      for (FileInfo file : fileLoader.loadFiles(fileSet, basePath, true)) {
+        files.put(file.getFilePath(), file);
       }
     }
     ServerStartupAction serverStartupAction =
@@ -91,7 +95,7 @@ public class ActionSequenceBuilder {
 
   /**
    * Adds tests to the action sequence.
-   * 
+   *
    * @param tests
    *          The list of tests to be executed during this sequence.
    * @return the current builder.
@@ -142,7 +146,7 @@ public class ActionSequenceBuilder {
 
   /**
    * Defines a list of files that should be loaded into the list of browsers.
-   * 
+   *
    * @param fileSet
    *          The files to be loaded into the browser.
    * @param preloadFiles

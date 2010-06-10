@@ -177,7 +177,7 @@ public class SlaveBrowser {
 
     for (FileSource f : errorFiles) {
       for (FileInfo info : fileSet) {
-        if (info.getFileName().equals(f.getBasePath())) {
+        if (info.getFilePath().equals(f.getBasePath())) {
           filesInfoToRemove.add(info);
           break;
         }

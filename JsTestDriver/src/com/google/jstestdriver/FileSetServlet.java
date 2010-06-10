@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -14,10 +14,6 @@
  * the License.
  */
 package com.google.jstestdriver;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.jstestdriver.BrowserCaptureEvent.Event;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -35,6 +31,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.BrowserCaptureEvent.Event;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
@@ -43,7 +43,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
   private static final long serialVersionUID = -5224290018208979639L;
   private static final int HEARTBEAT_TIMEOUT = 2000;
 
-  private final Gson gson = new Gson();  
+  private final Gson gson = new Gson();
   private final Map<String, Lock> locks = new ConcurrentHashMap<String, Lock>();
 
   private final CapturedBrowsers capturedBrowsers;
@@ -66,7 +66,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
     if (session == null && sessionId != null) {
       sessionHeartBeat(id, sessionId);
-    } else { 
+    } else {
       if (session.equals("start")) {
         startSession(id, resp.getWriter());
       } else if (session.equals("stop")) {
@@ -160,8 +160,8 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
     for (FileInfo fileInfo : filesToRequest) {
       if (!fileInfo.isServeOnly()
-          || !cachedFiles.contains(fileInfo.getFileName())
-          || filesCache.getFileInfo(fileInfo.getFileName()).getTimestamp() < fileInfo
+          || !cachedFiles.contains(fileInfo.getFilePath())
+          || filesCache.getFileInfo(fileInfo.getFilePath()).getTimestamp() < fileInfo
           .getTimestamp()) {
         filteredFilesToRequest.add(fileInfo);
       }
@@ -181,8 +181,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
         {}.getType());
 
     for (FileInfo f : filesData) {
-      String path = f.getFileName();
-      filesCache.addFile(path, f);
+      filesCache.addFile(f);
     }
   }
 }

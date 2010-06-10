@@ -47,14 +47,14 @@ public class InlineHtmlProcessorTest extends TestCase {
 
   private void doScriptTest(ScriptBuilder script) {
     FileInfo test = new FileInfo("foo.js", 20, false, false, script.buildTest());
-    FileInfo expected = new FileInfo(test.getFileName(),
+    FileInfo expected = new FileInfo(test.getFilePath(),
                                      test.getTimestamp(),
                                      test.isPatch(),
                                      test.isServeOnly(),
                                      script.buildExpect());
     FileInfo actual = new InlineHtmlProcessor(new HtmlDocParser(),
         new HtmlDocLexer()).process(test);
-    assertEquals(expected.getFileName(), actual.getFileName());
+    assertEquals(expected.getFilePath(), actual.getFilePath());
     assertEquals(expected.getTimestamp(), actual.getTimestamp());
     assertEquals(expected.isPatch(), actual.isPatch());
     assertEquals(expected.isServeOnly(), actual.isServeOnly());

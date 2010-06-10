@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -14,6 +14,10 @@
  * the License.
  */
 package com.google.jstestdriver;
+
+import java.io.File;
+import java.util.List;
+import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -23,12 +27,9 @@ import com.google.inject.name.Named;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.output.XmlPrinter;
 
-import java.util.List;
-import java.util.Set;
-
 /**
  * Provides a sequence of actions from a large number of arguments.
- * 
+ *
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  * @author corysmith@google.com (Cory Smith)
  */
@@ -45,6 +46,7 @@ public class DefaultActionListProvider implements ActionListProvider {
   private final boolean preloadFiles;
   private final Set<FileInfo> fileSet;
   private final String testOutput;
+  private final File basePath;
   private final ResponseStreamFactory responseStreamFactory;
   private final Provider<URLTranslator> urlTranslatorProvider;
   private final Provider<URLRewriter> urlRewriterProvider;
@@ -67,6 +69,7 @@ public class DefaultActionListProvider implements ActionListProvider {
       @Named("port") int port,
       @Named("fileSet") Set<FileInfo> fileSet,
       @Named("testOutput") String testOutput,
+      @Named("basePath") File basePath,
       ResponseStreamFactory responseStreamFactory,
       BrowserActionsRunner browserActionsRunner,
       Provider<URLTranslator> urlTranslatorProvider,
@@ -84,6 +87,7 @@ public class DefaultActionListProvider implements ActionListProvider {
     this.port = port;
     this.fileSet = fileSet;
     this.testOutput = testOutput;
+    this.basePath = basePath;
     this.responseStreamFactory = responseStreamFactory;
     this.browserActionsRunner = browserActionsRunner;
     this.urlTranslatorProvider = urlTranslatorProvider;
@@ -102,7 +106,8 @@ public class DefaultActionListProvider implements ActionListProvider {
                                   browserActionsRunner,
                                   urlTranslatorProvider,
                                   urlRewriterProvider,
-                                  accumulator);
+                                  accumulator,
+                                  basePath);
     builder.usingFiles(fileSet, preloadFiles)
            .addTests(tests)
            .addCommands(arguments)

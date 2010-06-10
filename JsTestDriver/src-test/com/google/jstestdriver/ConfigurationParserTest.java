@@ -79,9 +79,9 @@ public class ConfigurationParserTest extends TestCase {
     List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
 
     assertEquals(3, files.size());
-    assertTrue(listFiles.get(0).getFileName().endsWith("code/code.js"));
-    assertTrue(listFiles.get(1).getFileName().endsWith("test/test.js"));
-    assertTrue(listFiles.get(2).getFileName().endsWith("test/test3.js"));
+    assertTrue(listFiles.get(0).getFilePath().endsWith("code/code.js"));
+    assertTrue(listFiles.get(1).getFilePath().endsWith("test/test.js"));
+    assertTrue(listFiles.get(2).getFilePath().endsWith("test/test3.js"));
   }
 
   public void testParseConfigFileAndHaveListOfFilesWithPatches() throws Exception {
@@ -114,10 +114,10 @@ public class ConfigurationParserTest extends TestCase {
     List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
     
     assertEquals(3, files.size());
-    assertTrue(listFiles.get(0).getFileName().endsWith("code/code.js"));
-    assertTrue(listFiles.get(1).getFileName().endsWith("test/test.js"));
-    assertTrue(listFiles.get(2).getFileName().endsWith("test/test3.js"));
-    assertTrue(listFiles.get(0).getPatches().get(0).getFileName().endsWith("code/patch.js"));
+    assertTrue(listFiles.get(0).getFilePath().endsWith("code/code.js"));
+    assertTrue(listFiles.get(1).getFilePath().endsWith("test/test.js"));
+    assertTrue(listFiles.get(2).getFilePath().endsWith("test/test3.js"));
+    assertTrue(listFiles.get(0).getPatches().get(0).getFilePath().endsWith("code/patch.js"));
   }
 
   public void testParseConfigFileAndHaveListOfFilesWithUnassociatedPatch() throws Exception {
@@ -253,10 +253,10 @@ public class ConfigurationParserTest extends TestCase {
 
     assertEquals(4, serveFilesSet.size());
     System.out.println(serveFilesSet);
-    assertTrue(serveFiles.get(0).getFileName().endsWith("code/code.js"));
-    assertTrue(serveFiles.get(1).getFileName().endsWith("test/test.js"));
-    assertTrue(serveFiles.get(2).getFileName().endsWith("test/test3.js"));
-    assertTrue(serveFiles.get(3).getFileName().endsWith("serve/serve1.js"));
+    assertTrue(serveFiles.get(0).getFilePath().endsWith("code/code.js"));
+    assertTrue(serveFiles.get(1).getFilePath().endsWith("test/test.js"));
+    assertTrue(serveFiles.get(2).getFilePath().endsWith("test/test3.js"));
+    assertTrue(serveFiles.get(3).getFilePath().endsWith("serve/serve1.js"));
     assertTrue(serveFiles.get(3).isServeOnly());
   }
 

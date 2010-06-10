@@ -173,17 +173,17 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
     FileInfo info1 = iterator.next();
 
-    assertEquals("filename1.js", info1.getFileName());
+    assertEquals("filename1.js", info1.getFilePath());
     assertEquals(123, info1.getTimestamp());
 
     FileInfo info2 = iterator.next();
 
-    assertEquals("filename2.js", info2.getFileName());
+    assertEquals("filename2.js", info2.getFilePath());
     assertEquals(456, info2.getTimestamp());
 
     FileInfo info3 = iterator.next();
 
-    assertEquals("filename3.js", info3.getFileName());
+    assertEquals("filename3.js", info3.getFilePath());
     assertEquals(789, info3.getTimestamp());
   }
   

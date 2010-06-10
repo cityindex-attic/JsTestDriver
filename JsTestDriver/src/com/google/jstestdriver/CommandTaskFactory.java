@@ -15,12 +15,13 @@
  */
 package com.google.jstestdriver;
 
+import java.io.File;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.jstestdriver.util.StopWatch;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -44,8 +45,8 @@ public class CommandTaskFactory {
   }
 
   public CommandTask getCommandTask(ResponseStream stream, Set<FileInfo> fileSet, String baseUrl,
-      Server server, Map<String, String> params, boolean upload) {
-    return new CommandTask(filter, stream, fileSet, baseUrl, server, params, heartBeatProvider.get(),
-        fileLoader, upload, stopWatch);
+      File basePath, Server server, Map<String, String> params, boolean upload) {
+    return new CommandTask(filter, stream, fileSet, baseUrl, basePath, server, params,
+    		heartBeatProvider.get(), fileLoader, upload, stopWatch);
   }
 }

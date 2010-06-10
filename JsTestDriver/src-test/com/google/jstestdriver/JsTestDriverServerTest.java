@@ -1,12 +1,12 @@
 /*
  * Copyright 2008 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,11 +15,7 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.jstestdriver.util.NullStopWatch;
-
-import junit.framework.TestCase;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -28,6 +24,11 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Observable;
 import java.util.Observer;
+
+import junit.framework.TestCase;
+
+import com.google.gson.Gson;
+import com.google.jstestdriver.util.NullStopWatch;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -65,7 +66,7 @@ public class JsTestDriverServerTest extends TestCase {
     URL url = new URL("http://localhost:4224/slave/XXX/HeartbeatClientquirks.html");
     assertTrue(read(url.openStream()).length() > 0);
   }
-  
+
   public void testCapture() throws Exception {
     final Gson gson = new Gson();
     server.start();
@@ -74,7 +75,7 @@ public class JsTestDriverServerTest extends TestCase {
     assertEquals(1, browsers.getBrowsers().size());
     assertEquals(1, browsers.getBrowsers().get(0).getId().intValue());
   }
-  
+
   public void testCaptureWithId() throws Exception {
     server.start();
     URL captureUrl = new URL("http://localhost:4224/capture?id=5");
@@ -86,7 +87,8 @@ public class JsTestDriverServerTest extends TestCase {
   public void testListBrowsers() throws Exception {
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new DefaultFileFilter(), null, null, new NullStopWatch()),
-        new LinkedHashSet<FileInfo>(), "http://localhost:4224", new HttpServer(), false);
+        new LinkedHashSet<FileInfo>(), "http://localhost:4224",
+        new HttpServer(), new File("."), false);
 
     server.start();
     Collection<BrowserInfo> browsers = client.listBrowsers();

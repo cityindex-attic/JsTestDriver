@@ -16,14 +16,15 @@
 
 package com.google.jstestdriver;
 
-import com.google.inject.Inject;
-import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
-
+import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import com.google.inject.Inject;
+import com.google.jstestdriver.hooks.FileLoadPostProcessor;
+import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 
 /**
  * A simple loader for files.
@@ -47,11 +48,12 @@ public class ProcessingFileLoader implements FileLoader {
   }
 
   //TODO(corysmith): Remove shouldReset.
-  public List<FileInfo> loadFiles(Collection<FileInfo> filesToLoad, boolean shouldReset) {
+  public List<FileInfo> loadFiles(
+  		Collection<FileInfo> filesToLoad, File basePath, boolean shouldReset) {
     List<FileInfo> loadedFiles = new LinkedList<FileInfo>();
     try {
       for (FileInfo file : preProcessFiles(filesToLoad)) {
-        FileInfo processed = loadFile(shouldReset, file);
+        FileInfo processed = loadFile(shouldReset, basePath, file);
         processed = postProcessFile(processed);
         loadedFiles.add(processed);
       }
@@ -62,20 +64,21 @@ public class ProcessingFileLoader implements FileLoader {
     return loadedFiles;
   }
 
-  private FileInfo loadFile(boolean shouldReset, FileInfo file) {
+  private FileInfo loadFile(boolean shouldReset, File basePath, FileInfo file) {
     if (!file.canLoad()) {
       return file;
     }
     StringBuilder fileContent = new StringBuilder();
     long timestamp = file.getTimestamp();
-    fileContent.append(filter.filterFile(reader.readFile(file.getFileName()), !shouldReset));
+    fileContent.append(
+    		filter.filterFile(reader.readFile(file.getAbsoluteFileName(basePath)), !shouldReset));
     List<FileInfo> patches = file.getPatches();
     if (patches != null) {
       for (FileInfo patch : patches) {
-        fileContent.append(reader.readFile(patch.getFileName()));
+        fileContent.append(reader.readFile(patch.getAbsoluteFileName(basePath)));
       }
     }
-    return new FileInfo(file.getFileName(),
+    return new FileInfo(file.getFilePath(),
                         timestamp,
                         false,
                         file.isServeOnly(),
@@ -88,7 +91,7 @@ public class ProcessingFileLoader implements FileLoader {
     }
     return processed;
   }
-  
+
   private List<FileInfo> preProcessFiles(Collection<FileInfo> filesToLoad) {
     List<FileInfo> files = new LinkedList<FileInfo>(filesToLoad);
     for (FileLoadPreProcessor processor : preProcessors) {

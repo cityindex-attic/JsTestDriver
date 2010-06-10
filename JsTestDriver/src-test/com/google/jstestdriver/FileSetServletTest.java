@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -14,11 +14,6 @@
  * the License.
  */
 package com.google.jstestdriver;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import junit.framework.TestCase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -28,6 +23,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -41,13 +41,13 @@ public class FileSetServletTest extends TestCase {
   public void testAddFilesNameAndDataToMap() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     capturedBrowsers.addSlave(new SlaveBrowser(new MockTime(0), "1", new BrowserInfo(), SlaveBrowser.TIMEOUT));
-    Map<String, FileInfo> files = new HashMap<String, FileInfo>(); 
+    Map<String, FileInfo> files = new HashMap<String, FileInfo>();
     FilesCache filesCache = new FilesCache(files);
     FileSetServlet fileSetServlet =
         new FileSetServlet(capturedBrowsers, filesCache);
 
-    fileSetServlet.uploadFiles("1", "[ { 'file': 'dummy.js', 'data': 'some data' }," +
-        "{ 'file': 'dummytoo.js', 'data': 'some more data' }]");
+    fileSetServlet.uploadFiles("1", "[ { 'filePath': 'dummy.js', 'data': 'some data' }," +
+        "{ 'filePath': 'dummytoo.js', 'data': 'some more data' }]");
     assertEquals(2, filesCache.getFilesNumber());
     assertEquals("some data", filesCache.getFileContent("dummy.js"));
     assertEquals("some more data", filesCache.getFileContent("dummytoo.js"));
@@ -81,23 +81,23 @@ public class FileSetServletTest extends TestCase {
     Iterator<FileInfo> iterator = response.iterator();
 
     FileInfo info1 = iterator.next();
-    assertEquals("filename1.js", info1.getFileName());
+    assertEquals("filename1.js", info1.getFilePath());
     assertEquals(123, info1.getTimestamp());
 
     FileInfo info2 = iterator.next();
-    assertEquals("filename2.js", info2.getFileName());
+    assertEquals("filename2.js", info2.getFilePath());
     assertEquals(456, info2.getTimestamp());
 
     FileInfo info3 = iterator.next();
-    assertEquals("filename3.js", info3.getFileName());
+    assertEquals("filename3.js", info3.getFilePath());
     assertEquals(789, info3.getTimestamp());
 
     FileInfo info4 = iterator.next();
-    assertEquals("filename4.js", info4.getFileName());
+    assertEquals("filename4.js", info4.getFilePath());
     assertEquals(101112, info4.getTimestamp());
 
     slave.addFiles(response);
-    
+
     List<FileInfo> updatedFileInfos = new LinkedList<FileInfo>();
 
     updatedFileInfos.add(new FileInfo("filename1.js", 123, false, false, null));
@@ -115,7 +115,7 @@ public class FileSetServletTest extends TestCase {
 
     FileInfo updatedInfo = updatedIterator.next();
 
-    assertEquals("filename3.js", updatedInfo.getFileName());
-    assertEquals(131415, updatedInfo.getTimestamp());    
+    assertEquals("filename3.js", updatedInfo.getFilePath());
+    assertEquals(131415, updatedInfo.getTimestamp());
   }
 }

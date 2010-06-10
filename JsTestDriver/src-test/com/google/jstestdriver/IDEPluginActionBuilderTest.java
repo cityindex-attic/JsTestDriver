@@ -15,16 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.inject.AbstractModule;
-import com.google.inject.util.Providers;
-import com.google.jstestdriver.output.MultiTestResultListener;
-import com.google.jstestdriver.output.TestResultListener;
-import com.google.jstestdriver.output.XmlPrinter;
-import com.google.jstestdriver.output.XmlPrinterImpl;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Reader;
@@ -35,6 +25,16 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
+
+import com.google.gson.Gson;
+import com.google.inject.AbstractModule;
+import com.google.inject.util.Providers;
+import com.google.jstestdriver.output.MultiTestResultListener;
+import com.google.jstestdriver.output.TestResultListener;
+import com.google.jstestdriver.output.XmlPrinter;
+import com.google.jstestdriver.output.XmlPrinterImpl;
 
 /**
  * Tests for {@link com.google.jstestdriver.IDEPluginActionBuilder}
@@ -60,7 +60,7 @@ public class IDEPluginActionBuilderTest extends TestCase {
         new ConfigurationParser(tmpDir, configReader, new DefaultPathRewriter());
 
     IDEPluginActionBuilder builder = new IDEPluginActionBuilder(configParser, "http://localhost:42242",
-        new ResponseStreamFactoryStub());
+        new ResponseStreamFactoryStub(), new File("."));
     builder.install(new AbstractModule(){
                      @Override
                      protected void configure() {
@@ -77,20 +77,21 @@ public class IDEPluginActionBuilderTest extends TestCase {
     // TODO(corysmith): fix the fact this test is all integration.
     // Without a server. :P
   }
-  
+
   public void testInstallModuleOverwritingResolvedJustInTimeInjection() throws Exception {
     Reader configReader = new StringReader("load:\n- blash.js\nserver:\n -http://foo");
     ConfigurationParser configParser =
         new ConfigurationParser(tmpDir, configReader, new DefaultPathRewriter());
 
     IDEPluginActionBuilder builder = new IDEPluginActionBuilder(configParser, "http://address",
-        new ResponseStreamFactoryStub());
+        new ResponseStreamFactoryStub(), new File("."));
     builder.install(new AbstractModule(){
                      @Override
                      protected void configure() {
                        bind(Server.class).to(MyServer.class);
                        bind(XmlPrinter.class).to(XmlPrinterImpl.class);
-                       bind(TestResultListener.class).toProvider(Providers.<TestResultListener>of(null));
+                       bind(TestResultListener.class)
+                           .toProvider(Providers.<TestResultListener>of(null));
                      }
                    });
     builder.addAllTests();
@@ -110,12 +111,12 @@ public class IDEPluginActionBuilderTest extends TestCase {
     private final class NullResponseStream implements ResponseStream {
       public void stream(Response response) {
         // TODO Auto-generated method stub
-        
+
       }
 
       public void finish() {
         // TODO Auto-generated method stub
-        
+
       }
     }
 
@@ -135,10 +136,11 @@ public class IDEPluginActionBuilderTest extends TestCase {
       return new NullResponseStream();
     }
   }
-  
+
   static class MyFileLoader implements FileLoader {
 
-    public List<FileInfo> loadFiles(Collection<FileInfo> filesToLoad, boolean shouldReset) {
+    public List<FileInfo> loadFiles(
+    		Collection<FileInfo> filesToLoad, File basePath, boolean shouldReset) {
       return new LinkedList<FileInfo>(filesToLoad);
     }
   }

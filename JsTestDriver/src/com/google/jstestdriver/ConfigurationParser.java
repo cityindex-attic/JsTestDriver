@@ -15,13 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Lists;
-import com.google.jstestdriver.hooks.FileParsePostProcessor;
-
-import org.apache.oro.io.GlobFilenameFilter;
-import org.apache.oro.text.GlobCompiler;
-import org.jvyaml.YAML;
-
 import java.io.File;
 import java.io.Reader;
 import java.util.Arrays;
@@ -32,9 +25,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.oro.io.GlobFilenameFilter;
+import org.apache.oro.text.GlobCompiler;
+import org.jvyaml.YAML;
+
+import com.google.common.collect.Lists;
+import com.google.jstestdriver.hooks.FileParsePostProcessor;
+
 /**
  * TODO: needs to give more feedback when something goes wrong...
- * 
+ *
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 @Deprecated
@@ -56,7 +56,8 @@ public class ConfigurationParser {
     this.basePath = basePath;
     this.configReader = configReader;
     this.pathRewriter = pathRewriter;
-    pathResolver = new PathResolver(basePath, pathRewriter, Collections.<FileParsePostProcessor>emptySet());
+    pathResolver =
+        new PathResolver(basePath, Collections.<FileParsePostProcessor>emptySet());
   }
 
   @SuppressWarnings("unchecked")
@@ -153,8 +154,8 @@ public class ConfigurationParser {
 
           for (String filteredFile : filteredFiles) {
             String resolvedFilePath =
-                pathResolver.resolvePath(dir.getAbsolutePath().replaceAll("\\\\", "/") + "/"
-                    + filteredFile.replaceAll("\\\\", "/"));
+                pathResolver.resolvePath(
+                		dir.getAbsolutePath() + FileInfo.SEPARATOR_CHAR + filteredFile);
             File resolvedFile = new File(resolvedFilePath);
 
             resolvedFiles.add(new FileInfo(resolvedFilePath, resolvedFile.lastModified(), isPatch,

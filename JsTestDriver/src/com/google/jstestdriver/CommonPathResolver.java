@@ -37,13 +37,13 @@ public class CommonPathResolver {
       return "";
     }
     if (files.size() == 1) {
-      return new File(files.get(0).getFileName()).getParent() + PATH_SEPARATOR;
+      return new File(files.get(0).getFilePath()).getParent() + PATH_SEPARATOR;
     }
     Iterator<FileInfo> iterator = files.iterator();
-    String longestPath = iterator.next().getFileName();
+    String longestPath = iterator.next().getFilePath();
 
     do {
-      longestPath = getLongestCommonPath(longestPath, iterator.next().getFileName());
+      longestPath = getLongestCommonPath(longestPath, iterator.next().getFilePath());
     } while (iterator.hasNext());
     return longestPath;
   }

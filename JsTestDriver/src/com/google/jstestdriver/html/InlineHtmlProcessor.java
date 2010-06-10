@@ -45,14 +45,14 @@ public class InlineHtmlProcessor implements FileLoadPostProcessor {
   
   public FileInfo process(FileInfo file) {
     try {
-      LOGGER.trace("inlining html for {}", file.getFileName());
+      LOGGER.trace("inlining html for {}", file.getFilePath());
       String source = file.getData();
       Writer writer = new CharArrayWriter();
       parser.parse(
           lexer.createStream(
               new ByteArrayInputStream(source.getBytes()))).write(writer);
       writer.flush();
-      return new FileInfo(file.getFileName(),
+      return new FileInfo(file.getFilePath(),
                           file.getTimestamp(),
                           file.isPatch(),
                           file.isServeOnly(),
