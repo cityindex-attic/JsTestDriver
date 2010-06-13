@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -43,7 +42,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionSequenceBuilder(actionFactory, null, null,
             new BrowserActionsRunner(null, null, null, null, null, 0),
             Providers.<URLTranslator> of(null), Providers.<URLRewriter> of(null),
-            new FailureAccumulator(), new File("."));
+            new FailureAccumulator());
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(BrowserActionsRunner.class);
@@ -65,7 +64,7 @@ public class ActionSequenceBuilderTest extends TestCase {
             null, null, new BrowserActionsRunner(null, null, null, null, null, 0),
             Providers.<URLTranslator> of(null),
             Providers.<URLRewriter> of(null),
-        new FailureAccumulator(),  new File("."));
+        new FailureAccumulator());
     Set<BrowserRunner> browsers = browsers();
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
@@ -88,7 +87,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         				SlaveBrowser.TIMEOUT), null, null,
             new BrowserActionsRunner(null, null, null, null, null, 0), Providers
                 .<URLTranslator> of(null), Providers.<URLRewriter> of(null),
-            new FailureAccumulator(), new File("."));
+            new FailureAccumulator());
 
     List<Action> actions = builder.addTests(tests).withLocalServerPort(999)
         .usingFiles(files, false).build();

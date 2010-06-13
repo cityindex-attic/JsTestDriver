@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -88,7 +87,7 @@ public class JsTestDriverServerTest extends TestCase {
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new DefaultFileFilter(), null, null, new NullStopWatch()),
         new LinkedHashSet<FileInfo>(), "http://localhost:4224",
-        new HttpServer(), new File("."), false);
+        new HttpServer(), false);
 
     server.start();
     Collection<BrowserInfo> browsers = client.listBrowsers();

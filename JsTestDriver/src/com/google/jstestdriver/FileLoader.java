@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -30,5 +29,5 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(ProcessingFileLoader.class)
 public interface FileLoader {
   public List<FileInfo> loadFiles(
-  		Collection<FileInfo> filesToLoad, File basePath, boolean shouldReset);
+  		Collection<FileInfo> filesToLoad, boolean shouldReset);
 }

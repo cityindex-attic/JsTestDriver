@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -50,7 +49,6 @@ public class ActionSequenceBuilder {
   private List<String> commands = new LinkedList<String>();
   private XmlPrinter xmlPrinter;
   private final BrowserActionsRunner browserActionsRunner;
-  private final File basePath;
 
   /**
    * Begins the building of an action sequence.
@@ -63,15 +61,13 @@ public class ActionSequenceBuilder {
                                BrowserActionsRunner browserActionsRunner,
                                Provider<URLTranslator> urlTranslatorProvider,
                                Provider<URLRewriter> urlRewriterProvider,
-                               FailureAccumulator accumulator,
-                               File basePath) {
+                               FailureAccumulator accumulator) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.browserActionsRunner = browserActionsRunner;
     this.urlTranslatorProvider = urlTranslatorProvider;
     this.urlRewriterProvider = urlRewriterProvider;
     this.accumulator = accumulator;
-    this.basePath = basePath;
   }
 
   /**
@@ -80,7 +76,7 @@ public class ActionSequenceBuilder {
    */
   private void addServerActions(List<Action> actions, boolean leaveServerRunning) {
     if (preloadFiles) {
-      for (FileInfo file : fileLoader.loadFiles(fileSet, basePath, true)) {
+      for (FileInfo file : fileLoader.loadFiles(fileSet, true)) {
         files.put(file.getFilePath(), file);
       }
     }

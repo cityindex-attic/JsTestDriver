@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -184,8 +183,7 @@ public class CommandTaskTest extends TestCase {
       LinkedHashSet<FileInfo> serveFiles, Map<String, String> params, FakeResponseStream stream,
       MockFileLoader fileLoader, boolean upload) {
     CommandTask task = new CommandTask(new DefaultFileFilter(), stream, files,
-        "http://localhost", new File(System.getProperty("java.io.tmpdir")),
-        server, params, new HeartBeatManagerStub(),
+        "http://localhost", server, params, new HeartBeatManagerStub(),
         fileLoader, upload, new NullStopWatch());
     return task;
   }
@@ -198,7 +196,7 @@ public class CommandTaskTest extends TestCase {
     }
 
     public List<FileInfo> loadFiles(
-    		Collection<FileInfo> filesToLoad, File basePath, boolean shouldReset) {
+    		Collection<FileInfo> filesToLoad, boolean shouldReset) {
       List<FileInfo> loaded = new LinkedList<FileInfo>();
       for (FileInfo info : filesToLoad) {
         assertTrue("File " + info + " was not found in " + expected.keySet(), expected

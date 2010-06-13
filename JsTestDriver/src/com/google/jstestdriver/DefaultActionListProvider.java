@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -46,7 +45,6 @@ public class DefaultActionListProvider implements ActionListProvider {
   private final boolean preloadFiles;
   private final Set<FileInfo> fileSet;
   private final String testOutput;
-  private final File basePath;
   private final ResponseStreamFactory responseStreamFactory;
   private final Provider<URLTranslator> urlTranslatorProvider;
   private final Provider<URLRewriter> urlRewriterProvider;
@@ -69,7 +67,6 @@ public class DefaultActionListProvider implements ActionListProvider {
       @Named("port") int port,
       @Named("fileSet") Set<FileInfo> fileSet,
       @Named("testOutput") String testOutput,
-      @Named("basePath") File basePath,
       ResponseStreamFactory responseStreamFactory,
       BrowserActionsRunner browserActionsRunner,
       Provider<URLTranslator> urlTranslatorProvider,
@@ -87,7 +84,6 @@ public class DefaultActionListProvider implements ActionListProvider {
     this.port = port;
     this.fileSet = fileSet;
     this.testOutput = testOutput;
-    this.basePath = basePath;
     this.responseStreamFactory = responseStreamFactory;
     this.browserActionsRunner = browserActionsRunner;
     this.urlTranslatorProvider = urlTranslatorProvider;
@@ -106,8 +102,7 @@ public class DefaultActionListProvider implements ActionListProvider {
                                   browserActionsRunner,
                                   urlTranslatorProvider,
                                   urlRewriterProvider,
-                                  accumulator,
-                                  basePath);
+                                  accumulator);
     builder.usingFiles(fileSet, preloadFiles)
            .addTests(tests)
            .addCommands(arguments)

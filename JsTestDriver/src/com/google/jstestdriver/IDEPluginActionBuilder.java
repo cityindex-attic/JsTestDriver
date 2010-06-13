@@ -143,7 +143,7 @@ public class IDEPluginActionBuilder {
 
       // TODO(corysmith): Change this to an actual class, so that we can JITI it.
       bind(ResponseStreamFactory.class).toInstance(responseStreamFactory);
-      bind(File.class).annotatedWith(Names.named("basePath")).toInstance(new File("."));
+      bind(File.class).annotatedWith(Names.named("basePath")).toInstance(basePath);
       bind(new TypeLiteral<List<BrowserAction>>(){}).toProvider(BrowserActionProvider.class);
       bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool());
 

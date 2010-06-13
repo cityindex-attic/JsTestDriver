@@ -33,7 +33,6 @@ import com.google.inject.name.Names;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.ConfigurationParser;
-import com.google.jstestdriver.DefaultPathRewriter;
 import com.google.jstestdriver.DryRunInfo;
 import com.google.jstestdriver.IDEPluginActionBuilder;
 import com.google.jstestdriver.Plugin;
@@ -137,7 +136,7 @@ public class TestRunner {
       ConfigurationParser configurationParser = new ConfigurationParser(baseDirectory, fileReader,
           new DefaultPathRewriter());
       IDEPluginActionBuilder builder = new IDEPluginActionBuilder(
-      		configurationParser, serverURL, responseStreamFactory, baseDirectory);
+      		configurationParser, serverURL, responseStreamFactory);
       builder.install(new AbstractModule() {
         @Override
         protected void configure() {

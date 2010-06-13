@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 
@@ -35,21 +36,24 @@ public class ProcessingFileLoader implements FileLoader {
   private final FileReader reader;
   private final Set<FileLoadPostProcessor> postprocessors;
   private final Set<FileLoadPreProcessor> preProcessors;
+  private final File basePath;
 
   @Inject
   public ProcessingFileLoader(JsTestDriverFileFilter filter,
                               FileReader reader,
                               Set<FileLoadPostProcessor> postprocessors,
-                              Set<FileLoadPreProcessor> preProcessors) {
+                              Set<FileLoadPreProcessor> preProcessors,
+                              @Named("basePath") File basePath) {
     this.filter = filter;
     this.reader = reader;
     this.postprocessors = postprocessors;
     this.preProcessors = preProcessors;
+    this.basePath = basePath;
   }
 
   //TODO(corysmith): Remove shouldReset.
   public List<FileInfo> loadFiles(
-  		Collection<FileInfo> filesToLoad, File basePath, boolean shouldReset) {
+  		Collection<FileInfo> filesToLoad, boolean shouldReset) {
     List<FileInfo> loadedFiles = new LinkedList<FileInfo>();
     try {
       for (FileInfo file : preProcessFiles(filesToLoad)) {

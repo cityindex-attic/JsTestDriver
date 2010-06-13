@@ -136,27 +136,27 @@ public class FileInfo {
         + ", timestamp=" + timestamp + "]";
   }
 
-	/** Formats the specified path to use {@link #SEPARATOR_CHAR} as the path separator. */
-	public static final String formatFileSeparator(String path) {
-	  return path.replaceAll("\\\\", SEPARATOR_CHAR);
-	}
-
+  /** Formats the specified path to use {@link #SEPARATOR_CHAR} as the path separator. */
+  public static final String formatFileSeparator(String path) {
+    return path.replaceAll("\\\\", SEPARATOR_CHAR);
+  }
+  
 	/**
 	 * Gets a path containing the base dir and relative file path. The file separators in the path
 	 * will be formatted to use {@link #SEPARATOR_CHAR} as the path separator.
 	 */
-	public static String getPath(File dir, String path) {
-		// Don't prepend the directory if the path is already absolute
-		if (new File(path).isAbsolute()) {
-			return path;
-		}
+  public static String getPath(File dir, String path) {
+  // Don't prepend the directory if the path is already absolute
+	  if (new File(path).isAbsolute()) {
+		  return path;
+    }
 
-		String dirPath = formatFileSeparator(dir.getPath());
+    String dirPath = formatFileSeparator(dir.getPath());
 
-		if (!dirPath.endsWith(SEPARATOR_CHAR)) {
-			dirPath = dirPath + SEPARATOR_CHAR;
-		}
+    if (!dirPath.endsWith(SEPARATOR_CHAR)) {
+      dirPath = dirPath + SEPARATOR_CHAR;
+    }
 
-		return dirPath + path;
-	}
+    return dirPath + path;
+  }
 }

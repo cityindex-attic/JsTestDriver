@@ -106,8 +106,8 @@ public class ProcessingFileLoaderTest extends TestCase {
 						return infoData;
 					}
 				}, Collections.<FileLoadPostProcessor> emptySet(),
-				Collections.<FileLoadPreProcessor> emptySet()).loadFiles(
-						Collections.singleton(info), new File("."), shouldReset);
+				Collections.<FileLoadPreProcessor> emptySet(), new File(".")).loadFiles(
+						Collections.singleton(info), shouldReset);
 
     assertEquals(infoData + "filtered", actual.get(0).getData());
     assertEquals(info.getFilePath(), actual.get(0).getFilePath());
@@ -133,8 +133,8 @@ public class ProcessingFileLoaderTest extends TestCase {
 
     List<FileInfo> actual = new ProcessingFileLoader(new MockFileFilter(shouldReset, infoData),
         new FileReaderStub(infoData, info), Collections.singleton(processor),
-        Collections.<FileLoadPreProcessor> emptySet()).loadFiles(
-            Collections.singleton(info), new File("."), shouldReset);
+        Collections.<FileLoadPreProcessor> emptySet(), new File(".")).loadFiles(
+            Collections.singleton(info), shouldReset);
 
     assertEquals(expected, actual.get(0));
   }
@@ -162,8 +162,8 @@ public class ProcessingFileLoaderTest extends TestCase {
       }
 
     }, mockFileReader, Collections.<FileLoadPostProcessor> emptySet(),
-        Collections.<FileLoadPreProcessor> emptySet()).loadFiles(
-        		Collections.singleton(info), new File("."), shouldReset);
+        Collections.<FileLoadPreProcessor> emptySet(), new File(".")).loadFiles(
+        		Collections.singleton(info), shouldReset);
 
     assertEquals(infoData + "filtered" + patchData, actual.get(0).getData());
     assertEquals(info.getFilePath(), actual.get(0).getFilePath());
@@ -175,8 +175,9 @@ public class ProcessingFileLoaderTest extends TestCase {
     final FileInfo info = new FileInfo("http://local/foo.js", -1, false, false, "");
     final boolean shouldReset = false;
     List<FileInfo> actual = new ProcessingFileLoader(null, null, Collections
-        .<FileLoadPostProcessor> emptySet(), Collections.<FileLoadPreProcessor> emptySet())
-        .loadFiles(Collections.singleton(info), new File("."), shouldReset);
+        .<FileLoadPostProcessor> emptySet(),
+        Collections.<FileLoadPreProcessor> emptySet(), new File("."))
+            .loadFiles(Collections.singleton(info), shouldReset);
 
     assertEquals("", actual.get(0).getData());
     assertEquals(info.getFilePath(), actual.get(0).getFilePath());
@@ -204,8 +205,8 @@ public class ProcessingFileLoaderTest extends TestCase {
     List<FileInfo> actual = new ProcessingFileLoader(new MockFileFilter(shouldReset, infoData),
         reader,
         Collections.<FileLoadPostProcessor> emptySet(),
-        Collections.singleton(preProcessor))
-            .loadFiles(Collections.singleton(info), new File("."), shouldReset);
+        Collections.singleton(preProcessor), new File("."))
+            .loadFiles(Collections.singleton(info), shouldReset);
 
     assertEquals(infoData + "filtered", actual.get(0).getData());
     assertEquals(info.getFilePath(), actual.get(0).getFilePath());

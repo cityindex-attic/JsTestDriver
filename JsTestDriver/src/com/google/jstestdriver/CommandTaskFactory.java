@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,8 +44,8 @@ public class CommandTaskFactory {
   }
 
   public CommandTask getCommandTask(ResponseStream stream, Set<FileInfo> fileSet, String baseUrl,
-      File basePath, Server server, Map<String, String> params, boolean upload) {
-    return new CommandTask(filter, stream, fileSet, baseUrl, basePath, server, params,
+      Server server, Map<String, String> params, boolean upload) {
+    return new CommandTask(filter, stream, fileSet, baseUrl, server, params,
     		heartBeatProvider.get(), fileLoader, upload, stopWatch);
   }
 }

@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -75,7 +74,6 @@ public class DefaultActionListProviderTest extends TestCase {
         port,
         Collections.<FileInfo>emptySet(),
         testOutput,
-        new File("."),
         null,
         new BrowserActionsRunner(null, null, null, null, null, 0),
         Providers.<URLTranslator>of(null),

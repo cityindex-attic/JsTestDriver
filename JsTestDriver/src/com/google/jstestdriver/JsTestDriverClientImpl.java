@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -43,7 +42,6 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   private final Set<FileInfo> fileSet;
   private final String baseUrl;
   private final Server server;
-  private final File basePath;
 
   private final Boolean debug;
 
@@ -52,13 +50,11 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
                                 @Named("fileSet") Set<FileInfo> fileSet,
                                 @Named("server") String baseUrl,
                                 Server server,
-                                @Named("basePath") File basePath,
                                 @Named("debug") Boolean debug) {
     this.commandTaskFactory = commandTaskFactory;
     this.fileSet = fileSet;
     this.baseUrl = baseUrl;
     this.server = server;
-    this.basePath = basePath;
     this.debug = debug;
   }
 
@@ -76,7 +72,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
     params.put("data", cmd);
     params.put("id", id);
-    CommandTask task = commandTaskFactory.getCommandTask(stream, fileSet, baseUrl, basePath,
+    CommandTask task = commandTaskFactory.getCommandTask(stream, fileSet, baseUrl,
         server, params, uploadFiles);
 
     task.run();

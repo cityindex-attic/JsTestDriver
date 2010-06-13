@@ -57,7 +57,6 @@ public class CommandTask {
   private final ResponseStream stream;
   private final Set<FileInfo> fileSet;
   private final String baseUrl;
-  private final File basePath;
   private final Server server;
   private final Map<String, String> params;
   private final HeartBeatManager heartBeatManager;
@@ -67,13 +66,12 @@ public class CommandTask {
   private final StopWatch stopWatch;
 
   public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
-      String baseUrl, File basePath, Server server, Map<String, String> params,
+      String baseUrl, Server server, Map<String, String> params,
       HeartBeatManager heartBeatManager, FileLoader fileLoader, boolean upload, StopWatch stopWatch) {
     this.filter = filter;
     this.stream = stream;
     this.fileSet = fileSet;
     this.baseUrl = baseUrl;
-    this.basePath = basePath;
     this.server = server;
     this.params = params;
     this.heartBeatManager = heartBeatManager;
@@ -180,7 +178,7 @@ public class CommandTask {
           finalFilesToUpload.addAll(findDependencies(file));
         }
       }
-      List<FileInfo> loadedfiles = fileLoader.loadFiles(finalFilesToUpload, basePath, shouldReset);
+      List<FileInfo> loadedfiles = fileLoader.loadFiles(finalFilesToUpload, shouldReset);
       Map<String, String> uploadFileParams = new LinkedHashMap<String, String>();
 
       uploadFileParams.put("id", params.get("id"));

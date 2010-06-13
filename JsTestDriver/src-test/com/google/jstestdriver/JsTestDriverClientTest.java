@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -104,7 +103,7 @@ public class JsTestDriverClientTest extends TestCase {
             return new HeartBeatManagerStub();
           }
         }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server, new File("."), false);
+        "http://localhost", server, false);
     FakeResponseStream stream = new FakeResponseStream();
 
     client.eval("1", stream, "cmd");
@@ -135,7 +134,7 @@ public class JsTestDriverClientTest extends TestCase {
             return new HeartBeatManagerStub();
           }
         }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server, new File("."), false);
+        "http://localhost", server, false);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
     List<BrowserInfo> browsers = new ArrayList<BrowserInfo>(browsersCollection);
 
@@ -171,7 +170,7 @@ public class JsTestDriverClientTest extends TestCase {
             return new HeartBeatManagerStub();
           }
         }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server, new File("."), false);
+        "http://localhost", server, false);
     FakeResponseStream stream = new FakeResponseStream();
 
     client.runAllTests("1", stream, false);
@@ -196,7 +195,7 @@ public class JsTestDriverClientTest extends TestCase {
             return new HeartBeatManagerStub();
           }
         }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server, new File("."), false);
+        "http://localhost", server, false);
     FakeResponseStream stream = new FakeResponseStream();
 
     ArrayList<String> tests = new ArrayList<String>();
