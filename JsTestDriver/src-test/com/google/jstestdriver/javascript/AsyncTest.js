@@ -14,10 +14,10 @@
  * the License.
  */
 
-var xhrTest = AsyncTestCase('xhrTest');
+var asyncTest = AsyncTestCase('asyncTest');
 
 
-xhrTest.prototype.testWindowSetTimeout = function(q) {
+asyncTest.prototype.testWindowSetTimeout = function(q) {
   var state = false;
 
   var passingCallback = function() {
@@ -41,7 +41,7 @@ xhrTest.prototype.testWindowSetTimeout = function(q) {
 };
 
 
-xhrTest.prototype.testSeriesOfAsyncSteps = function(q) {
+asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
   // Some state variables to change and test
   var state = 0;
   var someMoreState = 'a';
