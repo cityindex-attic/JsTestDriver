@@ -17,18 +17,18 @@
 var testSafeCallbackBuilderTest = TestCase('testSafeCallbackBuilderTest');
 
 
-testSafeCallbackBuilderTest.MockDeferredQueue = function() {
+testSafeCallbackBuilderTest.MockHerd = function() {
   this.lastError = null;
   this.lastMessage = null;
 };
 
 
-testSafeCallbackBuilderTest.MockDeferredQueue.prototype.onError = function(error) {
+testSafeCallbackBuilderTest.MockHerd.prototype.onError = function(error) {
   this.lastError = error;
 };
 
 
-testSafeCallbackBuilderTest.MockDeferredQueue.prototype.remove = function(message) {
+testSafeCallbackBuilderTest.MockHerd.prototype.remove = function(message) {
   this.lastMessage = message;
 };
 
@@ -51,7 +51,7 @@ testSafeCallbackBuilderTest.MockTimeout.prototype.maybeDisarm = function() {
 
 
 testSafeCallbackBuilderTest.prototype.testBuild = function() {
-  var herd = new testSafeCallbackBuilderTest.MockDeferredQueue();
+  var herd = new testSafeCallbackBuilderTest.MockHerd();
   var builder = new jstestdriver.plugins.async.TestSafeCallbackBuilder(
       function() {}, function() {}, testSafeCallbackBuilderTest.MockTimeout);
   var called = false;
