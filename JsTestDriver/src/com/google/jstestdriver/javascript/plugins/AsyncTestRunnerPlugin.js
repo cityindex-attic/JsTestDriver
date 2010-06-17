@@ -40,13 +40,18 @@
  *
  * @param dateObj the date object constructor
  * @param clearBody a function to call to clear the document body.
- * @param opt_herdConstructor a constructor for obtaining new CallbackHerds.
+ * @param opt_setTimeout window.setTimeout replacement.
+ * @param opt_queueConstructor a constructor for obtaining new DeferredQueues.
+ * @param opt_armorConstructor a constructor for obtaining new DeferredQueueArmors.
  */
-jstestdriver.plugins.async.AsyncTestRunnerPlugin = function(dateObj, clearBody, opt_herdConstructor) {
+jstestdriver.plugins.async.AsyncTestRunnerPlugin = function(
+    dateObj, clearBody, opt_setTimeout, opt_queueConstructor, opt_armorConstructor) {
   this.name = "AsyncTestRunnerPlugin";
   this.dateObj_ = dateObj;
   this.clearBody_ = clearBody;
-  this.herdConstructor_ = opt_herdConstructor || jstestdriver.plugins.async.CallbackHerd;
+  this.setTimeout_ = opt_setTimeout || jstestdriver.setTimeout;
+  this.queueConstructor_ = opt_queueConstructor || jstestdriver.plugins.async.DeferredQueue;
+  this.armorConstructor_ = opt_armorConstructor || jstestdriver.plugins.async.DeferredQueueArmor;
   this.testRunConfiguration_ = null;
   this.testCaseInfo_ = null;
   this.onTestDone_ = null;
@@ -115,18 +120,19 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.nextTest = function()
  * catching any exceptions, and then hands the control over to the herd to
  * call onHerdComplete when it empties.
  */
-jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.start = function(
-    onHerdComplete, invokeMethod) {
+jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.execute_ = function(
+    onQueueComplete, invokeMethod) {
   console.log('start');
 
   // Create a new herd of callbacks that will call invokeMethod() once all callbacks complete.
-  var herd = new (this.herdConstructor_)(jstestdriver.setTimeout, this.testCase_, onHerdComplete);
+  var q = new (this.queueConstructor_)(this.setTimeout_, this.testCase_, onQueueComplete);
+  var armor = new (this.armorConstructor_)(q);
 
   // Attempt to invoke the method. The method will add zero or more asynchronous callbacks
   // to the herd. If the method throws an error, add that error to the list.
   if (invokeMethod) {
     try {
-      invokeMethod(herd);
+      invokeMethod(armor);
     } catch (e) {
       this.errors_.push(e);
     }
@@ -137,7 +143,7 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.start = function(
   //
   // If invokeMethod() schedules no asynchronous callbacks, maybeComplete() schedules an immediate
   // call to onHerdComplete().
-  herd.maybeComplete();
+  q.startStep();
 };
 
 
@@ -147,7 +153,7 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.start = function(
 jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.startSetUp = function() {
   console.log('startSetUp');
   var runner = this;
-  this.start(function(errors) {
+  this.execute_(function(errors) {
     runner.finishSetUp(errors);
   }, this.testCase_.setUp);
 };
@@ -174,7 +180,7 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.finishSetUp = functio
 jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.startTestMethod = function() {
   console.log('startTestMethod');
   var runner = this;
-  this.start(function(errors) {
+  this.execute_(function(errors) {
     runner.finishTestMethod(errors);
   }, this.testCase_[this.testName_]);
 };
@@ -198,7 +204,7 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.finishTestMethod = fu
 jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.startTearDown = function() {
   console.log('startTearDown');
   var runner = this;
-  this.start(function(errors){
+  this.execute_(function(errors){
     runner.finishTearDown(errors);
   }, this.testCase_.tearDown);
 };
@@ -234,5 +240,5 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.buildResult = functio
   return new jstestdriver.TestResult(
       this.testCaseInfo_.getTestCaseName(), this.testName_, result, message,
       jstestdriver.console.getLog(), end - this.start_);
-}
+};
 

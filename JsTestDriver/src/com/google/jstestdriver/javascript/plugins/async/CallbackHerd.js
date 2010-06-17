@@ -16,7 +16,7 @@
 
 
 /**
- * @fileoverview Defines the CallbackHerd function, which decorates given callback
+ * @fileoverview Defines the CallbackHerd class, which decorates given callback
  * functions with safeguards and tracks them until they execute or expire.
  * 
  * @author rdionne@google.com (Robert Dionne)

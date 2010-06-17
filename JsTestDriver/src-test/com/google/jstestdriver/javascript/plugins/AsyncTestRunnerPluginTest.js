@@ -17,49 +17,6 @@
 var asyncTestRunnerPluginTest = TestCase('asyncTestRunnerPluginTest');
 
 
-asyncTestRunnerPluginTest.MockHerd = function(setTimeout, testCase, onHerdComplete) {
-  jstestdriver.plugins.async.CallbackHerd.apply(this, arguments);
-};
-
-
-asyncTestRunnerPluginTest.MockHerd.prototype.maybeComplete = function() {
-  if (this.count_ == 0 && this.onHerdComplete_) {
-    this.onHerdComplete_(this.errors_);
-  }
-};
-
-
-asyncTestRunnerPluginTest.MockHerd.prototype.count = function() {
-  return jstestdriver.plugins.async.CallbackHerd.prototype.count.apply(this, arguments);
-};
-
-
-asyncTestRunnerPluginTest.MockHerd.prototype.onError = function(error) {
-  return jstestdriver.plugins.async.CallbackHerd.prototype.onError.apply(this, arguments);
-};
-
-
-asyncTestRunnerPluginTest.MockHerd.prototype.add = function(wrapped, opt_n) {
-  this.count_ += opt_n || 1;
-  console.log('adding. (' + this.count_ + ' in herd)');
-  var callback = new jstestdriver.plugins.async.TestSafeCallbackBuilder(function() {}, function() {})
-      .setHerd(this)
-      .setRemainingUses(opt_n)
-      .setTestCase(this.testCase_)
-      .setWrapped(wrapped)
-      .build();
-  callback.arm(jstestdriver.plugins.async.CallbackHerd.TIMEOUT);
-  return function() {
-    return callback.invoke(arguments);
-  };
-};
-
-
-asyncTestRunnerPluginTest.MockHerd.prototype.remove = function(message, opt_n) {
-  return jstestdriver.plugins.async.CallbackHerd.prototype.remove.apply(this, arguments);
-};
-
-
 asyncTestRunnerPluginTest.prototype.testTestCaseWithWrongType = function() {
   var testCase = function() {};
   testCase.prototype.setUp = function() {};
@@ -71,7 +28,7 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithWrongType = function() {
       'testCase', testCase, jstestdriver.TestCaseInfo.DEFAULT_TYPE);
 
   var asyncTestRunner = new jstestdriver.plugins.async.AsyncTestRunnerPlugin(
-      Date, function() {}, asyncTestRunnerPluginTest.MockHerd);
+      Date, function() {}, function(callback) {callback();});
 
   var testRunConfiguration = {};
   testRunConfiguration.getTestCaseInfo = function() {return testCaseInfo;};
@@ -84,11 +41,11 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithWrongType = function() {
 };
 
 
-asyncTestRunnerPluginTest.prototype.testTestCaseWithoutCallbacks = function() {
+asyncTestRunnerPluginTest.prototype.testTestCaseWithoutSteps = function() {
   var timesSetUpCalled = 0;
   var timesTestMethodCalled = 0;
   var timesTearDownCalled = 0;
-  
+
   var testCase = function() {};
   testCase.prototype.setUp = function() {timesSetUpCalled += 1;};
   testCase.prototype.testMethod = function() {timesTestMethodCalled += 1;};
@@ -98,7 +55,7 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithoutCallbacks = function() {
       'testCase', testCase, jstestdriver.TestCaseInfo.ASYNC_TYPE);
 
   var asyncTestRunner = new jstestdriver.plugins.async.AsyncTestRunnerPlugin(
-      Date, function() {}, asyncTestRunnerPluginTest.MockHerd);
+      Date, function() {}, function(callback) {callback();});
 
   var testDone = false;
   var testResult;
@@ -130,7 +87,7 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithoutCallbacks = function() {
 };
 
 
-asyncTestRunnerPluginTest.prototype.testTestCaseWithoutCallbacksWithSetupError = function() {
+asyncTestRunnerPluginTest.prototype.testTestCaseWithoutStepsWithSetupError = function() {
   var timesSetUpCalled = 0;
   var timesTestMethodCalled = 0;
   var timesTearDownCalled = 0;
@@ -144,7 +101,7 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithoutCallbacksWithSetupError =
       'testCase', testCase, jstestdriver.TestCaseInfo.ASYNC_TYPE);
 
   var asyncTestRunner = new jstestdriver.plugins.async.AsyncTestRunnerPlugin(
-      Date, function() {}, asyncTestRunnerPluginTest.MockHerd);
+      Date, function() {}, function(callback) {callback();});
 
   var testDone = false;
   var testResult;
@@ -152,7 +109,7 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithoutCallbacksWithSetupError =
     testResult = result;
     testDone = true;
   };
-  
+
   var testRunConfigurationComplete = false;
   var onTestRunConfigurationComplete = function() {
     testRunConfigurationComplete = true;
@@ -176,33 +133,33 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithoutCallbacksWithSetupError =
 };
 
 
-asyncTestRunnerPluginTest.prototype.testTestCaseWithCallbacks = function() {
+asyncTestRunnerPluginTest.prototype.testTestCaseWithSteps = function() {
   var timesSetUpCalled = 0;
-  var setUpCallback;
+  var timesSetUpStepCalled = 0;
   var timesTestMethodCalled = 0;
-  var testMethodCallback;
+  var timesTestMethodStepCalled = 0;
   var timesTearDownCalled = 0;
-  var tearDownCallback;
+  var timesTearDownStepCalled = 0;
 
   var testCase = function() {};
-  testCase.prototype.setUp = function(herd) {
+  testCase.prototype.setUp = function(q) {
     timesSetUpCalled += 1;
-    setUpCallback = herd.add(function() {});
+    q.defer(function() {timesSetUpStepCalled += 1;});
   };
-  testCase.prototype.testMethod = function(herd) {
+  testCase.prototype.testMethod = function(q) {
     timesTestMethodCalled += 1;
-    testMethodCallback = herd.add(function() {});
+    q.defer(function() {timesTestMethodStepCalled += 1;});
   };
-  testCase.prototype.tearDown = function(herd) {
+  testCase.prototype.tearDown = function(q) {
     timesTearDownCalled += 1;
-    tearDownCallback = herd.add(function() {});
+    q.defer(function() {timesTearDownStepCalled += 1;});
   };
 
   var testCaseInfo = new jstestdriver.TestCaseInfo(
       'testCase', testCase, jstestdriver.TestCaseInfo.ASYNC_TYPE);
 
   var asyncTestRunner = new jstestdriver.plugins.async.AsyncTestRunnerPlugin(
-      Date, function() {}, asyncTestRunnerPluginTest.MockHerd);
+      Date, function() {}, function(callback) {callback();});
 
   var testDone = false;
   var testResult;
@@ -226,38 +183,11 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithCallbacks = function() {
   assertTrue(testCaseAccepted);
 
   assertEquals(1, timesSetUpCalled);
-  assertEquals(0, timesTestMethodCalled);
-  assertEquals(0, timesTearDownCalled);
-  assertNotUndefined(setUpCallback);
-  assertUndefined(testMethodCallback);
-  assertUndefined(tearDownCallback);
-  assertFalse(testDone);
-  assertFalse(testRunConfigurationComplete);
-
-  setUpCallback();
-
-  assertEquals(1, timesSetUpCalled);
+  assertEquals(1, timesSetUpStepCalled);
   assertEquals(1, timesTestMethodCalled);
-  assertEquals(0, timesTearDownCalled);
-  assertNotUndefined(setUpCallback);
-  assertNotUndefined(testMethodCallback);
-  assertUndefined(tearDownCallback);
-  assertFalse(testDone);
-  assertFalse(testRunConfigurationComplete);
-
-  testMethodCallback();
-
-  assertEquals(1, timesSetUpCalled);
-  assertEquals(1, timesTestMethodCalled);
+  assertEquals(1, timesTestMethodStepCalled);
   assertEquals(1, timesTearDownCalled);
-  assertNotUndefined(setUpCallback);
-  assertNotUndefined(testMethodCallback);
-  assertNotUndefined(tearDownCallback);
-  assertFalse(testDone);
-  assertFalse(testRunConfigurationComplete);
-
-  tearDownCallback();
-  
+  assertEquals(1, timesTearDownStepCalled);
   assertTrue(testDone);
   assertTrue(testRunConfigurationComplete);
   assertEquals('passed', testResult.result);
@@ -266,31 +196,31 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithCallbacks = function() {
 
 asyncTestRunnerPluginTest.prototype.testTestCaseWithCallbacksWithSetupError = function() {
   var timesSetUpCalled = 0;
-  var setUpCallback;
+  var timesSetUpStepCalled = 0;
   var timesTestMethodCalled = 0;
-  var testMethodCallback;
+  var timesTestMethodStepCalled = 0;
   var timesTearDownCalled = 0;
-  var tearDownCallback;
+  var timesTearDownStepCalled = 0;
 
   var testCase = function() {};
-  testCase.prototype.setUp = function(herd) {
+  testCase.prototype.setUp = function(q) {
     timesSetUpCalled += 1;
-    setUpCallback = herd.add(function() {throw 'error';});
+    q.defer(function() {timesSetUpStepCalled += 1; throw 'error';});
   };
-  testCase.prototype.testMethod = function(herd) {
+  testCase.prototype.testMethod = function(q) {
     timesTestMethodCalled += 1;
-    testMethodCallback = herd.add(function() {});
+    q.defer(function() {timesTestMethodStepCalled += 1;});
   };
-  testCase.prototype.tearDown = function(herd) {
+  testCase.prototype.tearDown = function(q) {
     timesTearDownCalled += 1;
-    tearDownCallback = herd.add(function() {});
+    q.defer(function() {timesTearDownStepCalled += 1;});
   };
 
   var testCaseInfo = new jstestdriver.TestCaseInfo(
       'testCase', testCase, jstestdriver.TestCaseInfo.ASYNC_TYPE);
 
   var asyncTestRunner = new jstestdriver.plugins.async.AsyncTestRunnerPlugin(
-      Date, function() {}, asyncTestRunnerPluginTest.MockHerd);
+      Date, function() {}, function(callback) {callback();});
 
   var testDone = false;
   var testResult;
@@ -314,29 +244,11 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithCallbacksWithSetupError = fu
   assertTrue(testCaseAccepted);
 
   assertEquals(1, timesSetUpCalled);
+  assertEquals(1, timesSetUpStepCalled);
   assertEquals(0, timesTestMethodCalled);
-  assertEquals(0, timesTearDownCalled);
-  assertNotUndefined(setUpCallback);
-  assertUndefined(testMethodCallback);
-  assertUndefined(tearDownCallback);
-  assertFalse(testDone);
-  assertFalse(testRunConfigurationComplete);
-
-  try {
-    setUpCallback();
-  } catch (expected) {}
-
-  assertEquals(1, timesSetUpCalled);
-  assertEquals(0, timesTestMethodCalled);
+  assertEquals(0, timesTestMethodStepCalled);
   assertEquals(1, timesTearDownCalled);
-  assertNotUndefined(setUpCallback);
-  assertUndefined(testMethodCallback);
-  assertNotUndefined(tearDownCallback);
-  assertFalse(testDone);
-  assertFalse(testRunConfigurationComplete);
-
-  tearDownCallback();
-
+  assertEquals(1, timesTearDownStepCalled);
   assertTrue(testDone);
   assertTrue(testRunConfigurationComplete);
   assertEquals('failed', testResult.result);

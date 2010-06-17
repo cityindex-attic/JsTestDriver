@@ -17,18 +17,18 @@
 var expiringCallbackTest = TestCase('expiringTestCase');
 
 
-expiringCallbackTest.MockHerd = function() {
+expiringCallbackTest.MockDeferredQueue = function() {
   this.lastError = null;
   this.lastMessage = null;
 };
 
 
-expiringCallbackTest.MockHerd.prototype.onError = function(error) {
+expiringCallbackTest.MockDeferredQueue.prototype.onError = function(error) {
   this.lastError = error;
 };
 
 
-expiringCallbackTest.MockHerd.prototype.remove = function(message) {
+expiringCallbackTest.MockDeferredQueue.prototype.remove = function(message) {
   this.lastMessage = message;
 };
 
@@ -48,7 +48,7 @@ expiringCallbackTest.MockTimeout.prototype.trigger = function() {
 
 
 expiringCallbackTest.prototype.testArmAndTimeout = function() {
-  var herd = new expiringCallbackTest.MockHerd();
+  var herd = new expiringCallbackTest.MockDeferredQueue();
   var timeout = new expiringCallbackTest.MockTimeout();
   var testCase = this;
   var callback = new jstestdriver.plugins.async.ExpiringCallback(
