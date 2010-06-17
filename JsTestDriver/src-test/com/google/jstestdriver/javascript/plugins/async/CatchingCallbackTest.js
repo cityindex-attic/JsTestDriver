@@ -17,24 +17,24 @@
 var catchingCallbackTest = TestCase('catchingCallbackTest');
 
 
-catchingCallbackTest.MockDeferredQueue = function() {
+catchingCallbackTest.MockHerd = function() {
   this.lastError = null;
   this.lastMessage = null;
 };
 
 
-catchingCallbackTest.MockDeferredQueue.prototype.onError = function(error) {
+catchingCallbackTest.MockHerd.prototype.onError = function(error) {
   this.lastError = error;
 };
 
 
-catchingCallbackTest.MockDeferredQueue.prototype.remove = function(message) {
+catchingCallbackTest.MockHerd.prototype.remove = function(message) {
   this.lastMessage = message;
 };
 
 
 catchingCallbackTest.prototype.testInvokeWithNoArguments = function() {
-  var herd = new catchingCallbackTest.MockDeferredQueue();
+  var herd = new catchingCallbackTest.MockHerd();
   var called = false;
   var callback = new jstestdriver.plugins.async.CatchingCallback({}, herd, function() {called = true;});
 
@@ -47,7 +47,7 @@ catchingCallbackTest.prototype.testInvokeWithNoArguments = function() {
 
 
 catchingCallbackTest.prototype.testInvokeWithArguments = function() {
-  var herd = new catchingCallbackTest.MockDeferredQueue();
+  var herd = new catchingCallbackTest.MockHerd();
   var capturedName = null;
   var capturedAge = null;
   var callback = new jstestdriver.plugins.async.CatchingCallback({}, herd, function(name, age) {
@@ -65,7 +65,7 @@ catchingCallbackTest.prototype.testInvokeWithArguments = function() {
 
 
 catchingCallbackTest.prototype.testInvokeWithReturnValue = function() {
-  var herd = new catchingCallbackTest.MockDeferredQueue();
+  var herd = new catchingCallbackTest.MockHerd();
   var callback = new jstestdriver.plugins.async.CatchingCallback({}, herd, function() {return 'return value';});
 
   var result = callback.invoke();
@@ -77,7 +77,7 @@ catchingCallbackTest.prototype.testInvokeWithReturnValue = function() {
 
 
 catchingCallbackTest.prototype.testInvokeWithError = function() {
-  var herd = new catchingCallbackTest.MockDeferredQueue();
+  var herd = new catchingCallbackTest.MockHerd();
   var error = new Error();
   var callback = new jstestdriver.plugins.async.CatchingCallback({}, herd, function() {throw error;});
 
@@ -97,7 +97,7 @@ catchingCallbackTest.prototype.testInvokeOnObject = function() {
   var object = {};
   object.field1 = true;
   object.field2 = '0909101';
-  var herd = new catchingCallbackTest.MockDeferredQueue();
+  var herd = new catchingCallbackTest.MockHerd();
   var callback = new jstestdriver.plugins.async.CatchingCallback(object, herd, function() {
     assertUndefined(this.field0);
     assertTrue(this.field1);
