@@ -47,9 +47,9 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
   var someMoreState = 'a';
 
   // Add the first deferred operation to the queue.
-  // This operation checks that ‘state’ is zero, then it schedules
-  // a callback to change ‘state’ to one after a one-second delay.
-  // Notice that the deferred operation takes ‘herd’ as an argument.
+  // This operation checks that 'state' is zero, then it schedules
+  // a callback to change 'state' to one after a one-second delay.
+  // Notice that the deferred operation takes 'herd' as an argument.
   q.defer('A', function(herd) {
     assertEquals(0, state);
 
@@ -60,13 +60,13 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
 
   // Add the second deferred operation to the queue.
   // This operation verifies that the previous asynchronous callback
-  // set ‘state’ to one and someMoreState’ to ‘a’.
+  // set 'state' to one and 'someMoreState' to 'a'.
   // Then it schedules two asynchronous callbacks to run in
   // parallel.
   // The first callback executes after a one-second delay and sets
-  // ‘state’ to two.
+  // 'state' to two.
   // The second callback executes after a two-second delay and sets
-  // ‘someMoreState’ to ‘b’.
+  // 'someMoreState' to 'b'.
   q.defer('B', function(herd) {
     assertEquals(1, state);
     assertEquals('a', someMoreState);
@@ -81,7 +81,7 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
 
   // Add the third deferred operation to the queue.
   // This operation verifies that the previous asynchronous
-  // callbacks set ‘state’ to two and ‘someMoreState’ to ‘b’.
+  // callbacks set 'state' to two and 'someMoreState' to 'b'.
   q.defer('C', function() {
     assertEquals(2, state);
     assertEquals('b', someMoreState);
