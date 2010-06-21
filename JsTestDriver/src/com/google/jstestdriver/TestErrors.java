@@ -46,7 +46,7 @@ public class TestErrors extends RuntimeException {
 
       s.println("Caused by:");
       for (Throwable cause : causes) {
-        s.append(cause.toString());
+        s.println(cause.toString());
       }
     }
   }
@@ -69,9 +69,14 @@ public class TestErrors extends RuntimeException {
 
   @Override
   public String toString() {
-    final CharArrayWriter writer = new CharArrayWriter();
-    writer.append("\nTest Errors:\n\tat");
-    writer.append(message);
-    return writer.toString();
+    final CharArrayWriter core = new CharArrayWriter();
+    final PrintWriter writer = new PrintWriter(core);
+    writer.println(message);
+    writer.println("Caused by");
+    for (Throwable cause : causes) {
+      writer.println("\t" + cause.toString());
+    }
+    writer.flush();
+    return core.toString();
   }
 }
