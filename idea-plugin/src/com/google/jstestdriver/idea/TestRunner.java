@@ -15,6 +15,23 @@
  */
 package com.google.jstestdriver.idea;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.name.Names;
+import com.google.jstestdriver.ActionRunner;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.ConfigurationParser;
+import com.google.jstestdriver.DefaultPathRewriter;
+import com.google.jstestdriver.DryRunInfo;
+import com.google.jstestdriver.IDEPluginActionBuilder;
+import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.PluginLoader;
+import com.google.jstestdriver.Response;
+import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.ResponseStreamFactory;
+import com.google.jstestdriver.TestResult;
+import com.google.jstestdriver.TestResultGenerator;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -26,22 +43,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Arrays;
 import java.util.List;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
-import com.google.inject.name.Names;
-import com.google.jstestdriver.ActionRunner;
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.ConfigurationParser;
-import com.google.jstestdriver.DryRunInfo;
-import com.google.jstestdriver.IDEPluginActionBuilder;
-import com.google.jstestdriver.Plugin;
-import com.google.jstestdriver.PluginLoader;
-import com.google.jstestdriver.Response;
-import com.google.jstestdriver.ResponseStream;
-import com.google.jstestdriver.ResponseStreamFactory;
-import com.google.jstestdriver.TestResult;
-import com.google.jstestdriver.TestResultGenerator;
 
 /**
  * Run JSTD in its own process, and stream messages to a server that lives in the IDEA process,
@@ -133,10 +134,9 @@ public class TestRunner {
   private IDEPluginActionBuilder makeActionBuilder(ResponseStreamFactory responseStreamFactory) {
     try {
       FileReader fileReader = new FileReader(settingsFile);
-      ConfigurationParser configurationParser = new ConfigurationParser(baseDirectory, fileReader,
-          new DefaultPathRewriter());
+      ConfigurationParser configurationParser = new ConfigurationParser(baseDirectory, fileReader, new DefaultPathRewriter());
       IDEPluginActionBuilder builder = new IDEPluginActionBuilder(
-      		configurationParser, serverURL, responseStreamFactory);
+      		configurationParser, serverURL, responseStreamFactory, baseDirectory);
       builder.install(new AbstractModule() {
         @Override
         protected void configure() {
