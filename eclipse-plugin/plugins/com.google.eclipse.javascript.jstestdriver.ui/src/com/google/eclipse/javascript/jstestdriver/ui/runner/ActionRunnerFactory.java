@@ -138,7 +138,7 @@ public class ActionRunnerFactory {
 
     IDEPluginActionBuilder pluginActionBuilder =
         new IDEPluginActionBuilder(parser, serverUrl,
-            new EclipseResponseStreamFactory());
+            new EclipseResponseStreamFactory(), runfilesDir);
     pluginActionBuilder.install(new AbstractModule() {
       @Override
       protected void configure() {
