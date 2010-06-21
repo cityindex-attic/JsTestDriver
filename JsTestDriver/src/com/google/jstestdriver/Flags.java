@@ -39,6 +39,9 @@ public interface Flags {
   public String getTestOutput();
 
   public Set<BrowserRunner> getBrowser();
+  
+  /** A set of strings for browsers that all actions should be run on. */
+  public Set<String> getRequiredBrowsers();
 
   @GuiceBinding(name="reset")
   public boolean getReset();

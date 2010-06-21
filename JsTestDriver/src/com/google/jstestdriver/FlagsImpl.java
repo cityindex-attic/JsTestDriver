@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -49,6 +50,7 @@ public class FlagsImpl implements Flags {
   @Argument
   private List<String> arguments = new ArrayList<String>();
   private RunnerMode runnerMode = RunnerMode.QUIET;
+  private HashSet<String> requiredBrowsers;
 
   @Option(name="--port", usage="The port on which to start the JsTestDriver server")
   public void setPort(Integer port) {
@@ -179,5 +181,15 @@ public class FlagsImpl implements Flags {
 
   public long getBrowserTimeout() {
     return browserTimeout;
+  }
+
+  @Option(name="--requiredBrowsers",
+      usage="Browsers that all actions must be run on.")
+  public void setRequiredBrowsers(List<String> requiredBrowsers) {
+    this.requiredBrowsers = Sets.newHashSet(requiredBrowsers);
+  }
+  
+  public Set<String> getRequiredBrowsers() {
+    return requiredBrowsers;
   }
 }
