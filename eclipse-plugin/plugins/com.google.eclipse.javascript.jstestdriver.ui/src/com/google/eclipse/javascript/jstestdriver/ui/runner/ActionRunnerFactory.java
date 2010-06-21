@@ -24,7 +24,6 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.ConfigurationParser;
-import com.google.jstestdriver.runner.RunnerMode;
 import com.google.jstestdriver.IDEPluginActionBuilder;
 import com.google.jstestdriver.JsTestDriverModule.BrowserCount;
 import com.google.jstestdriver.JsTestDriverModule.BrowserCountProvider;
@@ -36,12 +35,10 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**

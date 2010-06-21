@@ -19,33 +19,43 @@ jstestdriver.Console = function() {
 
 
 jstestdriver.Console.prototype.log = function() {
-  this.log_.push('[LOG] ' + jstestdriver.formatString.apply(this, arguments));
+  this.logStatement('[LOG]', jstestdriver.formatString.apply(this, arguments));
 };
 
 
 jstestdriver.Console.prototype.debug = function() {
-  this.log_.push('[DEBUG] ' + jstestdriver.formatString.apply(this, arguments));
+  this.logStatement('[DEBUG]', jstestdriver.formatString.apply(this, arguments));
 };
 
 
 jstestdriver.Console.prototype.info = function() {
-  this.log_.push('[INFO] ' + jstestdriver.formatString.apply(this, arguments));
+  this.logStatement('[INFO]', jstestdriver.formatString.apply(this, arguments));
 };
 
 
 jstestdriver.Console.prototype.warn = function() {
-  this.log_.push('[WARN] ' + jstestdriver.formatString.apply(this, arguments));
+  this.logStatement('[WARN]', jstestdriver.formatString.apply(this, arguments));
 };
 
 
 jstestdriver.Console.prototype.error = function() {
-  this.log_.push('[ERROR] ' + jstestdriver.formatString.apply(this, arguments));
+  this.logStatement('[ERROR]', jstestdriver.formatString.apply(this, arguments));
+};
+
+
+jstestdriver.Console.prototype.logStatement = function(level, statement) {
+  this.log_.push(level + ' ' + statement);
 };
 
 
 jstestdriver.Console.prototype.getLog = function() {
   var log = this.log_;
-
-  this.log_ = [];
   return log.join('\n');
+};
+
+
+jstestdriver.Console.prototype.getAndResetLog = function() {
+  var log = this.getLog();
+  this.log_ = [];
+  return log;
 };

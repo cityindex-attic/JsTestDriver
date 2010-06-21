@@ -92,10 +92,10 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest = function(testCaseName,
     }
     var end = new this.dateObj_().getTime();
     return new jstestdriver.TestResult(testCaseName, testName, res, msg,
-            jstestdriver.console.getLog(), end - start);  
+            jstestdriver.console.getAndResetLog(), end - start);  
   } catch (e) {
     return new jstestdriver.TestResult(testCaseName, testName,
             'error', 'Unexpected runner error: ' + JSON.stringify(e),
-            jstestdriver.console.getLog(), 0);
+            jstestdriver.console.getAndResetLog(), 0);
   }
 };

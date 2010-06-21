@@ -19,22 +19,22 @@ consoleTest.prototype.testLog = function() {
   var console = new jstestdriver.Console();
 
   console.log("Hello %s", "world");
-  assertEquals("[LOG] Hello world", console.getLog());
+  assertEquals("[LOG] Hello world", console.getAndResetLog());
   console.log("This is some log", "and more");
-  assertEquals("[LOG] This is some log and more", console.getLog());
+  assertEquals("[LOG] This is some log and more", console.getAndResetLog());
   console.log("A number %d", 42);
-  assertEquals("[LOG] A number 42", console.getLog());
+  assertEquals("[LOG] A number 42", console.getAndResetLog());
   console.log("A", "B");
   console.log("C %s", "D"); 
-  assertEquals("[LOG] A B\n[LOG] C D", console.getLog());
+  assertEquals("[LOG] A B\n[LOG] C D", console.getAndResetLog());
   console.log("log"); 
   console.debug("debug");
-  assertEquals("[LOG] log\n[DEBUG] debug", console.getLog());
+  assertEquals("[LOG] log\n[DEBUG] debug", console.getAndResetLog());
   console.log("log");
   console.debug("debug");
   console.info("info");
   console.warn("warn");
   console.error("error");
   assertEquals("[LOG] log\n[DEBUG] debug\n[INFO] info\n[WARN] warn\n[ERROR] error",
-      console.getLog());
+      console.getAndResetLog());
 }
