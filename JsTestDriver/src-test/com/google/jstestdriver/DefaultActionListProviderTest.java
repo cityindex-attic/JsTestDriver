@@ -75,7 +75,7 @@ public class DefaultActionListProviderTest extends TestCase {
         Collections.<FileInfo>emptySet(),
         testOutput,
         null,
-        new BrowserActionsRunner(null, null, null, null, null, 0),
+        new BrowserActionsRunner(null, null, null, null, null, 0, null),
         Providers.<URLTranslator>of(null),
         Providers.<URLRewriter>of(null),
         new FailureAccumulator(), processors,

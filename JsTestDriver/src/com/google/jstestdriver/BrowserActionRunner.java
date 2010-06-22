@@ -17,6 +17,7 @@ package com.google.jstestdriver;
 
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.AggregatingResponseStreamFactory.AggregatingResponseStream;
+import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,17 +37,23 @@ public class BrowserActionRunner implements Callable<ResponseStream> {
   private final JsTestDriverClient client;
   private final List<BrowserAction> actions;
 
-  public BrowserActionRunner(String id, JsTestDriverClient client, List<BrowserAction> actions) {
+  private final StopWatch stopWatch;
+
+  public BrowserActionRunner(String id, JsTestDriverClient client, List<BrowserAction> actions,
+      StopWatch stopWatch) {
     this.id = id;
     this.client = client;
     this.actions = actions;
+    this.stopWatch = stopWatch;
   }
 
   public ResponseStream call() {
     final List<ResponseStream> responseStreams = Lists.newLinkedList();
     for (BrowserAction action : actions) {
+      stopWatch.start("run %s", action);
       logger.debug("Running BrowserAction {}", action);
       responseStreams.add(action.run(id, client));
+      stopWatch.stop("run %s", action);
     }
     return new AggregatingResponseStream(responseStreams);
   }

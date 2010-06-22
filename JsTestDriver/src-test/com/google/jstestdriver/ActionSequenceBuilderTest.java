@@ -40,7 +40,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     Set<BrowserRunner> browsers = browsers();
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(actionFactory, null, null,
-            new BrowserActionsRunner(null, null, null, null, null, 0),
+            new BrowserActionsRunner(null, null, null, null, null, 0, null),
             Providers.<URLTranslator> of(null), Providers.<URLRewriter> of(null),
             new FailureAccumulator());
 
@@ -61,7 +61,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionFactory(
             null,
             Collections.<TestsPreProcessor> emptySet(), SlaveBrowser.TIMEOUT),
-            null, null, new BrowserActionsRunner(null, null, null, null, null, 0),
+            null, null, new BrowserActionsRunner(null, null, null, null, null, 0, null),
             Providers.<URLTranslator> of(null),
             Providers.<URLRewriter> of(null),
         new FailureAccumulator());
@@ -85,7 +85,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionSequenceBuilder(
         		new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(),
         				SlaveBrowser.TIMEOUT), null, null,
-            new BrowserActionsRunner(null, null, null, null, null, 0), Providers
+            new BrowserActionsRunner(null, null, null, null, null, 0, null), Providers
                 .<URLTranslator> of(null), Providers.<URLRewriter> of(null),
             new FailureAccumulator());
 

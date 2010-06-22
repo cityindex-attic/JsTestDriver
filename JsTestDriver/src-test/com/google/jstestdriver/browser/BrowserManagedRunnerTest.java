@@ -21,6 +21,7 @@ import com.google.jstestdriver.BrowserActionRunner;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.FakeJsTestDriverClient;
 import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.util.NullStopWatch;
 
 import junit.framework.TestCase;
 
@@ -38,13 +39,13 @@ public class BrowserManagedRunnerTest extends TestCase {
     final FakeJsTestDriverClient client = new FakeJsTestDriverClient(Lists.newArrayList(browserInfo));
     final FakeBrowserRunner runner = new FakeBrowserRunner();
     final FakeBrowserActionRunner browserActionRunner = new FakeBrowserActionRunner();
-    final BrowserManagedRunner browserRunner = new BrowserManagedRunner(runner, browserId, serverAddress, client, browserActionRunner);
+    final BrowserManagedRunner browserRunner = new BrowserManagedRunner(runner, browserId, serverAddress, client, browserActionRunner, new NullStopWatch());
     browserRunner.call();
   }
   
   private static final class FakeBrowserActionRunner extends BrowserActionRunner {
     public FakeBrowserActionRunner() {
-      super(null, null, null);
+      super(null, null, null, new NullStopWatch());
     }
     
     @Override

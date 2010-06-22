@@ -239,7 +239,9 @@ public class CommandTask {
     String sessionId = null;
 
     try {
+      stopWatch.start("session start %s", params.get("data"));
       sessionId = startSession();
+      stopWatch.stop("session start %s", params.get("data"));
 
       if (!"".equals(sessionId)) {
         heartBeatManager.startHeartBeat(baseUrl, browserId, sessionId);
@@ -258,7 +260,7 @@ public class CommandTask {
       server.post(baseUrl + "/cmd", params);
       StreamMessage streamMessage = null;
 
-      stopWatch.start("Command %s", params.get("data"));
+      stopWatch.start("Execution %s", params.get("data"));
       logger.debug("Starting {} for {}", params.get("data"), browserId);
       do {
         String response = server.fetch(baseUrl + "/cmd?id=" + browserId);
@@ -268,10 +270,12 @@ public class CommandTask {
         shouldPanic(resObj, "execution of command");
         stream.stream(resObj);
       } while (!streamMessage.isLast());
-      stopWatch.stop("Command %s", params.get("data"));
+      stopWatch.stop("execution %s", params.get("data"));
     } finally {
       heartBeatManager.cancelTimer();
+      stopWatch.start("session stop %s", params.get("data"));
       stopSession(sessionId);
+      stopWatch.stop("session stop %s", params.get("data"));
       logger.debug("finished {} for {}", params.get("data"), browserId);
     }
   }

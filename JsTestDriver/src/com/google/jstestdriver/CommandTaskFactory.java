@@ -46,6 +46,6 @@ public class CommandTaskFactory {
   public CommandTask getCommandTask(ResponseStream stream, Set<FileInfo> fileSet, String baseUrl,
       Server server, Map<String, String> params, boolean upload) {
     return new CommandTask(filter, stream, fileSet, baseUrl, server, params,
-    		heartBeatProvider.get(), fileLoader, upload, stopWatch);
+        heartBeatProvider.get(), fileLoader, upload, stopWatch);
   }
 }

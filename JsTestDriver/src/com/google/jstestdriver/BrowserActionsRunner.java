@@ -15,6 +15,17 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.browser.BrowserManagedRunner;
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.util.NullStopWatch;
+import com.google.jstestdriver.util.StopWatch;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -23,16 +34,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import com.google.jstestdriver.browser.BrowserManagedRunner;
-import com.google.jstestdriver.browser.BrowserRunner;
 
 /**
  * Executes each {@link BrowserAction} on each browser.
@@ -49,20 +50,25 @@ public class BrowserActionsRunner implements Action {
   private final String serverAddress;
   private final long testSuiteTimeout;
 
+  private final StopWatch stopWatch;
+
   @Inject
   public BrowserActionsRunner(JsTestDriverClient client, List<BrowserAction> actions,
       ExecutorService executor, Set<BrowserRunner> browserRunners,
       @Named("server") String serverAddress,
-      @Named("testSuiteTimeout") long testTimeout) {
+      @Named("testSuiteTimeout") long testTimeout,
+      StopWatch stopWatch) {
     this.client = client;
     this.actions = actions;
     this.executor = executor;
     this.browserRunners = browserRunners;
     this.serverAddress = serverAddress;
     this.testSuiteTimeout = testTimeout;
+    this.stopWatch = stopWatch;
   }
 
   public void run() {
+    stopWatch.start("run %s", actions);
     logger.trace("Starting BrowserActions {}.", actions);
     Collection<BrowserInfo> browsers = client.listBrowsers();
     if (browsers.size() == 0 && browserRunners.size() == 0 && actions.size() > 0) {
@@ -74,28 +80,28 @@ public class BrowserActionsRunner implements Action {
     // return useful information about a run.
     List<Callable<ResponseStream>> runners = Lists.newLinkedList();
     for (BrowserInfo browserInfo : browsers) {
-      runners.add(new BrowserActionRunner(browserInfo.getId().toString(), client, actions));
+      runners.add(new BrowserActionRunner(browserInfo.getId().toString(), client, actions,
+          stopWatch));
     }
     for (BrowserRunner runner : browserRunners) {
       String browserId = client.getNextBrowserId();
       runners.add(new BrowserManagedRunner(runner, browserId, serverAddress, client,
-          new BrowserActionRunner(browserId, client, actions)));
+          new BrowserActionRunner(browserId, client, actions, stopWatch), stopWatch));
     }
     List<Throwable> exceptions = Lists.newLinkedList();
     final List<ResponseStream> streams = Lists.newLinkedList();
     long currentTimeout = testSuiteTimeout;
     try {
-      final List<Future<ResponseStream>> results = executor.invokeAll(runners);
+      final List<Future<ResponseStream>> results =
+          executor.invokeAll(runners, currentTimeout, TimeUnit.SECONDS);
       for (Future<ResponseStream> result : results) {
-          try {
-            streams.add(result.get(currentTimeout, TimeUnit.SECONDS));
-          } catch (ExecutionException e) {
-            exceptions.add(e.getCause());
-          } catch(TimeoutException e) {
-            currentTimeout = 0; //one timeout, skip the rest.¯
-          } catch (Exception e) {
-            exceptions.add(e);
-          }
+        try {
+          streams.add(result.get());
+        } catch (ExecutionException e) {
+          exceptions.add(e.getCause());
+        } catch (Exception e) {
+          exceptions.add(e);
+        }
       }
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
@@ -112,6 +118,7 @@ public class BrowserActionsRunner implements Action {
     for (ResponseStream stream : streams) {
       stream.finish();
     }
+    stopWatch.stop("run %s", actions);
   }
 
   public List<BrowserAction> getActions() {

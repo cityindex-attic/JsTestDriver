@@ -122,7 +122,7 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.nextTest = function()
  */
 jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.execute_ = function(
     onQueueComplete, invokeMethod) {
-  console.log('start');
+  //console.log('start');
 
   // Create a new herd of callbacks that will call invokeMethod() once all callbacks complete.
   var q = new (this.queueConstructor_)(this.setTimeout_, this.testCase_, onQueueComplete);
@@ -241,5 +241,3 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.buildResult = functio
       this.testCaseInfo_.getTestCaseName(), this.testName_, result, message,
       jstestdriver.console.getAndResetLog(), end - this.start_);
 };
-
-

@@ -4,6 +4,7 @@ import com.google.jstestdriver.BrowserActionRunner;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.JsTestDriverClient;
 import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,17 +28,21 @@ public class BrowserManagedRunner implements Callable<ResponseStream> {
   private final String serverAddress;
   private final JsTestDriverClient client;
 
+  private final StopWatch stopWatch;
+
   public BrowserManagedRunner(BrowserRunner runner, String browserId, String serverAddress,
-      JsTestDriverClient client, BrowserActionRunner browserActionRunner) {
+      JsTestDriverClient client, BrowserActionRunner browserActionRunner, StopWatch stopWatch) {
     this.runner = runner;
     this.browserId = browserId;
     this.serverAddress = serverAddress;
     this.client = client;
     this.browserActionRunner = browserActionRunner;
+    this.stopWatch = stopWatch;
   }
 
   public ResponseStream call() throws Exception {
     String url = String.format("%s/capture?id=%s", serverAddress, browserId);
+    stopWatch.start("browser start %s", runner);
     runner.startBrowser(url);
     try {
       long timeOut = TimeUnit.MILLISECONDS.convert(runner.getTimeout(), TimeUnit.SECONDS);
@@ -51,9 +56,12 @@ public class BrowserManagedRunner implements Callable<ResponseStream> {
               + runner.getTimeout());
         }
       }
+      stopWatch.stop("browser start %s", runner);
       return browserActionRunner.call();
     } finally {
+      stopWatch.start("browser stop %s", runner);
       runner.stopBrowser();
+      stopWatch.stop("browser stop %s", runner);
     }
   }
 
