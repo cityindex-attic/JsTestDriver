@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -97,6 +98,8 @@ public class BrowserActionsRunner implements Action {
       for (Future<ResponseStream> result : results) {
         try {
           streams.add(result.get());
+        } catch (CancellationException e) {
+          exceptions.add(new RuntimeException("Test run cancelled, exceeded " + currentTimeout + "s", e));
         } catch (ExecutionException e) {
           exceptions.add(e.getCause());
         } catch (Exception e) {

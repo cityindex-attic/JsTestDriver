@@ -79,7 +79,7 @@ public class Initializer {
             resolvedConfiguration.createServerAddress(flags.getServer(),
                 flags.getPort()),
             outputStream,
-            basePath, configuration.getTestSuiteTimeout()));
+            basePath, resolvedConfiguration.getTestSuiteTimeout()));
     return modules;
   }
 }

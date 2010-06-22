@@ -26,6 +26,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.jstestdriver.util.StopWatch;
 
 /**
  * A simple loader for files.
@@ -37,35 +38,48 @@ public class ProcessingFileLoader implements FileLoader {
   private final Set<FileLoadPostProcessor> postprocessors;
   private final Set<FileLoadPreProcessor> preProcessors;
   private final File basePath;
+  private final StopWatch stopWatch;
 
   @Inject
   public ProcessingFileLoader(JsTestDriverFileFilter filter,
                               FileReader reader,
                               Set<FileLoadPostProcessor> postprocessors,
                               Set<FileLoadPreProcessor> preProcessors,
-                              @Named("basePath") File basePath) {
+                              @Named("basePath") File basePath,
+                              StopWatch stopWatch) {
     this.filter = filter;
     this.reader = reader;
     this.postprocessors = postprocessors;
     this.preProcessors = preProcessors;
     this.basePath = basePath;
+    this.stopWatch = stopWatch;
   }
 
   //TODO(corysmith): Remove shouldReset.
   public List<FileInfo> loadFiles(
   		Collection<FileInfo> filesToLoad, boolean shouldReset) {
-    List<FileInfo> loadedFiles = new LinkedList<FileInfo>();
+    List<FileInfo> processed = new LinkedList<FileInfo>();
+    List<FileInfo> loaded = new LinkedList<FileInfo>();
     try {
-      for (FileInfo file : preProcessFiles(filesToLoad)) {
-        FileInfo processed = loadFile(shouldReset, basePath, file);
-        processed = postProcessFile(processed);
-        loadedFiles.add(processed);
+      stopWatch.start("preProcessFiles");
+      final List<FileInfo> preProcessedFiles = preProcessFiles(filesToLoad);
+      stopWatch.stop("preProcessFiles");
+
+      stopWatch.start("loadFile");
+      for (FileInfo file : preProcessedFiles) {
+        loaded.add(loadFile(shouldReset, basePath, file));
       }
+      stopWatch.stop("loadFile");
+
+      stopWatch.start("postProcessFile");
+      for (FileInfo file : loaded) {
+        processed.add(postProcessFile(file));
+      }
+      stopWatch.stop("postProcessFile");
     } catch (RuntimeException e) {
-      e.printStackTrace();
       throw e;
     }
-    return loadedFiles;
+    return processed;
   }
 
   private FileInfo loadFile(boolean shouldReset, File basePath, FileInfo file) {

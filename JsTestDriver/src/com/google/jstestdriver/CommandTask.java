@@ -143,6 +143,7 @@ public class CommandTask {
   }
 
   private void uploadFileSet() {
+    stopWatch.start("determine upload %s", params);
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
 
     fileSetParams.put("id", params.get("id"));
@@ -183,10 +184,17 @@ public class CommandTask {
 
       uploadFileParams.put("id", params.get("id"));
       uploadFileParams.put("data", gson.toJson(loadedfiles));
+      stopWatch.stop("determine upload %s", params);
+
+      stopWatch.start("upload to server %s", params);
       server.post(baseUrl + "/fileSet", uploadFileParams);
+      stopWatch.stop("upload to server %s", params);
+
       List<FileSource> filesSrc = new LinkedList<FileSource>(filterFilesToLoad(loadedfiles));
       int numberOfFilesToLoad = filesSrc.size();
 
+      
+      stopWatch.start("load in browser %s", params);
       for (int i = 0; i < numberOfFilesToLoad; i += CHUNK_SIZE) {
         int chunkEndIndex = Math.min(i + CHUNK_SIZE, numberOfFilesToLoad);
         List<String> loadParameters = new LinkedList<String>();
@@ -209,6 +217,7 @@ public class CommandTask {
         shouldPanic(response, "Loading files into the browser.");
         stream.stream(response);
       }
+      stopWatch.stop("load in browser %s", params);
     }
   }
 
@@ -252,15 +261,13 @@ public class CommandTask {
 
       logger.debug("Starting upload for {}", browserId);
       if (upload) {
-        stopWatch.start("upload");
         uploadFileSet();
-        stopWatch.stop("upload");
       }
       logger.debug("Finished upload for {}", browserId);
       server.post(baseUrl + "/cmd", params);
       StreamMessage streamMessage = null;
 
-      stopWatch.start("Execution %s", params.get("data"));
+      stopWatch.start("execution %s", params.get("data"));
       logger.debug("Starting {} for {}", params.get("data"), browserId);
       do {
         String response = server.fetch(baseUrl + "/cmd?id=" + browserId);

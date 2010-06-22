@@ -106,7 +106,7 @@ public class ProcessingFileLoaderTest extends TestCase {
 						return infoData;
 					}
 				}, Collections.<FileLoadPostProcessor> emptySet(),
-				Collections.<FileLoadPreProcessor> emptySet(), new File(".")).loadFiles(
+				Collections.<FileLoadPreProcessor> emptySet(), new File("."), new com.google.jstestdriver.util.NullStopWatch()).loadFiles(
 						Collections.singleton(info), shouldReset);
 
     assertEquals(infoData + "filtered", actual.get(0).getData());
@@ -133,7 +133,7 @@ public class ProcessingFileLoaderTest extends TestCase {
 
     List<FileInfo> actual = new ProcessingFileLoader(new MockFileFilter(shouldReset, infoData),
         new FileReaderStub(infoData, info), Collections.singleton(processor),
-        Collections.<FileLoadPreProcessor> emptySet(), new File(".")).loadFiles(
+        Collections.<FileLoadPreProcessor> emptySet(), new File("."), new com.google.jstestdriver.util.NullStopWatch()).loadFiles(
             Collections.singleton(info), shouldReset);
 
     assertEquals(expected, actual.get(0));
@@ -162,7 +162,7 @@ public class ProcessingFileLoaderTest extends TestCase {
       }
 
     }, mockFileReader, Collections.<FileLoadPostProcessor> emptySet(),
-        Collections.<FileLoadPreProcessor> emptySet(), new File(".")).loadFiles(
+        Collections.<FileLoadPreProcessor> emptySet(), new File("."), new com.google.jstestdriver.util.NullStopWatch()).loadFiles(
         		Collections.singleton(info), shouldReset);
 
     assertEquals(infoData + "filtered" + patchData, actual.get(0).getData());
@@ -176,7 +176,7 @@ public class ProcessingFileLoaderTest extends TestCase {
     final boolean shouldReset = false;
     List<FileInfo> actual = new ProcessingFileLoader(null, null, Collections
         .<FileLoadPostProcessor> emptySet(),
-        Collections.<FileLoadPreProcessor> emptySet(), new File("."))
+        Collections.<FileLoadPreProcessor> emptySet(), new File("."), new com.google.jstestdriver.util.NullStopWatch())
             .loadFiles(Collections.singleton(info), shouldReset);
 
     assertEquals("", actual.get(0).getData());
@@ -205,7 +205,7 @@ public class ProcessingFileLoaderTest extends TestCase {
     List<FileInfo> actual = new ProcessingFileLoader(new MockFileFilter(shouldReset, infoData),
         reader,
         Collections.<FileLoadPostProcessor> emptySet(),
-        Collections.singleton(preProcessor), new File("."))
+        Collections.singleton(preProcessor), new File("."), new com.google.jstestdriver.util.NullStopWatch())
             .loadFiles(Collections.singleton(info), shouldReset);
 
     assertEquals(infoData + "filtered", actual.get(0).getData());

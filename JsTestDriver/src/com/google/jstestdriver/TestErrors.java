@@ -72,9 +72,9 @@ public class TestErrors extends RuntimeException {
     final CharArrayWriter core = new CharArrayWriter();
     final PrintWriter writer = new PrintWriter(core);
     writer.println(message);
-    writer.println("Caused by");
+    writer.println("Caused by:");
     for (Throwable cause : causes) {
-      writer.println("\t" + cause.toString());
+      cause.printStackTrace(writer);
     }
     writer.flush();
     return core.toString();
