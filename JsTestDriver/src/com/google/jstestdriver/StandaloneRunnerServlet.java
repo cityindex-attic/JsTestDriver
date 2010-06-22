@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class StandaloneRunnerServlet  extends HttpServlet  {
+public class StandaloneRunnerServlet extends HttpServlet  {
 
   private static final long serialVersionUID = 8525889760512657635L;
 
