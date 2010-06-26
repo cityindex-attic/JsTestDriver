@@ -36,9 +36,12 @@ CommandExecutorTest.prototype.setUp = function() {
 
 
 CommandExecutorTest.prototype.testFetchCommandNoLibsSendResponseLoop = function() {
+  function getBrowserInfo() {
+    return new jstestdriver.BrowserInfo(1);
+  }
 
-  var executor = new jstestdriver.CommandExecutor(1,
-          this.streamingService, null, null, null);
+  var executor = new jstestdriver.CommandExecutor(this.streamingService,
+          null, null, null, jstestdriver.now, getBrowserInfo);
   executor.registerCommand('execute', executor, executor.execute);
 
   executor.listen();
@@ -71,15 +74,20 @@ CommandExecutorTest.prototype.testConvertJsToJson = function() {
 
 
 CommandExecutorTest.prototype.testHandleDisconnectionByServer = function() {
+  function getBrowserInfo() {
+    return new jstestdriver.BrowserInfo(1);
+  }
+
   var url;
   var data;
   var callback;
   var called = 0;
-  var executor = new jstestdriver.CommandExecutor(1, 
-                                                  this.streamingService,
+  var executor = new jstestdriver.CommandExecutor(this.streamingService,
                                                   null,
                                                   null,
-                                                  null);
+                                                  null,
+                                                  jstestdriver.now,
+                                                  getBrowserInfo);
   executor.listen();
   var listenPost = this.posts.pop();
   listenPost.callback('noop');
@@ -112,11 +120,16 @@ CommandExecutorTest.prototype.testHandleDisconnectionByServer = function() {
 
 
 CommandExecutorTest.prototype.testEvaluateGoodAndBadCommand = function() {
-  var executor = new jstestdriver.CommandExecutor(1, 
-                                                  this.streamingService,
+  function getBrowserInfo() {
+    return new jstestdriver.BrowserInfo(1);
+  }
+
+  var executor = new jstestdriver.CommandExecutor(this.streamingService,
                                                   null,
                                                   null,
-                                                  null);
+                                                  null,
+                                                  jstestdriver.now,
+                                                  getBrowserInfo);
   var res = executor.evaluateCommand('1+2');
 
   assertEquals(res, 3);
@@ -173,66 +186,19 @@ CommandExecutorTest.prototype.testEvaluateGoodAndBadCommand = function() {
 };
 */
 
-CommandExecutorTest.prototype.testRemoveScriptTags = function() {
-  var executor = new jstestdriver.CommandExecutor(1, 
-                                                  this.streamingService,
-                                                  null,
-                                                  null,
-                                                  null);
-  var files = [];
-  var dom = new jstestdriver.MockDOM();
-  var head = dom.createElement('head');
-  var script = dom.createElement('script');
 
-  script.src = "file1";
-  head.appendChild(script);
-  files.push({fileSrc: "file1", timestamp: 42});
-  executor.removeScripts(dom, files);
-  assertEquals(0, head.childNodes.length);
-};
-
-
-CommandExecutorTest.prototype.testCallPluginOnTestResultAdded = function() {
-  var expected = new jstestdriver.TestResult("testsuite", "foo", "passed", "", [], 1, {
-    foo : 1
-  });
-
-  var tmpPlugin = {
-    name : "tmpPlugin"
-  };
-  tmpPlugin[jstestdriver.PluginRegistrar.PROCESS_TEST_RESULT] = function(result) {
-    result.data = expected.data;
-  }
-  
-  var registrar = new jstestdriver.PluginRegistrar();
-  registrar.register(tmpPlugin);
-
-  var executor = new jstestdriver.CommandExecutor(1, 
-          this.streamingService,
-          null,
-          null,
-          registrar);
-  
-  var result = new jstestdriver.TestResult(expected.testCaseName,
-                                           expected.testName,
-                                           expected.result,
-                                           expected.message,
-                                           expected.log,
-                                           expected.time,
-                                           {});
-  executor.addTestResult(result);
-  executor.sendTestResults();
-  var resultPost = this.posts.pop();
-  assertNotNull(resultPost);
-  assertEquals(JSON.stringify([expected]), eval(resultPost.data.response).response);
-};
 
 CommandExecutorTest.prototype.testParseJsonAndRunTheRightMethod = function() {
-  var executor = new jstestdriver.CommandExecutor(1, 
-          this.streamingService,
+  function getBrowserInfo() {
+    return new jstestdriver.BrowserInfo(1);
+  }
+
+  var executor = new jstestdriver.CommandExecutor(this.streamingService,
           null,
           null,
-          null);
+          null,
+          jstestdriver.now,
+          getBrowserInfo);
 
   var command = {
     fooRang : false,
