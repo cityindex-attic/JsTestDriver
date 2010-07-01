@@ -16,7 +16,7 @@
 
 
 /**
- * @fileoverview Defines the CallbackHerdArmor class. Encapsulates a CallbackHerd
+ * @fileoverview Defines the CallbackPoolArmor class. Encapsulates a CallbackPool
  * behind a narrower interface. Also, validates arguments.
  *
  * @author rdionne@google.com (Robert Dionne)
@@ -24,15 +24,15 @@
 
 
 /**
- * Constructs a CallbackHerdArmor.
+ * Constructs a CallbackPoolArmor.
  */
-jstestdriver.plugins.async.CallbackHerdArmor = function(herd) {
-  this.herd_ = herd;
+jstestdriver.plugins.async.CallbackPoolArmor = function(pool) {
+  this.pool_ = pool;
 };
 
 
-jstestdriver.plugins.async.CallbackHerdArmor.prototype.add = function(wrapped, opt_n) {
+jstestdriver.plugins.async.CallbackPoolArmor.prototype.add = function(wrapped, opt_n) {
   if (wrapped) {
-    return this.herd_.add(wrapped, opt_n);
+    return this.pool_.add(wrapped, opt_n);
   }
 };

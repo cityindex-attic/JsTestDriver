@@ -17,18 +17,18 @@
 var testSafeCallbackBuilderTest = TestCase('testSafeCallbackBuilderTest');
 
 
-testSafeCallbackBuilderTest.MockHerd = function() {
+testSafeCallbackBuilderTest.MockPool = function() {
   this.lastError = null;
   this.lastMessage = null;
 };
 
 
-testSafeCallbackBuilderTest.MockHerd.prototype.onError = function(error) {
+testSafeCallbackBuilderTest.MockPool.prototype.onError = function(error) {
   this.lastError = error;
 };
 
 
-testSafeCallbackBuilderTest.MockHerd.prototype.remove = function(message) {
+testSafeCallbackBuilderTest.MockPool.prototype.remove = function(message) {
   this.lastMessage = message;
 };
 
@@ -51,11 +51,11 @@ testSafeCallbackBuilderTest.MockTimeout.prototype.maybeDisarm = function() {
 
 
 testSafeCallbackBuilderTest.prototype.testBuild = function() {
-  var herd = new testSafeCallbackBuilderTest.MockHerd();
+  var pool = new testSafeCallbackBuilderTest.MockPool();
   var builder = new jstestdriver.plugins.async.TestSafeCallbackBuilder(
       function() {}, function() {}, testSafeCallbackBuilderTest.MockTimeout);
   var called = false;
-  var callback = builder.setHerd(herd).setWrapped(function() {called = true;}).build();
+  var callback = builder.setPool(pool).setWrapped(function() {called = true;}).build();
 
   callback.arm(2000);
   assertTrue(testSafeCallbackBuilderTest.mockTimeoutInstance.armed);
@@ -64,6 +64,6 @@ testSafeCallbackBuilderTest.prototype.testBuild = function() {
 
   assertTrue(called);
   assertTrue(testSafeCallbackBuilderTest.mockTimeoutInstance.disarmed);
-  assertNull(herd.lastError);
-  assertEquals('success.', herd.lastMessage);
+  assertNull(pool.lastError);
+  assertEquals('success.', pool.lastMessage);
 };

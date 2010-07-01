@@ -25,29 +25,29 @@
 /**
  * Constructs a DeferredQueue.
  */
-jstestdriver.plugins.async.DeferredQueue = function(setTimeout, testCase, onQueueComplete, opt_herdConstructor) {
+jstestdriver.plugins.async.DeferredQueue = function(setTimeout, testCase, onQueueComplete, opt_poolConstructor) {
   this.setTimeout_ = setTimeout;
   this.testCase_ = testCase;
   this.onQueueComplete_ = onQueueComplete;
-  this.queueConstructor_ = opt_herdConstructor || jstestdriver.plugins.async.CallbackHerd;
+  this.poolConstructor_ = opt_poolConstructor || jstestdriver.plugins.async.CallbackPool;
   this.descriptions_ = [];
   this.operations_ = [];
   this.errors_ = [];
 };
 
 
-jstestdriver.plugins.async.DeferredQueue.prototype.execute_ = function(operation, onHerdComplete) {
-  var herd = new (this.queueConstructor_)(this.setTimeout_, this.testCase_, onHerdComplete);
+jstestdriver.plugins.async.DeferredQueue.prototype.execute_ = function(operation, onPoolComplete) {
+  var pool = new (this.poolConstructor_)(this.setTimeout_, this.testCase_, onPoolComplete);
 
   if (operation) {
     try {
-      operation(herd);
+      operation(pool);
     } catch (e) {
       this.errors_.push(e);
     }
   }
 
-  herd.maybeComplete();
+  pool.maybeComplete();
 };
 
 

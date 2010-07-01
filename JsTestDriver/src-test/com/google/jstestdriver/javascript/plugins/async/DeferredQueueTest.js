@@ -104,10 +104,10 @@ deferredQueueTest.prototype.testMultipleStepsWithAsynchronousCalls = function() 
   var stepOneCalled = false;
   var stepOneCallbackOne;
   var stepOneCallbackTwo;
-  q.defer('Step 1', function(herd) {
+  q.defer('Step 1', function(pool) {
     stepOneCalled = true;
-    stepOneCallbackOne = herd.add(function() {});
-    stepOneCallbackTwo = herd.add(function() {});
+    stepOneCallbackOne = pool.add(function() {});
+    stepOneCallbackTwo = pool.add(function() {});
   });
   var stepTwoCalled = false;
   q.defer('Step 2', function() {
@@ -144,10 +144,10 @@ deferredQueueTest.prototype.testMultipleStepsWithAsynchronousCallsWithFailure = 
   var stepOneCalled = false;
   var stepOneCallbackOne;
   var stepOneCallbackTwo;
-  q.defer('Step 1', function(herd) {
+  q.defer('Step 1', function(pool) {
     stepOneCalled = true;
-    stepOneCallbackOne = herd.add(function() {throw 'error';});
-    stepOneCallbackTwo = herd.add(function() {});
+    stepOneCallbackOne = pool.add(function() {throw 'error';});
+    stepOneCallbackTwo = pool.add(function() {});
   });
   var stepTwoCalled = false;
   q.defer('Step 2', function() {

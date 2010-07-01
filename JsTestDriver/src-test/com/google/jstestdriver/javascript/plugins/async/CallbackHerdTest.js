@@ -19,7 +19,7 @@ var callbackHerdTest = TestCase('callbackHerdTest');
 
 callbackHerdTest.prototype.testAdd = function() {
   var complete = false;
-  var herd = new jstestdriver.plugins.async.CallbackHerd(function(callback) {
+  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
   }, {}, function(errors) {
     assertEquals(0, errors.length);
@@ -48,7 +48,7 @@ callbackHerdTest.prototype.testAdd = function() {
 
 callbackHerdTest.prototype.testAddRepeated = function() {
   var complete = false;
-  var herd = new jstestdriver.plugins.async.CallbackHerd(function(callback) {
+  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
   }, {}, function(errors) {
     assertEquals(0, errors.length);
@@ -73,7 +73,7 @@ callbackHerdTest.prototype.testAddRepeated = function() {
 
 callbackHerdTest.prototype.testAddNested = function() {
   var complete = false;
-  var herd = new jstestdriver.plugins.async.CallbackHerd(function(callback) {
+  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
   }, {}, function(errors) {
     assertEquals(0, errors.length);
@@ -98,7 +98,7 @@ callbackHerdTest.prototype.testAddNested = function() {
 
 callbackHerdTest.prototype.testAddWithErrors = function() {
   var complete = false;
-  var herd = new jstestdriver.plugins.async.CallbackHerd(function(callback) {
+  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
   }, {}, function(errors) {
     assertEquals(1, errors.length);

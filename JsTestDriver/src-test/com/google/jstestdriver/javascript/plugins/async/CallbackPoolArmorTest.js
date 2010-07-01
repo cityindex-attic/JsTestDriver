@@ -14,10 +14,10 @@
  * the License.
  */
 
-var callbackHerdArmorTest = TestCase('callbackHerdArmorTest');
+var callbackPoolArmorTest = TestCase('callbackPoolArmorTest');
 
 
-callbackHerdArmorTest.prototype.testAdd = function() {
+callbackPoolArmorTest.prototype.testAdd = function() {
   var delegate = {};
   var capturedCallback;
   var capturedOptN;
@@ -26,30 +26,30 @@ callbackHerdArmorTest.prototype.testAdd = function() {
     capturedOptN = opt_n;
     return wrapped;
   };
-  var herd = new jstestdriver.plugins.async.CallbackHerdArmor(delegate);
+  var pool = new jstestdriver.plugins.async.CallbackPoolArmor(delegate);
 
   var callback = function() {};
-  var result = herd.add(callback);
+  var result = pool.add(callback);
 
   assertSame(callback, capturedCallback)
   assertSame(callback, result);
   assertUndefined(capturedOptN);
 
-  herd.add(callback, 5);
+  pool.add(callback, 5);
 
   assertEquals(5, capturedOptN);
 };
 
 
-callbackHerdArmorTest.prototype.testAddUndefinedCallback = function() {
+callbackPoolArmorTest.prototype.testAddUndefinedCallback = function() {
   var delegate = {};
   var delegateCalled = false;
   delegate.add = function(wrapped, opt_n) {
     delegateCalled = true;
   };
-  var herd = new jstestdriver.plugins.async.CallbackHerdArmor(delegate);
+  var pool = new jstestdriver.plugins.async.CallbackPoolArmor(delegate);
 
-  herd.add();
+  pool.add();
 
   assertFalse(delegateCalled);
 };

@@ -27,19 +27,19 @@
  * Constructs a CatchingCallback.
  *
  * @param testCase the testCase to use as 'this' when calling the wrapped function.
- * @param herd the herd to which this callback belongs.
+ * @param pool the pool to which this callback belongs.
  * @param wrapped the wrapped callback function.
  */
-jstestdriver.plugins.async.CatchingCallback = function(testCase, herd, wrapped) {
+jstestdriver.plugins.async.CatchingCallback = function(testCase, pool, wrapped) {
   this.testCase_ = testCase;
-  this.herd_ = herd;
+  this.pool_ = pool;
   this.callback_ = wrapped;
 };
 
 
 /**
  * Invokes the wrapped callback, catching any exceptions and reporting the status
- * to the herd.
+ * to the pool.
  */
 jstestdriver.plugins.async.CatchingCallback.prototype.invoke = function() {
   var result;
@@ -49,10 +49,10 @@ jstestdriver.plugins.async.CatchingCallback.prototype.invoke = function() {
     message = 'success.';
     return result;
   } catch (e) {
-    this.herd_.onError(e);
+    this.pool_.onError(e);
     message = 'failure: ' + e;
     throw e;
   } finally {
-    this.herd_.remove(message);
+    this.pool_.remove(message);
   }
 };

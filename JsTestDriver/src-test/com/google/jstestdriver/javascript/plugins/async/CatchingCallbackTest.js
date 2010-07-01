@@ -17,40 +17,40 @@
 var catchingCallbackTest = TestCase('catchingCallbackTest');
 
 
-catchingCallbackTest.MockHerd = function() {
+catchingCallbackTest.MockPool = function() {
   this.lastError = null;
   this.lastMessage = null;
 };
 
 
-catchingCallbackTest.MockHerd.prototype.onError = function(error) {
+catchingCallbackTest.MockPool.prototype.onError = function(error) {
   this.lastError = error;
 };
 
 
-catchingCallbackTest.MockHerd.prototype.remove = function(message) {
+catchingCallbackTest.MockPool.prototype.remove = function(message) {
   this.lastMessage = message;
 };
 
 
 catchingCallbackTest.prototype.testInvokeWithNoArguments = function() {
-  var herd = new catchingCallbackTest.MockHerd();
+  var pool = new catchingCallbackTest.MockPool();
   var called = false;
-  var callback = new jstestdriver.plugins.async.CatchingCallback({}, herd, function() {called = true;});
+  var callback = new jstestdriver.plugins.async.CatchingCallback({}, pool, function() {called = true;});
 
   var result = callback.invoke();
 
   assertTrue('Should execute its callback function.', called);
-  this.assertCallbackSuccess_(herd);
+  this.assertCallbackSuccess_(pool);
   this.assertCallbackReturnedUndefined_(result);
 };
 
 
 catchingCallbackTest.prototype.testInvokeWithArguments = function() {
-  var herd = new catchingCallbackTest.MockHerd();
+  var pool = new catchingCallbackTest.MockPool();
   var capturedName = null;
   var capturedAge = null;
-  var callback = new jstestdriver.plugins.async.CatchingCallback({}, herd, function(name, age) {
+  var callback = new jstestdriver.plugins.async.CatchingCallback({}, pool, function(name, age) {
     capturedName = name;
     capturedAge = age;
   });
@@ -59,36 +59,36 @@ catchingCallbackTest.prototype.testInvokeWithArguments = function() {
 
   this.assertCallbackReceivedParameter_('name', 'Robert', capturedName);
   this.assertCallbackReceivedParameter_('age', 23, capturedAge);
-  this.assertCallbackSuccess_(herd);
+  this.assertCallbackSuccess_(pool);
   this.assertCallbackReturnedUndefined_(result);
 };
 
 
 catchingCallbackTest.prototype.testInvokeWithReturnValue = function() {
-  var herd = new catchingCallbackTest.MockHerd();
-  var callback = new jstestdriver.plugins.async.CatchingCallback({}, herd, function() {return 'return value';});
+  var pool = new catchingCallbackTest.MockPool();
+  var callback = new jstestdriver.plugins.async.CatchingCallback({}, pool, function() {return 'return value';});
 
   var result = callback.invoke();
 
-  this.assertCallbackSuccess_(herd);
+  this.assertCallbackSuccess_(pool);
   assertEquals('Should return the return value of the wrapped callback.',
       'return value', result);
 };
 
 
 catchingCallbackTest.prototype.testInvokeWithError = function() {
-  var herd = new catchingCallbackTest.MockHerd();
+  var pool = new catchingCallbackTest.MockPool();
   var error = new Error();
-  var callback = new jstestdriver.plugins.async.CatchingCallback({}, herd, function() {throw error;});
+  var callback = new jstestdriver.plugins.async.CatchingCallback({}, pool, function() {throw error;});
 
   var result;
   assertException('callback.invoke()', function() {
     result = callback.invoke();
   });
 
-  assertEquals('Should report any caught errors to the herd.', error, herd.lastError);
-  assertNotNull('Should remove itself from the herd with the message \'failure\'.',
-      herd.lastMessage.match(/failure: .*/));
+  assertEquals('Should report any caught errors to the pool.', error, pool.lastError);
+  assertNotNull('Should remove itself from the pool with the message \'failure\'.',
+      pool.lastMessage.match(/failure: .*/));
   this.assertCallbackReturnedUndefined_(result);
 };
 
@@ -97,8 +97,8 @@ catchingCallbackTest.prototype.testInvokeOnObject = function() {
   var object = {};
   object.field1 = true;
   object.field2 = '0909101';
-  var herd = new catchingCallbackTest.MockHerd();
-  var callback = new jstestdriver.plugins.async.CatchingCallback(object, herd, function() {
+  var pool = new catchingCallbackTest.MockPool();
+  var callback = new jstestdriver.plugins.async.CatchingCallback(object, pool, function() {
     assertUndefined(this.field0);
     assertTrue(this.field1);
     assertEquals('0909101', this.field2);
@@ -106,15 +106,15 @@ catchingCallbackTest.prototype.testInvokeOnObject = function() {
 
   var result = callback.invoke();
 
-  this.assertCallbackSuccess_(herd);
+  this.assertCallbackSuccess_(pool);
   this.assertCallbackReturnedUndefined_(result);
 };
 
 
-catchingCallbackTest.prototype.assertCallbackSuccess_ = function(herd) {
-  assertNull('Should report no errors to the herd.', herd.lastError);
-  assertEquals('Should remove itself from the herd with the message \'success\'.',
-      'success.', herd.lastMessage);
+catchingCallbackTest.prototype.assertCallbackSuccess_ = function(pool) {
+  assertNull('Should report no errors to the pool.', pool.lastError);
+  assertEquals('Should remove itself from the pool with the message \'success\'.',
+      'success.', pool.lastMessage);
 };
 
 

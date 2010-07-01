@@ -17,18 +17,18 @@
 var expiringCallbackTest = TestCase('expiringTestCase');
 
 
-expiringCallbackTest.MockHerd = function() {
+expiringCallbackTest.MockPool = function() {
   this.lastError = null;
   this.lastMessage = null;
 };
 
 
-expiringCallbackTest.MockHerd.prototype.onError = function(error) {
+expiringCallbackTest.MockPool.prototype.onError = function(error) {
   this.lastError = error;
 };
 
 
-expiringCallbackTest.MockHerd.prototype.remove = function(message) {
+expiringCallbackTest.MockPool.prototype.remove = function(message) {
   this.lastMessage = message;
 };
 
@@ -48,11 +48,11 @@ expiringCallbackTest.MockTimeout.prototype.trigger = function() {
 
 
 expiringCallbackTest.prototype.testArmAndTimeout = function() {
-  var herd = new expiringCallbackTest.MockHerd();
+  var pool = new expiringCallbackTest.MockPool();
   var timeout = new expiringCallbackTest.MockTimeout();
   var testCase = this;
   var callback = new jstestdriver.plugins.async.ExpiringCallback(
-      herd,
+      pool,
       this.buildCallback_(function() {}),
       timeout);
 
@@ -63,8 +63,8 @@ expiringCallbackTest.prototype.testArmAndTimeout = function() {
 
   timeout.trigger();
 
-  assertNotNull(herd.lastError);
-  assertEquals('expired.', herd.lastMessage);
+  assertNotNull(pool.lastError);
+  assertEquals('expired.', pool.lastMessage);
   assertFalse(callback.callback_.isUsable());
 };
 

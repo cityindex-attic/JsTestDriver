@@ -116,20 +116,20 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.nextTest = function()
 
 /**
  * Starts the next phase of the current test in the current test case. Creates a
- * herd to manage the callbacks spawned during this phase, executes the phase
- * catching any exceptions, and then hands the control over to the herd to
- * call onHerdComplete when it empties.
+ * DeferredQueue to manage the steps of this phase, executes the phase
+ * catching any exceptions, and then hands the control over to the queue to
+ * call onQueueComplete when it empties.
  */
 jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.execute_ = function(
     onQueueComplete, invokeMethod) {
   //console.log('start');
 
-  // Create a new herd of callbacks that will call invokeMethod() once all callbacks complete.
+  // Create a new DeferredQueue that will call invokeMethod() once all steps complete.
   var q = new (this.queueConstructor_)(this.setTimeout_, this.testCase_, onQueueComplete);
   var armor = new (this.armorConstructor_)(q);
 
-  // Attempt to invoke the method. The method will add zero or more asynchronous callbacks
-  // to the herd. If the method throws an error, add that error to the list.
+  // Attempt to invoke the method. The method will add zero or more steps
+  // to the queue. If the method throws an error, add that error to the list.
   if (invokeMethod) {
     try {
       invokeMethod(armor);
@@ -137,12 +137,7 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.execute_ = function(
       this.errors_.push(e);
     }
   }
-
-  // If invokeMethod() schedules any asynchronous callbacks, maybeComplete() does nothing. The herd will
-  // call onHerdComplete() once all the scheduled callbacks complete or expire.
-  //
-  // If invokeMethod() schedules no asynchronous callbacks, maybeComplete() schedules an immediate
-  // call to onHerdComplete().
+  
   q.startStep();
 };
 

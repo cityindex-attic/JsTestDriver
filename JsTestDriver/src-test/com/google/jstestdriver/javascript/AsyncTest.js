@@ -30,9 +30,9 @@ asyncTest.prototype.testWindowSetTimeout = function(q) {
     assertFalse(state);
   };
 
-  q.defer(function(herd) {
+  q.defer(function(pool) {
     // Execute the callback 1 second from now.
-    window.setTimeout(herd.add(passingCallback), 1000 /* ms */);
+    window.setTimeout(pool.add(passingCallback), 1000 /* ms */);
   });
 
   // This code executes instantly.
@@ -49,11 +49,11 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
   // Add the first deferred operation to the queue.
   // This operation checks that 'state' is zero, then it schedules
   // a callback to change 'state' to one after a one-second delay.
-  // Notice that the deferred operation takes 'herd' as an argument.
-  q.defer('A', function(herd) {
+  // Notice that the deferred operation takes 'pool' as an argument.
+  q.defer('A', function(pool) {
     assertEquals(0, state);
 
-    window.setTimeout(herd.add(function() {
+    window.setTimeout(pool.add(function() {
       state = 1;
     }), 1000);
   });
@@ -67,14 +67,14 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
   // 'state' to two.
   // The second callback executes after a two-second delay and sets
   // 'someMoreState' to 'b'.
-  q.defer('B', function(herd) {
+  q.defer('B', function(pool) {
     assertEquals(1, state);
     assertEquals('a', someMoreState);
 
-    window.setTimeout(herd.add(function() {
+    window.setTimeout(pool.add(function() {
       state = 2;
     }), 1000);
-    window.setTimeout(herd.add(function() {
+    window.setTimeout(pool.add(function() {
       someMoreState = 'b';
     }), 2000);
   });

@@ -43,7 +43,7 @@ jstestdriver.plugins.async.TestSafeCallbackBuilder = function(
   this.setTimeout_ = opt_setTimeout || jstestdriver.setTimeout;
   this.clearTimeout_ = opt_clearTimeout || jstestdriver.clearTimeout;
   this.timeoutConstructor_ = opt_timeoutConstructor || jstestdriver.plugins.async.Timeout;
-  this.herd_ = null;
+  this.pool_ = null;
   this.remainingUses_ = null;
   this.testCase_ = null;
   this.wrapped_ = null;
@@ -54,21 +54,21 @@ jstestdriver.plugins.async.TestSafeCallbackBuilder = function(
  * Returns the original function decorated with safeguards.
  */
 jstestdriver.plugins.async.TestSafeCallbackBuilder.prototype.build = function() {
-  var catchingCallback = new jstestdriver.plugins.async.CatchingCallback(this.testCase_, this.herd_, this.wrapped_);
+  var catchingCallback = new jstestdriver.plugins.async.CatchingCallback(this.testCase_, this.pool_, this.wrapped_);
   var timeout = new (this.timeoutConstructor_)(this.setTimeout_, this.clearTimeout_);
   var onDepleted = function() {
     timeout.maybeDisarm();
   };
   var finiteUseCallback = new jstestdriver.plugins.async.FiniteUseCallback(catchingCallback, onDepleted, this.remainingUses_);
-  return new jstestdriver.plugins.async.ExpiringCallback(this.herd_, finiteUseCallback, timeout);
+  return new jstestdriver.plugins.async.ExpiringCallback(this.pool_, finiteUseCallback, timeout);
 };
 
 
 /**
- * @param herd the callback herd to contain the callback.
+ * @param pool the CallbackPool to contain the callback.
  */
-jstestdriver.plugins.async.TestSafeCallbackBuilder.prototype.setHerd = function(herd) {
-  this.herd_ = herd;
+jstestdriver.plugins.async.TestSafeCallbackBuilder.prototype.setPool = function(pool) {
+  this.pool_ = pool;
   return this;
 };
 

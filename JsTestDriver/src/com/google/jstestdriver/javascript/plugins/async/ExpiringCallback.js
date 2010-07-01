@@ -27,12 +27,12 @@
 /**
  * Constructs an ExpiringCallback.
  *
- * @param herd the herd to which this callback belongs.
+ * @param pool the pool to which this callback belongs.
  * @param callback a FiniteUseCallback.
  * @param timeout a Timeout object.
  */
-jstestdriver.plugins.async.ExpiringCallback = function(herd, callback, timeout) {
-  this.herd_ = herd;
+jstestdriver.plugins.async.ExpiringCallback = function(pool, callback, timeout) {
+  this.pool_ = pool;
   this.callback_ = callback;
   this.timeout_ = timeout;
 };
@@ -46,8 +46,8 @@ jstestdriver.plugins.async.ExpiringCallback = function(herd, callback, timeout) 
 jstestdriver.plugins.async.ExpiringCallback.prototype.arm = function(delay) {
   var callback = this;
   this.timeout_.arm(function() {
-    callback.herd_.onError(new Error('expired.'));
-    callback.herd_.remove('expired.', callback.callback_.getRemainingUses());
+    callback.pool_.onError(new Error('expired.'));
+    callback.pool_.remove('expired.', callback.callback_.getRemainingUses());
     callback.callback_.deplete();
   }, delay);
 };

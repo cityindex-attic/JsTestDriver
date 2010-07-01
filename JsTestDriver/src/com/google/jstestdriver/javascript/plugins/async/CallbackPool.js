@@ -16,7 +16,7 @@
 
 
 /**
- * @fileoverview Defines the CallbackHerd class, which decorates given callback
+ * @fileoverview Defines the CallbackPool class, which decorates given callback
  * functions with safeguards and tracks them until they execute or expire.
  * 
  * @author rdionne@google.com (Robert Dionne)
@@ -24,16 +24,16 @@
 
 
 /**
- * Constructs a CallbackHerd.
+ * Constructs a CallbackPool.
  *
  * @param setTimeout the global setTimeout function.
  * @param testCase the test case instance.
- * @param onHerdComplete a function to call when the herd empties.
+ * @param onPoolComplete a function to call when the pool empties.
  */
-jstestdriver.plugins.async.CallbackHerd = function(setTimeout, testCase, onHerdComplete) {
+jstestdriver.plugins.async.CallbackPool = function(setTimeout, testCase, onPoolComplete) {
   this.setTimeout_ = setTimeout;
   this.testCase_ = testCase;
-  this.onHerdComplete_ = onHerdComplete;
+  this.onPoolComplete_ = onPoolComplete;
   this.errors_ = [];
   this.count_ = 0;
 };
@@ -42,56 +42,56 @@ jstestdriver.plugins.async.CallbackHerd = function(setTimeout, testCase, onHerdC
 /**
  * The number of milliseconds to wait before expiring a delinquent callback.
  */
-jstestdriver.plugins.async.CallbackHerd.TIMEOUT = 30000;
+jstestdriver.plugins.async.CallbackPool.TIMEOUT = 30000;
 
 
 /**
- * Calls onHerdComplete if the herd is empty.
+ * Calls onPoolComplete if the pool is empty.
  */
-jstestdriver.plugins.async.CallbackHerd.prototype.maybeComplete = function() {
-  if (this.count_ == 0 && this.onHerdComplete_) {
-    var herd = this;
+jstestdriver.plugins.async.CallbackPool.prototype.maybeComplete = function() {
+  if (this.count_ == 0 && this.onPoolComplete_) {
+    var pool = this;
     this.setTimeout_(function() {
-      herd.onHerdComplete_(herd.errors_);
+      pool.onPoolComplete_(pool.errors_);
     }, 0);
   }
 };
 
 
 /**
- * Returns the number of outstanding callbacks in the herd.
+ * Returns the number of outstanding callbacks in the pool.
  */
-jstestdriver.plugins.async.CallbackHerd.prototype.count = function() {
+jstestdriver.plugins.async.CallbackPool.prototype.count = function() {
   return this.count_;
 };
 
 
 /**
- * Accepts errors to later report them to the test runner via onHerdComplete.
+ * Accepts errors to later report them to the test runner via onPoolComplete.
  * @param error the error to report
  */
-jstestdriver.plugins.async.CallbackHerd.prototype.onError = function(error) {
+jstestdriver.plugins.async.CallbackPool.prototype.onError = function(error) {
   this.errors_.push(error);
 };
 
 
 /**
- * Adds a callback function to the herd, optionally more than once.
+ * Adds a callback function to the pool, optionally more than once.
  *
  * @param wrapped the callback function to decorate with safeguards and to add
- * to the herd.
+ * to the pool.
  * @param opt_n the number of permitted uses of the given callback; defaults to one.
  */
-jstestdriver.plugins.async.CallbackHerd.prototype.add = function(wrapped, opt_n) {
+jstestdriver.plugins.async.CallbackPool.prototype.add = function(wrapped, opt_n) {
   this.count_ += opt_n || 1;
-  console.log('adding. (' + this.count_ + ' in herd)');
+  console.log('adding. (' + this.count_ + ' in pool)');
   var callback = new jstestdriver.plugins.async.TestSafeCallbackBuilder()
-      .setHerd(this)
+      .setPool(this)
       .setRemainingUses(opt_n)
       .setTestCase(this.testCase_)
       .setWrapped(wrapped)
       .build();
-  callback.arm(jstestdriver.plugins.async.CallbackHerd.TIMEOUT);
+  callback.arm(jstestdriver.plugins.async.CallbackPool.TIMEOUT);
   return function() {
     return callback.invoke(arguments);
   };
@@ -99,17 +99,17 @@ jstestdriver.plugins.async.CallbackHerd.prototype.add = function(wrapped, opt_n)
 
 
 /**
- * Removes a callback from the herd, optionally more than one.
+ * Removes a callback from the pool, optionally more than one.
  *
- * @param message a message to pass to the herd for logging purposes; usually the
- * reason that the callback was removed from the herd.
- * @param opt_n the number of callbacks to remove from the herd.
+ * @param message a message to pass to the pool for logging purposes; usually the
+ * reason that the callback was removed from the pool.
+ * @param opt_n the number of callbacks to remove from the pool.
  */
-jstestdriver.plugins.async.CallbackHerd.prototype.remove = function(message, opt_n) {
+jstestdriver.plugins.async.CallbackPool.prototype.remove = function(message, opt_n) {
   if (this.count_ > 0) {
     this.count_ -= opt_n || 1;
     if (message) {
-      console.log(message + ' (' + this.count_ + ' in herd)');
+      console.log(message + ' (' + this.count_ + ' in pool)');
     }
     this.maybeComplete();
   }

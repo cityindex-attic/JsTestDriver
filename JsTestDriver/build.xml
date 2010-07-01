@@ -164,8 +164,8 @@
                  FiniteUseCallback.js,
                  Timeout.js,
                  TestSafeCallbackBuilder.js,
-                 CallbackHerd.js
-                 CallbackHerdArmor.js
+                 CallbackPool.js
+                 CallbackPoolArmor.js
                  DeferredQueue.js
                  DeferredQueueArmor.js" />
         <filelist dir="${obj.dir}/${javascript-resources}/plugins"
@@ -208,8 +208,8 @@
                  FiniteUseCallback.js,
                  Timeout.js,
                  TestSafeCallbackBuilder.js,
-                 CallbackHerd.js
-                 CallbackHerdArmor.js
+                 CallbackPool.js
+                 CallbackPoolArmor.js
                  DeferredQueue.js
                  DeferredQueueArmor.js" />
         <filelist dir="${obj.dir}/${javascript-resources}/plugins"
