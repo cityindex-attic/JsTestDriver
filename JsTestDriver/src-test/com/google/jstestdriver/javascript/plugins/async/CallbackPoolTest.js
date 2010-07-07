@@ -14,10 +14,10 @@
  * the License.
  */
 
-var callbackHerdTest = TestCase('callbackHerdTest');
+var callbackPoolTest = TestCase('callbackPoolTest');
 
 
-callbackHerdTest.prototype.testAdd = function() {
+callbackPoolTest.prototype.testAdd = function() {
   var complete = false;
   var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
@@ -46,7 +46,7 @@ callbackHerdTest.prototype.testAdd = function() {
 };
 
 
-callbackHerdTest.prototype.testAddRepeated = function() {
+callbackPoolTest.prototype.testAddRepeated = function() {
   var complete = false;
   var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
@@ -71,7 +71,7 @@ callbackHerdTest.prototype.testAddRepeated = function() {
 };
 
 
-callbackHerdTest.prototype.testAddNested = function() {
+callbackPoolTest.prototype.testAddNested = function() {
   var complete = false;
   var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
@@ -96,7 +96,7 @@ callbackHerdTest.prototype.testAddNested = function() {
 };
 
 
-callbackHerdTest.prototype.testAddWithErrors = function() {
+callbackPoolTest.prototype.testAddWithErrors = function() {
   var complete = false;
   var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();

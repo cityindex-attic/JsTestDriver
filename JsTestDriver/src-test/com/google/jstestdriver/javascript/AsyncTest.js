@@ -32,7 +32,7 @@ asyncTest.prototype.testWindowSetTimeout = function(q) {
 
   q.defer(function(pool) {
     // Execute the callback 1 second from now.
-    window.setTimeout(pool.add(passingCallback), 1000 /* ms */);
+    window.setTimeout(pool.add(passingCallback), 250 /* ms */);
   });
 
   // This code executes instantly.
@@ -55,7 +55,7 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
 
     window.setTimeout(pool.add(function() {
       state = 1;
-    }), 1000);
+    }), 250);
   });
 
   // Add the second deferred operation to the queue.
@@ -73,10 +73,10 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
 
     window.setTimeout(pool.add(function() {
       state = 2;
-    }), 1000);
+    }), 250);
     window.setTimeout(pool.add(function() {
       someMoreState = 'b';
-    }), 2000);
+    }), 500);
   });
 
   // Add the third deferred operation to the queue.
@@ -92,5 +92,24 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
   q.defer('D', function() {
     assertEquals(3, state);
     assertEquals('c', someMoreState);
+  });
+};
+
+
+asyncTest.prototype.testWithNestedDeferredQueues = function(queue) {
+  var state = 0;
+  
+  queue.defer(function(pool, childQueue) {
+    assertEquals(0, state);
+    window.setTimeout(pool.add(function() {state = 1;}), 250);
+    
+    childQueue.defer(function(pool) {
+      assertEquals(1, state);
+      window.setTimeout(pool.add(function() {state = 2;}), 250);
+    });
+  });
+
+  queue.defer(function() {
+    assertEquals(2, state);
   });
 };

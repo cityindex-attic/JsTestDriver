@@ -25,23 +25,34 @@
 /**
  * Constructs a DeferredQueue.
  */
-jstestdriver.plugins.async.DeferredQueue = function(setTimeout, testCase, onQueueComplete, opt_poolConstructor) {
+jstestdriver.plugins.async.DeferredQueue = function(setTimeout, testCase, onQueueComplete,
+    opt_queueConstructor, opt_queueArmorConstructor, opt_poolConstructor, opt_poolArmorConstructor) {
   this.setTimeout_ = setTimeout;
   this.testCase_ = testCase;
   this.onQueueComplete_ = onQueueComplete;
+  this.queueConstructor_ = opt_queueConstructor || jstestdriver.plugins.async.DeferredQueue;
+  this.queueArmorConstructor_ = opt_queueArmorConstructor || jstestdriver.plugins.async.DeferredQueueArmor;
   this.poolConstructor_ = opt_poolConstructor || jstestdriver.plugins.async.CallbackPool;
+  this.poolArmorConstructor_ = opt_poolArmorConstructor || jstestdriver.plugins.async.CallbackPoolArmor;
   this.descriptions_ = [];
   this.operations_ = [];
   this.errors_ = [];
 };
 
 
-jstestdriver.plugins.async.DeferredQueue.prototype.execute_ = function(operation, onPoolComplete) {
+jstestdriver.plugins.async.DeferredQueue.prototype.execute_ = function(operation, onQueueComplete) {
+  var queue = new (this.queueConstructor_)(this.setTimeout_, this.testCase_, onQueueComplete);
+  var queueArmor = new (this.queueArmorConstructor_)(queue);
+
+  var onPoolComplete = function(errors) {
+    queue.finishStep_(errors);
+  };
   var pool = new (this.poolConstructor_)(this.setTimeout_, this.testCase_, onPoolComplete);
+  var poolArmor = new (this.poolArmorConstructor_)(pool);
 
   if (operation) {
     try {
-      operation(pool);
+      operation(poolArmor, queueArmor);
     } catch (e) {
       this.errors_.push(e);
     }
