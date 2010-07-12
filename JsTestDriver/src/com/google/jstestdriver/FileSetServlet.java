@@ -103,7 +103,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
     if (lock.tryLock(sessionId)) {
       writer.write(sessionId);
     } else {
-      // session is probably staled
+      // session is probably stalled
       if ((!browser.isCommandRunning() && browser.peekCommand() == null) ||
           ((new Date().getTime() - lock.getLastHeartBeat()) > HEARTBEAT_TIMEOUT)) {
         lock.forceUnlock();
@@ -169,6 +169,7 @@ public class FileSetServlet extends HttpServlet implements Observer {
     return filteredFilesToRequest;
   }
 
+  // TODO(corysmith): Remove this and add the Lock to the SlaveBrowser.
   public void update(Observable o, Object arg) {
     BrowserCaptureEvent captureEvent = (BrowserCaptureEvent) arg;
     if (captureEvent.event == Event.CONNECTED) {

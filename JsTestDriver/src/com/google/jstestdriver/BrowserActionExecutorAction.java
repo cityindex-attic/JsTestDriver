@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.browser.BrowserManagedRunner;
 import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.browser.BrowserSessionManager;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.StopWatch;
 
@@ -41,8 +42,8 @@ import java.util.concurrent.TimeUnit;
  *
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class BrowserActionsRunner implements Action {
-  private static final Logger logger = LoggerFactory.getLogger(BrowserActionsRunner.class);
+public class BrowserActionExecutorAction implements Action {
+  private static final Logger logger = LoggerFactory.getLogger(BrowserActionExecutorAction.class);
 
   private final JsTestDriverClient client;
   private final List<BrowserAction> actions;
@@ -53,12 +54,15 @@ public class BrowserActionsRunner implements Action {
 
   private final StopWatch stopWatch;
 
+  private final BrowserSessionManager sessionManager;
+
   @Inject
-  public BrowserActionsRunner(JsTestDriverClient client, List<BrowserAction> actions,
+  public BrowserActionExecutorAction(JsTestDriverClient client, List<BrowserAction> actions,
       ExecutorService executor, Set<BrowserRunner> browserRunners,
       @Named("server") String serverAddress,
       @Named("testSuiteTimeout") long testTimeout,
-      StopWatch stopWatch) {
+      StopWatch stopWatch,
+      BrowserSessionManager sessionManager) {
     this.client = client;
     this.actions = actions;
     this.executor = executor;
@@ -66,6 +70,7 @@ public class BrowserActionsRunner implements Action {
     this.serverAddress = serverAddress;
     this.testSuiteTimeout = testTimeout;
     this.stopWatch = stopWatch;
+    this.sessionManager = sessionManager;
   }
 
   public RunData run(RunData runData) {
@@ -81,13 +86,18 @@ public class BrowserActionsRunner implements Action {
     // return useful information about a run.
     List<Callable<RunData>> runners = Lists.newLinkedList();
     for (BrowserInfo browserInfo : browsers) {
-      runners.add(new BrowserActionRunner(browserInfo.getId().toString(), client, actions,
-          stopWatch, runData));
+      runners.add(new BrowserActionRunner(browserInfo.getId().toString(),
+          client,
+          actions,
+          stopWatch,
+          runData,
+          sessionManager));
     }
     for (BrowserRunner runner : browserRunners) {
       String browserId = client.getNextBrowserId();
-      runners.add(new BrowserManagedRunner(runner, browserId, serverAddress, client,
-          new BrowserActionRunner(browserId, client, actions, stopWatch, runData), stopWatch));
+      final BrowserActionRunner actionRunner =
+          new BrowserActionRunner(browserId, client, actions, stopWatch, runData, sessionManager);
+      runners.add(createBrowserManagedRunner(runData, runner, browserId, actionRunner));
     }
     List<Throwable> exceptions = Lists.newLinkedList();
     long currentTimeout = testSuiteTimeout;
@@ -98,7 +108,8 @@ public class BrowserActionsRunner implements Action {
         try {
           runData = runData.aggregateResponses(result.get());
         } catch (CancellationException e) {
-          exceptions.add(new RuntimeException("Test run cancelled, exceeded " + currentTimeout + "s", e));
+          exceptions.add(new RuntimeException(
+              "Test run cancelled, exceeded " + currentTimeout + "s", e));
         } catch (ExecutionException e) {
           exceptions.add(e.getCause());
         } catch (Exception e) {
@@ -121,6 +132,17 @@ public class BrowserActionsRunner implements Action {
 
     stopWatch.stop("run %s", actions);
     return runData;
+  }
+
+  // TODO(corysmith): Pull this into a factory.
+  private BrowserManagedRunner createBrowserManagedRunner(RunData runData, BrowserRunner runner,
+      String browserId, BrowserActionRunner actionRunner) {
+    return new BrowserManagedRunner(runner,
+        browserId,
+        serverAddress,
+        client,
+        actionRunner,
+        stopWatch);
   }
 
   public List<BrowserAction> getActions() {

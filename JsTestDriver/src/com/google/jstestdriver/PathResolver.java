@@ -51,7 +51,7 @@ public class PathResolver {
   // TODO(andrewtrenk): This method may not be needed since the File class
   // can resolve ".." on its own
   public String resolvePath(String path) {
-  	path  = FileInfo.formatFileSeparator(path);
+    path  = FileInfo.formatFileSeparator(path);
     Stack<String> resolvedPath = new Stack<String>();
     String[] tokenizedPath = path.split(FileInfo.SEPARATOR_CHAR);
 
@@ -100,14 +100,14 @@ public class PathResolver {
     return consolidated;
   }
 
-	/**
-	 * Resolves files for a set of FileInfos:
-	 *  - Expands glob paths (e.g. "*.js") into distinct FileInfos
-	 *  - Sets last modified timestamp for each FileInfo
-	 *
-	 * @param unresolvedFiles the FileInfos to resolved
-	 * @return the resolved FileInfos
-	 */
+  /**
+   * Resolves files for a set of FileInfos:
+   *  - Expands glob paths (e.g. "*.js") into distinct FileInfos
+   *  - Sets last modified timestamp for each FileInfo
+   *
+   * @param unresolvedFiles the FileInfos to resolved
+   * @return the resolved FileInfos
+   */
   public Set<FileInfo> resolve(Set<FileInfo> unresolvedFiles) {
     Set<FileInfo> resolvedFiles = new LinkedHashSet<FileInfo>();
 
@@ -128,15 +128,15 @@ public class PathResolver {
         String[] expandedFileNames = expandGlob(filePath, file.getName(), absoluteDir);
 
         for (String fileName : expandedFileNames) {
-        	String absoluteResolvedFilePath = FileInfo.getPath(absoluteDir, fileName);
-        	String relativeResolvedFilePath = FileInfo.getPath(relativeDir, fileName);
+          String absoluteResolvedFilePath = FileInfo.getPath(absoluteDir, fileName);
+          String relativeResolvedFilePath = FileInfo.getPath(relativeDir, fileName);
 
-      		File resolvedFile = new File(absoluteResolvedFilePath);
-      		long timestamp = resolvedFile.lastModified();
+          File resolvedFile = new File(absoluteResolvedFilePath);
+          long timestamp = resolvedFile.lastModified();
 
-        	FileInfo newFileInfo =
-        		  new FileInfo(relativeResolvedFilePath, timestamp,
-        		    	fileInfo.isPatch(), fileInfo.isServeOnly(), null);
+          FileInfo newFileInfo =
+              new FileInfo(relativeResolvedFilePath, timestamp,
+                  fileInfo.isPatch(), fileInfo.isServeOnly(), null);
 
           resolvedFiles.add(newFileInfo);
         }
@@ -148,9 +148,9 @@ public class PathResolver {
     return consolidatePatches(resolvedFiles);
   }
 
-	private String[] expandGlob(String filePath, String fileNamePattern, File dir) {
+  private String[] expandGlob(String filePath, String fileNamePattern, File dir) {
     String[] filteredFiles = dir.list(new GlobFilenameFilter(
-    		fileNamePattern, GlobCompiler.DEFAULT_MASK | GlobCompiler.CASE_INSENSITIVE_MASK));
+        fileNamePattern, GlobCompiler.DEFAULT_MASK | GlobCompiler.CASE_INSENSITIVE_MASK));
 
     if (filteredFiles == null || filteredFiles.length == 0) {
       try {
@@ -168,9 +168,9 @@ public class PathResolver {
     Arrays.sort(filteredFiles, String.CASE_INSENSITIVE_ORDER);
 
     return filteredFiles;
-	}
+  }
 
-	public List<Plugin> resolve(List<Plugin> plugins) {
+  public List<Plugin> resolve(List<Plugin> plugins) {
     List<Plugin> resolved = Lists.newLinkedList();
     for (Plugin plugin : plugins) {
       resolved.add(plugin.getPluginFromPath(resolvePath(plugin.getPathToJar())));
@@ -179,10 +179,10 @@ public class PathResolver {
   }
 
   private Set<FileInfo> postProcessFiles(Set<FileInfo> resolvedFiles) {
-  	Set<FileInfo> processedFiles = resolvedFiles;
+    Set<FileInfo> processedFiles = resolvedFiles;
     for (FileParsePostProcessor processor : processors) {
-    	processedFiles = processor.process(resolvedFiles);
+      processedFiles = processor.process(resolvedFiles);
     }
     return processedFiles;
-	}
+  }
 }

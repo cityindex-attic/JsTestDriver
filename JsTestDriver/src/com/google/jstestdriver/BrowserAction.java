@@ -22,5 +22,5 @@ import com.google.jstestdriver.model.RunData;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public interface BrowserAction {
-  public RunData run(String id, JsTestDriverClient client, RunData runData);
+  public RunData run(String browserId, JsTestDriverClient client, RunData runData);
 }

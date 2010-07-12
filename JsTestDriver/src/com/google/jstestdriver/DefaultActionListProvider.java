@@ -51,7 +51,7 @@ public class DefaultActionListProvider implements ActionListProvider {
   private final FailureAccumulator accumulator;
   private final Set<ActionListProcessor> processors;
   private final XmlPrinter xmlPrinter;
-  private final BrowserActionsRunner browserActionsRunner;
+  private final BrowserActionExecutorAction browserActionsRunner;
 
   // TODO(corysmith): Refactor this. Currently in a temporary,
   //  make dependencies visible to aid refactoring state.
@@ -68,7 +68,7 @@ public class DefaultActionListProvider implements ActionListProvider {
       @Named("fileSet") Set<FileInfo> fileSet,
       @Named("testOutput") String testOutput,
       ResponseStreamFactory responseStreamFactory,
-      BrowserActionsRunner browserActionsRunner,
+      BrowserActionExecutorAction browserActionsRunner,
       Provider<URLTranslator> urlTranslatorProvider,
       Provider<URLRewriter> urlRewriterProvider,
       FailureAccumulator accumulator,

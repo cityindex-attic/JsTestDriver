@@ -50,7 +50,7 @@ public class DefaultActionListProviderTest extends TestCase {
 
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
-    expectedActions.add(BrowserActionsRunner.class);
+    expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(FailureCheckerAction.class);
     assertSequence(expectedActions, actions);
   }
@@ -75,7 +75,7 @@ public class DefaultActionListProviderTest extends TestCase {
         Collections.<FileInfo>emptySet(),
         testOutput,
         null,
-        new BrowserActionsRunner(null, null, null, null, null, 0, null),
+        new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
         Providers.<URLTranslator>of(null),
         Providers.<URLRewriter>of(null),
         new FailureAccumulator(), processors,
@@ -94,7 +94,7 @@ public class DefaultActionListProviderTest extends TestCase {
     flags.setReset(true);
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
-    expectedActions.add(BrowserActionsRunner.class);
+    expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(FailureCheckerAction.class);
 
     List<Action> actions = parser.get();
@@ -110,7 +110,7 @@ public class DefaultActionListProviderTest extends TestCase {
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
-    expectedActions.add(BrowserActionsRunner.class);
+    expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
 
@@ -126,7 +126,7 @@ public class DefaultActionListProviderTest extends TestCase {
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
-    expectedActions.add(BrowserActionsRunner.class);
+    expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(PrintXmlTestResultsAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);

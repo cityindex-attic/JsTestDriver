@@ -17,6 +17,17 @@ package com.google.jstestdriver;
 
 import static java.lang.String.format;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.browser.BrowserPanicException;
+import com.google.jstestdriver.model.RunData;
+import com.google.jstestdriver.util.StopWatch;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,17 +37,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.jstestdriver.JsonCommand.CommandType;
-import com.google.jstestdriver.Response.ResponseType;
-import com.google.jstestdriver.browser.BrowserPanicException;
-import com.google.jstestdriver.model.RunData;
-import com.google.jstestdriver.util.StopWatch;
 
 /**
  * Handles the communication of a command to the JsTestDriverServer from the
@@ -49,7 +49,7 @@ public class CommandTask {
   private static final Logger logger = LoggerFactory.getLogger(CommandTask.class);
 
   private static final List<String> EMPTY_ARRAYLIST = new ArrayList<String>();
-  private static final long WAIT_INTERVAL = 500L;
+
   public static final int CHUNK_SIZE = 50;
 
   private final Gson gson = new Gson();
@@ -59,48 +59,25 @@ public class CommandTask {
   private final String baseUrl;
   private final Server server;
   private final Map<String, String> params;
-  private final HeartBeatManager heartBeatManager;
   private final FileLoader fileLoader;
   private final boolean upload;
 
   private final StopWatch stopWatch;
 
-  public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, Set<FileInfo> fileSet,
-      String baseUrl, Server server, Map<String, String> params,
-      HeartBeatManager heartBeatManager, FileLoader fileLoader, boolean upload, StopWatch stopWatch) {
+
+  public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, String baseUrl,
+      Server server, Map<String, String> params, FileLoader fileLoader,
+      boolean upload, StopWatch stopWatch) {
     this.filter = filter;
     this.stream = stream;
     this.baseUrl = baseUrl;
     this.server = server;
     this.params = params;
-    this.heartBeatManager = heartBeatManager;
     this.fileLoader = fileLoader;
     this.upload = upload;
     this.stopWatch = stopWatch;
   }
-
-  private String startSession() {
-    String browserId = params.get("id");
-    String sessionId = server.startSession(baseUrl, browserId);
-
-    if ("FAILED".equals(sessionId)) {
-      while ("FAILED".equals(sessionId)) {
-        try {
-          Thread.sleep(WAIT_INTERVAL);
-        } catch (InterruptedException e) {
-          logger.error("Could not create session for browser: " + browserId);
-          return "";
-        }
-        sessionId = server.startSession(baseUrl, browserId);
-      }
-    }
-    return sessionId;
-  }
-
-  private void stopSession(String sessionId) {
-    server.stopSession(baseUrl, params.get("id"), sessionId);
-  }
-
+  
   /**
    * Throws an exception if the expected browser is not available for this task.
    */
@@ -142,14 +119,16 @@ public class CommandTask {
   }
 
   private void uploadFileSet(Set<FileInfo> files) {
-    stopWatch.start("determine upload %s", params);
+    stopWatch.start("get upload set %s", params);
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
 
     fileSetParams.put("id", params.get("id"));
     fileSetParams.put("fileSet", gson.toJson(files));
     String postResult = server.post(baseUrl + "/fileSet", fileSetParams);
+    stopWatch.stop("get upload set %s", params);
 
     if (postResult.length() > 0) {
+      stopWatch.start("determine upload %s", params);
       Collection<FileInfo> filesToUpload =
           gson.fromJson(postResult, new TypeToken<Collection<FileInfo>>() {}.getType());
       // should reset if the files are the same, because there could be other files on
@@ -184,6 +163,7 @@ public class CommandTask {
       uploadFileParams.put("id", params.get("id"));
       uploadFileParams.put("data", gson.toJson(loadedfiles));
       stopWatch.stop("determine upload %s", params);
+      
 
       stopWatch.start("upload to server %s", params);
       server.post(baseUrl + "/fileSet", uploadFileParams);
@@ -242,20 +222,10 @@ public class CommandTask {
   }
 
   public void run(RunData runData) {
-    heartBeatManager.startTimer();
     String browserId = params.get("id");
-    String sessionId = null;
-
     try {
       stopWatch.start("session start %s", params.get("data"));
-      sessionId = startSession();
       stopWatch.stop("session start %s", params.get("data"));
-
-      if (!"".equals(sessionId)) {
-        heartBeatManager.startHeartBeat(baseUrl, browserId, sessionId);
-      } else {
-        throw new FailureException("Can't start a session on the server!" + params);
-      }
       checkBrowser();
 
       logger.debug("Starting upload for {}", browserId);
@@ -278,9 +248,7 @@ public class CommandTask {
       } while (!streamMessage.isLast());
       stopWatch.stop("execution %s", params.get("data"));
     } finally {
-      heartBeatManager.cancelTimer();
       stopWatch.start("session stop %s", params.get("data"));
-      stopSession(sessionId);
       stopWatch.stop("session stop %s", params.get("data"));
       logger.debug("finished {} for {}", params.get("data"), browserId);
     }

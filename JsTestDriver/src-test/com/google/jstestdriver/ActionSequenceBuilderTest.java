@@ -40,12 +40,12 @@ public class ActionSequenceBuilderTest extends TestCase {
     Set<BrowserRunner> browsers = browsers();
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(actionFactory, null, null,
-            new BrowserActionsRunner(null, null, null, null, null, 0, null),
+            new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
             Providers.<URLTranslator> of(null), Providers.<URLRewriter> of(null),
             new FailureAccumulator());
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
-    expectedActions.add(BrowserActionsRunner.class);
+    expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(FailureCheckerAction.class);
     builder.usingFiles(files, false);
 
@@ -61,7 +61,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionFactory(
             null,
             Collections.<TestsPreProcessor> emptySet(), SlaveBrowser.TIMEOUT),
-            null, null, new BrowserActionsRunner(null, null, null, null, null, 0, null),
+            null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
             Providers.<URLTranslator> of(null),
             Providers.<URLRewriter> of(null),
         new FailureAccumulator());
@@ -69,7 +69,7 @@ public class ActionSequenceBuilderTest extends TestCase {
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
-    expectedActions.add(BrowserActionsRunner.class);
+    expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
     builder.withLocalServerPort(1001).usingFiles(files, false);
@@ -85,7 +85,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionSequenceBuilder(
         		new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(),
         				SlaveBrowser.TIMEOUT), null, null,
-            new BrowserActionsRunner(null, null, null, null, null, 0, null), Providers
+            new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null), Providers
                 .<URLTranslator> of(null), Providers.<URLRewriter> of(null),
             new FailureAccumulator());
 
@@ -94,7 +94,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
 //    expectedActions.add(BrowserStartupAction.class);
-    expectedActions.add(BrowserActionsRunner.class);
+    expectedActions.add(BrowserActionExecutorAction.class);
 //    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);

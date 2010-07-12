@@ -39,13 +39,14 @@ public class BrowserManagedRunnerTest extends TestCase {
     final FakeJsTestDriverClient client = new FakeJsTestDriverClient(Lists.newArrayList(browserInfo));
     final FakeBrowserRunner runner = new FakeBrowserRunner();
     final FakeBrowserActionRunner browserActionRunner = new FakeBrowserActionRunner();
-    final BrowserManagedRunner browserRunner = new BrowserManagedRunner(runner, browserId, serverAddress, client, browserActionRunner, new NullStopWatch());
+    final BrowserManagedRunner browserRunner =
+        new BrowserManagedRunner(runner, browserId, serverAddress, client, browserActionRunner, new NullStopWatch());
     browserRunner.call();
   }
-  
+
   private static final class FakeBrowserActionRunner extends BrowserActionRunner {
     public FakeBrowserActionRunner() {
-      super(null, null, null, new NullStopWatch(), null);
+      super(null, null, null, new NullStopWatch(), null, null);
     }
     
     @Override
@@ -53,7 +54,7 @@ public class BrowserManagedRunnerTest extends TestCase {
       return null;
     }
   }
-  
+
   private static final class FakeBrowserRunner implements BrowserRunner {
     public void stopBrowser() {
       // TODO Auto-generated method stub

@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.browser.BrowserSessionManager;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.StopWatch;
 
@@ -26,9 +27,9 @@ import java.util.concurrent.Callable;
 
 
 /**
+ * Runs all actions on a specific browser.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-// TODO(corysmith): Work out a better return value.
 public class BrowserActionRunner implements Callable<RunData> {
   private static final Logger logger = LoggerFactory.getLogger(BrowserActionRunner.class);
 
@@ -41,7 +42,7 @@ public class BrowserActionRunner implements Callable<RunData> {
   private final RunData runData;
 
   public BrowserActionRunner(String id, JsTestDriverClient client, List<BrowserAction> actions,
-      StopWatch stopWatch, RunData runData) {
+      StopWatch stopWatch, RunData runData, BrowserSessionManager sessionManager) {
     this.id = id;
     this.client = client;
     this.actions = actions;

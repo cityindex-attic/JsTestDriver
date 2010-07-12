@@ -19,8 +19,7 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public class BrowserManagedRunner implements Callable<RunData> {
-  private static final Logger logger =
-      LoggerFactory.getLogger(BrowserManagedRunner.class);
+  private static final Logger logger = LoggerFactory.getLogger(BrowserManagedRunner.class);
 
   private final BrowserRunner runner;
   private final String browserId;
@@ -30,8 +29,12 @@ public class BrowserManagedRunner implements Callable<RunData> {
 
   private final StopWatch stopWatch;
 
-  public BrowserManagedRunner(BrowserRunner runner, String browserId, String serverAddress,
-      JsTestDriverClient client, BrowserActionRunner browserActionRunner, StopWatch stopWatch) {
+  public BrowserManagedRunner(BrowserRunner runner,
+      String browserId,
+      String serverAddress,
+      JsTestDriverClient client,
+      BrowserActionRunner browserActionRunner,
+      StopWatch stopWatch) {
     this.runner = runner;
     this.browserId = browserId;
     this.serverAddress = serverAddress;
@@ -41,9 +44,10 @@ public class BrowserManagedRunner implements Callable<RunData> {
   }
 
   public RunData call() throws Exception {
-    String url = String.format("%s/capture?id=%s", serverAddress, browserId);
+    final String url = String.format("%s/capture?id=%s", serverAddress, browserId);
     stopWatch.start("browser start %s", runner);
     runner.startBrowser(url);
+    String sessionId = null;
     try {
       long timeOut = TimeUnit.MILLISECONDS.convert(runner.getTimeout(), TimeUnit.SECONDS);
       long start = System.currentTimeMillis();

@@ -48,7 +48,7 @@ public class ActionSequenceBuilder {
   private List<String> dryRunFor = new LinkedList<String>();
   private List<String> commands = new LinkedList<String>();
   private XmlPrinter xmlPrinter;
-  private final BrowserActionsRunner browserActionsRunner;
+  private final BrowserActionExecutorAction browserActionsRunner;
 
   /**
    * Begins the building of an action sequence.
@@ -58,7 +58,7 @@ public class ActionSequenceBuilder {
   public ActionSequenceBuilder(ActionFactory actionFactory,
                                FileLoader fileLoader,
                                ResponseStreamFactory responseStreamFactory,
-                               BrowserActionsRunner browserActionsRunner,
+                               BrowserActionExecutorAction browserActionsRunner,
                                Provider<URLTranslator> urlTranslatorProvider,
                                Provider<URLRewriter> urlRewriterProvider,
                                FailureAccumulator accumulator) {
