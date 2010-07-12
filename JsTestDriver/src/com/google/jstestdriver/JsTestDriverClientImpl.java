@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.model.RunData;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -67,27 +68,31 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     return server.fetch(baseUrl + "/cmd?nextBrowserId");
   }
 
-  private void sendCommand(String id, ResponseStream stream, String cmd, boolean uploadFiles) {
+  private void sendCommand(String browserId, ResponseStream stream, String cmd,
+      boolean uploadFiles, RunData runData) {
     Map<String, String> params = new LinkedHashMap<String, String>();
 
     params.put("data", cmd);
-    params.put("id", id);
-    CommandTask task = commandTaskFactory.getCommandTask(stream, fileSet, baseUrl,
-        server, params, uploadFiles);
+    params.put("id", browserId);
+    CommandTask task =
+        commandTaskFactory.getCommandTask(stream, fileSet, baseUrl, server, params, uploadFiles);
 
-    task.run();
+    // TODO(corysmith): Work out the contradiction between ResponseStream and
+    // RunData, possibly returning runData here.
+    task.run(runData);
   }
 
-  public void eval(String id, ResponseStream responseStream, String cmd) {
+  public void eval(String browserId, ResponseStream responseStream, String cmd, RunData runData) {
     List<String> parameters = new LinkedList<String>();
 
     parameters.add(cmd);
     JsonCommand jsonCmd = new JsonCommand(CommandType.EXECUTE, parameters);
 
-    sendCommand(id, responseStream, gson.toJson(jsonCmd), false);
+    sendCommand(browserId, responseStream, gson.toJson(jsonCmd), false, runData);
   }
 
-  public void runAllTests(String id, ResponseStream responseStream, boolean captureConsole) {
+  public void runAllTests(String browserId, ResponseStream responseStream, boolean captureConsole,
+      RunData runData) {
     List<String> parameters = new LinkedList<String>();
 
     parameters.add(String.valueOf(captureConsole));
@@ -96,17 +101,17 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     // false as strings evals to true on the js side. so, "" it is.
     JsonCommand cmd = new JsonCommand(CommandType.RUNALLTESTS, parameters);
 
-    sendCommand(id, responseStream, gson.toJson(cmd), true);
+    sendCommand(browserId, responseStream, gson.toJson(cmd), true, runData);
   }
 
-  public void reset(String id, ResponseStream responseStream) {
+  public void reset(String browserId, ResponseStream responseStream, RunData runData) {
     JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
 
-    sendCommand(id, responseStream, gson.toJson(cmd), false);
+    sendCommand(browserId, responseStream, gson.toJson(cmd), false, runData);
   }
 
-  public void runTests(String id, ResponseStream responseStream, List<String> tests,
-      boolean captureConsole) {
+  public void runTests(String browserId, ResponseStream responseStream, List<String> tests,
+      boolean captureConsole, RunData runData) {
     List<String> parameters = new LinkedList<String>();
 
     parameters.add(gson.toJson(tests));
@@ -115,21 +120,21 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     // false as strings evals to true on the js side. so, "" it is.
     JsonCommand cmd = new JsonCommand(CommandType.RUNTESTS, parameters);
 
-    sendCommand(id, responseStream, gson.toJson(cmd), true);
+    sendCommand(browserId, responseStream, gson.toJson(cmd), true, runData);
   }
 
-  public void dryRun(String id, ResponseStream responseStream) {
+  public void dryRun(String browserId, ResponseStream responseStream, RunData runData) {
     JsonCommand cmd = new JsonCommand(CommandType.DRYRUN, Collections.<String>emptyList());
 
-    sendCommand(id, responseStream, gson.toJson(cmd), true);
+    sendCommand(browserId, responseStream, gson.toJson(cmd), true, runData);
   }
 
-  public void dryRunFor(String id, ResponseStream responseStream, List<String> expressions) {
+  public void dryRunFor(String browserId, ResponseStream responseStream, List<String> expressions, RunData runData) {
     List<String> parameters = new LinkedList<String>();
 
     parameters.add(gson.toJson(expressions));
     JsonCommand cmd = new JsonCommand(CommandType.DRYRUNFOR, parameters);
 
-    sendCommand(id, responseStream, gson.toJson(cmd), true);
+    sendCommand(browserId, responseStream, gson.toJson(cmd), true, runData);
   }
 }

@@ -3,7 +3,7 @@ package com.google.jstestdriver.browser;
 import com.google.jstestdriver.BrowserActionRunner;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.JsTestDriverClient;
-import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author corbinrsmith@gmail.com (Corbin Smith)
  *
  */
-public class BrowserManagedRunner implements Callable<ResponseStream> {
+public class BrowserManagedRunner implements Callable<RunData> {
   private static final Logger logger =
       LoggerFactory.getLogger(BrowserManagedRunner.class);
 
@@ -40,7 +40,7 @@ public class BrowserManagedRunner implements Callable<ResponseStream> {
     this.stopWatch = stopWatch;
   }
 
-  public ResponseStream call() throws Exception {
+  public RunData call() throws Exception {
     String url = String.format("%s/capture?id=%s", serverAddress, browserId);
     stopWatch.start("browser start %s", runner);
     runner.startBrowser(url);

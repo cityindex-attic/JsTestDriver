@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.jstestdriver.model.RunData;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -54,13 +55,13 @@ public class DryRunAction implements BrowserAction {
     this.expressions = expressions;
   }
 
-  public ResponseStream run(String id, JsTestDriverClient client) {
+  public RunData run(String id, JsTestDriverClient client, RunData runData) {
     final ResponseStream responseStream = responseStreamFactory.getDryRunActionResponseStream();
     if (expressions.size() == 1 && expressions.get(0).equals("all")) {
-      client.dryRun(id, responseStream);
+      client.dryRun(id, responseStream, runData);
     } else {
-      client.dryRunFor(id, responseStream, expressions);
+      client.dryRunFor(id, responseStream, expressions, runData);
     }
-    return responseStream;
+    return runData.recordResponse(responseStream);
   }
 }

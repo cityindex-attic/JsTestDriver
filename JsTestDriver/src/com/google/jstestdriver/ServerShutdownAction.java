@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.model.RunData;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
@@ -26,7 +28,8 @@ public class ServerShutdownAction implements Action {
     this.serverStartupAction = serverStartupAction;
   }
 
-  public void run() {
+  public RunData run(RunData runData) {
     serverStartupAction.getServer().stop();
+    return runData;
   }
 }

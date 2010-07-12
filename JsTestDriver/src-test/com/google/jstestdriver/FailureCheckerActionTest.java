@@ -30,7 +30,7 @@ public class FailureCheckerActionTest extends TestCase {
     FailureCheckerAction action = new FailureCheckerAction(accumulator);
 
     try {
-      action.run();
+      action.run(null);
       fail("Expected an exception to be thrown");
     } catch (FailureException e) {
       // success

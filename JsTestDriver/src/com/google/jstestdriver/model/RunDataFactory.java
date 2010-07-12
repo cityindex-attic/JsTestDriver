@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Google Inc.
+ * Copyright 2010 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,25 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
 
-import com.google.jstestdriver.model.RunData;
+package com.google.jstestdriver.model;
 
-/**
- * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
- */
-public class FailureCheckerAction implements Action {
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.ResponseStream;
 
-  private final FailureAccumulator accumulator;
+import java.util.Collections;
+import java.util.Set;
 
-  public FailureCheckerAction(FailureAccumulator accumulator) {
-    this.accumulator = accumulator;
+public class RunDataFactory {
+  private final Set<FileInfo> fileSet;
+
+  @Inject
+  public RunDataFactory(@Named("fileSet") Set<FileInfo> fileSet) {
+    this.fileSet = fileSet;
   }
 
-  public RunData run(RunData runData) {
-    if (accumulator.hasFailures()) {
-      throw new FailureException("Tests failed. (Useful, isn't this?)");
-    }
-    return runData;
+  public RunData get() {
+    return new RunData(fileSet, Collections.<ResponseStream> emptyList());
   }
 }

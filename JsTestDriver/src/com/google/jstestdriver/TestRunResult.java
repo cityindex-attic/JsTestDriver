@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class RunData {
+public class TestRunResult {
   private int passes = 0;
   private int fails = 0;
   private int errors = 0;

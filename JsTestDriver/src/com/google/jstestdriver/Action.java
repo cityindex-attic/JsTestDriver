@@ -15,9 +15,11 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.model.RunData;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public interface Action {
-  void run();
+  RunData run(RunData runData);
 }

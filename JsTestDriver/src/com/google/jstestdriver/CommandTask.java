@@ -35,6 +35,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.Response.ResponseType;
 import com.google.jstestdriver.browser.BrowserPanicException;
+import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.StopWatch;
 
 /**
@@ -55,7 +56,6 @@ public class CommandTask {
 
   private final JsTestDriverFileFilter filter;
   private final ResponseStream stream;
-  private final Set<FileInfo> fileSet;
   private final String baseUrl;
   private final Server server;
   private final Map<String, String> params;
@@ -70,7 +70,6 @@ public class CommandTask {
       HeartBeatManager heartBeatManager, FileLoader fileLoader, boolean upload, StopWatch stopWatch) {
     this.filter = filter;
     this.stream = stream;
-    this.fileSet = fileSet;
     this.baseUrl = baseUrl;
     this.server = server;
     this.params = params;
@@ -142,12 +141,12 @@ public class CommandTask {
     }
   }
 
-  private void uploadFileSet() {
+  private void uploadFileSet(Set<FileInfo> files) {
     stopWatch.start("determine upload %s", params);
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
 
     fileSetParams.put("id", params.get("id"));
-    fileSetParams.put("fileSet", gson.toJson(fileSet));
+    fileSetParams.put("fileSet", gson.toJson(files));
     String postResult = server.post(baseUrl + "/fileSet", fileSetParams);
 
     if (postResult.length() > 0) {
@@ -155,7 +154,7 @@ public class CommandTask {
           gson.fromJson(postResult, new TypeToken<Collection<FileInfo>>() {}.getType());
       // should reset if the files are the same, because there could be other files on
       // the server.
-      boolean shouldReset = sameFiles(filesToUpload, fileSet);
+      boolean shouldReset = sameFiles(filesToUpload, files);
       Set<FileInfo> finalFilesToUpload = new LinkedHashSet<FileInfo>();
 
       if (shouldReset) {
@@ -242,7 +241,7 @@ public class CommandTask {
     return filteredFileSources;
   }
 
-  public void run() {
+  public void run(RunData runData) {
     heartBeatManager.startTimer();
     String browserId = params.get("id");
     String sessionId = null;
@@ -261,7 +260,7 @@ public class CommandTask {
 
       logger.debug("Starting upload for {}", browserId);
       if (upload) {
-        uploadFileSet();
+        uploadFileSet(runData.getFileSet());
       }
       logger.debug("Finished upload for {}", browserId);
       server.post(baseUrl + "/cmd", params);

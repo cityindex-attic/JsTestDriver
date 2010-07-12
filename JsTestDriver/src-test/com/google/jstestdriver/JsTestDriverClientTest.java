@@ -17,12 +17,14 @@ package com.google.jstestdriver;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import com.google.inject.Provider;
+import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
 
 /**
@@ -106,7 +108,8 @@ public class JsTestDriverClientTest extends TestCase {
         "http://localhost", server, false);
     FakeResponseStream stream = new FakeResponseStream();
 
-    client.eval("1", stream, "cmd");
+    client.eval("1", stream, "cmd",
+        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList()));
 
     Response response = stream.getResponse();
 
@@ -115,7 +118,8 @@ public class JsTestDriverClientTest extends TestCase {
     assertEquals("error1", response.getError());
     assertEquals(3L, response.getExecutionTime());
 
-    client.eval("2", stream, "cmd");
+    client.eval("2", stream, "cmd",
+        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList()));
     response = stream.getResponse();
     assertEquals("2", stream.getResponse().getResponse());
     assertEquals("browser2", response.getBrowser().getName());
@@ -173,7 +177,8 @@ public class JsTestDriverClientTest extends TestCase {
         "http://localhost", server, false);
     FakeResponseStream stream = new FakeResponseStream();
 
-    client.runAllTests("1", stream, false);
+    client.runAllTests("1", stream, false,
+        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList()));
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }
@@ -202,7 +207,8 @@ public class JsTestDriverClientTest extends TestCase {
 
     tests.add("testCase.testFoo");
     tests.add("testCase.testBar");
-    client.runTests("1", stream, tests, false);
+    client.runTests("1", stream, tests, false,
+        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList()));
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }

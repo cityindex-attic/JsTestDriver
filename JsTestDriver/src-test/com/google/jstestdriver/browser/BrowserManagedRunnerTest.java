@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.jstestdriver.BrowserActionRunner;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.FakeJsTestDriverClient;
-import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
 
 import junit.framework.TestCase;
@@ -45,11 +45,11 @@ public class BrowserManagedRunnerTest extends TestCase {
   
   private static final class FakeBrowserActionRunner extends BrowserActionRunner {
     public FakeBrowserActionRunner() {
-      super(null, null, null, new NullStopWatch());
+      super(null, null, null, new NullStopWatch(), null);
     }
     
     @Override
-    public ResponseStream call() {
+    public RunData call() {
       return null;
     }
   }

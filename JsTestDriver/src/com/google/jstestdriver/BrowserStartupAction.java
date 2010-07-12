@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.model.RunData;
 
 /**
  * Starts a list of browsers when run.
@@ -46,7 +47,7 @@ public class BrowserStartupAction implements Action, Observer {
       this.latch = latch;
   }
 
-  public void run() {
+  public RunData run(RunData runData) {
     try {
       String url = String.format("%s/capture", serverAddress);
       int timeout = 30;
@@ -71,6 +72,7 @@ public class BrowserStartupAction implements Action, Observer {
     } catch (InterruptedException e) {
       logger.error("Error in starting browsers: {}", e.toString());
     }
+    return runData;
   }
 
   public void update(Observable o, Object arg) {

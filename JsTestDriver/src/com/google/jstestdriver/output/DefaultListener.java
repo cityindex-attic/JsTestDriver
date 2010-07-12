@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.FileResult;
-import com.google.jstestdriver.RunData;
+import com.google.jstestdriver.TestRunResult;
 import com.google.jstestdriver.TestResult;
 
 import java.io.PrintStream;
@@ -40,7 +40,7 @@ public class DefaultListener implements TestResultListener {
 
   private final AtomicBoolean finished = new AtomicBoolean(false);
   private final boolean verbose;
-  private final Map<String, RunData> browsersRunData = new ConcurrentHashMap<String, RunData>();
+  private final Map<String, TestRunResult> browsersRunData = new ConcurrentHashMap<String, TestRunResult>();
   private final AtomicInteger lineColumn = new AtomicInteger(0);
   private final AtomicInteger totalPasses = new AtomicInteger(0);
   private final AtomicInteger totalFails = new AtomicInteger(0);
@@ -65,8 +65,8 @@ public class DefaultListener implements TestResultListener {
     // right now it can be called multiple times. :P
     if (!finished.getAndSet(true)) {
       printSummary(out);
-      for (Map.Entry<String, RunData> entry : browsersRunData.entrySet()) {
-        RunData data = entry.getValue();
+      for (Map.Entry<String, TestRunResult> entry : browsersRunData.entrySet()) {
+        TestRunResult data = entry.getValue();
   
         printBrowserSummary(out, entry.getKey(), data);
   
@@ -86,7 +86,7 @@ public class DefaultListener implements TestResultListener {
         totalFails.get(), totalErrors.get(), findMaxTime()));
   }
 
-  private void printBrowserSummary(PrintStream out, String browser, RunData data) {
+  private void printBrowserSummary(PrintStream out, String browser, TestRunResult data) {
     out.println(String.format("  %s: Run %d tests (Passed: %d; Fails: %d; Errors %d) (%.2f ms)",
         browser, (data.getPassed() + data.getFailed() + data.getErrors()),
         data.getPassed(), data.getFailed(), data.getErrors(), data.getTotalTime()));
@@ -96,7 +96,7 @@ public class DefaultListener implements TestResultListener {
   private float findMaxTime() {
     float max = 0f;
 
-    for (RunData data : browsersRunData.values()) {
+    for (TestRunResult data : browsersRunData.values()) {
       max = Math.max(data.getTotalTime(), max);
     }
     return max;
@@ -104,7 +104,7 @@ public class DefaultListener implements TestResultListener {
 
   public void onTestComplete(TestResult testResult) {
     String browser = testResult.getBrowserInfo().toString();
-    RunData runData = currentRunData(browser);
+    TestRunResult runData = currentRunData(browser);
     TestResult.Result result = testResult.getResult();
     String log = testResult.getLog();
 
@@ -169,11 +169,11 @@ public class DefaultListener implements TestResultListener {
     }
   }
 
-  private synchronized RunData currentRunData(String browser) {
-    RunData runData = browsersRunData.get(browser);
+  private synchronized TestRunResult currentRunData(String browser) {
+    TestRunResult runData = browsersRunData.get(browser);
 
     if (runData == null) {
-      runData = new RunData();
+      runData = new TestRunResult();
       browsersRunData.put(browser, runData);
     }
     return runData;
@@ -186,7 +186,7 @@ public class DefaultListener implements TestResultListener {
       }
       return;
     }
-    RunData runData = currentRunData(browser);
+    TestRunResult runData = currentRunData(browser);
     runData.addError();
     runData.addProblem(new FileLoadProblem(fileResult));
     if (verbose) {

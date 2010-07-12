@@ -47,12 +47,12 @@ public class BrowserHunter {
   }
 
   /**
-   * Begins tracking a browser intheCpaturedBrowsers collection.
+   * Begins tracking a browser in the CapturedBrowsers collection.
    * @param rawId
    * @param name
    * @param version
    * @param os
-   * @return
+   * @return A slave browser
    */
   public SlaveBrowser captureBrowser(String rawId, String name, String version, String os) {
 

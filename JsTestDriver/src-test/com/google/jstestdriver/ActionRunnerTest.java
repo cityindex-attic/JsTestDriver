@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.model.RunData;
+import com.google.jstestdriver.model.RunDataFactory;
 import com.google.jstestdriver.util.NullStopWatch;
 
 import junit.framework.TestCase;
@@ -31,8 +33,9 @@ public class ActionRunnerTest extends TestCase {
 
     private boolean ran = false;
 
-    public void run() {
+    public RunData run(RunData runData) {
       ran = true;
+      return runData;
     }
 
     public boolean actionRan() {
@@ -45,7 +48,7 @@ public class ActionRunnerTest extends TestCase {
     TestRanAction action =  new TestRanAction();
 
     actions.add(action);
-    ActionRunner runner = new ActionRunner(actions, new NullStopWatch());
+    ActionRunner runner = new ActionRunner(actions, new NullStopWatch(), new RunDataFactory(null));
 
     runner.runActions();
     assertTrue(action.actionRan());

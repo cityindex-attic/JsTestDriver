@@ -1,6 +1,7 @@
 package com.google.jstestdriver.output;
 
 import com.google.jstestdriver.Action;
+import com.google.jstestdriver.model.RunData;
 
 /**
  *
@@ -13,7 +14,8 @@ public class PrintXmlTestResultsAction implements Action {
     this.xmlPrinter = xmlPrinter;
   }
 
-  public void run() {
+  public RunData run(RunData testCase) {
     xmlPrinter.writeXmlReportFiles();
+    return testCase;
   }
 }

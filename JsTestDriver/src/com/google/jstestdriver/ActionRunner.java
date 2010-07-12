@@ -16,6 +16,8 @@
 package com.google.jstestdriver;
 
 import com.google.inject.Inject;
+import com.google.jstestdriver.model.RunData;
+import com.google.jstestdriver.model.RunDataFactory;
 import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
@@ -39,24 +41,28 @@ public class ActionRunner {
   private final List<Action> actions;
 
   private final StopWatch stopWatch;
+  private final RunDataFactory factory;
 
   @Inject
-  public ActionRunner(List<Action> actions, StopWatch stopWatch) {
+  public ActionRunner(List<Action> actions, StopWatch stopWatch, RunDataFactory factory) {
     this.actions = actions;
     this.stopWatch = stopWatch;
+    this.factory = factory;
   }
 
   public void runActions() {
+    RunData runData = factory.get();
     Iterator<Action> iterator = actions.iterator();
 
     while (iterator.hasNext()) {
       Action action = iterator.next();
       stopWatch.start(action.toString());
       logger.info("Running {}", action);
-      action.run();
+      runData = action.run(runData);
       logger.info("Finished {}", action);
       stopWatch.stop(action.toString());
     }
+    // TODO(corysmith): Finish the runData here?
 
     Writer writer = new StringWriter();
     stopWatch.print(writer);

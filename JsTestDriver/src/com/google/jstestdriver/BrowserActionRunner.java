@@ -15,8 +15,7 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Lists;
-import com.google.jstestdriver.AggregatingResponseStreamFactory.AggregatingResponseStream;
+import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ import java.util.concurrent.Callable;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 // TODO(corysmith): Work out a better return value.
-public class BrowserActionRunner implements Callable<ResponseStream> {
+public class BrowserActionRunner implements Callable<RunData> {
   private static final Logger logger = LoggerFactory.getLogger(BrowserActionRunner.class);
 
   private final String id;
@@ -39,22 +38,25 @@ public class BrowserActionRunner implements Callable<ResponseStream> {
 
   private final StopWatch stopWatch;
 
+  private final RunData runData;
+
   public BrowserActionRunner(String id, JsTestDriverClient client, List<BrowserAction> actions,
-      StopWatch stopWatch) {
+      StopWatch stopWatch, RunData runData) {
     this.id = id;
     this.client = client;
     this.actions = actions;
     this.stopWatch = stopWatch;
+    this.runData = runData;
   }
 
-  public ResponseStream call() {
-    final List<ResponseStream> responseStreams = Lists.newLinkedList();
+  public RunData call() {
+    RunData currentRunData = runData;
     for (BrowserAction action : actions) {
       stopWatch.start("run %s", action);
       logger.debug("Running BrowserAction {}", action);
-      responseStreams.add(action.run(id, client));
+      currentRunData = action.run(id, client, currentRunData);
       stopWatch.stop("run %s", action);
     }
-    return new AggregatingResponseStream(responseStreams);
+    return currentRunData;
   }
 }

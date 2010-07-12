@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.browser.BrowserManagedRunner;
 import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.util.NullStopWatch;
+import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
@@ -68,7 +68,7 @@ public class BrowserActionsRunner implements Action {
     this.stopWatch = stopWatch;
   }
 
-  public void run() {
+  public RunData run(RunData runData) {
     stopWatch.start("run %s", actions);
     logger.trace("Starting BrowserActions {}.", actions);
     Collection<BrowserInfo> browsers = client.listBrowsers();
@@ -79,25 +79,24 @@ public class BrowserActionsRunner implements Action {
     }
     // TODO(corysmith): Change the threaded action runner to
     // return useful information about a run.
-    List<Callable<ResponseStream>> runners = Lists.newLinkedList();
+    List<Callable<RunData>> runners = Lists.newLinkedList();
     for (BrowserInfo browserInfo : browsers) {
       runners.add(new BrowserActionRunner(browserInfo.getId().toString(), client, actions,
-          stopWatch));
+          stopWatch, runData));
     }
     for (BrowserRunner runner : browserRunners) {
       String browserId = client.getNextBrowserId();
       runners.add(new BrowserManagedRunner(runner, browserId, serverAddress, client,
-          new BrowserActionRunner(browserId, client, actions, stopWatch), stopWatch));
+          new BrowserActionRunner(browserId, client, actions, stopWatch, runData), stopWatch));
     }
     List<Throwable> exceptions = Lists.newLinkedList();
-    final List<ResponseStream> streams = Lists.newLinkedList();
     long currentTimeout = testSuiteTimeout;
     try {
-      final List<Future<ResponseStream>> results =
+      final List<Future<RunData>> results =
           executor.invokeAll(runners, currentTimeout, TimeUnit.SECONDS);
-      for (Future<ResponseStream> result : results) {
+      for (Future<RunData> result : results) {
         try {
-          streams.add(result.get());
+          runData = runData.aggregateResponses(result.get());
         } catch (CancellationException e) {
           exceptions.add(new RuntimeException("Test run cancelled, exceeded " + currentTimeout + "s", e));
         } catch (ExecutionException e) {
@@ -116,12 +115,12 @@ public class BrowserActionsRunner implements Action {
     if (!exceptions.isEmpty()) {
       throw new TestErrors("Failures during test run.", exceptions);
     }
-    // TODO(corysmith):Remove this when there is a better way to return results
-    // of a list of actions.
-    for (ResponseStream stream : streams) {
-      stream.finish();
-    }
+
+    // TODO(corysmith): Move this to the ActionRunner?
+    runData.finish(); // finalizes the rundata collection.
+
     stopWatch.stop("run %s", actions);
+    return runData;
   }
 
   public List<BrowserAction> getActions() {

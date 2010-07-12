@@ -15,10 +15,12 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.model.RunData;
+
 /**
- * Base class for actions to run in the browser.
+ * Interface for actions to run in the browser.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public interface BrowserAction {
-  public ResponseStream run(String id, JsTestDriverClient client);
+  public RunData run(String id, JsTestDriverClient client, RunData runData);
 }

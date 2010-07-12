@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.model.RunData;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -35,10 +36,11 @@ public class BrowserShutdownAction implements Action {
     this.browsers = browsers;
   }
 
-  public void run() {
+  public RunData run(RunData runData) {
     for (BrowserRunner browser : browsers) {
       logger.debug("Stopping {}", browser);
       browser.stopBrowser();
-    } 
+    }
+    return runData;
   }
 }

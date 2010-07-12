@@ -100,7 +100,7 @@ public class ToolPanel extends JPanel implements Observer {
       serverStartupAction = new ServerStartupAction(serverPort, browsers, cache,
           new DefaultURLTranslator(), new DefaultURLRewriter(), SlaveBrowser.TIMEOUT);
       serverStartupAction.addObservers(Arrays.<Observer>asList(statusBar, ToolPanel.this));
-      serverStartupAction.run();
+      serverStartupAction.run(null);
       final String serverUrl = format("http://{0}:{1,number,###}/capture", InfoPanel.getHostName(), serverPort);
       captureUrl.setText(serverUrl);
     }
@@ -113,7 +113,7 @@ public class ToolPanel extends JPanel implements Observer {
     }
     public void actionPerformed(ActionEvent e) {
       if (serverStartupAction != null) {
-        new ServerShutdownAction(serverStartupAction).run();
+        new ServerShutdownAction(serverStartupAction).run(null);
       }
     }
   }

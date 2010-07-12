@@ -2,6 +2,8 @@
 
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.model.RunData;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -15,27 +17,27 @@ final public class FakeJsTestDriverClient implements JsTestDriverClient {
   }
 
   public void runTests(String id, ResponseStream responseStream, List<String> tests,
-      boolean captureConsole) {
+      boolean captureConsole, RunData runData) {
     testRun = new TestRun(id, responseStream, tests, captureConsole);
   }
 
-  public void runAllTests(String id, ResponseStream responseStream, boolean captureConsole) {
+  public void runAllTests(String id, ResponseStream responseStream, boolean captureConsole, RunData runData) {
   }
 
-  public void reset(String id, ResponseStream responseStream) {
+  public void reset(String id, ResponseStream responseStream, RunData runData) {
   }
 
   public Collection<BrowserInfo> listBrowsers() {
     return browsers;
   }
 
-  public void eval(String id, ResponseStream responseStream, String cmd) {
+  public void eval(String id, ResponseStream responseStream, String cmd, RunData runData) {
   }
 
-  public void dryRunFor(String id, ResponseStream responseStream, List<String> expressions) {
+  public void dryRunFor(String id, ResponseStream responseStream, List<String> expressions, RunData runData) {
   }
 
-  public void dryRun(String id, ResponseStream responseStream) {
+  public void dryRun(String id, ResponseStream responseStream, RunData runData) {
   }
 
   public void assertTestRun(FakeJsTestDriverClient.TestRun expected) {

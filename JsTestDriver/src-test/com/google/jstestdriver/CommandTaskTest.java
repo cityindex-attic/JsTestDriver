@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 import com.google.gson.Gson;
 import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
 import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
 
 /**
@@ -56,7 +57,7 @@ public class CommandTaskTest extends TestCase {
     LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
     CommandTask task = createCommandTask(server, files, files, params, stream, null, true);
 
-    task.run();
+    task.run(new RunData(files, null));
     Response response = stream.getResponse();
 
     assertEquals("response", response.getResponse());
@@ -83,10 +84,12 @@ public class CommandTaskTest extends TestCase {
     FakeResponseStream stream = new FakeResponseStream();
     MockFileLoader fileReader = new MockFileLoader();
     fileReader.addExpectation(fileInfo, "foobar");
-    CommandTask task = createCommandTask(server, new LinkedHashSet<FileInfo>(Arrays
-        .asList(fileInfo)), new LinkedHashSet<FileInfo>(), params, stream, fileReader, true);
+    final LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>(Arrays
+        .asList(fileInfo));
+    CommandTask task = createCommandTask(server, files, new LinkedHashSet<FileInfo>(), params,
+        stream, fileReader, true);
 
-    task.run();
+    task.run(new RunData(files, null));
     Response response = stream.getResponse();
 
     assertEquals("response", response.getResponse());
@@ -148,10 +151,11 @@ public class CommandTaskTest extends TestCase {
     MockFileLoader fileReader = new MockFileLoader();
     fileReader.addExpectation(loadInfo, loadInfoContents);
     fileReader.addExpectation(serveInfo, serveInfoContents);
-    CommandTask task = createCommandTask(server, new LinkedHashSet<FileInfo>(fileSet),
+    final LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>(fileSet);
+    CommandTask task = createCommandTask(server, files,
         new LinkedHashSet<FileInfo>(Arrays.asList(serveInfo)), params, stream, fileReader, true);
 
-    task.run();
+    task.run(new RunData(files, null));
     Response response = stream.getResponse();
 
     assertEquals("response", response.getResponse());

@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.jstestdriver.hooks.TestsPreProcessor;
+import com.google.jstestdriver.model.RunData;
 
 import java.util.List;
 import java.util.Set;
@@ -45,7 +46,7 @@ public class RunTestsAction implements BrowserAction {
    * @param id The Browser id to execute tests in.
    * @param client The client to run tests in.
    */
-  public ResponseStream run(String id, JsTestDriverClient client) {
+  public RunData run(String id, JsTestDriverClient client, RunData runData) {
     List<String> testsToRun = tests;
     for (TestsPreProcessor preProcessor : preProcessors) {
       // makes sure that the preProcessor doesn't modify the base test list
@@ -56,11 +57,11 @@ public class RunTestsAction implements BrowserAction {
           responseStreamFactory.getRunTestsActionResponseStream(id);
 
     if (testsToRun.size() == 1 && testsToRun.get(0).equals("all")) {
-      client.runAllTests(id, runTestsActionResponseStream, captureConsole);
+      client.runAllTests(id, runTestsActionResponseStream, captureConsole, runData);
     } else if (testsToRun.size() > 0) {
-      client.runTests(id, runTestsActionResponseStream, testsToRun, captureConsole);
+      client.runTests(id, runTestsActionResponseStream, testsToRun, captureConsole, runData);
     }
-    return runTestsActionResponseStream;
+    return runData.recordResponse(runTestsActionResponseStream);
   }
 
   public List<String> getTests() {

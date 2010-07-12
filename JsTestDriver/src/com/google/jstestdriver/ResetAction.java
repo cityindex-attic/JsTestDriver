@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 import java.io.PrintStream;
 
 import com.google.inject.Inject;
+import com.google.jstestdriver.model.RunData;
 
 
 /**
@@ -50,9 +51,9 @@ public class ResetAction implements BrowserAction {
     this.responseStreamFactory = responseStreamFactory;
   }
 
-  public ResponseStream run(String id, JsTestDriverClient client) {
+  public RunData run(String id, JsTestDriverClient client, RunData runData) {
     final ResponseStream responseStream = responseStreamFactory.getResetActionResponseStream();
-    client.reset(id, responseStream);
-    return responseStream;
+    client.reset(id, responseStream, runData);
+    return runData.recordResponse(responseStream);
   }
 }

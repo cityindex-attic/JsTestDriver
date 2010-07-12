@@ -39,7 +39,7 @@ public class BrowserStartupActionTest extends TestCase {
         new BrowserStartupAction(Sets.<BrowserRunner>newHashSet(browser),
             serverAddress, latch);
 
-    action.run();
+    action.run(null);
 
     assertTrue(browser.started);
     assertEquals(serverAddress + "/capture", browser.serverAddress);
@@ -58,7 +58,7 @@ public class BrowserStartupActionTest extends TestCase {
                                                               browserTwo),
           serverAddress, latch);
     
-    action.run();
+    action.run(null);
     
     assertTrue(browserOne.started);
     assertTrue(browserTwo.started);
@@ -79,7 +79,7 @@ public class BrowserStartupActionTest extends TestCase {
                                                               browserOne),
           serverAddress, latch);
     
-    action.run();
+    action.run(null);
     
     assertTrue(browserOne.started);
     assertTrue(browserTwo.started);
@@ -110,7 +110,7 @@ public class BrowserStartupActionTest extends TestCase {
       serverAddress,
       latch);
     
-    action.run();
+    action.run(null);
 
   }
 

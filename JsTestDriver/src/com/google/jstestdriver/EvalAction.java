@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.model.RunData;
+
 import java.io.PrintStream;
 
 
@@ -51,10 +53,10 @@ public class EvalAction implements BrowserAction {
     }
   }
 
-  public ResponseStream run(String id, JsTestDriverClient client) {
+  public RunData run(String id, JsTestDriverClient client, RunData runData) {
     final ResponseStream responseStream = responseStreamFactory.getEvalActionResponseStream();
-    client.eval(id, responseStream, getCmd());
-    return responseStream;
+    client.eval(id, responseStream, getCmd(), runData);
+    return runData.recordResponse(responseStream);
   }
 
   public String getCmd() {

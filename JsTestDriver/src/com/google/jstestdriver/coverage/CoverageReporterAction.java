@@ -17,6 +17,7 @@ package com.google.jstestdriver.coverage;
 
 import com.google.inject.Inject;
 import com.google.jstestdriver.Action;
+import com.google.jstestdriver.model.RunData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +39,10 @@ public class CoverageReporterAction implements Action {
     this.writer = writer;
   }
 
-  public void run() {
+  public RunData run(RunData testCase) {
     logger.debug("Writing coverage to {}", writer);
     accumulator.write(writer);
     writer.flush();
+    return testCase;
   }
 }

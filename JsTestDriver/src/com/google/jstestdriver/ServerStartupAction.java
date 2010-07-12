@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.model.RunData;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +74,7 @@ public class ServerStartupAction implements ObservableAction {
     return server;
   }
 
-  public void run() {
+  public RunData run(RunData testCase) {
     logger.info("Starting server...");
     server =
         new JsTestDriverServer(port, capturedBrowsers, preloadedFilesCache, urlTranslator,
@@ -85,6 +87,7 @@ public class ServerStartupAction implements ObservableAction {
     } catch (Exception e) {
       throw new RuntimeException("Error starting the server on " + port, e);
     }
+    return testCase;
   }
 
   public void addObservers(List<Observer> observers) {
