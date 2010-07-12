@@ -120,7 +120,7 @@ public class Server {
    */
   public synchronized void start() {
     if (!started) {
-      startupAction.run();
+      startupAction.run(null);
       started = true;
     }
   }
