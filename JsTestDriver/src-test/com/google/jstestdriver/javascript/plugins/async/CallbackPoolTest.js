@@ -46,6 +46,49 @@ callbackPoolTest.prototype.testAdd = function() {
 };
 
 
+callbackPoolTest.prototype.testAddWithArguments = function() {
+  var complete = false;
+  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
+    callback();
+  }, {}, function(errors) {
+    assertEquals(0, errors.length);
+    complete = true;
+  });
+
+  assertEquals(0, herd.count());
+
+  var capturedOne;
+  var capturedTwo;
+  var callbackA = herd.add(function(one, two) {
+    capturedOne = one;
+    capturedTwo = two;
+  });
+  assertEquals(1, herd.count());
+  assertFalse(complete);
+
+  var capturedThree;
+  var callbackB = herd.add(function(three) {
+    capturedThree = three;
+  });
+  assertEquals(2, herd.count());
+  assertFalse(complete);
+  assertUndefined(capturedOne);
+  assertUndefined(capturedTwo);
+  assertUndefined(capturedThree);
+
+  callbackA(1, 2);
+  assertEquals(1, herd.count());
+  assertEquals(1, capturedOne);
+  assertEquals(2, capturedTwo);
+  assertFalse(complete);
+
+  callbackB(3);
+  assertEquals(0, herd.count());
+  assertEquals(3, capturedThree);
+  assertTrue(complete);
+};
+
+
 callbackPoolTest.prototype.testAddRepeated = function() {
   var complete = false;
   var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {

@@ -93,7 +93,7 @@ jstestdriver.plugins.async.CallbackPool.prototype.add = function(wrapped, opt_n)
       .build();
   callback.arm(jstestdriver.plugins.async.CallbackPool.TIMEOUT);
   return function() {
-    return callback.invoke(arguments);
+    return callback.invoke.apply(callback, arguments);
   };
 };
 
