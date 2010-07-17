@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.HeartBeatManager;
 import com.google.jstestdriver.Server;
+import com.google.jstestdriver.util.Sleeper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +22,15 @@ public class BaseBrowserSessionManager implements BrowserSessionManager {
   private final Server server;
   private final String baseUrl;
   private final HeartBeatManager heartBeatManager;
+  private final Sleeper sleeper;
 
   @Inject
   public BaseBrowserSessionManager(Server server, @Named("server") String baseUrl,
-      HeartBeatManager heartBeatManager) {
+      HeartBeatManager heartBeatManager, Sleeper sleeper) {
     this.server = server;
     this.baseUrl = baseUrl;
     this.heartBeatManager = heartBeatManager;
+    this.sleeper = sleeper;
   }
 
   /**
@@ -39,7 +42,7 @@ public class BaseBrowserSessionManager implements BrowserSessionManager {
     if ("FAILED".equals(sessionId)) {
       while ("FAILED".equals(sessionId)) {
         try {
-          Thread.sleep(WAIT_INTERVAL);
+          sleeper.sleep(WAIT_INTERVAL);
         } catch (InterruptedException e) {
           logger.error("Could not create session for browser: " + browserId);
           throw new RuntimeException("Can't start a session on the server!" + browserId);

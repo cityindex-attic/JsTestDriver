@@ -28,6 +28,7 @@ import java.util.List;
 @ImplementedBy(JsTestDriverClientImpl.class)
 public interface JsTestDriverClient {
 
+  /** Lists the current browsers captured by the server. */
   public Collection<BrowserInfo> listBrowsers();
 
   public void eval(String id, ResponseStream responseStream, String cmd,
@@ -46,5 +47,9 @@ public interface JsTestDriverClient {
   public void dryRunFor(String id, ResponseStream responseStream, List<String> expressions,
       RunData runData);
 
+  /** Asks the server for the next browser id. */
   public String getNextBrowserId();
+
+  /** uploads the files to the server and requests the browser to load as well.*/
+  public void uploadFiles(String browserId, RunData runData);
 }

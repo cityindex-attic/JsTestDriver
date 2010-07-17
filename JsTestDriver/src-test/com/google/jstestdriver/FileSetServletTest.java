@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.browser.BrowserFileSet;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -46,7 +47,7 @@ public class FileSetServletTest extends TestCase {
     FileSetServlet fileSetServlet =
         new FileSetServlet(capturedBrowsers, filesCache);
 
-    fileSetServlet.uploadFiles("1", "[ { 'filePath': 'dummy.js', 'data': 'some data' }," +
+    fileSetServlet.uploadFiles("[ { 'filePath': 'dummy.js', 'data': 'some data' }," +
         "{ 'filePath': 'dummytoo.js', 'data': 'some more data' }]");
     assertEquals(2, filesCache.getFilesNumber());
     assertEquals("some data", filesCache.getFileContent("dummy.js"));
@@ -72,13 +73,13 @@ public class FileSetServletTest extends TestCase {
     fileInfos.add(new FileInfo("filename4.js", 101112, false, false, null));
     fileSetServlet.checkFileSet(gson.toJson(fileInfos), "1", writer);
 
-    Collection<FileInfo> response =
-        gson.fromJson(baos.toString(), new TypeToken<Collection<FileInfo>>() {}.getType());
+    BrowserFileSet response =
+        gson.fromJson(baos.toString(), BrowserFileSet.class);
 
     baos.reset();
 
-    assertEquals(4, response.size());
-    Iterator<FileInfo> iterator = response.iterator();
+    assertEquals(4, response.getFilesToUpload().size());
+    Iterator<FileInfo> iterator =  response.getFilesToUpload().iterator();
 
     FileInfo info1 = iterator.next();
     assertEquals("filename1.js", info1.getFilePath());
@@ -96,7 +97,7 @@ public class FileSetServletTest extends TestCase {
     assertEquals("filename4.js", info4.getFilePath());
     assertEquals(101112, info4.getTimestamp());
 
-    slave.addFiles(response);
+    slave.addFiles( response.getFilesToUpload());
 
     List<FileInfo> updatedFileInfos = new LinkedList<FileInfo>();
 
@@ -105,13 +106,12 @@ public class FileSetServletTest extends TestCase {
     updatedFileInfos.add(new FileInfo("filename3.js", 131415, false, false, null));
     updatedFileInfos.add(new FileInfo("filename4.js", 101112, false, false, null));
     fileSetServlet.checkFileSet(gson.toJson(updatedFileInfos), "1", writer);
-    Collection<FileInfo> updatedResponse =
-      gson.fromJson(baos.toString(), new TypeToken<Collection<FileInfo>>() {}.getType());
+    BrowserFileSet updatedResponse = gson.fromJson(baos.toString(), BrowserFileSet.class);
 
     baos.reset();
 
-    assertEquals(1, updatedResponse.size());
-    Iterator<FileInfo> updatedIterator = updatedResponse.iterator();
+    assertEquals(1, updatedResponse.getFilesToUpload().size());
+    Iterator<FileInfo> updatedIterator = updatedResponse.getFilesToUpload().iterator();
 
     FileInfo updatedInfo = updatedIterator.next();
 

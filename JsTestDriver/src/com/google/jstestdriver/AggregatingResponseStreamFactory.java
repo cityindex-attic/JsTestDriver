@@ -36,15 +36,21 @@ public class AggregatingResponseStreamFactory implements ResponseStreamFactory {
   }
 
   public ResponseStream getDryRunActionResponseStream() {
-    List<ResponseStream> streams = Lists.newLinkedList();
+    List<ResponseStream> streams = defaultStreams();
     for (ResponseStreamFactory factory : factories) {
       streams.add(factory.getDryRunActionResponseStream());
     }
     return new AggregatingResponseStream(streams);
   }
 
+  private List<ResponseStream> defaultStreams() {
+    final List<ResponseStream> defaultStreams = Lists.newLinkedList();
+    defaultStreams.add(new BrowserPanicResponseStream());
+    return defaultStreams;
+  }
+
   public ResponseStream getEvalActionResponseStream() {
-    List<ResponseStream> streams = Lists.newLinkedList();
+    List<ResponseStream> streams = defaultStreams();
     for (ResponseStreamFactory factory : factories) {
       streams.add(factory.getEvalActionResponseStream());
     }
@@ -52,7 +58,7 @@ public class AggregatingResponseStreamFactory implements ResponseStreamFactory {
   }
 
   public ResponseStream getResetActionResponseStream() {
-    List<ResponseStream> streams = Lists.newLinkedList();
+    List<ResponseStream> streams = defaultStreams();
     for (ResponseStreamFactory factory : factories) {
       streams.add(factory.getResetActionResponseStream());
     }
@@ -60,7 +66,7 @@ public class AggregatingResponseStreamFactory implements ResponseStreamFactory {
   }
 
   public ResponseStream getRunTestsActionResponseStream(String browserId) {
-    List<ResponseStream> streams = Lists.newLinkedList();
+    List<ResponseStream> streams = defaultStreams();
     for (ResponseStreamFactory factory : factories) {
       streams.add(factory.getRunTestsActionResponseStream(browserId));
     }

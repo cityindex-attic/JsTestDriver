@@ -15,11 +15,17 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.BrowserCaptureEvent.Event;
+import com.google.jstestdriver.browser.BrowserFileSet;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -30,10 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.jstestdriver.BrowserCaptureEvent.Event;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -122,13 +124,14 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    String data = req.getParameter("data");
-    String id = req.getParameter("id");
+    final String data = req.getParameter("data");
+    final String id = req.getParameter("id");
+    final String fileSet = req.getParameter("fileSet");
 
     if (data != null) {
-      uploadFiles(id, data);
+      uploadFiles(data);
     } else {
-      checkFileSet(req.getParameter("fileSet"), id, resp.getWriter());
+      checkFileSet(fileSet, id, resp.getWriter());
     }
   }
 
@@ -139,6 +142,8 @@ public class FileSetServlet extends HttpServlet implements Observer {
     Set<FileInfo> browserFileSet = browser.getFileSet();
     Set<FileInfo> filesToRequest = strategy.createExpiredFileSet(clientFileSet, browserFileSet);
     if (!filesToRequest.isEmpty()) {
+      // reload all files if Safari, Opera, or Konqueror, because they don't overwrite properly.
+      // TODO(corysmith): Replace this with polymorphic browser classes.
       if (browser.getBrowserInfo().getName().contains("Safari")
           || browser.getBrowserInfo().getName().contains("Opera")
           || browser.getBrowserInfo().getName().contains("Konqueror")) {
@@ -147,26 +152,30 @@ public class FileSetServlet extends HttpServlet implements Observer {
           filesToRequest.add(info);
         }
       }
-      Set<FileInfo> filteredFilesToRequest = filterServeOnlyFiles(filesToRequest);
 
-      writer.write(gson.toJson(filteredFilesToRequest));
+      final String json = gson.toJson(findExpiredFilesToUpload(filesToRequest));
+      writer.write(json);
     }
     writer.flush();
   }
 
-  private Set<FileInfo> filterServeOnlyFiles(Set<FileInfo> filesToRequest) {
-    Set<FileInfo> filteredFilesToRequest = new LinkedHashSet<FileInfo>();
+  private BrowserFileSet findExpiredFilesToUpload(Set<FileInfo> filesToRequest) {
     Set<String> cachedFiles = filesCache.getAllFileNames();
+    final List<FileInfo> filesToUpload = Lists.newLinkedList();
+    final List<FileInfo> extraFiles = Lists.newLinkedList();
 
     for (FileInfo fileInfo : filesToRequest) {
-      if (!fileInfo.isServeOnly()
-          || !cachedFiles.contains(fileInfo.getFilePath())
-          || filesCache.getFileInfo(fileInfo.getFilePath()).getTimestamp() < fileInfo
-          .getTimestamp()) {
-        filteredFilesToRequest.add(fileInfo);
+      if (!cachedFiles.contains(fileInfo.getFilePath())
+          || filesCache.getFileInfo(fileInfo.getFilePath()).getTimestamp() <
+              fileInfo.getTimestamp()) {
+        filesToUpload.add(fileInfo);
       }
     }
-    return filteredFilesToRequest;
+
+    extraFiles.addAll(filesCache.getAllFileInfos());
+    extraFiles.removeAll(filesToRequest);
+
+    return new BrowserFileSet(filesToUpload, extraFiles);
   }
 
   // TODO(corysmith): Remove this and add the Lock to the SlaveBrowser.
@@ -177,9 +186,9 @@ public class FileSetServlet extends HttpServlet implements Observer {
     }
   }
 
-  public void uploadFiles(String id, String data) {
-    Collection<FileInfo> filesData = gson.fromJson(data, new TypeToken<Collection<FileInfo>>()
-        {}.getType());
+  public void uploadFiles(String data) {
+    Collection<FileInfo> filesData =
+        gson.fromJson(data, new TypeToken<Collection<FileInfo>>() {}.getType());
 
     for (FileInfo f : filesData) {
       filesCache.addFile(f);

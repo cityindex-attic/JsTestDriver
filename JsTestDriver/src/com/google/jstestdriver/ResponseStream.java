@@ -19,7 +19,6 @@ package com.google.jstestdriver;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public interface ResponseStream {
-
   public void stream(Response response);
   public void finish();
 }

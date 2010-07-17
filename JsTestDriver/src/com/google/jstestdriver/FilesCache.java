@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,5 +54,9 @@ public class FilesCache {
 
   public Set<String> getAllFileNames() {
     return files.keySet();
+  }
+  
+  public Collection<FileInfo> getAllFileInfos() {
+    return files.values();
   }
 }

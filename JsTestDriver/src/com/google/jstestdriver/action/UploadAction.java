@@ -15,35 +15,40 @@
  */
 package com.google.jstestdriver.action;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.google.jstestdriver.Action;
+import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.FileLoader;
 import com.google.jstestdriver.JsTestDriverClient;
+import com.google.jstestdriver.browser.BrowserSessionManager;
 import com.google.jstestdriver.model.RunData;
 
-import java.util.Set;
+import java.util.List;
 
 /**
- * Uploads the changed test files to the server
+ * Uploads the test files to the server. Used by the standalone runner.
  * @author corysmith@google.com (Cory Smith)
  *
  */
 public class UploadAction implements Action {
 
-  private final Set<FileInfo> fileSet;
-  private final FileLoader loader;
   private final JsTestDriverClient client;
+  private final BrowserSessionManager sessionManager;
 
   @Inject
-  public UploadAction(@Named("fileSet") Set<FileInfo> fileSet, FileLoader loader, JsTestDriverClient client) {
-    this.fileSet = fileSet;
-    this.loader = loader;
+  public UploadAction(JsTestDriverClient client, BrowserSessionManager sessionManager) {
     this.client = client;
+    this.sessionManager = sessionManager;
   }
   
-  public RunData run(RunData testCase) {
-    return testCase;
+  public RunData run(RunData runData) {
+    for (BrowserInfo browser : client.listBrowsers()) {
+      final String browserId = browser.getId().toString();
+      final String sessionId = sessionManager.startSession(browserId);
+      client.uploadFiles(browserId, runData);
+      sessionManager.stopSession(sessionId, browserId);
+    }
+    return runData;
   }
 }

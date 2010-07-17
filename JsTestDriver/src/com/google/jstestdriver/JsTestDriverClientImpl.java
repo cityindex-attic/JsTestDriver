@@ -15,14 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
@@ -30,6 +22,17 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.model.RunData;
+import com.google.jstestdriver.util.StopWatch;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -38,25 +41,29 @@ import com.google.jstestdriver.model.RunData;
 public class JsTestDriverClientImpl implements JsTestDriverClient {
 
   private final Gson gson = new Gson();
+  
+  private static final Logger logger =
+      LoggerFactory.getLogger(JsTestDriverClientImpl.class);
 
   private final CommandTaskFactory commandTaskFactory;
-  private final Set<FileInfo> fileSet;
   private final String baseUrl;
   private final Server server;
 
   private final Boolean debug;
 
+  private final StopWatch stopWatch;
+
   @Inject
   public JsTestDriverClientImpl(CommandTaskFactory commandTaskFactory,
-                                @Named("fileSet") Set<FileInfo> fileSet,
                                 @Named("server") String baseUrl,
                                 Server server,
-                                @Named("debug") Boolean debug) {
+                                @Named("debug") Boolean debug,
+                                StopWatch stopWatch) {
     this.commandTaskFactory = commandTaskFactory;
-    this.fileSet = fileSet;
     this.baseUrl = baseUrl;
     this.server = server;
     this.debug = debug;
+    this.stopWatch = stopWatch;
   }
 
   public Collection<BrowserInfo> listBrowsers() {
@@ -136,5 +143,9 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     JsonCommand cmd = new JsonCommand(CommandType.DRYRUNFOR, parameters);
 
     sendCommand(browserId, responseStream, gson.toJson(cmd), true, runData);
+  }
+
+  public void uploadFiles(String browserId, RunData runData) {
+    
   }
 }
