@@ -99,13 +99,15 @@ public class JsTestDriverClientTest extends TestCase {
         + "{\"response\":\"2\",\"browser\":{\"name\":\"browser2\"},"
         + "\"error\":\"error2\",\"executionTime\":6},\"last\":true}");
 
-    JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
+    final NullStopWatch stopWatch = new NullStopWatch();
+    CommandTaskFactory commandTaskFactory =
+        new CommandTaskFactory(new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server, false);
+        }, stopWatch);
+    JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
+        server, false, stopWatch);
     FakeResponseStream stream = new FakeResponseStream();
 
     client.eval("1", stream, "cmd",
@@ -132,13 +134,15 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/cmd?listBrowsers", "["
         + "{\"id\":0, \"name\":\"name0\", \"version\":\"ver0\", \"os\":\"os0\"},"
         + "{\"id\":1, \"name\":\"name1\", \"version\":\"ver1\", \"os\":\"os1\"}]");
-    JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
+    final NullStopWatch stopWatch = new NullStopWatch();
+    CommandTaskFactory commandTaskFactory =
+        new CommandTaskFactory(new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server, false);
+        }, stopWatch);
+    JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
+        server, false, stopWatch);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
     List<BrowserInfo> browsers = new ArrayList<BrowserInfo>(browsersCollection);
 
@@ -168,13 +172,15 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
-    JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
+    final NullStopWatch stopWatch = new NullStopWatch();
+    CommandTaskFactory commandTaskFactory =
+        new CommandTaskFactory(new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server, false);
+        }, stopWatch);
+    JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
+        server, false, stopWatch);
     FakeResponseStream stream = new FakeResponseStream();
 
     client.runAllTests("1", stream, false,
@@ -194,13 +200,15 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
-    JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
+    final NullStopWatch stopWatch = new NullStopWatch();
+    CommandTaskFactory commandTaskFactory =
+        new CommandTaskFactory(new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }, new NullStopWatch()), new LinkedHashSet<FileInfo>(),
-        "http://localhost", server, false);
+        }, stopWatch);
+    JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
+        server, false, stopWatch);
     FakeResponseStream stream = new FakeResponseStream();
 
     ArrayList<String> tests = new ArrayList<String>();

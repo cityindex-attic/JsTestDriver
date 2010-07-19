@@ -58,7 +58,7 @@ public class FileUploader {
     stopWatch.stop("get upload set %s", browserId);
 
     if (postResult.length() > 0) {
-      stopWatch.start("determine upload %s", browserId);
+      stopWatch.start("resolving upload %s", browserId);
       BrowserFileSet browserFileSet =
           gson.fromJson(postResult, BrowserFileSet.class);
       // should reset if the files are the same, because there could be other files on
@@ -73,7 +73,7 @@ public class FileUploader {
           finalFilesToUpload.addAll(findDependencies(file));
         }
       }
-      stopWatch.stop("determine upload %s", browserId);
+      stopWatch.stop("resolving upload %s", browserId);
       return fileLoader.loadFiles(finalFilesToUpload, shouldReset);
     }
     return Collections.<FileInfo>emptyList();
@@ -82,15 +82,19 @@ public class FileUploader {
   /** Uploads the changed files to the server and the browser. */
   public void uploadFileSet(String browserId, Set<FileInfo> files, ResponseStream stream) {
 
+    stopWatch.start("determineFileSet(%s)", browserId);
     final List<FileInfo> loadedFiles = determineFileSet(browserId, files, stream);
+    stopWatch.stop("determineFileSet(%s)", browserId);
 
-    stopWatch.start("upload to server %s", browserId);
-    uploadToServer(loadedFiles);
-    stopWatch.stop("upload to server %s", browserId);
-
-    stopWatch.start("uploadToTheBrowser %s", browserId);
-    uploadToTheBrowser(browserId, stream, loadedFiles);
-    stopWatch.stop("uploadToTheBrowser %s", browserId);
+    if (!loadedFiles.isEmpty()) {
+      stopWatch.start("upload to server %s", browserId);
+      uploadToServer(loadedFiles);
+      stopWatch.stop("upload to server %s", browserId);
+  
+      stopWatch.start("uploadToTheBrowser %s", browserId);
+      uploadToTheBrowser(browserId, stream, loadedFiles);
+      stopWatch.stop("uploadToTheBrowser %s", browserId);
+    }
   }
 
   /** Uploads files to the browser. */

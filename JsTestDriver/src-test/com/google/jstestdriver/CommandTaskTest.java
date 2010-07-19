@@ -27,9 +27,11 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
 import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.browser.BrowserFileSet;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
 
@@ -109,12 +111,15 @@ public class CommandTaskTest extends TestCase {
     String serveInfoContents = "foobar2";
     List<FileInfo> fileSet = Arrays.asList(loadInfo, serveInfo);
 
+    final BrowserFileSet browserFileSet =
+        new BrowserFileSet(fileSet, Lists.<FileInfo>newArrayList());
+
     // server expects
     server.expect(baseUrl + "heartbeat?id=1", "OK");
-    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet=" + gson.toJson(fileSet) + "}", gson
-        .toJson(fileSet));
+    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet=" + gson.toJson(fileSet) + "}",
+        gson.toJson(browserFileSet));
 
-    JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String> emptyList());
+    JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
     Map<String, String> resetParams = new LinkedHashMap<String, String>();
     resetParams.put("id", "1");
     resetParams.put("data", gson.toJson(cmd));
@@ -123,8 +128,9 @@ public class CommandTaskTest extends TestCase {
     server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
         + "\"last\":true}");
-    server.expect(baseUrl
-        + "fileSet?POST?{id=1, data="
+    server.expect(
+        baseUrl
+        + "fileSet?POST?{data="
         + gson.toJson(Arrays.asList(new FileInfo(loadInfo.getFilePath(), loadInfo.getTimestamp(),
             loadInfo.isPatch(), loadInfo.isServeOnly(), loadInfoContents), new FileInfo(serveInfo
             .getFilePath(), serveInfo.getTimestamp(), serveInfo.isPatch(), serveInfo.isServeOnly(),

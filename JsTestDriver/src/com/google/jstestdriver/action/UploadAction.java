@@ -15,16 +15,12 @@
  */
 package com.google.jstestdriver.action;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.jstestdriver.Action;
 import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.JsTestDriverClient;
 import com.google.jstestdriver.browser.BrowserSessionManager;
 import com.google.jstestdriver.model.RunData;
-
-import java.util.List;
 
 /**
  * Uploads the test files to the server. Used by the standalone runner.
@@ -41,7 +37,7 @@ public class UploadAction implements Action {
     this.client = client;
     this.sessionManager = sessionManager;
   }
-  
+
   public RunData run(RunData runData) {
     for (BrowserInfo browser : client.listBrowsers()) {
       final String browserId = browser.getId().toString();

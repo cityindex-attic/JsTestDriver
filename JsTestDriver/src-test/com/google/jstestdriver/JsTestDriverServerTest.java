@@ -15,19 +15,18 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.Gson;
+import com.google.jstestdriver.util.NullStopWatch;
+
+import junit.framework.TestCase;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Observable;
 import java.util.Observer;
-
-import junit.framework.TestCase;
-
-import com.google.gson.Gson;
-import com.google.jstestdriver.util.NullStopWatch;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -84,10 +83,10 @@ public class JsTestDriverServerTest extends TestCase {
   }
 
   public void testListBrowsers() throws Exception {
+    final NullStopWatch stopWatch = new NullStopWatch();
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new DefaultFileFilter(), null, null, new NullStopWatch()),
-        new LinkedHashSet<FileInfo>(), "http://localhost:4224",
-        new HttpServer(), false);
+        new DefaultFileFilter(), null, null, stopWatch), "http://localhost:4224",
+        new HttpServer(), false, stopWatch);
 
     server.start();
     Collection<BrowserInfo> browsers = client.listBrowsers();
