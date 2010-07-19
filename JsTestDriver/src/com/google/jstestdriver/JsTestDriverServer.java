@@ -16,12 +16,15 @@
 package com.google.jstestdriver;
 
 import com.google.jstestdriver.browser.BrowserReaper;
+import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.servlet.BrowserLoggingServlet;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.handler.HandlerList;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
+import org.mortbay.servlet.ProxyServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +50,7 @@ public class JsTestDriverServer extends Observable {
   private Context context;
 
   private final long browserTimeout;
+  private final ProxyDestination destination;
 
   private Timer timer;
 
@@ -55,13 +59,15 @@ public class JsTestDriverServer extends Observable {
                             FilesCache preloadedFilesCache,
                             URLTranslator urlTranslator,
                             URLRewriter urlRewriter,
-                            long browserTimeout) {
+                            long browserTimeout,
+                            ProxyDestination destination) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = preloadedFilesCache;
     this.urlTranslator = urlTranslator;
     this.urlRewriter = urlRewriter;
     this.browserTimeout = browserTimeout;
+    this.destination = destination;
     initJetty(this.port);
     initServlets();
   }
@@ -89,19 +95,36 @@ public class JsTestDriverServer extends Observable {
     addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/forward/*", new ForwardingServlet(forwardingMapper,
       "localhost", port));
+
+    if (destination != null) {
+      ServletHolder proxyHolder =
+          new ServletHolder(new ProxyServlet.Transparent());
+      proxyHolder.setInitParameter(
+          "ProxyTo", destination.getDestinationAddress());
+      proxyHolder.setInitParameter("Prefix", ProxyHandler.PROXY_PREFIX);
+      addServlet(ProxyHandler.PROXY_PREFIX + "/*", proxyHolder);
+    }
   }
 
   private void addServlet(String url, Servlet servlet) {
     context.addServlet(new ServletHolder(servlet), url);
   }
 
+  private void addServlet(String url, ServletHolder servletHolder) {
+    context.addServlet(servletHolder, url);
+  }
+
   private void initJetty(int port) {
     SocketConnector connector = new SocketConnector();
-
     connector.setPort(port);
     server.addConnector(connector);
-    context = new Context(server, "/", Context.SESSIONS);
+
+    ProxyHandler proxyHandler = new ProxyHandler();
+
+    context = new Context(proxyHandler, "/", Context.SESSIONS);
     context.setMaxFormContentSize(Integer.MAX_VALUE);
+
+    server.setHandler(proxyHandler);
   }
 
   public void start() {

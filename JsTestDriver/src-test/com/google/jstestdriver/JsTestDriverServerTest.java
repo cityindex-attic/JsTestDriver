@@ -36,7 +36,7 @@ public class JsTestDriverServerTest extends TestCase {
   private CapturedBrowsers browsers = new CapturedBrowsers();
   private JsTestDriverServer server =
       new JsTestDriverServer(4224, browsers, new FilesCache(
-          new HashMap<String, FileInfo>()), new DefaultURLTranslator(), new DefaultURLRewriter(), SlaveBrowser.TIMEOUT);
+          new HashMap<String, FileInfo>()), new DefaultURLTranslator(), new DefaultURLRewriter(), SlaveBrowser.TIMEOUT, null);
 
   @Override
   protected void tearDown() throws Exception {

@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class ActionFactory {
   private final Provider<JsTestDriverClient> clientProvider;
   private final Set<TestsPreProcessor> testPreProcessors;
   private final long browserTimeout;
+  private ProxyDestination destination;
 
   @Inject
   public ActionFactory(Provider<JsTestDriverClient> clientProvider,
@@ -49,6 +51,11 @@ public class ActionFactory {
     this.clientProvider = clientProvider;
     this.testPreProcessors = testPreProcessors;
     this.browserTimeout = browserTimeout;
+  }
+
+  @Inject(optional = true)
+  public void setProxyDestination(ProxyDestination destination) {
+    this.destination = destination;
   }
 
   public ServerStartupAction getServerStartupAction(Integer port,
@@ -60,7 +67,8 @@ public class ActionFactory {
                                 preloadedFilesCache,
                                 urlTranslator,
                                 urlRewriter,
-                                browserTimeout);
+                                browserTimeout,
+                                destination);
 
     if (observers.containsKey(CapturedBrowsers.class)) {
       for (Observer o : observers.get(CapturedBrowsers.class)) {

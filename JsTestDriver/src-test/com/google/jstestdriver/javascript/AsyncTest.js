@@ -96,13 +96,35 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
 };
 
 
+asyncTest.prototype.testRequest = function(queue) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/hello');
+  queue.defer(function(pool) {
+    var headersReceived = pool.add(function(status) {
+      assertEquals(200, status);
+    });
+    var bodyReceived = pool.add(function(body) {
+      assertEquals('hello', body);
+    });
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 2) {
+        headersReceived(xhr.status);
+      } else if (xhr.readyState == 4) {
+        bodyReceived(xhr.responseText);
+      }
+    };
+    xhr.send(null);
+  });
+};
+
+
 asyncTest.prototype.testWithNestedDeferredQueues = function(queue) {
   var state = 0;
-  
+
   queue.defer(function(pool, childQueue) {
     assertEquals(0, state);
     window.setTimeout(pool.add(function() {state = 1;}), 250);
-    
+
     childQueue.defer(function(pool) {
       assertEquals(1, state);
       window.setTimeout(pool.add(function() {state = 2;}), 250);

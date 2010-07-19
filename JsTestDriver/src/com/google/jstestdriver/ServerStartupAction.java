@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.model.RunData;
 
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ public class ServerStartupAction implements ObservableAction {
   private JsTestDriverServer server;
   private List<Observer> observerList = new LinkedList<Observer>();
   private final long browserTimeout;
+  private final ProxyDestination destination;
   
   /**
    * @deprecated In favor of using the constructor that defines browser timeout.
@@ -52,8 +54,8 @@ public class ServerStartupAction implements ObservableAction {
          preloadedFilesCache,
          urlTranslator,
          urlRewriter,
-         SlaveBrowser.TIMEOUT);
-    
+         SlaveBrowser.TIMEOUT,
+         null);
   }
 
   public ServerStartupAction(int port,
@@ -61,13 +63,15 @@ public class ServerStartupAction implements ObservableAction {
                              FilesCache preloadedFilesCache,
                              URLTranslator urlTranslator,
                              URLRewriter urlRewriter,
-                             long browserTimeout) {
+                             long browserTimeout,
+                             ProxyDestination destination) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.preloadedFilesCache = preloadedFilesCache;
     this.urlTranslator = urlTranslator;
     this.urlRewriter = urlRewriter;
     this.browserTimeout = browserTimeout;
+    this.destination = destination;
   }
 
   public JsTestDriverServer getServer() {
@@ -78,7 +82,7 @@ public class ServerStartupAction implements ObservableAction {
     logger.info("Starting server...");
     server =
         new JsTestDriverServer(port, capturedBrowsers, preloadedFilesCache, urlTranslator,
-            urlRewriter, browserTimeout);
+            urlRewriter, browserTimeout, destination);
     for (Observer o : observerList) {
       server.addObserver(o);
     }
