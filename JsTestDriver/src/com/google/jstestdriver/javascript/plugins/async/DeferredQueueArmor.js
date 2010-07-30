@@ -17,7 +17,7 @@
 
 /**
  * @fileoverview Defines the DeferredQueueArmor class. Encapsulates a DeferredQueue
- * behind a narrower interface. Also, validates arguments. 
+ * behind a narrower interface. Also, validates arguments.
  *
  * @author rdionne@google.com (Robert Dionne)
  */
@@ -42,4 +42,6 @@ jstestdriver.plugins.async.DeferredQueueArmor.prototype.defer = function(descrip
     this.q_.defer(description, operation);
     this.step_ += 1;
   }
+
+  return this;
 };

@@ -77,3 +77,19 @@ deferredQueueArmorTest.prototype.testDeferWithUndefinedOperation = function() {
 
   assertUndefined(capturedDescription);
 };
+
+
+deferredQueueArmorTest.prototype.testChainedDeferCalls = function() {
+  var delegate = {};
+  var capturedDescriptions = [];
+  delegate.defer = function(description, operation) {
+    capturedDescriptions.push(description);
+  };
+  var q = new jstestdriver.plugins.async.DeferredQueueArmor(delegate);
+
+  q.defer(function() {})
+   .defer(function() {})
+   .defer(function() {});
+
+  assertEquals(['Step 1', 'Step 2', 'Step 3'], capturedDescriptions);
+};
