@@ -30,7 +30,7 @@ public class ProxyHandler extends HandlerWrapper {
 
   public static final String ROOT = "/";
 
-  public static final String PROXY_PREFIX = "/proxy";
+  public static final String PROXY_PREFIX = "/jstd/proxy";
 
   /**
    * Mutates the {@link HttpServletRequest}'s URI path, prefixing it with the
