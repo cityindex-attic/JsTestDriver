@@ -16,6 +16,7 @@
 package com.google.jstestdriver.idea.ui;
 
 import com.google.jstestdriver.*;
+import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.idea.MessageBundle;
 import com.google.jstestdriver.idea.PluginResources;
 import com.intellij.util.ui.UIUtil;
@@ -25,6 +26,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import static java.text.MessageFormat.format;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Observer;
 import java.util.Observable;
@@ -98,7 +100,7 @@ public class ToolPanel extends JPanel implements Observer {
       browsers.addObserver(capturedBrowsersPanel);
       browsers.addObserver(statusBar);
       serverStartupAction = new ServerStartupAction(serverPort, browsers, cache,
-          new DefaultURLTranslator(), new DefaultURLRewriter(), SlaveBrowser.TIMEOUT, null);
+          new DefaultURLTranslator(), new DefaultURLRewriter(), SlaveBrowser.TIMEOUT, null, Collections.<AuthStrategy>emptySet());
       serverStartupAction.addObservers(Arrays.<Observer>asList(statusBar, ToolPanel.this));
       serverStartupAction.run(null);
       final String serverUrl = format("http://{0}:{1,number,###}/capture", InfoPanel.getHostName(), serverPort);

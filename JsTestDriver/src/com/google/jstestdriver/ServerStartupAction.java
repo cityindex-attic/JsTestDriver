@@ -15,15 +15,19 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Provider;
+import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.model.RunData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observer;
+import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -39,6 +43,7 @@ public class ServerStartupAction implements ObservableAction {
   private List<Observer> observerList = new LinkedList<Observer>();
   private final long browserTimeout;
   private final ProxyDestination destination;
+  private final Set<AuthStrategy> authStrategies;
   
   /**
    * @deprecated In favor of using the constructor that defines browser timeout.
@@ -55,7 +60,8 @@ public class ServerStartupAction implements ObservableAction {
          urlTranslator,
          urlRewriter,
          SlaveBrowser.TIMEOUT,
-         null);
+         null,
+         Collections.<AuthStrategy>emptySet());
   }
 
   public ServerStartupAction(int port,
@@ -64,7 +70,8 @@ public class ServerStartupAction implements ObservableAction {
                              URLTranslator urlTranslator,
                              URLRewriter urlRewriter,
                              long browserTimeout,
-                             ProxyDestination destination) {
+                             ProxyDestination destination,
+                             Set<AuthStrategy> authStrategies) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.preloadedFilesCache = preloadedFilesCache;
@@ -72,6 +79,7 @@ public class ServerStartupAction implements ObservableAction {
     this.urlRewriter = urlRewriter;
     this.browserTimeout = browserTimeout;
     this.destination = destination;
+    this.authStrategies = authStrategies;
   }
 
   public JsTestDriverServer getServer() {
@@ -82,7 +90,7 @@ public class ServerStartupAction implements ObservableAction {
     logger.info("Starting server...");
     server =
         new JsTestDriverServer(port, capturedBrowsers, preloadedFilesCache, urlTranslator,
-            urlRewriter, browserTimeout, destination);
+            urlRewriter, browserTimeout, destination, authStrategies);
     for (Observer o : observerList) {
       server.addObserver(o);
     }

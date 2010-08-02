@@ -29,6 +29,7 @@ import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.config.DefaultConfiguration;
 import com.google.jstestdriver.guice.BrowserActionProvider;
 import com.google.jstestdriver.guice.FlagsModule;
+import com.google.jstestdriver.hooks.AuthStrategy;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -80,6 +81,8 @@ public class JsTestDriverModule extends AbstractModule {
 
   @Override
   protected void configure() {
+    Multibinder.newSetBinder(binder(), AuthStrategy.class);
+
     bind(PrintStream.class)
          .annotatedWith(Names.named("outputStream")).toInstance(outputStream);
     bind(String.class)

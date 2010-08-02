@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 
@@ -43,14 +44,17 @@ public class ActionFactory {
   private final Set<TestsPreProcessor> testPreProcessors;
   private final long browserTimeout;
   private ProxyDestination destination;
+  private final Set<AuthStrategy> authStrategies;
 
   @Inject
   public ActionFactory(Provider<JsTestDriverClient> clientProvider,
                        Set<TestsPreProcessor> testPreProcessors,
-                       @Named("browserTimeout") long browserTimeout) {
+                       @Named("browserTimeout") long browserTimeout,
+                       Set<AuthStrategy> authStrategies) {
     this.clientProvider = clientProvider;
     this.testPreProcessors = testPreProcessors;
     this.browserTimeout = browserTimeout;
+    this.authStrategies = authStrategies;
   }
 
   @Inject(optional = true)
@@ -68,7 +72,8 @@ public class ActionFactory {
                                 urlTranslator,
                                 urlRewriter,
                                 browserTimeout,
-                                destination);
+                                destination,
+                                authStrategies);
 
     if (observers.containsKey(CapturedBrowsers.class)) {
       for (Observer o : observers.get(CapturedBrowsers.class)) {

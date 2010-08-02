@@ -15,7 +15,9 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Provider;
 import com.google.jstestdriver.browser.BrowserReaper;
+import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.servlet.BrowserLoggingServlet;
 
@@ -29,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Observable;
+import java.util.Set;
 import java.util.Timer;
 
 import javax.servlet.Servlet;
@@ -51,6 +54,7 @@ public class JsTestDriverServer extends Observable {
 
   private final long browserTimeout;
   private final ProxyDestination destination;
+  private final Set<AuthStrategy> authStrategies;
 
   private Timer timer;
 
@@ -60,7 +64,8 @@ public class JsTestDriverServer extends Observable {
                             URLTranslator urlTranslator,
                             URLRewriter urlRewriter,
                             long browserTimeout,
-                            ProxyDestination destination) {
+                            ProxyDestination destination,
+                            Set<AuthStrategy> authStrategies) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = preloadedFilesCache;
@@ -68,6 +73,7 @@ public class JsTestDriverServer extends Observable {
     this.urlRewriter = urlRewriter;
     this.browserTimeout = browserTimeout;
     this.destination = destination;
+    this.authStrategies = authStrategies;
     initJetty(this.port);
     initServlets();
   }
@@ -95,6 +101,7 @@ public class JsTestDriverServer extends Observable {
     addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/forward/*", new ForwardingServlet(forwardingMapper,
       "localhost", port));
+    addServlet("/jstd/auth", new AuthServlet(authStrategies));
 
     if (destination != null) {
       ServletHolder proxyHolder =
