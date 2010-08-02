@@ -28,6 +28,7 @@ import com.google.inject.util.Providers;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.browser.CommandLineBrowserRunner;
 import com.google.jstestdriver.hooks.ActionListProcessor;
+import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 import com.google.jstestdriver.output.PrintXmlTestResultsAction;
 import com.google.jstestdriver.output.XmlPrinter;
@@ -62,7 +63,7 @@ public class DefaultActionListProviderTest extends TestCase {
                                                    String testOutput,
                                                    XmlPrinter xmlPrinter) {
     ActionFactory actionFactory =
-        new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT);
+        new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT, Collections.<AuthStrategy>emptySet());
     return new DefaultActionListProvider(
         actionFactory,
         null,

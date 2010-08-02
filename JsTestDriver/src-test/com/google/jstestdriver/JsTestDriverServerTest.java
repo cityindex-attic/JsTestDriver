@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.util.NullStopWatch;
 
 import junit.framework.TestCase;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
@@ -36,7 +38,7 @@ public class JsTestDriverServerTest extends TestCase {
   private CapturedBrowsers browsers = new CapturedBrowsers();
   private JsTestDriverServer server =
       new JsTestDriverServer(4224, browsers, new FilesCache(
-          new HashMap<String, FileInfo>()), new DefaultURLTranslator(), new DefaultURLRewriter(), SlaveBrowser.TIMEOUT, null);
+          new HashMap<String, FileInfo>()), new DefaultURLTranslator(), new DefaultURLRewriter(), SlaveBrowser.TIMEOUT, null, Collections.<AuthStrategy>emptySet());
 
   @Override
   protected void tearDown() throws Exception {

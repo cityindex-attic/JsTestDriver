@@ -27,12 +27,13 @@ import com.google.common.collect.Sets;
 import com.google.inject.util.Providers;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.browser.CommandLineBrowserRunner;
+import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 
 public class ActionSequenceBuilderTest extends TestCase {
 
   private LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
-  ActionFactory actionFactory = new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT);
+  ActionFactory actionFactory = new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT, Collections.<AuthStrategy>emptySet());
 
   public void testAddTestsWithRemoteServerAddress() throws Exception {
     List<String> tests = tests();
@@ -60,7 +61,8 @@ public class ActionSequenceBuilderTest extends TestCase {
     ActionSequenceBuilder builder = new ActionSequenceBuilder(
         new ActionFactory(
             null,
-            Collections.<TestsPreProcessor> emptySet(), SlaveBrowser.TIMEOUT),
+            Collections.<TestsPreProcessor> emptySet(), SlaveBrowser.TIMEOUT,
+            Collections.<AuthStrategy>emptySet()),
             null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
             Providers.<URLTranslator> of(null),
             Providers.<URLRewriter> of(null),
@@ -84,7 +86,8 @@ public class ActionSequenceBuilderTest extends TestCase {
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(
         		new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(),
-        				SlaveBrowser.TIMEOUT), null, null,
+        				SlaveBrowser.TIMEOUT,
+                                        Collections.<AuthStrategy>emptySet()), null, null,
             new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null), Providers
                 .<URLTranslator> of(null), Providers.<URLRewriter> of(null),
             new FailureAccumulator());

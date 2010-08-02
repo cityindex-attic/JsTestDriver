@@ -19,9 +19,11 @@ import com.google.common.collect.Lists;
 import com.google.jstestdriver.Action;
 import com.google.jstestdriver.ServerStartupAction;
 import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.hooks.AuthStrategy;
 
 import junit.framework.TestCase;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,7 +33,7 @@ public class CoverageActionDecoratorTest extends TestCase {
   public void testDecorate() throws Exception {
     CoverageReporterAction reporter = new CoverageReporterAction(null, null);
     List<Action> actions =
-      Lists.<Action>newArrayList(new ServerStartupAction(0, null, null, null, null, SlaveBrowser.TIMEOUT, null));
+      Lists.<Action>newArrayList(new ServerStartupAction(0, null, null, null, null, SlaveBrowser.TIMEOUT, null, Collections.<AuthStrategy>emptySet()));
     List<Action> actual = new CoverageActionDecorator(reporter).process(actions);
     assertEquals(2, actual.size());
     assertTrue(actual.get(0) instanceof ServerStartupAction);
