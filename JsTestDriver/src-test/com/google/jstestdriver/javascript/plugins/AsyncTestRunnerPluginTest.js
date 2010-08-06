@@ -17,6 +17,49 @@
 var asyncTestRunnerPluginTest = TestCase('asyncTestRunnerPluginTest');
 
 
+asyncTestRunnerPluginTest.prototype.testScopeIsNotWindow = function() {
+  var asyncTestRunner = new jstestdriver.plugins.async.AsyncTestRunnerPlugin(
+      Date, function() {}, function(callback) {callback();});
+
+  var testCase = function() {};
+  var testCaseInstance;
+  var setUpScope;
+  testCase.prototype.setUp = function() {
+    testCaseInstance = asyncTestRunner.testCase_;
+    setUpScope = this;
+  };
+  var testMethodScope;
+  testCase.prototype.testMethod = function() {
+    testMethodScope = this;
+  };
+  var tearDownScope;
+  testCase.prototype.tearDown = function() {
+    tearDownScope = this;
+  };
+
+  var testCaseInfo = new jstestdriver.TestCaseInfo(
+      'testCase', testCase, jstestdriver.TestCaseInfo.ASYNC_TYPE);
+
+  var testRunConfiguration = {};
+  testRunConfiguration.getTestCaseInfo = function() {return testCaseInfo;};
+  testRunConfiguration.getTests = function() {return ['testMethod'];};
+
+  asyncTestRunner.runTestConfiguration(
+      testRunConfiguration, function() {}, function() {});
+
+  assertFalse('window === setUpScope', window === setUpScope);
+  assertFalse('window === testMethodScope', window === testMethodScope);
+  assertFalse('window === tearDownScope', window === tearDownScope);
+
+  assertTrue('testCaseInstance === setUpScope',
+      testCaseInstance === setUpScope);
+  assertTrue('testCaseInstance === testMethodScope',
+      testCaseInstance === testMethodScope);
+  assertTrue('testCaseInstance === tearDownScope',
+      testCaseInstance === tearDownScope);
+};
+
+
 asyncTestRunnerPluginTest.prototype.testTestCaseWithWrongType = function() {
   var testCase = function() {};
   testCase.prototype.setUp = function() {};

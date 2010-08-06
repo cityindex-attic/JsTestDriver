@@ -46,6 +46,31 @@ callbackPoolTest.prototype.testAdd = function() {
 };
 
 
+callbackPoolTest.prototype.testScopeIsNotWindow = function() {
+  var complete = false;
+  var testCase = {};
+  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
+    callback();
+  }, testCase, function(errors) {
+    assertEquals(0, errors.length);
+    complete = true;
+  });
+
+  assertEquals(0, herd.count());
+
+  var callbackAScope;
+  var callbackA = herd.add(function() {callbackAScope = this;});
+  assertEquals(1, herd.count());
+  assertFalse(complete);
+
+  callbackA();
+  assertEquals(0, herd.count());
+  assertTrue(complete);
+  assertFalse('window === callbackAScope', window === callbackAScope);
+  assertTrue('testCase === callbackAScope', testCase === callbackAScope);
+};
+
+
 callbackPoolTest.prototype.testAddWithArguments = function() {
   var complete = false;
   var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {

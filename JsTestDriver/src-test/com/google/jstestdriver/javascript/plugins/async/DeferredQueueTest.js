@@ -29,6 +29,25 @@ deferredQueueTest.prototype.testEmptyQueue = function() {
 };
 
 
+deferredQueueTest.prototype.testScopeIsNotWindow = function() {
+  var queueComplete = false;
+  var onQueueComplete = function() {
+    queueComplete = true;
+  };
+  var testCase = {};
+  var q = new jstestdriver.plugins.async.DeferredQueue(
+      function(callback) {callback();}, testCase, onQueueComplete);
+  var stepOneScope;
+  q.defer('Step 1', function() {
+    stepOneScope = this;
+  });
+  q.startStep();
+  assertTrue(queueComplete);
+  assertFalse('window === stepOneScope', window === stepOneScope);
+  assertTrue('testCase === stepOneScope', testCase === stepOneScope);
+};
+
+
 deferredQueueTest.prototype.testOneStep = function() {
   var queueComplete = false;
   var onQueueComplete = function() {

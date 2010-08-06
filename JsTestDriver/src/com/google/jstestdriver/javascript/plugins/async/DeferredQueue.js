@@ -52,7 +52,7 @@ jstestdriver.plugins.async.DeferredQueue.prototype.execute_ = function(operation
 
   if (operation) {
     try {
-      operation(poolArmor, queueArmor);
+      operation.call(this.testCase_, poolArmor, queueArmor);
     } catch (e) {
       this.errors_.push(e);
     }

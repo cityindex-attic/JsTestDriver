@@ -129,7 +129,7 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.execute_ = function(
   // to the queue. If the method throws an error, add that error to the list.
   if (invokeMethod) {
     try {
-      invokeMethod(armor);
+      invokeMethod.call(this.testCase_, armor);
     } catch (e) {
       this.errors_.push(e);
     }
