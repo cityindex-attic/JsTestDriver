@@ -107,7 +107,7 @@ public class JsTestDriverClientTest extends TestCase {
           }
         }, stopWatch);
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
-        server, false, stopWatch);
+        server, false, stopWatch, null);
     FakeResponseStream stream = new FakeResponseStream();
 
     client.eval("1", stream, "cmd",
@@ -142,7 +142,7 @@ public class JsTestDriverClientTest extends TestCase {
           }
         }, stopWatch);
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
-        server, false, stopWatch);
+        server, false, stopWatch, null);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
     List<BrowserInfo> browsers = new ArrayList<BrowserInfo>(browsersCollection);
 
@@ -180,7 +180,7 @@ public class JsTestDriverClientTest extends TestCase {
           }
         }, stopWatch);
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
-        server, false, stopWatch);
+        server, false, stopWatch, null);
     FakeResponseStream stream = new FakeResponseStream();
 
     client.runAllTests("1", stream, false,
@@ -208,7 +208,7 @@ public class JsTestDriverClientTest extends TestCase {
           }
         }, stopWatch);
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
-        server, false, stopWatch);
+        server, false, stopWatch, null);
     FakeResponseStream stream = new FakeResponseStream();
 
     ArrayList<String> tests = new ArrayList<String>();

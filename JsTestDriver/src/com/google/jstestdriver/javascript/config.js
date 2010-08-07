@@ -187,10 +187,9 @@ jstestdriver.config = (function(module) {
     function getBrowserInfo() {
       return new jstestdriver.BrowserInfo(id);
     }
-    
-    jstestdriver.global.G_testRunner = new jstestdriver.StandAloneTestReporter();
-    
-    
+
+    window.top.G_testRunner = new jstestdriver.StandAloneTestReporter();
+
     var executor = new jstestdriver.CommandExecutor(streamingService,
             testCaseManager,
             testRunner,

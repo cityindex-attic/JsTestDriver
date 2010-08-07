@@ -53,17 +53,21 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
   private final StopWatch stopWatch;
 
+  private final FileUploader uploader;
+
   @Inject
   public JsTestDriverClientImpl(CommandTaskFactory commandTaskFactory,
                                 @Named("server") String baseUrl,
                                 Server server,
                                 @Named("debug") Boolean debug,
-                                StopWatch stopWatch) {
+                                StopWatch stopWatch,
+                                FileUploader uploader) {
     this.commandTaskFactory = commandTaskFactory;
     this.baseUrl = baseUrl;
     this.server = server;
     this.debug = debug;
     this.stopWatch = stopWatch;
+    this.uploader = uploader;
   }
 
   public Collection<BrowserInfo> listBrowsers() {
@@ -136,7 +140,8 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     sendCommand(browserId, responseStream, gson.toJson(cmd), true, runData);
   }
 
-  public void dryRunFor(String browserId, ResponseStream responseStream, List<String> expressions, RunData runData) {
+  public void dryRunFor(String browserId, ResponseStream responseStream, List<String> expressions,
+      RunData runData) {
     List<String> parameters = new LinkedList<String>();
 
     parameters.add(gson.toJson(expressions));
@@ -146,6 +151,6 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   }
 
   public void uploadFiles(String browserId, RunData runData) {
-    
+    uploader.uploadFileSet(browserId, runData.getFileSet(), new BrowserPanicResponseStream());
   }
 }

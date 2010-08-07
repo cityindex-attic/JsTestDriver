@@ -88,7 +88,7 @@ public class JsTestDriverServerTest extends TestCase {
     final NullStopWatch stopWatch = new NullStopWatch();
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
         new DefaultFileFilter(), null, null, stopWatch), "http://localhost:4224",
-        new HttpServer(), false, stopWatch);
+        new HttpServer(), false, stopWatch, null);
 
     server.start();
     Collection<BrowserInfo> browsers = client.listBrowsers();
