@@ -24,6 +24,7 @@ jstestdriver.StandAloneTestReporter = function() {
   this.success_ = 1;
   this.report_ = '';
   this.filesLoaded_ = 0;
+  this.lastTestResult_ = "none";
 };
 
 
@@ -41,30 +42,50 @@ jstestdriver.StandAloneTestReporter.prototype.getReport = function() {
 
 
 jstestdriver.StandAloneTestReporter.prototype.getNumFilesLoaded = function() {
-  jstestdriver.setTimeout(function() {
-    window.top.close();
-  }, 1);
   return this.filesLoaded_;
 };
 
 
 jstestdriver.StandAloneTestReporter.prototype.setIsFinished = function(finished) {
+  this.log("finished: " + finished + ": success" + this.success_);
   this.finished_ = finished;
 };
 
 
+jstestdriver.StandAloneTestReporter.prototype.log = function(msg) {
+  //var div = document.body.appendChild(document.createElement('div'));
+  //div.innerHTML = "LOG: " + msg;
+}
+
+
 jstestdriver.StandAloneTestReporter.prototype.setIsSuccess = function(success) {
+  this.log("success" + this.success_);
   this.success_ = success;
 };
 
 
+/**
+ * Adds a test result to the current run.
+ * @param {jstestdriver.TestResult}
+ */
+jstestdriver.StandAloneTestReporter.prototype.addTestResult = function(testResult) {
+  this.lastTestResult_ = testResult.testCaseName + "." + testResult.testName + " " + testResult.result;
+  this.log("testresult: " + this.lastTestResult_);
+};
+
+
 jstestdriver.StandAloneTestReporter.prototype.isSuccess = function() {
-  return this.success_;
+  return !!this.success_;
 };
 
 
 jstestdriver.StandAloneTestReporter.prototype.updateIsSuccess = function(success) {
+  if (this != window.top.G_testRunner) {
+    // this is a horrible hack to work around overwrites happening on file importing.
+    window.top.G_testRunner = this;
+  }
   this.success_ = success & this.success_;
+  this.log("success" + this.success_);
 };
 
 
@@ -73,6 +94,21 @@ jstestdriver.StandAloneTestReporter.prototype.setReport = function(report) {
 };
 
 
-jstestdriver.StandAloneTestReporter.prototype.setNumFilesLoaded = function(filesLoaded) {
-  this.filesLoaded_ = filesLoaded;
+jstestdriver.StandAloneTestReporter.prototype.updateNumFilesLoaded = function(filesLoaded) {
+  this.log("files loaded: " + filesLoaded);
+  if (this != window.top.G_testRunner) {
+    // this is a horrible hack to work around overwrites happening on file importing.
+    window.top.G_testRunner = this;
+  }
+  this.filesLoaded_ += filesLoaded;
+};
+
+
+jstestdriver.StandAloneTestReporter.prototype.toString = function() {
+  return "StandAloneTestReporter(success=["
+      + this.success_ + "], finished=["
+      + this.finished_ + "], lastTestResult=["
+      + this.lastTestResult_ + "], filesLoaded=["
+      + this.filesLoaded_ + "] report=["
+      + this.report_ + "])";
 };

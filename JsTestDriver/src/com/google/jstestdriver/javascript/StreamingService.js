@@ -53,7 +53,7 @@ jstestdriver.StreamingService.prototype.streamResponse = function(response,
  * @param {Array.<String>} A list of received ids for the currently open stream.
  */
 jstestdriver.StreamingService.prototype.streamAcknowledged = function(recieved) {
-  for (var i = 0; recieved[i]; i++) {
+  for (var i = 0; recieved && recieved[i]; i++) {
     if (this.activeResponses_[recieved[i]]) {
       // cut down on memory goof ups....
       this.activeResponses_[recieved[i]] = null;

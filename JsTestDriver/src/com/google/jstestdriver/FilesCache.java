@@ -18,19 +18,18 @@ package com.google.jstestdriver;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class FilesCache {
 
-  private final ConcurrentMap<String, FileInfo> files =
-      new ConcurrentHashMap<String, FileInfo>();
+  // TODO(corysmith): replace this with a synchronized collection
+  // When the map semantics
+  private final Map<String, FileInfo> files;
 
   public FilesCache(Map<String, FileInfo> files) {
-    this.files.putAll(files);
+    this.files = files;
   }
 
   public String getFileContent(String fileName) {
@@ -58,7 +57,16 @@ public class FilesCache {
     return files.keySet();
   }
   
+  /**
+   * Returns all files in order.
+   * @return
+   */
   public Collection<FileInfo> getAllFileInfos() {
     return files.values();
+  }
+
+  @Override
+  public String toString() {
+    return "FilesCache [files=" + files + "]";
   }
 }

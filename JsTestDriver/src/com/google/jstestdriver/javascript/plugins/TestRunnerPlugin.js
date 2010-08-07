@@ -13,38 +13,55 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.plugins.TestRunnerPlugin = function(dateObj, clearBody, opt_wait) {
+jstestdriver.plugins.TestRunnerPlugin = function(dateObj, clearBody, opt_runTestLoop) {
   this.dateObj_ = dateObj;
   this.clearBody_ = clearBody;
-  //this.wait_ = opt_wait || function(next) { next(); };
-  this.wait_ = function(next) {
-    jstestdriver.setTimeout(next, 50);
-  };
+  this.boundRunTest_ = jstestdriver.bind(this, this.runTest);
+  this.runTestLoop_ = opt_runTestLoop || jstestdriver.plugins.defaultRunTestLoop;
 };
 
-jstestdriver.plugins.TestRunnerPlugin.prototype.runTestConfiguration = function(
-    testRunConfiguration, onTestDone, onTestRunConfigurationComplete) {
-  var testCaseInfo = testRunConfiguration.getTestCaseInfo();
-  var tests = testRunConfiguration.getTests();
-  var size = tests.length;
 
-  var self = this;
+jstestdriver.plugins.pausingRunTestLoop =
+    function(testCaseName, template, tests, runTest, onTest, onComplete) {
   var i = 0;
   function nextTest() {
     if (tests[i]) {
-      onTestDone(self.runTest(testCaseInfo.getTestCaseName(), testCaseInfo.getTemplate(), tests[i]));
-      i++;
-      self.wait_(nextTest);
+      onTest(runTest(testCaseName, template, tests[i++]));
+      jstestdriver.setTimeout(nextTest, 10);
     } else {
-      onTestRunConfigurationComplete();
+      onComplete();
     }
   }
   nextTest();
 };
 
 
-jstestdriver.plugins.TestRunnerPlugin.prototype.runTest = function(testCaseName, testCase,
-    testName) {
+jstestdriver.plugins.defaultRunTestLoop =
+    function(testCaseName, template, tests, runTest, onTest, onComplete) {
+  for (var i = 0; tests[i]; i++) {
+    onTest(runTest(testCaseName, template, tests[i]));
+  }
+  onComplete();
+};
+
+
+jstestdriver.plugins.TestRunnerPlugin.prototype.runTestConfiguration =
+    function(testRunConfiguration, onTestDone, onTestRunConfigurationComplete) {
+  var testCaseInfo = testRunConfiguration.getTestCaseInfo();
+  var tests = testRunConfiguration.getTests();
+  var size = tests.length;
+
+  this.runTestLoop_(testCaseInfo.getTestCaseName(),
+                    testCaseInfo.getTemplate(),
+                    tests,
+                    this.boundRunTest_,
+                    onTestDone,
+                    onTestRunConfigurationComplete)
+};
+
+
+jstestdriver.plugins.TestRunnerPlugin.prototype.runTest =
+    function(testCaseName, testCase, testName) {
   var testCaseInstance;
   try {
     try {

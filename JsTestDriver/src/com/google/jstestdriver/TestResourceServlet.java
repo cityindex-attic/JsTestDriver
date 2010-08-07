@@ -47,10 +47,7 @@ public class TestResourceServlet extends HttpServlet {
 
   public void service(String fileName, PrintWriter writer) {
     String data = filesCache.getFileContent(fileName);
-
-    if (data != null) {
-      writer.write(data);
-    }
+    writer.write(data);
     writer.flush();
   }
 }

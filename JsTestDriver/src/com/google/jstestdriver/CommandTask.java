@@ -24,8 +24,6 @@ import com.google.jstestdriver.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,11 +34,7 @@ import java.util.Map;
  */
 public class CommandTask {
 
-  static final Logger logger = LoggerFactory.getLogger(CommandTask.class);
-
-  static final List<String> EMPTY_ARRAYLIST = new ArrayList<String>();
-
-  public static final int CHUNK_SIZE = 50;
+  private static final Logger logger = LoggerFactory.getLogger(CommandTask.class);
 
   private final Gson gson = new Gson();
 
@@ -77,15 +71,6 @@ public class CommandTask {
       throw new FailureException(
           format("Browser is not available\n {} \nfor\n {}", alive, params));
     }
-  }
-
-  // TODO(corysmith): remove this function once FileInfo is used exclusively.
-  // Hate static crap.
-  public static FileSource fileInfoToFileSource(FileInfo info) {
-    if (info.getFilePath().startsWith("http://")) {
-      return new FileSource(info.getFilePath(), info.getTimestamp());
-    }
-    return new FileSource("/test/" + info.getFilePath(), info.getTimestamp());
   }
 
   public void run(RunData runData) {

@@ -23,7 +23,10 @@ jstestdriver.config = (function(module) {
   /**
    * Start a new runner.
    */
-  config.startRunner = function(createCommandExecutor, testBreather) {
+  config.startRunner = function(createCommandExecutor, testBreather, opt_runTestLoop) {
+    
+    var runTestLoop = opt_runTestLoop || jstestdriver.plugins.defaultRunTestLoop;
+    
     jstestdriver.pluginRegistrar = new jstestdriver.PluginRegistrar();
     jstestdriver.testCaseManager =
         new jstestdriver.TestCaseManager(jstestdriver.pluginRegistrar);
@@ -56,7 +59,7 @@ jstestdriver.config = (function(module) {
         jstestdriver.jQuery('body').children().remove();
         jstestdriver.jQuery(document).unbind();
         jstestdriver.jQuery(document).die();
-    });
+    }, runTestLoop);
 
     jstestdriver.pluginRegistrar.register(
         new jstestdriver.plugins.DefaultPlugin(

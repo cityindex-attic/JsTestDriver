@@ -15,8 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import static java.lang.String.format;
-
 import com.google.gson.Gson;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.SlaveBrowser.CommandResponse;
@@ -43,7 +41,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class StandaloneRunnerServlet extends HttpServlet  {
-  
+
+  public static final String STANDALONE_RUNNER_HTML = "StandaloneRunner.html";
+
   private static final Logger LOGGER =
       LoggerFactory.getLogger(StandaloneRunnerServlet.class);
 
@@ -75,7 +75,7 @@ public class StandaloneRunnerServlet extends HttpServlet  {
       // return the resources first.
       service.serve(path, resp.getOutputStream());
       // start test running
-      if (req.getPathInfo().endsWith("StandaloneRunner.html")) {
+      if (req.getPathInfo().endsWith(STANDALONE_RUNNER_HTML)) {
         service(browser, path);
       }
     } catch (IllegalArgumentException e) {
@@ -104,12 +104,12 @@ public class StandaloneRunnerServlet extends HttpServlet  {
     for (String f : filesToload) {
       filesSources.add(new FileSource("/test/" + f, -1));
     }
-    int size = filesSources.size();
+    final int size = filesSources.size();
 
-    for (int i = 0; i < size; i += CommandTask.CHUNK_SIZE) {
+    for (int i = 0; i < size; i += FileUploader.CHUNK_SIZE) {
       LinkedList<String> loadFilesParameters = new LinkedList<String>();
       List<FileSource> chunkedFileSources =
-          filesSources.subList(i, Math.min(i + CommandTask.CHUNK_SIZE, size));
+          filesSources.subList(i, Math.min(i + FileUploader.CHUNK_SIZE, size));
 
       loadFilesParameters.add(gson.toJson(chunkedFileSources));
       loadFilesParameters.add("true");
@@ -129,55 +129,54 @@ public class StandaloneRunnerServlet extends HttpServlet  {
         public void run() {
           String runnerId = slaveBrowser.getBrowserInfo().toUniqueString();
           final long testStart = System.currentTimeMillis();
-            while (true) {
-              CommandResponse commandResponse = slaveBrowser.getResponse();
-              if (commandResponse != null) {
-                final Response response = commandResponse.getResponse();
-                response.setBrowser(slaveBrowser.getBrowserInfo());
+          int loaded = 0;
+          while (true) {
+            CommandResponse commandResponse = slaveBrowser.getResponse();
+            if (commandResponse != null) {
+              final Response response = commandResponse.getResponse();
+              response.setBrowser(slaveBrowser.getBrowserInfo());
 
               switch (response.getResponseType()) {
                 case TEST_RESULT:
                   final Collection<TestResult> testResults =
                       testResultGenerator.getTestResults(response);
+                  boolean failed = false;
                   for (TestResult result : testResults) {
                     if (result.getResult() != Result.passed) {
-                      System.out.println(format("%s: %s %s.%s: \n%s",
-                          runnerId,
-                          result.getResult(),
-                          result.getTestCaseName(),
-                          result.getTestName(),
-                          result.getMessage()));
+                      failed = true;
+                      LOGGER.trace("{}: {} {}.{}: \n{}",
+                          new Object[] {runnerId, result.getResult(), result.getTestCaseName(),
+                              result.getTestName(), result.getMessage()});
                     } else {
-                      System.out.println(format("%s: passed %s.%s", runnerId,
-                          result.getTestCaseName(), result.getTestName()));
+                      LOGGER.trace("{}: passed {}{}",
+                          new Object[] {runnerId, result.getTestCaseName(), result.getTestName()});
                     }
                   }
+                  LOGGER.debug("{}: result {} {}s", new Object[] {runnerId, !failed,
+                      ((System.currentTimeMillis() - testStart) / 1000)});
                   break;
                 case FILE_LOAD_RESULT:
                   LoadedFiles files =
                       gson.fromJson(response.getResponse(), response.getGsonType());
                   for (FileResult result : files.getLoadedFiles()) {
                     if (result.isSuccess()) {
-                      System.out.println(format("%s: loaded %s", runnerId,
-                          result.getFileSource().getFileSrc()));
+                      loaded++;
                     } else {
-                      System.out.println(format("%s: failed to load %s", runnerId,
-                          result.getFileSource().getFileSrc()));
+                      LOGGER.debug("{}: failed to load {}",
+                          new Object[] {runnerId, result.getFileSource().getFileSrc()});
                     }
                   }
+                  LOGGER.debug("{}: loaded {} files of {} @ {} {}s", new Object[] {runnerId,
+                      loaded, size, ((System.currentTimeMillis() - testStart) / 1000)});
                   break;
                 case LOG:
-                  System.out.println(runnerId + ": test time "
-                      + ((System.currentTimeMillis() - testStart) / 1000) + "s "
-                      + response.getResponse());
+                  LOGGER.debug("{}: test time {}s {}",
+                      new Object[] {runnerId, ((System.currentTimeMillis() - testStart) / 1000),
+                          response.getResponse()});
                   break;
               }
             }
-            // Thread.sleep(1000);
-            }
-          //} catch (InterruptedException e) {
-          //  e.printStackTrace();
-          //}
+          }
         }
       });
       reportingThreads.put(slaveBrowser, thread);

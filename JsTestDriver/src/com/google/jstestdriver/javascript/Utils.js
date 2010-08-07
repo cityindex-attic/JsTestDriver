@@ -31,10 +31,14 @@ jstestdriver.formatString = function(str) {
   var formatArgs = arguments;
   var idx = 1;
   var formatted = str.replace(/%([sdifo])/g, function(fullmatch, groupOne) {
+    var value = formatArgs[idx++];
     if (!jstestdriver.FORMAT_MAPPINGS[groupOne]) {
       throw new Error(groupOne + 'is not a proper format.');
     }
-    return jstestdriver.FORMAT_MAPPINGS[groupOne](formatArgs[idx++]);
+    if (value === undefined || value === null) {
+      return value;
+    }
+    return jstestdriver.FORMAT_MAPPINGS[groupOne](value);
   })
   while (idx < formatArgs.length) {
     var currentArg = formatArgs[idx++]

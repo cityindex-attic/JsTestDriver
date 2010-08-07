@@ -25,9 +25,12 @@ import java.util.Set;
 
 /**
  * Handles the uploading of files.
+ *
  * @author corysmith@google.com (Cory Smith)
  */
 public class FileUploader {
+  public static final int CHUNK_SIZE = 50;
+
   private final StopWatch stopWatch;
   private final Gson gson = new Gson();
   private final Server server;
@@ -37,11 +40,8 @@ public class FileUploader {
   private static final Logger logger = LoggerFactory.getLogger(FileUploader.class);
 
   @Inject
-  public FileUploader(StopWatch stopWatch,
-                      Server server,
-                      @Named("server") String baseUrl,
-                      FileLoader fileLoader,
-                      JsTestDriverFileFilter filter) {
+  public FileUploader(StopWatch stopWatch, Server server, @Named("server") String baseUrl,
+      FileLoader fileLoader, JsTestDriverFileFilter filter) {
     this.stopWatch = stopWatch;
     this.server = server;
     this.baseUrl = baseUrl;
@@ -50,7 +50,8 @@ public class FileUploader {
   }
 
   /** Determines what files have been changed as compared to the server. */
-  public List<FileInfo> determineFileSet(String browserId, Set<FileInfo> files, ResponseStream stream) {
+  public List<FileInfo> determineFileSet(String browserId, Set<FileInfo> files,
+      ResponseStream stream) {
     stopWatch.start("get upload set %s", browserId);
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
 
@@ -61,13 +62,13 @@ public class FileUploader {
 
     if (postResult.length() > 0) {
       stopWatch.start("resolving upload %s", browserId);
-      BrowserFileSet browserFileSet =
-          gson.fromJson(postResult, BrowserFileSet.class);
-      // should reset if the files are the same, because there could be other files on
+      BrowserFileSet browserFileSet = gson.fromJson(postResult, BrowserFileSet.class);
+      // should reset if the files are the same, because there could be other
+      // files on
       // the server.
       boolean shouldReset = sameFiles(browserFileSet.getFilesToUpload(), files);
       Set<FileInfo> finalFilesToUpload = new LinkedHashSet<FileInfo>();
-  
+
       if (shouldReset) {
         reset(browserId, stream, browserFileSet, finalFilesToUpload);
       } else {
@@ -92,7 +93,7 @@ public class FileUploader {
       stopWatch.start("upload to server %s", browserId);
       uploadToServer(loadedFiles);
       stopWatch.stop("upload to server %s", browserId);
-  
+
       stopWatch.start("uploadToTheBrowser %s", browserId);
       uploadToTheBrowser(browserId, stream, loadedFiles);
       stopWatch.stop("uploadToTheBrowser %s", browserId);
@@ -100,11 +101,12 @@ public class FileUploader {
   }
 
   /** Uploads files to the browser. */
-  public void uploadToTheBrowser(String browserId, ResponseStream stream, List<FileInfo> loadedFiles) {
+  public void uploadToTheBrowser(String browserId, ResponseStream stream,
+      List<FileInfo> loadedFiles) {
     List<FileSource> filesSrc = Lists.newLinkedList(filterFilesToLoad(loadedFiles));
     int numberOfFilesToLoad = filesSrc.size();
-    for (int i = 0; i < numberOfFilesToLoad; i += CommandTask.CHUNK_SIZE) {
-      int chunkEndIndex = Math.min(i + CommandTask.CHUNK_SIZE, numberOfFilesToLoad);
+    for (int i = 0; i < numberOfFilesToLoad; i += CHUNK_SIZE) {
+      int chunkEndIndex = Math.min(i + CHUNK_SIZE, numberOfFilesToLoad);
       List<String> loadParameters = new LinkedList<String>();
       List<FileSource> filesToLoad = filesSrc.subList(i, chunkEndIndex);
 
@@ -135,20 +137,20 @@ public class FileUploader {
   private void reset(String browserId, ResponseStream stream, BrowserFileSet browserFileSet,
       Set<FileInfo> finalFilesToUpload) {
     stopWatch.start("reset %s", browserId);
-    JsonCommand cmd = new JsonCommand(CommandType.RESET, CommandTask.EMPTY_ARRAYLIST);
+    JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
     Map<String, String> resetParams = new LinkedHashMap<String, String>();
 
     resetParams.put("id", browserId);
     resetParams.put("data", gson.toJson(cmd));
     server.post(baseUrl + "/cmd", resetParams);
- 
-    CommandTask.logger.debug("Starting File Upload Refresh for {}", browserId);
+
+    logger.debug("Starting File Upload Refresh for {}", browserId);
     String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + browserId);
     StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
     Response response = message.getResponse();
     stream.stream(response);
-    CommandTask.logger.debug("Finished File Upload Refresh for {}", browserId);
- 
+    logger.debug("Finished File Upload Refresh for {}", browserId);
+
     finalFilesToUpload.addAll(browserFileSet.getFilesToUpload());
     stopWatch.stop("reset %s", browserId);
   }
@@ -172,12 +174,21 @@ public class FileUploader {
     return deps;
   }
 
+  // TODO(corysmith): remove this function once FileInfo is used exclusively.
+  // Hate static crap.
+  private FileSource fileInfoToFileSource(FileInfo info) {
+    if (info.getFilePath().startsWith("http://")) {
+      return new FileSource(info.getFilePath(), info.getTimestamp());
+    }
+    return new FileSource("/test/" + info.getFilePath(), info.getTimestamp());
+  }
+
   private List<FileSource> filterFilesToLoad(Collection<FileInfo> fileInfos) {
     List<FileSource> filteredFileSources = new LinkedList<FileSource>();
-    
+
     for (FileInfo fileInfo : fileInfos) {
       if (!fileInfo.isServeOnly()) {
-        filteredFileSources.add(CommandTask.fileInfoToFileSource(fileInfo));
+        filteredFileSources.add(fileInfoToFileSource(fileInfo));
       }
     }
     return filteredFileSources;

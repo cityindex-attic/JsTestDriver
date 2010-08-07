@@ -140,6 +140,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
           }
         //$FALL-THROUGH$
         case BROWSER_READY:
+          logger.debug("Clearing fileset for {}", browser);
           browser.resetFileSet();
           urlTranslator.clear();
           forwardingMapper.clear();

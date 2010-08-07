@@ -51,6 +51,10 @@ jstestdriver.StandAloneRunTestsCommand = function(testCaseManager,
 
 
 jstestdriver.StandAloneRunTestsCommand.prototype.runAllTests = function(args) {
+  this.streamContinue_(new jstestdriver.Response(
+          'LOG',
+          JSON.stringify('started alltests.'),
+          this.getBrowserInfo_()));
   var captureConsole = args[0];
   this.debug_ = Boolean(args[2]);
 
@@ -60,6 +64,10 @@ jstestdriver.StandAloneRunTestsCommand.prototype.runAllTests = function(args) {
 
 
 jstestdriver.StandAloneRunTestsCommand.prototype.runTests = function(args) {
+  this.streamContinue_(new jstestdriver.Response(
+          'LOG',
+          JSON.stringify('started tests.'),
+          this.getBrowserInfo_()));
   var expressions = jsonParse('{"expressions":' + args[0] + '}').expressions;
   var captureConsole = args[1];
   this.debug_ = Boolean(args[2]);
@@ -83,40 +91,27 @@ jstestdriver.StandAloneRunTestsCommand.prototype.runTestCases_ = function(testRu
 jstestdriver.StandAloneRunTestsCommand.prototype.onTestDone_ = function(result) {
   this.reporter_.updateIsSuccess(result.result == 'passed');
   this.addTestResult(result);
-  /*var response = new jstestdriver.Response(
-          jstestdriver.RESPONSE_TYPES.TEST_RESULT,
-          JSON.stringify([ testResult ]),
-          this.getBrowserInfo_());
-  if (window.console && console.log) {
-    console.log(testResult.testCaseName + '.' + testResult.testName);
-  }
-  this.streamContinue_(response);*/
-  /*if (this.testsDone_.length % 5 == 0) {
-    this.streamContinue_(new jstestdriver.Response(
-            'LOG',
-            JSON.stringify('Completed ' + this.testsDone_.length + ' out of ' + this.totaltestruns_),
-            this.getBrowserInfo_()));
-  }*/
 };
 
 
 jstestdriver.StandAloneRunTestsCommand.prototype.onComplete = function() {
   var serializedTests = JSON.stringify(this.testsDone_);
-  /*this.streamContinue_(new jstestdriver.Response(
+  this.streamContinue_(new jstestdriver.Response(
           jstestdriver.RESPONSE_TYPES.TEST_RESULT,
           serializedTests,
-          this.getBrowserInfo_()));*/
+          this.getBrowserInfo_()));
   this.reporter_.setReport(serializedTests);
   this.testsDone_ = [];
   this.reporter_.setIsFinished(true);
-  /*this.streamStop_(new jstestdriver.Response(
+  this.streamStop_(new jstestdriver.Response(
           'LOG',
           JSON.stringify('testing complete, isSuccess:' + this.reporter_.isSuccess() + ', isFinished:' + this.reporter_.isFinished()),
-          this.getBrowserInfo_()));*/
+          this.getBrowserInfo_()));
 };
 
 
 jstestdriver.StandAloneRunTestsCommand.prototype.addTestResult = function(testResult) {
+  this.reporter_.addTestResult(testResult);
   this.pluginRegistrar_.processTestResult(testResult);
   this.testsDone_.push(testResult);
 };

@@ -34,12 +34,12 @@ public class StandaloneRunnerServletTest extends TestCase {
     files.put("file4.js", new FileInfo("file4.js", 1, false, false, "content4"));
     FilesCache cache = new FilesCache(files);
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    SlaveBrowser slaveBrowser = capturedBrowsers.getBrowser("1");
+    SlaveBrowser slaveBrowser = new SlaveBrowser(new MockTime(10), "1", new BrowserInfo(), 1200);
     capturedBrowsers.addSlave(slaveBrowser);
     StandaloneRunnerServlet runnerServlet =
         new StandaloneRunnerServlet(capturedBrowsers, cache,
             new StandaloneRunnerFilesFilterImpl(), new SlaveResourceService(""));
-    runnerServlet.service(slaveBrowser, "/runner");
+    runnerServlet.service(slaveBrowser, "/runner/1/" + StandaloneRunnerServlet.STANDALONE_RUNNER_HTML);
 
     assertNotNull(slaveBrowser.peekCommand());
     Command cmd = slaveBrowser.dequeueCommand();
@@ -55,7 +55,7 @@ public class StandaloneRunnerServletTest extends TestCase {
     assertNotNull(slaveBrowser.peekCommand());
     cmd = slaveBrowser.dequeueCommand();
     assertNotNull(cmd);
-    assertEquals("{\"command\":\"runAllTests\",\"parameters\":[\"false\",\"false\",\"1\"]}",
+    assertEquals("{\"command\":\"runAllTests\",\"parameters\":[\"false\",\"false\",\"0\"]}",
         cmd.getCommand());
   }
 }

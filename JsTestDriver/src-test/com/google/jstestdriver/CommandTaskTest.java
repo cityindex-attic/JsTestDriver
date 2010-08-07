@@ -133,18 +133,17 @@ public class CommandTaskTest extends TestCase {
         + "fileSet?POST?{data="
         + gson.toJson(Arrays.asList(new FileInfo(loadInfo.getFilePath(), loadInfo.getTimestamp(),
             loadInfo.isPatch(), loadInfo.isServeOnly(), loadInfoContents), new FileInfo(serveInfo
-            .getFilePath(), serveInfo.getTimestamp(), serveInfo.isPatch(), serveInfo.isServeOnly(),
-            serveInfoContents))) + "}", "");
+.getFilePath(), serveInfo.getTimestamp(), serveInfo.isPatch(),
+                serveInfo.isServeOnly(), serveInfoContents))) + "}", "");
 
-    String url = baseUrl
-        + "cmd?POST?"
-        + createLoadCommandString("1", CommandType.LOADTEST, Arrays.asList(CommandTask
-            .fileInfoToFileSource(loadInfo)));
+    String url =
+        baseUrl + "cmd?POST?" + createLoadCommandString("1", CommandType.LOADTEST,
+            Arrays.asList(fileInfoToFileSource(loadInfo)));
     server.expect(url, "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
         + "\"last\":true}");
-    server.expect(baseUrl + "cmd?id=1", "{\"response\":" + createLoadedFilesResponseString()
-        + ", \"last\":true}");
+    server.expect(baseUrl + "cmd?id=1",
+        "{\"response\":" + createLoadedFilesResponseString() + ", \"last\":true}");
     server.expect(baseUrl + "cmd?POST?{data={mooh}, id=1}", "");
     server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
@@ -217,4 +216,12 @@ public class CommandTaskTest extends TestCase {
       return loaded;
     }
   }
+  
+  private FileSource fileInfoToFileSource(FileInfo info) {
+    if (info.getFilePath().startsWith("http://")) {
+      return new FileSource(info.getFilePath(), info.getTimestamp());
+    }
+    return new FileSource("/test/" + info.getFilePath(), info.getTimestamp());
+  }
+
 }
