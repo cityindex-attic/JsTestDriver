@@ -63,14 +63,13 @@ public class FileUploader {
     if (postResult.length() > 0) {
       stopWatch.start("resolving upload %s", browserId);
       BrowserFileSet browserFileSet = gson.fromJson(postResult, BrowserFileSet.class);
-      // should reset if the files are the same, because there could be other
-      // files on
-      // the server.
-      boolean shouldReset = sameFiles(browserFileSet.getFilesToUpload(), files);
-      Set<FileInfo> finalFilesToUpload = new LinkedHashSet<FileInfo>();
 
+      // reset if there are extra files o=in the browser
+      boolean shouldReset = !browserFileSet.getExtraFiles().isEmpty();
+      Set<FileInfo> finalFilesToUpload = new LinkedHashSet<FileInfo>();
       if (shouldReset) {
-        reset(browserId, stream, browserFileSet, finalFilesToUpload);
+        reset(browserId, stream);
+        finalFilesToUpload.addAll(browserFileSet.getFilesToUpload());
       } else {
         for (FileInfo file : browserFileSet.getFilesToUpload()) {
           finalFilesToUpload.addAll(findDependencies(file));
@@ -134,8 +133,7 @@ public class FileUploader {
     server.post(baseUrl + "/fileSet", uploadFileParams);
   }
 
-  private void reset(String browserId, ResponseStream stream, BrowserFileSet browserFileSet,
-      Set<FileInfo> finalFilesToUpload) {
+  private void reset(String browserId, ResponseStream stream) {
     stopWatch.start("reset %s", browserId);
     JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
     Map<String, String> resetParams = new LinkedHashMap<String, String>();
@@ -150,18 +148,7 @@ public class FileUploader {
     Response response = message.getResponse();
     stream.stream(response);
     logger.debug("Finished File Upload Refresh for {}", browserId);
-
-    finalFilesToUpload.addAll(browserFileSet.getFilesToUpload());
     stopWatch.stop("reset %s", browserId);
-  }
-
-  private boolean sameFiles(Collection<FileInfo> filesToUpload, Collection<FileInfo> fileSet) {
-    for (FileInfo info : fileSet) {
-      if (!info.isServeOnly() && !filesToUpload.contains(info)) {
-        return false;
-      }
-    }
-    return true;
   }
 
   private Collection<FileInfo> findDependencies(FileInfo file) {
@@ -169,7 +156,8 @@ public class FileUploader {
 
     // TODO(jeremiele): replace filter with a plugin
     for (String fileName : filter.resolveFilesDeps(file.getFilePath())) {
-      deps.add(new FileInfo(fileName, new File(fileName).lastModified(), false, false, null));
+      deps.add(new FileInfo(fileName, new File(fileName).lastModified(), file.isPatch(),
+          file.isServeOnly(), null));
     }
     return deps;
   }

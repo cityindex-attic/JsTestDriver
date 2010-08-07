@@ -166,7 +166,7 @@ public class StandaloneRunnerServlet extends HttpServlet  {
                           new Object[] {runnerId, result.getFileSource().getFileSrc()});
                     }
                   }
-                  LOGGER.debug("{}: loaded {} files of {} @ {} {}s", new Object[] {runnerId,
+                  LOGGER.debug("{}: loaded {} files of {} @ {}s", new Object[] {runnerId,
                       loaded, size, ((System.currentTimeMillis() - testStart) / 1000)});
                   break;
                 case LOG:

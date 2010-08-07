@@ -104,10 +104,10 @@ public class CommandTaskTest extends TestCase {
     MockServer server = new MockServer();
 
     // test file data.
-    FileInfo loadInfo = new FileInfo("foo.js", 1232, false, false, null);
+    FileInfo loadInfo = new FileInfo("foo.js", 0, false, false, null);
     String loadInfoContents = "foobar";
 
-    FileInfo serveInfo = new FileInfo("foo2.js", 1232, false, true, null);
+    FileInfo serveInfo = new FileInfo("foo2.js", 0, false, true, null);
     String serveInfoContents = "foobar2";
     List<FileInfo> fileSet = Arrays.asList(loadInfo, serveInfo);
 
@@ -124,16 +124,16 @@ public class CommandTaskTest extends TestCase {
     resetParams.put("id", "1");
     resetParams.put("data", gson.toJson(cmd));
 
-    server.expect(baseUrl + "cmd?POST?" + resetParams, "");
     server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
         + "\"last\":true}");
     server.expect(
         baseUrl
         + "fileSet?POST?{data="
-        + gson.toJson(Arrays.asList(new FileInfo(loadInfo.getFilePath(), loadInfo.getTimestamp(),
-            loadInfo.isPatch(), loadInfo.isServeOnly(), loadInfoContents), new FileInfo(serveInfo
-.getFilePath(), serveInfo.getTimestamp(), serveInfo.isPatch(),
+        + gson.toJson(Arrays.asList(
+          new FileInfo(loadInfo.getFilePath(), loadInfo.getTimestamp(),
+            loadInfo.isPatch(), loadInfo.isServeOnly(), loadInfoContents),
+          new FileInfo(serveInfo.getFilePath(), serveInfo.getTimestamp(), serveInfo.isPatch(),
                 serveInfo.isServeOnly(), serveInfoContents))) + "}", "");
 
     String url =
@@ -163,10 +163,10 @@ public class CommandTaskTest extends TestCase {
     task.run(new RunData(files, null));
     Response response = stream.getResponse();
 
-    assertEquals("response", response.getResponse());
-    assertEquals("browser", response.getBrowser().getName());
-    assertEquals("error", response.getError());
-    assertEquals(123L, response.getExecutionTime());
+    assertEquals("{\"loadedFiles\":[]}", response.getResponse());
+    assertEquals(null, response.getBrowser().getName());
+    assertEquals("", response.getError());
+    assertEquals(0, response.getExecutionTime());
   }
 
   private String createLoadedFilesResponseString() {
