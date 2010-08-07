@@ -149,7 +149,7 @@ public class BrowserQueryResponseServlet extends HttpServlet {
       browser.addResponse(res, done);
     }
     if (isResponseIdValid(responseId) && !done && !isResponseValid(response)) {
-      logger.debug("Streaming query for ids {} from {}", streamedResponses.get(browser), browser);
+      logger.trace("Streaming query for ids {} from {}", streamedResponses.get(browser), browser);
     }
     // TODO(corysmith): What do we do?
     if (!isResponseValid(response) && done && browser.isCommandRunning()) {

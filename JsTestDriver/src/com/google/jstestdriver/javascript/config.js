@@ -188,7 +188,7 @@ jstestdriver.config = (function(module) {
       return new jstestdriver.BrowserInfo(id);
     }
 
-    window.top.G_testRunner = new jstestdriver.StandAloneTestReporter();
+    window.top.G_testRunner = reporter = new jstestdriver.StandAloneTestReporter();
 
     var executor = new jstestdriver.CommandExecutor(streamingService,
             testCaseManager,
@@ -220,7 +220,9 @@ jstestdriver.config = (function(module) {
                 getBrowserInfo,
                 reporter,
                 now,
-                jsonParse);
+                jsonParse,
+                streamContinue,
+                streamStop);
     
     executor.registerCommand('execute', executor, executor.execute);
     executor.registerCommand('runAllTests', runTestsCommand, runTestsCommand.runAllTests);

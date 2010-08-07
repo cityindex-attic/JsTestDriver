@@ -52,7 +52,7 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
     TestResultListener listener = responsePrinterFactory.get();
 
     RunTestsActionResponseStream responseStream = new RunTestsActionResponseStream(
-        new TestResultGenerator(basePath), listener, accumulator);
+        new TestResultGenerator(), listener, accumulator);
 
     return responseStream;
   }

@@ -96,7 +96,6 @@ public class TestRunner {
               }
             }
           }
-
           public void finish() {
           }
         };

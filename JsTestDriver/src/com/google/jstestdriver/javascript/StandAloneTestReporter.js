@@ -22,8 +22,8 @@
 jstestdriver.StandAloneTestReporter = function() {
   this.finished_ = false;
   this.success_ = 1;
-  this.resport_ = '';
-  this.fileLoaded_ = 0;
+  this.report_ = '';
+  this.filesLoaded_ = 0;
 };
 
 
@@ -52,6 +52,16 @@ jstestdriver.StandAloneTestReporter.prototype.setIsFinished = function(finished)
 
 jstestdriver.StandAloneTestReporter.prototype.setIsSuccess = function(success) {
   this.success_ = success;
+};
+
+
+jstestdriver.StandAloneTestReporter.prototype.isSuccess = function() {
+  return this.success_;
+};
+
+
+jstestdriver.StandAloneTestReporter.prototype.updateIsSuccess = function(success) {
+  this.success_ = success && this.success_;
 };
 
 

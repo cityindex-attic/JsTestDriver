@@ -48,7 +48,11 @@ jstestdriver.StandAloneLoadTestsCommand.prototype.loadTest = function(args) {
 
 jstestdriver.StandAloneLoadTestsCommand.prototype.onFileLoaded = function(status) {
   this.reporter_.setNumFilesLoaded(status.loadedFiles.length);
-  this.onLoadComplete(null);
+  var response = new jstestdriver.Response(
+          jstestdriver.RESPONSE_TYPES.FILE_LOAD_RESULT,
+          JSON.stringify(status),
+          this.getBrowserInfo());
+  this.onLoadComplete_(response);
 };
 
 

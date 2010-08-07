@@ -54,7 +54,7 @@ public class StandaloneRunnerServletTest extends TestCase {
     assertNotNull(slaveBrowser.peekCommand());
     cmd = slaveBrowser.dequeueCommand();
     assertNotNull(cmd);
-    assertEquals("{\"command\":\"runAllTests\",\"parameters\":[\"false\",\"true\"]}",
+    assertEquals("{\"command\":\"runAllTests\",\"parameters\":[\"false\",\"false\",\"1\"]}",
         cmd.getCommand());
   }
 }

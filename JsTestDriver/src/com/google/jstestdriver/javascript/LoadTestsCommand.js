@@ -47,50 +47,6 @@ jstestdriver.LoadTestsCommand.prototype.onFileLoaded = function(status) {
 };
 
 jstestdriver.LoadTestsCommand.prototype.onFileLoadedRunnerMode = function(status) {
-  if (!parent.G_testRunner) {
-    parent.G_testRunner = {
-
-      finished_: false,
-      success_: 1,
-      report_: '',
-      filesLoaded_: 0,
-
-      isFinished: function() {
-        return this.finished_;
-      },
-
-      isSuccess: function() {
-        return this.success_;
-      },
-
-      getReport: function() {
-        return this.report_;
-      },
-
-      getNumFilesLoaded: function() {
-        return this.filesLoaded_;
-      },
-
-      setIsFinished: function(finished) {
-        this.finished_ = finished;
-      },
-
-      setIsSuccess: function(success) {
-        this.success_ = success;
-        chromeos  },
-
-      setReport: function(report) {
-        this.report_ = report;
-      },
-
-      setNumFilesLoaded: function(filesLoaded) {
-        this.filesLoaded_ = filesLoaded;
-      }
-    };
-  }
-  var testRunner = parent.G_testRunner;
-
-  testRunner.setNumFilesLoaded(status.loadedFiles.length);
   this.streamingService_.close(null, this.__boundExecuteCommand);
 };
 

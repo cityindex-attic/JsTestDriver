@@ -377,6 +377,7 @@
       <fileset dir="${obj.dir}/">
         <include name="${javascript-resources}/jstestdrivernamespace.js" />
         <include name="${javascript-resources}/runner.js" />
+        <include name="${javascript-resources}/standalonerunner.js" />
         <include name="${javascript-resources}/heartbeatclient.js" />
         <include name="${javascript-resources}/lib/*.js" />
       </fileset>
@@ -394,6 +395,7 @@
       <fileset dir="${obj.dir}/">
         <include name="${javascript-resources}/jstestdrivernamespace.js" />
         <include name="${javascript-resources}/runner.js" />
+        <include name="${javascript-resources}/standalonerunner.js" />
         <include name="${javascript-resources}/heartbeatclient.js" />
         <include name="${javascript-resources}/lib/*.js" />
       </fileset>
@@ -538,6 +540,7 @@
       <fileset dir="${obj.dir}/">
         <include name="${javascript-resources}/jstestdrivernamespace.js" />
         <include name="${javascript-resources}/runner.js" />
+        <include name="${javascript-resources}/standalonerunner.js" />
         <include name="${javascript-resources}/heartbeatclient.js" />
         <exclude name="${javascript-resources}/lib/*.js" />
       </fileset>

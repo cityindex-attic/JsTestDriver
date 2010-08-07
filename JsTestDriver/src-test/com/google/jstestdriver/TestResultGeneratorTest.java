@@ -18,7 +18,6 @@ import com.google.jstestdriver.Response.ResponseType;
 
 import junit.framework.TestCase;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -34,7 +33,7 @@ public class TestResultGeneratorTest extends TestCase {
     Collection<TestResult> results = new ArrayList<TestResult>();
     results.add(expected);
     String gsonString = gson.toJson(results);
-    TestResultGenerator generator = new TestResultGenerator(new File("."));
+    TestResultGenerator generator = new TestResultGenerator();
     Response response = new Response();
     response.setType(ResponseType.TEST_RESULT.name());
     response.setResponse(gsonString);

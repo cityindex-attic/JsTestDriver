@@ -38,6 +38,11 @@ public enum RunnerMode {
             .finest("com.google.javascript.jstestdriver")
             .finest("com.google.jstestdriver")
             .severe("org.mortbay"), true),
+  DEBUG_NO_TRACE(new LogConfigBuilder()
+                 .useConsoleHandler()
+                 .fine("com.google.javascript.jstestdriver")
+                 .fine("com.google.jstestdriver")
+                 .severe("org.mortbay"), true),
   PROFILE(new LogConfigBuilder()
             .useFileHandler()
             .useConsoleHandler()

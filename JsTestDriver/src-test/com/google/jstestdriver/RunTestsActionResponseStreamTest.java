@@ -21,7 +21,6 @@ import com.google.jstestdriver.output.TestResultListener;
 
 import junit.framework.TestCase;
 
-import java.io.File;
 import java.util.Collections;
 
 /**
@@ -50,7 +49,7 @@ public class RunTestsActionResponseStreamTest extends TestCase {
     Gson gson = new Gson();
     TestResultListenerStub printer = new TestResultListenerStub();
     RunTestsActionResponseStream stream = new RunTestsActionResponseStream(
-      new TestResultGenerator(new File(".")), printer, new FailureAccumulator());
+      new TestResultGenerator(), printer, new FailureAccumulator());
     Response response = new Response();
     response.setType(ResponseType.TEST_RESULT.name());
     BrowserInfo browser = new BrowserInfo();

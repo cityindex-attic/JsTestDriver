@@ -13,47 +13,37 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.formatString = function() {
-  var argsLength = arguments.length;
-  var stringBuilder = [];
-  var subPattern = new RegExp("%[sdifo]", "g");
-  var i = 0;
-
-  while (i < argsLength) {
-    var arg = arguments[i];
-    var match = subPattern.exec(arg);
-
-    if (!match) {
-      var currentArg = arg;
-
-      if (typeof currentArg == 'object') {
-        currentArg = JSON.stringify(currentArg);
-      }
-      if (stringBuilder.length > 0) {
-        stringBuilder.push(" ");
-      }
-      stringBuilder.push(currentArg);
-      i++;
-    } else {
-      var argsUsed = 1;
-      var argIndex = i + 1;
-      var finalStr = arg;
-
-      do {
-        // probably extremely inefficient :-/
-        var currentArg = arguments[argIndex++];
-
-        if (typeof currentArg == 'object') {
-          currentArg = JSON.stringify(currentArg);
-        }
-        finalStr = finalStr.replace(match, currentArg);
-        argsUsed++;
-      } while ((match = subPattern.exec(finalStr)) != null);
-      stringBuilder.push(finalStr);
-      i += argsUsed;
+jstestdriver.FORMAT_MAPPINGS = {
+  's' : function(arg) {
+    if (arg == undefined) {
+      return '';
     }
+    return String(arg);
+  },
+  'd' : Number,
+  'i' : parseInt,
+  'f' : parseFloat,
+  'o' : JSON.stringify
+}
+
+
+jstestdriver.formatString = function(str) {
+  var formatArgs = arguments;
+  var idx = 1;
+  var formatted = str.replace(/%([sdifo])/g, function(fullmatch, groupOne) {
+    if (!jstestdriver.FORMAT_MAPPINGS[groupOne]) {
+      throw new Error(groupOne + 'is not a proper format.');
+    }
+    return jstestdriver.FORMAT_MAPPINGS[groupOne](formatArgs[idx++]);
+  })
+  while (idx < formatArgs.length) {
+    var currentArg = formatArgs[idx++]
+    if (typeof currentArg == 'object') {
+      currentArg = JSON.stringify(currentArg);
+    }
+    formatted += " " + currentArg;
   }
-  return stringBuilder.join('');
+  return formatted;
 };
 
 

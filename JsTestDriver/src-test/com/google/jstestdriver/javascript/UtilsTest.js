@@ -23,7 +23,7 @@ utilsTest.prototype.testStringFormat = function() {
       "ahah"));
   assertEquals("Hello world 42", jstestdriver.formatString("Hello", "world", 42));
   assertEquals("Hello undefined", jstestdriver.formatString("Hello %s"));
-  assertEquals("Hello {\"property\":\"value\"}", jstestdriver.formatString("Hello %s", {property:
+  assertEquals("Hello {\"property\":\"value\"}", jstestdriver.formatString("Hello %o", {property:
     'value'}));
   assertEquals("Hello {\"property\":\"value\"}", jstestdriver.formatString("Hello", {property:
     'value'}));

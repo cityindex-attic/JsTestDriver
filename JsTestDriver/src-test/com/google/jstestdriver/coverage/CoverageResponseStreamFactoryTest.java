@@ -23,7 +23,6 @@ import com.google.jstestdriver.output.TestResultListener;
 
 import junit.framework.TestCase;
 
-import java.io.File;
 
 /**
  * @author corysmith
@@ -50,14 +49,14 @@ public class CoverageResponseStreamFactoryTest extends TestCase {
   final TestResultListener listener = new TestResultListenerStub();
 
   public void testGetRunTestsActionResponseStream() throws Exception {
-    CoverageResponseStreamFactory factory = new CoverageResponseStreamFactory(null, new TestResultGenerator(new File("")));
+    CoverageResponseStreamFactory factory = new CoverageResponseStreamFactory(null, new TestResultGenerator());
 
     ResponseStream responseStream = factory.getRunTestsActionResponseStream("browserId");
     assertNotNull(responseStream);
   }
 
   public void testGetResetActionResponseStream() throws Exception {
-    CoverageResponseStreamFactory factory = new CoverageResponseStreamFactory(null, new TestResultGenerator(new File("")));
+    CoverageResponseStreamFactory factory = new CoverageResponseStreamFactory(null, new TestResultGenerator());
     
     ResponseStream responseStream = factory.getResetActionResponseStream();
     assertEquals(CoverageResponseStreamFactory.NULL_RESPONSE_STREAM, responseStream);

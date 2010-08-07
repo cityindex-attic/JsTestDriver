@@ -22,7 +22,7 @@
  * @param {jstestdriver.TestRunner}
  * @param {jstestdriver.PluginRegistrar}
  * @param {function():BrowserInfo}
- * @param {jstestdriver.StandAloneTestReporter} results The reporter object for the stand alone runner.
+ * @param {jstestdriver.StandAloneTestReporter} reporter The reporter object for the stand alone runner.
  * @param {function():Number}
  * @param {function(String):Object}
  */
@@ -32,18 +32,21 @@ jstestdriver.StandAloneRunTestsCommand = function(testCaseManager,
                                                   getBrowserInfo,
                                                   reporter,
                                                   now,
-                                                  jsonParse) {
+                                                  jsonParse,
+                                                  streamContinue,
+                                                  streamStop) {
   this.testCaseManager_ = testCaseManager;
   this.testRunner_ = testRunner;
   this.pluginRegistrar_ = pluginRegistrar;
   this.jsonParse_ = jsonParse;
   this.now_ = now;
-  this.boundOnTestDone_ = jstestdriver.bind(this, this.onComplete);
-  this.boundOnComplete_ = jstestdriver.bind(this, this.onTestDone_);
+  this.boundOnTestDone_ = jstestdriver.bind(this, this.onTestDone_);
+  this.boundOnComplete_ = jstestdriver.bind(this, this.onComplete);
   this.testsDone_ = [];
   this.getBrowserInfo_ = getBrowserInfo;
-  this.results_ = results;
   this.reporter_ = reporter;
+  this.streamContinue_ = streamContinue;
+  this.streamStop_ = streamStop;
 };
 
 
@@ -62,19 +65,22 @@ jstestdriver.StandAloneRunTestsCommand.prototype.runTests = function(args) {
   this.debug_ = Boolean(args[2]);
 
   this.runTestCases_(this.testCaseManager_.getTestRunsConfigurationFor(expressions),
-      captureConsole == "true" ? true : false, false);
+                     captureConsole == "true" ? true : false,
+                     false);
 };
 
 
 jstestdriver.StandAloneRunTestsCommand.prototype.runTestCases_ = function(testRunsConfiguration,
     captureConsole) {
-  this.testRunner_.runTests(testRunsConfiguration, this.boundOnTestDone_,
-      this.boundOnComplete_, captureConsole);
+  this.testRunner_.runTests(testRunsConfiguration,
+                            this.boundOnTestDone_,
+                            this.boundOnComplete_,
+                            captureConsole);
 };
 
 
 jstestdriver.StandAloneRunTestsCommand.prototype.onTestDone_ = function(result) {
-  this.reporter_.setIsSuccess(testRunner.isSuccess() & (result.result == 'passed'));
+  this.reporter_.setIsSuccess(result.result == 'passed');
   this.addTestResult(result);
 };
 
@@ -82,12 +88,21 @@ jstestdriver.StandAloneRunTestsCommand.prototype.onTestDone_ = function(result) 
 jstestdriver.StandAloneRunTestsCommand.prototype.onComplete = function() {
   this.reporter_.setReport(JSON.stringify(this.testsDone_));
   this.testsDone_ = [];
-  this.reporter_.setIsSuccess(testRunner.isSuccess() == 1 ? true : false);
   this.reporter_.setIsFinished(true);
+  var response = new jstestdriver.Response(
+          jstestdriver.RESPONSE_TYPES.TEST_RESULT,
+          JSON.stringify([]),
+          this.getBrowserInfo_());
+  this.streamStop_(response);
 };
 
 
 jstestdriver.StandAloneRunTestsCommand.prototype.addTestResult = function(testResult) {
   this.pluginRegistrar_.processTestResult(testResult);
   this.testsDone_.push(testResult);
+  var response = new jstestdriver.Response(
+          jstestdriver.RESPONSE_TYPES.TEST_RESULT,
+          JSON.stringify([ testResult ]),
+          this.getBrowserInfo_());
+  this.streamContinue_(response);
 };

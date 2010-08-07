@@ -4,6 +4,7 @@ package com.google.jstestdriver;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.browser.BrowserFileSet;
@@ -35,6 +36,7 @@ public class FileUploader {
   private final JsTestDriverFileFilter filter;
   private static final Logger logger = LoggerFactory.getLogger(FileUploader.class);
 
+  @Inject
   public FileUploader(StopWatch stopWatch,
                       Server server,
                       @Named("server") String baseUrl,
