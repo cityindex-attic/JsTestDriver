@@ -18,6 +18,8 @@ package com.google.jstestdriver;
 import static java.lang.String.format;
 
 import org.joda.time.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -30,6 +32,7 @@ import java.util.concurrent.TimeUnit;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class SlaveBrowser {
+  private static final Logger LOGGER = LoggerFactory.getLogger(SlaveBrowser.class);
 
   public static final long TIMEOUT = 15000; // 15 seconds
   private static final int POLL_RESPONSE_TIMEOUT = 2;
@@ -142,6 +145,7 @@ public class SlaveBrowser {
   }
 
   public synchronized void resetFileSet() {
+    LOGGER.debug("Resetting fileSet for {}", this);
     fileSet.clear();
   }
 
@@ -204,7 +208,7 @@ public class SlaveBrowser {
 
   @Override
   public String toString() {
-    return format("SlaveBrowser(browserInfo=%s,\nid=%s,\nsinceLastCheck=%s)",
-        browserInfo, id, time.now().getMillis() - lastHeartBeat.getMillis());
+    return format("SlaveBrowser(browserInfo=%s,\n\tid=%s,\n\tsinceLastCheck=%s,\n\ttimeout=%s)",
+        browserInfo, id, time.now().getMillis() - lastHeartBeat.getMillis(), timeout);
   }  
 }

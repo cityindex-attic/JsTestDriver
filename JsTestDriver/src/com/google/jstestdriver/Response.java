@@ -37,7 +37,8 @@ public class Response {
     BROWSER_PANIC(BrowserPanic.class),
     UNKNOWN(null),
     BROWSER_READY(null),
-    COMMAND_RESULT(null);
+    COMMAND_RESULT(null),
+    LOG(null);
 
     public final Type type;
 

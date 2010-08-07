@@ -116,7 +116,7 @@ public class DefaultListener implements TestResultListener {
           runData.addProblem(new TestResultProblem(testResult));
         }
       } else {
-        printInProgress("[PASSED] ", testResult, log);
+        printInProgress(browser, "[PASSED] ", testResult, log);
       }
       runData.addPass();
       totalPasses.incrementAndGet();
@@ -124,7 +124,7 @@ public class DefaultListener implements TestResultListener {
       if (!verbose) {
         out.print('F');
       } else {
-        printInProgress("[FAILED] ", testResult, log);
+        printInProgress(browser, "[FAILED] ", testResult, log);
       }
       runData.addFail();
       runData.addProblem(new TestResultProblem(testResult));
@@ -133,7 +133,7 @@ public class DefaultListener implements TestResultListener {
       if (!verbose) {
         out.print('E');
       } else {
-        printInProgress("[ERROR] ", testResult, log);
+        printInProgress(browser, "[ERROR] ", testResult, log);
       }
       runData.addError();
       runData.addProblem(new TestResultProblem(testResult));
@@ -158,8 +158,8 @@ public class DefaultListener implements TestResultListener {
     }
   }
 
-  private void printInProgress(String type, TestResult testResult, String log) {
-    out.println(type + testResult.getTestCaseName() + "." + testResult.getTestName());
+  private void printInProgress(String browser, String type, TestResult testResult, String log) {
+    out.println(browser + " " + type + testResult.getTestCaseName() + "." + testResult.getTestName());
     if (log.length() > 0) {
       String[] logLines = log.split("\n");
 

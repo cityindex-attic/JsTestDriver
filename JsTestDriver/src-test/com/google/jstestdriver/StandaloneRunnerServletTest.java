@@ -34,11 +34,12 @@ public class StandaloneRunnerServletTest extends TestCase {
     files.put("file4.js", new FileInfo("file4.js", 1, false, false, "content4"));
     FilesCache cache = new FilesCache(files);
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    StandaloneRunnerServlet runnerServlet =
-        new StandaloneRunnerServlet(new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT), cache,
-            new StandaloneRunnerFilesFilterImpl(), new SlaveResourceService(""));
-    runnerServlet.service("Chrome/2.0", "/runner", "1");
     SlaveBrowser slaveBrowser = capturedBrowsers.getBrowser("1");
+    capturedBrowsers.addSlave(slaveBrowser);
+    StandaloneRunnerServlet runnerServlet =
+        new StandaloneRunnerServlet(capturedBrowsers, cache,
+            new StandaloneRunnerFilesFilterImpl(), new SlaveResourceService(""));
+    runnerServlet.service(slaveBrowser, "/runner");
 
     assertNotNull(slaveBrowser.peekCommand());
     Command cmd = slaveBrowser.dequeueCommand();

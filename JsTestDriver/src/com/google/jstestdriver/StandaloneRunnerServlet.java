@@ -15,16 +15,18 @@
  */
 package com.google.jstestdriver;
 
+import static java.lang.String.format;
+
 import com.google.gson.Gson;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.SlaveBrowser.CommandResponse;
-import com.google.jstestdriver.output.DefaultListener;
-import com.google.jstestdriver.output.TestResultListener;
+import com.google.jstestdriver.TestResult.Result;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -48,17 +50,16 @@ public class StandaloneRunnerServlet extends HttpServlet  {
   private static final long serialVersionUID = 8525889760512657635L;
 
   private final Gson gson = new Gson();
-  private final BrowserHunter browserHunter;
+  private final CapturedBrowsers capturedBrowsers;
   private final FilesCache cache;
   private final StandaloneRunnerFilesFilter filter;
   private final SlaveResourceService service;
-  private final ConcurrentMap<String, Thread> reportingThreads = new ConcurrentHashMap<String, Thread>();
-  private final TestResultListener listener = new DefaultListener(System.out, true);
+  private final ConcurrentMap<SlaveBrowser, Thread> reportingThreads = new ConcurrentHashMap<SlaveBrowser, Thread>();
   private final TestResultGenerator testResultGenerator = new TestResultGenerator();
 
-  public StandaloneRunnerServlet(BrowserHunter browserHunter, FilesCache cache,
+  public StandaloneRunnerServlet(CapturedBrowsers capturedBrowsers, FilesCache cache,
       StandaloneRunnerFilesFilter filter, SlaveResourceService service) {
-    this.browserHunter = browserHunter;
+    this.capturedBrowsers = capturedBrowsers;
     this.cache = cache;
     this.filter = filter;
     this.service = service;
@@ -69,32 +70,34 @@ public class StandaloneRunnerServlet extends HttpServlet  {
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     String path = SlaveResourceServlet.stripId(req.getPathInfo());
-    String id = getIdFromUrl(req.getPathInfo());
-
-    if (req.getPathInfo().endsWith("StandaloneRunner.html")) {
-      if (browserHunter.isBrowserCaptured(id)) {
-        browserHunter.freeBrowser(id);
+    try {
+      final SlaveBrowser browser = getBrowserFromUrl(req.getPathInfo());
+      // return the resources first.
+      service.serve(path, resp.getOutputStream());
+      // start test running
+      if (req.getPathInfo().endsWith("StandaloneRunner.html")) {
+        service(browser, path);
       }
-      service(req.getHeader("User-Agent"), path, id);
+    } catch (IllegalArgumentException e) {
+      LOGGER.warn("Invalid ID in: {}", req.getPathInfo());
+      // re-capture browser as standalone
+      resp.sendRedirect("/capture/runnertype/STANDALONE/timeout/3600000");
     }
-    service.serve(path, resp.getOutputStream());
   }
 
-  public static String getIdFromUrl(String pathInfo) {
+  public SlaveBrowser getBrowserFromUrl(String pathInfo) {
     Matcher match = ID.matcher(pathInfo);
-
     if (match.find()) {
-      return match.group(1);
+      final SlaveBrowser browser = capturedBrowsers.getBrowser(match.group(1));
+      if (browser != null) {
+        return browser;
+      }
     }
     throw new IllegalArgumentException(pathInfo);
   }
 
-  public void service(String userAgent, String path, final String id) {
-    UserAgentParser parser = new UserAgentParser();
+  public void service(final SlaveBrowser slaveBrowser, final String path) {
 
-    parser.parse(userAgent);
-    final SlaveBrowser slaveBrowser =
-        browserHunter.captureBrowser(id, parser.getName(), parser.getVersion(), parser.getOs());
     Set<String> filesToload = filter.filter(path, cache);
     LinkedList<FileSource> filesSources = new LinkedList<FileSource>();
 
@@ -117,43 +120,67 @@ public class StandaloneRunnerServlet extends HttpServlet  {
 
     runAllTestsParameters.add("false");
     runAllTestsParameters.add("false");
-    runAllTestsParameters.add("1");
+    runAllTestsParameters.add("0");
     slaveBrowser.createCommand(gson.toJson(new JsonCommand(CommandType.RUNALLTESTS,
         runAllTestsParameters)));
 
-    if (LOGGER.isDebugEnabled() && !reportingThreads.containsKey(id)) {
+    if (LOGGER.isDebugEnabled() && !reportingThreads.containsKey(slaveBrowser)) {
       final Thread thread = new Thread(new Runnable() {
         public void run() {
-          try {
+          String runnerId = slaveBrowser.getBrowserInfo().toUniqueString();
+          final long testStart = System.currentTimeMillis();
             while (true) {
               CommandResponse commandResponse = slaveBrowser.getResponse();
               if (commandResponse != null) {
                 final Response response = commandResponse.getResponse();
                 response.setBrowser(slaveBrowser.getBrowserInfo());
-                switch(response.getResponseType()) {
-                  case TEST_RESULT:
-                    for (TestResult result : testResultGenerator.getTestResults(response)) {
-                      listener.onTestComplete(result);
+
+              switch (response.getResponseType()) {
+                case TEST_RESULT:
+                  final Collection<TestResult> testResults =
+                      testResultGenerator.getTestResults(response);
+                  for (TestResult result : testResults) {
+                    if (result.getResult() != Result.passed) {
+                      System.out.println(format("%s: %s %s.%s: \n%s",
+                          runnerId,
+                          result.getResult(),
+                          result.getTestCaseName(),
+                          result.getTestName(),
+                          result.getMessage()));
+                    } else {
+                      System.out.println(format("%s: passed %s.%s", runnerId,
+                          result.getTestCaseName(), result.getTestName()));
                     }
-                    break;
-                  case FILE_LOAD_RESULT:
-                    LoadedFiles files = gson.fromJson(response.getResponse(),
-                                                      response.getGsonType());
-                    for (FileResult result : files.getLoadedFiles()) {
-                      listener.onFileLoad(slaveBrowser.getBrowserInfo().toString(),
-                                          result);
+                  }
+                  break;
+                case FILE_LOAD_RESULT:
+                  LoadedFiles files =
+                      gson.fromJson(response.getResponse(), response.getGsonType());
+                  for (FileResult result : files.getLoadedFiles()) {
+                    if (result.isSuccess()) {
+                      System.out.println(format("%s: loaded %s", runnerId,
+                          result.getFileSource().getFileSrc()));
+                    } else {
+                      System.out.println(format("%s: failed to load %s", runnerId,
+                          result.getFileSource().getFileSrc()));
                     }
-                    break;
-                }
+                  }
+                  break;
+                case LOG:
+                  System.out.println(runnerId + ": test time "
+                      + ((System.currentTimeMillis() - testStart) / 1000) + "s "
+                      + response.getResponse());
+                  break;
               }
-              Thread.sleep(1000);
             }
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
+            // Thread.sleep(1000);
+            }
+          //} catch (InterruptedException e) {
+          //  e.printStackTrace();
+          //}
         }
       });
-      reportingThreads.put(id, thread);
+      reportingThreads.put(slaveBrowser, thread);
       thread.setDaemon(true);
       thread.start();
     }

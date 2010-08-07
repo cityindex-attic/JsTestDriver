@@ -27,7 +27,7 @@ import java.util.Map;
 public class TestResult {
 
   public enum Result {
-    passed, failed, error
+    passed, failed, error, started
   }
 
   private String result;

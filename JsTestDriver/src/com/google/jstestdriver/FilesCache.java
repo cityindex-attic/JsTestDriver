@@ -18,21 +18,23 @@ package com.google.jstestdriver;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class FilesCache {
 
-  private final Map<String, FileInfo> files;
+  private final ConcurrentMap<String, FileInfo> files =
+      new ConcurrentHashMap<String, FileInfo>();
 
   public FilesCache(Map<String, FileInfo> files) {
-    this.files = files;
+    this.files.putAll(files);
   }
 
   public String getFileContent(String fileName) {
     FileInfo FileInfo = files.get(fileName);
-
     return FileInfo != null ? FileInfo.getData() : "";
   }
 

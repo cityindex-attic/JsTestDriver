@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.runner.RunnerType;
+
 import junit.framework.TestCase;
 
 /**
@@ -27,7 +29,7 @@ public class CaptureServletTest extends TestCase {
     CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
 
     assertEquals("/slave/1/RemoteConsoleRunnerquirks.html", servlet.service("Chrome/2.0",
-        CaptureServlet.QUIRKS, null));
+        CaptureServlet.QUIRKS, null, RunnerType.CLIENT_CONTROLLED, null));
   }
 
   public void testRedirectStrictUrl() throws Exception {
@@ -35,7 +37,7 @@ public class CaptureServletTest extends TestCase {
     CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
 
     assertEquals("/slave/1/RemoteConsoleRunnerstrict.html", servlet.service("Chrome/2.0",
-        CaptureServlet.STRICT, null));
+        CaptureServlet.STRICT, null, RunnerType.CLIENT_CONTROLLED, null));
   }
   
   public void testRedirectStrictUrlWithId() throws Exception {
@@ -44,6 +46,6 @@ public class CaptureServletTest extends TestCase {
     CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
     
     assertEquals("/slave/" + id + "/RemoteConsoleRunnerstrict.html", servlet.service("Chrome/2.0",
-        CaptureServlet.STRICT, id));
+        CaptureServlet.STRICT, id, RunnerType.CLIENT_CONTROLLED, null));
   }
 }

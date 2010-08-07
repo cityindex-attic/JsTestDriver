@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.runner.RunnerType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +30,9 @@ public class BrowserHunter {
 
   private static final String REMOTE_CONSOLE_RUNNER =
       "/slave/%s/RemoteConsoleRunner%s.html";
+  
+  private static final String STANDALONE_CONSOLE_RUNNER =
+    "/runner/%s/StandaloneRunner.html";
 
   private final CapturedBrowsers capturedBrowsers;
 
@@ -42,8 +47,14 @@ public class BrowserHunter {
     return captureBrowser(capturedBrowsers.getUniqueId(), name, version, os);
   }
 
-  public String getCaptureUrl(String id, String mode) {
-    return String.format(REMOTE_CONSOLE_RUNNER, id, mode);
+  public String getCaptureUrl(String id, String mode, RunnerType type) {
+    switch(type) {
+      case CLIENT_CONTROLLED:
+        return String.format(REMOTE_CONSOLE_RUNNER, id, mode);
+      case STANDALONE:
+        return String.format(STANDALONE_CONSOLE_RUNNER, id);
+    }
+    throw new UnsupportedOperationException("Unsupported Runner type: " + type);
   }
 
   /**
@@ -55,6 +66,10 @@ public class BrowserHunter {
    * @return A slave browser
    */
   public SlaveBrowser captureBrowser(String rawId, String name, String version, String os) {
+    return captureBrowser(rawId, name, version, os, browserTimeout);
+  }
+
+  public SlaveBrowser captureBrowser(String rawId, String name, String version, String os, Long browserTimeout) {
 
     BrowserInfo browserInfo = new BrowserInfo();
 
@@ -63,10 +78,13 @@ public class BrowserHunter {
     browserInfo.setName(name);
     browserInfo.setVersion(version);
     browserInfo.setOs(os);
+    // TODO(corysmith):move all browser timeout configuration to the capture servlet.
+    long computedBrowserTimeout = browserTimeout == null ? this.browserTimeout : browserTimeout;
     SlaveBrowser slave =
-        new SlaveBrowser(new TimeImpl(), id.toString(), browserInfo, browserTimeout);
-
+      new SlaveBrowser(new TimeImpl(), id.toString(), browserInfo, computedBrowserTimeout);
+    
     capturedBrowsers.addSlave(slave);
+    logger.debug("Browser Captured: {}", slave);
     logger.info("Browser Captured: {} version {} ({})", new Object[] {name, version, id});
     return slave;
   }

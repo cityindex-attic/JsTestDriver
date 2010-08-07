@@ -15,17 +15,16 @@
  */
 package com.google.jstestdriver;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-
-import junit.framework.TestCase;
-
 import com.google.inject.Provider;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
+
+import junit.framework.TestCase;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

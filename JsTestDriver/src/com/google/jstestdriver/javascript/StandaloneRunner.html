@@ -7,6 +7,8 @@
 <script src="lib/json_sans_eval.js" type="text/javascript"></script>
 <script src="standalonerunner.js" type="text/javascript"></script>
 <script type="text/javascript">
+  // special casing: Standalone running should always breathe between runs.
+  jstestdriver.TIMEOUT = 0;
   jstestdriver.console = new jstestdriver.Console();
   jstestdriver.config.startRunner(jstestdriver.config.createStandAloneExecutor);
 </script>

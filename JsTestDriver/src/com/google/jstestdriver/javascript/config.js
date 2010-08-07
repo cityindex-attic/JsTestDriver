@@ -23,7 +23,7 @@ jstestdriver.config = (function(module) {
   /**
    * Start a new runner.
    */
-  config.startRunner = function(createCommandExecutor) {
+  config.startRunner = function(createCommandExecutor, testBreather) {
     jstestdriver.pluginRegistrar = new jstestdriver.PluginRegistrar();
     jstestdriver.testCaseManager =
         new jstestdriver.TestCaseManager(jstestdriver.pluginRegistrar);
@@ -188,7 +188,8 @@ jstestdriver.config = (function(module) {
       return new jstestdriver.BrowserInfo(id);
     }
 
-    window.top.G_testRunner = reporter = new jstestdriver.StandAloneTestReporter();
+    var reporter = new jstestdriver.StandAloneTestReporter();
+    window.top.G_testRunner = reporter;
 
     var executor = new jstestdriver.CommandExecutor(streamingService,
             testCaseManager,
@@ -202,11 +203,11 @@ jstestdriver.config = (function(module) {
     function streamStop(response) {
       streamingService.close(response, boundExecuteCommand)
     }
-    
+
     function streamContinue(response) {
       streamingService.stream(response, boundExecuteCommand);
     }
-    
+
     var loadTestsCommand = new jstestdriver.StandAloneLoadTestsCommand(jsonParse,
             pluginRegistrar,
             getBrowserInfo,

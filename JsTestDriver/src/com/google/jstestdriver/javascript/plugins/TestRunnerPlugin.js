@@ -13,11 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.plugins.TestRunnerPlugin = function(dateObj, clearBody) {
+jstestdriver.plugins.TestRunnerPlugin = function(dateObj, clearBody, opt_wait) {
   this.dateObj_ = dateObj;
   this.clearBody_ = clearBody;
+  //this.wait_ = opt_wait || function(next) { next(); };
+  this.wait_ = function(next) {
+    jstestdriver.setTimeout(next, 50);
+  };
 };
-
 
 jstestdriver.plugins.TestRunnerPlugin.prototype.runTestConfiguration = function(
     testRunConfiguration, onTestDone, onTestRunConfigurationComplete) {
@@ -25,12 +28,18 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTestConfiguration = function(
   var tests = testRunConfiguration.getTests();
   var size = tests.length;
 
-  for (var i = 0; i < size; i++) {
-    var testName = tests[i];
-
-    onTestDone(this.runTest(testCaseInfo.getTestCaseName(), testCaseInfo.getTemplate(), testName));
+  var self = this;
+  var i = 0;
+  function nextTest() {
+    if (tests[i]) {
+      onTestDone(self.runTest(testCaseInfo.getTestCaseName(), testCaseInfo.getTemplate(), tests[i]));
+      i++;
+      self.wait_(nextTest);
+    } else {
+      onTestRunConfigurationComplete();
+    }
   }
-  onTestRunConfigurationComplete();
+  nextTest();
 };
 
 
@@ -73,7 +82,6 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest = function(testCaseName,
         throw err;
       }
     } catch (e) {
-  
       // We use the global here because of a circular dependency. The isFailure plugin should be
       // refactored.
       res = jstestdriver.pluginRegistrar.isFailure(e) ? 'failed' : 'error';

@@ -41,6 +41,9 @@ jstestdriver.StandAloneTestReporter.prototype.getReport = function() {
 
 
 jstestdriver.StandAloneTestReporter.prototype.getNumFilesLoaded = function() {
+  jstestdriver.setTimeout(function() {
+    window.top.close();
+  }, 1);
   return this.filesLoaded_;
 };
 
@@ -61,7 +64,7 @@ jstestdriver.StandAloneTestReporter.prototype.isSuccess = function() {
 
 
 jstestdriver.StandAloneTestReporter.prototype.updateIsSuccess = function(success) {
-  this.success_ = success && this.success_;
+  this.success_ = success & this.success_;
 };
 
 

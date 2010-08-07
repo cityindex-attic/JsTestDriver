@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import static com.google.jstestdriver.runner.RunnerType.CLIENT_CONTROLLED;
+
 import junit.framework.TestCase;
 
 /**
@@ -31,7 +33,7 @@ public class BrowserHunterTest extends TestCase {
     assertEquals("version", browserInfo.getVersion());
     assertEquals("os", browserInfo.getOs());
     assertEquals("/slave/1/RemoteConsoleRunnerquirks.html", browserHunter.getCaptureUrl(
-        slaveBrowser.getId(), CaptureServlet.QUIRKS));
+        slaveBrowser.getId(), CaptureServlet.QUIRKS, CLIENT_CONTROLLED));
   }
 
   public void testCaptureAndGenerateUrlStrict() throws Exception {
@@ -43,6 +45,6 @@ public class BrowserHunterTest extends TestCase {
     assertEquals("version", browserInfo.getVersion());
     assertEquals("os", browserInfo.getOs());
     assertEquals("/slave/1/RemoteConsoleRunnerstrict.html", browserHunter.getCaptureUrl(
-        slaveBrowser.getId(), CaptureServlet.STRICT));
+        slaveBrowser.getId(), CaptureServlet.STRICT, CLIENT_CONTROLLED));
   }
 }

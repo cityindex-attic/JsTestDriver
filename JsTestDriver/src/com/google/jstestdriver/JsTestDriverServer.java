@@ -23,7 +23,6 @@ import com.google.jstestdriver.servlet.BrowserLoggingServlet;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.handler.HandlerList;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.servlet.ProxyServlet;
@@ -84,11 +83,12 @@ public class JsTestDriverServer extends Observable {
     addServlet("/", new HomeServlet(capturedBrowsers));
     addServlet("/hello", new HelloServlet());
     addServlet("/heartbeat", new HeartbeatServlet(capturedBrowsers));
-    addServlet("/capture", new CaptureServlet(new BrowserHunter(
+    addServlet("/capture/*", new CaptureServlet(new BrowserHunter(
       capturedBrowsers, browserTimeout)));
-    addServlet("/runner/*", new StandaloneRunnerServlet(new BrowserHunter(
-      capturedBrowsers, browserTimeout), filesCache, new StandaloneRunnerFilesFilterImpl(),
-      new SlaveResourceService(SlaveResourceService.RESOURCE_LOCATION)));
+    addServlet("/runner/*",
+        new StandaloneRunnerServlet(capturedBrowsers, filesCache,
+            new StandaloneRunnerFilesFilterImpl(),
+            new SlaveResourceService(SlaveResourceService.RESOURCE_LOCATION)));
     addServlet("/slave/*", new SlaveResourceServlet(new SlaveResourceService(
       SlaveResourceService.RESOURCE_LOCATION)));
     addServlet("/cmd", new CommandServlet(capturedBrowsers, urlTranslator,

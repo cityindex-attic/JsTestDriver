@@ -41,6 +41,7 @@ public enum RunnerMode {
   DEBUG_NO_TRACE(new LogConfigBuilder()
                  .useConsoleHandler()
                  .fine("com.google.javascript.jstestdriver")
+                 .fine("com.google.testing.jsunitfarm")
                  .fine("com.google.jstestdriver")
                  .severe("org.mortbay"), true),
   PROFILE(new LogConfigBuilder()

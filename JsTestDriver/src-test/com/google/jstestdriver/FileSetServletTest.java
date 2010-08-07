@@ -15,20 +15,18 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.Gson;
+import com.google.jstestdriver.browser.BrowserFileSet;
+
+import junit.framework.TestCase;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.TestCase;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.jstestdriver.browser.BrowserFileSet;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

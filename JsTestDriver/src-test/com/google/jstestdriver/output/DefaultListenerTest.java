@@ -96,7 +96,7 @@ public class DefaultListenerTest extends TestCase {
     browser.setOs("os");
     printer.onTestComplete(testResult(browser, "passed", "", "[LOG] some log", "A", "d", 1));
     printer.finish();
-    assertEquals("[PASSED] A.d" + NEW_LINE +
+    assertEquals("TB 1 os [PASSED] A.d" + NEW_LINE +
         "  [LOG] some log" + NEW_LINE +
         "Total 1 tests (Passed: 1; Fails: 0; Errors: 0) (1.00 ms)" + NEW_LINE +
         "  TB 1 os: Run 1 tests (Passed: 1; Fails: 0; Errors 0) (1.00 ms)" + NEW_LINE,
@@ -156,11 +156,11 @@ public class DefaultListenerTest extends TestCase {
     printer.onTestComplete(testResult(browser, "error", gson.toJson(new JsException("name", "abc",
         "fileName", 1L, "stack")), "[LOG] error log", "C", "f", 3));
     printer.finish();
-    assertEquals("[PASSED] A.d" + NEW_LINE +
+    assertEquals("TB 1 os [PASSED] A.d" + NEW_LINE +
         "  [LOG] some log" + NEW_LINE +
-        "[FAILED] B.e" + NEW_LINE +
+        "TB 1 os [FAILED] B.e" + NEW_LINE +
         "  [LOG] failed log" + NEW_LINE +
-        "[ERROR] C.f" + NEW_LINE +
+        "TB 1 os [ERROR] C.f" + NEW_LINE +
         "  [LOG] error log" + NEW_LINE +
         "Total 3 tests (Passed: 1; Fails: 1; Errors: 1) (6.00 ms)" + NEW_LINE +
         "  TB 1 os: Run 3 tests (Passed: 1; Fails: 1; Errors 1) (6.00 ms)" + NEW_LINE +
