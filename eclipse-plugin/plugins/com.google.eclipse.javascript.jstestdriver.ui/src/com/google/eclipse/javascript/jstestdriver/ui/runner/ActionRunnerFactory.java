@@ -15,6 +15,17 @@
  */
 package com.google.eclipse.javascript.jstestdriver.ui.runner;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+
 import com.google.eclipse.javascript.jstestdriver.core.Server;
 import com.google.eclipse.javascript.jstestdriver.ui.launch.JavascriptLaunchConfigurationHelper;
 import com.google.eclipse.javascript.jstestdriver.ui.launch.LaunchConfigurationConstants;
@@ -25,21 +36,10 @@ import com.google.inject.name.Names;
 import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.ConfigurationParser;
 import com.google.jstestdriver.IDEPluginActionBuilder;
-import com.google.jstestdriver.JsTestDriverModule.BrowserCount;
-import com.google.jstestdriver.JsTestDriverModule.BrowserCountProvider;
 import com.google.jstestdriver.PluginLoader;
+import com.google.jstestdriver.annotations.BrowserCount;
+import com.google.jstestdriver.JsTestDriverModule.BrowserCountProvider;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Factory which knows how to produce {@link ActionRunner}s for purposes like
