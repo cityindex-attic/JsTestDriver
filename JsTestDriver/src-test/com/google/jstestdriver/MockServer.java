@@ -15,6 +15,10 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -46,6 +50,12 @@ public class MockServer implements Server {
   private String get(String request) {
     Queue<String> response = expectations.get(request);
     if (response == null || response.size() == 0) {
+      System.out.println("Unexpected request: " + request + "\n in " + Lists.transform(Lists.newArrayList(expectations.keySet()), new Function<String, String>() {
+        public String apply(String arg) {
+          return "\n" + arg;
+        }
+        
+      }));
       throw new IllegalArgumentException("Unexpected request: " + request);
     }
     return response.remove();

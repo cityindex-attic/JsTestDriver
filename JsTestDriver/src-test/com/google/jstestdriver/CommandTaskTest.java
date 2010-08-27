@@ -118,7 +118,7 @@ public class CommandTaskTest extends TestCase {
 
     // server expects
     server.expect(baseUrl + "heartbeat?id=1", "OK");
-    server.expect(baseUrl + "fileSet?POST?{id=1, data=" + gson.toJson(fileSet) + ", action=browserFileCheck}",
+    server.expect(baseUrl + "fileSet?POST?{id=1, data=" + gson.toJson(Arrays.asList(loadInfo)) + ", action=browserFileCheck}",
         gson.toJson(browserFileSet));
     server.expect(baseUrl + "fileSet?POST?{data=" + gson.toJson(fileSet) + ", action=serverFileCheck}",
       "[]");
