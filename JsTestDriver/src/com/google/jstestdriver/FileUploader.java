@@ -3,7 +3,9 @@
 package com.google.jstestdriver;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
@@ -58,7 +60,7 @@ public class FileUploader {
       ResponseStream stream) {
     stopWatch.start("get upload set %s", browserId);
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
-    
+
     final List<FileInfo> serverable = Lists.newLinkedList();
     for (FileInfo fileInfo : files) {
       if (!fileInfo.isServeOnly()) {
@@ -86,7 +88,7 @@ public class FileUploader {
         finalFilesToUpload.addAll(serverable);
       } else {
         for (FileInfo file : browserFileSet.getFilesToUpload()) {
-          finalFilesToUpload.addAll(determineInBrowserDependencies(file));
+          finalFilesToUpload.addAll(determineInBrowserDependencies(file, Lists.newArrayList(serverable)));
         }
       }
       stopWatch.stop("resolving browser upload %s", browserId);
@@ -103,7 +105,7 @@ public class FileUploader {
     stopWatch.start("determineServerFileSet(%s)", browserId);
     final List<FileInfo> serverFilesToUpdate = determineServerFileSet(files);
     stopWatch.stop("determineServerFileSet(%s)", browserId);
-    
+
     stopWatch.start("upload to server %s", browserId);
     uploadToServer(serverFilesToUpdate);
     stopWatch.stop("upload to server %s", browserId);
@@ -111,7 +113,7 @@ public class FileUploader {
     stopWatch.start("determineBrowserFileSet(%s)", browserId);
     final List<FileInfo> browserFilesToupdate = determineBrowserFileSet(browserId, files, stream);
     stopWatch.stop("determineBrowserFileSet(%s)", browserId);
-    
+
     stopWatch.start("uploadToTheBrowser(%s)", browserId);
     uploadToTheBrowser(browserId, stream, browserFilesToupdate);
     stopWatch.stop("uploadToTheBrowser(%s)", browserId);
@@ -127,15 +129,24 @@ public class FileUploader {
     String postResult = server.post(baseUrl + "/fileSet", fileSetParams);
     final Collection<FileInfo> filesToUpload =
         gson.fromJson(postResult, new TypeToken<Collection<FileInfo>>() {}.getType());
+
+    // need to use the same instance we have locally, as types don't pass the
+    // json conversion.
+    Set<FileInfo> filesToLoad = Sets.filter(files, new Predicate<FileInfo>() {
+      public boolean apply(FileInfo file) {
+        return filesToUpload.contains(file);
+      }
+    });
+
     if (logger.isDebugEnabled()) {
       logger.debug("Loading {} from disk",
-          Lists.transform(Lists.newArrayList(files), new Function<FileInfo, String>() {
+          Lists.transform(Lists.newArrayList(filesToLoad), new Function<FileInfo, String>() {
             public String apply(FileInfo in) {
               return "\n" + in.getFilePath();
             }
           }));
     }
-    return fileLoader.loadFiles(filesToUpload, false);
+    return fileLoader.loadFiles(filesToLoad, false);
   }
 
   /** Uploads files to the browser. */
@@ -144,11 +155,11 @@ public class FileUploader {
     List<FileSource> filesSrc = Lists.newLinkedList(filterFilesToLoad(loadedFiles));
     int numberOfFilesToLoad = filesSrc.size();
     logger.debug("Files toupload {}",
-      Lists.transform(Lists.newArrayList(loadedFiles), new Function<FileInfo, String>() {
-        public String apply(FileInfo in) {
-          return "\n" + in.toString();
-        }
-      }));
+        Lists.transform(Lists.newArrayList(loadedFiles), new Function<FileInfo, String>() {
+          public String apply(FileInfo in) {
+            return "\n" + in.toString();
+          }
+        }));
     for (int i = 0; i < numberOfFilesToLoad; i += CHUNK_SIZE) {
       int chunkEndIndex = Math.min(i + CHUNK_SIZE, numberOfFilesToLoad);
       List<String> loadParameters = new LinkedList<String>();
@@ -208,11 +219,12 @@ public class FileUploader {
   }
 
   /**
-   * Determines what files must be reloaded in the browser, based on this file being updated.
+   * Determines what files must be reloaded in the browser, based on this file
+   * being updated.
    */
-  private Collection<FileInfo> determineInBrowserDependencies(FileInfo file) {
+  private Collection<FileInfo> determineInBrowserDependencies(FileInfo file, List<FileInfo> files) {
     List<FileInfo> deps = new LinkedList<FileInfo>();
-    for (FileInfo dep : filter.resolveFilesDeps(file)) {
+    for (FileInfo dep : filter.resolveFilesDeps(file, files)) {
       deps.add(dep);
     }
     return deps;

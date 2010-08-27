@@ -16,11 +16,12 @@
 
 package com.google.jstestdriver;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class DefaultFileFilter implements JsTestDriverFileFilter {
-  public List<FileInfo> resolveFilesDeps(FileInfo file) {
+  public List<FileInfo> resolveFilesDeps(FileInfo file, List<FileInfo> fileSet) {
     return Collections.singletonList(file);
   }
 }

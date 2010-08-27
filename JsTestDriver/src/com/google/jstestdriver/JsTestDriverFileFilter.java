@@ -18,11 +18,12 @@ package com.google.jstestdriver;
 import com.google.inject.ImplementedBy;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 @ImplementedBy(DefaultFileFilter.class)
 public interface JsTestDriverFileFilter {
-  public Collection<FileInfo> resolveFilesDeps(FileInfo file);
+  public Collection<FileInfo> resolveFilesDeps(FileInfo file, List<FileInfo> fileSet);
 }
