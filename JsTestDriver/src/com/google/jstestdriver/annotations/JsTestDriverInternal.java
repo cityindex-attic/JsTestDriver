@@ -1,4 +1,4 @@
-package com.google.jstestdriver;
+package com.google.jstestdriver.annotations;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 

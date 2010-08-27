@@ -15,16 +15,14 @@
  */
 package com.google.jstestdriver;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.inject.AbstractModule;
-import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
+import com.google.jstestdriver.annotations.BrowserCount;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.config.DefaultConfiguration;
 import com.google.jstestdriver.guice.BrowserActionProvider;
@@ -33,7 +31,6 @@ import com.google.jstestdriver.hooks.AuthStrategy;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.lang.annotation.Retention;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -76,8 +73,6 @@ public class JsTestDriverModule extends AbstractModule {
     this.basePath = basePath;
     this.testSuiteTimeout = testSuiteTimeout;
   }
-
-  @BindingAnnotation @Retention(RUNTIME) public @interface BrowserCount{}
 
   @Override
   protected void configure() {

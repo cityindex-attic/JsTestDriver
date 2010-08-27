@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.coverage;
+package com.google.jstestdriver.annotations;
 
 import com.google.inject.BindingAnnotation;
 
