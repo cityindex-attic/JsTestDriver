@@ -23,7 +23,6 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.ResponseStreamFactory;
-import com.google.jstestdriver.annotations.Coverage;
 import com.google.jstestdriver.guice.BrowserActionProvider;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;

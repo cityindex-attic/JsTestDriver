@@ -17,7 +17,6 @@ package com.google.jstestdriver.coverage;
 
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.annotations.Coverage;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 
 import org.slf4j.Logger;
