@@ -24,8 +24,5 @@ import java.util.Collection;
  */
 @ImplementedBy(DefaultFileFilter.class)
 public interface JsTestDriverFileFilter {
-
-  public String filterFile(String content, boolean reload);
-
-  public Collection<String> resolveFilesDeps(String file);
+  public Collection<FileInfo> resolveFilesDeps(FileInfo file);
 }

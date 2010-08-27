@@ -2,18 +2,22 @@
 
 package com.google.jstestdriver;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.browser.BrowserFileSet;
+import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
+import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
+import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
 import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -50,33 +54,45 @@ public class FileUploader {
   }
 
   /** Determines what files have been changed as compared to the server. */
-  public List<FileInfo> determineFileSet(String browserId, Set<FileInfo> files,
+  public List<FileInfo> determineBrowserFileSet(String browserId, Set<FileInfo> files,
       ResponseStream stream) {
     stopWatch.start("get upload set %s", browserId);
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
+    
+    final List<FileInfo> serverable = Lists.newLinkedList();
+    for (FileInfo fileInfo : files) {
+      if (!fileInfo.isServeOnly()) {
+        serverable.add(fileInfo);
+      }
+    }
 
     fileSetParams.put("id", browserId);
-    fileSetParams.put("fileSet", gson.toJson(files));
+    fileSetParams.put("data", gson.toJson(serverable));
+    fileSetParams.put("action", BrowserFileCheck.ACTION);
     String postResult = server.post(baseUrl + "/fileSet", fileSetParams);
     stopWatch.stop("get upload set %s", browserId);
 
     if (postResult.length() > 0) {
-      stopWatch.start("resolving upload %s", browserId);
+      stopWatch.start("resolving browser upload %s", browserId);
       BrowserFileSet browserFileSet = gson.fromJson(postResult, BrowserFileSet.class);
+      logger.debug("Updating files {}", browserFileSet.getFilesToUpload());
 
-      // reset if there are extra files o=in the browser
-      boolean shouldReset = !browserFileSet.getExtraFiles().isEmpty();
-      Set<FileInfo> finalFilesToUpload = new LinkedHashSet<FileInfo>();
-      if (shouldReset) {
+      // need a linked hashset here to avoid adding a file more than once.
+      final Set<FileInfo> finalFilesToUpload = new LinkedHashSet<FileInfo>();
+      // reset if there are extra files in the browser
+      if (!browserFileSet.getExtraFiles().isEmpty()) {
         reset(browserId, stream);
-        finalFilesToUpload.addAll(browserFileSet.getFilesToUpload());
+        // since the browser has been reset, reload all files.
+        finalFilesToUpload.addAll(serverable);
       } else {
         for (FileInfo file : browserFileSet.getFilesToUpload()) {
-          finalFilesToUpload.addAll(findDependencies(file));
+          finalFilesToUpload.addAll(determineInBrowserDependencies(file));
         }
       }
-      stopWatch.stop("resolving upload %s", browserId);
-      return fileLoader.loadFiles(finalFilesToUpload, shouldReset);
+      stopWatch.stop("resolving browser upload %s", browserId);
+      return Lists.newArrayList(finalFilesToUpload);
+    } else {
+      logger.debug("No files to update on server.");
     }
     return Collections.<FileInfo>emptyList();
   }
@@ -84,19 +100,42 @@ public class FileUploader {
   /** Uploads the changed files to the server and the browser. */
   public void uploadFileSet(String browserId, Set<FileInfo> files, ResponseStream stream) {
 
-    stopWatch.start("determineFileSet(%s)", browserId);
-    final List<FileInfo> loadedFiles = determineFileSet(browserId, files, stream);
-    stopWatch.stop("determineFileSet(%s)", browserId);
+    stopWatch.start("determineServerFileSet(%s)", browserId);
+    final List<FileInfo> serverFilesToUpdate = determineServerFileSet(files);
+    stopWatch.stop("determineServerFileSet(%s)", browserId);
+    
+    stopWatch.start("upload to server %s", browserId);
+    uploadToServer(serverFilesToUpdate);
+    stopWatch.stop("upload to server %s", browserId);
 
-    if (!loadedFiles.isEmpty()) {
-      stopWatch.start("upload to server %s", browserId);
-      uploadToServer(loadedFiles);
-      stopWatch.stop("upload to server %s", browserId);
+    stopWatch.start("determineBrowserFileSet(%s)", browserId);
+    final List<FileInfo> browserFilesToupdate = determineBrowserFileSet(browserId, files, stream);
+    stopWatch.stop("determineBrowserFileSet(%s)", browserId);
+    
+    stopWatch.start("uploadToTheBrowser(%s)", browserId);
+    uploadToTheBrowser(browserId, stream, browserFilesToupdate);
+    stopWatch.stop("uploadToTheBrowser(%s)", browserId);
+  }
 
-      stopWatch.start("uploadToTheBrowser %s", browserId);
-      uploadToTheBrowser(browserId, stream, loadedFiles);
-      stopWatch.stop("uploadToTheBrowser %s", browserId);
+  /**
+   * Creates a loaded list of files that are out of date with the server cache.
+   */
+  private List<FileInfo> determineServerFileSet(Set<FileInfo> files) {
+    Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
+    fileSetParams.put("data", gson.toJson(files));
+    fileSetParams.put("action", ServerFileCheck.ACTION);
+    String postResult = server.post(baseUrl + "/fileSet", fileSetParams);
+    final Collection<FileInfo> filesToUpload =
+        gson.fromJson(postResult, new TypeToken<Collection<FileInfo>>() {}.getType());
+    if (logger.isDebugEnabled()) {
+      logger.debug("Loading {} from disk",
+          Lists.transform(Lists.newArrayList(files), new Function<FileInfo, String>() {
+            public String apply(FileInfo in) {
+              return "\n" + in.getFilePath();
+            }
+          }));
     }
+    return fileLoader.loadFiles(filesToUpload, false);
   }
 
   /** Uploads files to the browser. */
@@ -104,6 +143,12 @@ public class FileUploader {
       List<FileInfo> loadedFiles) {
     List<FileSource> filesSrc = Lists.newLinkedList(filterFilesToLoad(loadedFiles));
     int numberOfFilesToLoad = filesSrc.size();
+    logger.debug("Files toupload {}",
+      Lists.transform(Lists.newArrayList(loadedFiles), new Function<FileInfo, String>() {
+        public String apply(FileInfo in) {
+          return "\n" + in.toString();
+        }
+      }));
     for (int i = 0; i < numberOfFilesToLoad; i += CHUNK_SIZE) {
       int chunkEndIndex = Math.min(i + CHUNK_SIZE, numberOfFilesToLoad);
       List<String> loadParameters = new LinkedList<String>();
@@ -116,7 +161,14 @@ public class FileUploader {
 
       loadFileParams.put("id", browserId);
       loadFileParams.put("data", gson.toJson(cmd));
-      logger.debug("Sending LOADTEST for {}", browserId);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Sending LOADTEST to {} for {}", browserId,
+            Lists.transform(filesToLoad, new Function<FileSource, String>() {
+              public String apply(FileSource in) {
+                return "\n" + in.getFileSrc();
+              }
+            }));
+      }
       server.post(baseUrl + "/cmd", loadFileParams);
       String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + browserId);
       StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
@@ -128,7 +180,11 @@ public class FileUploader {
   }
 
   private void uploadToServer(final List<FileInfo> loadedFiles) {
+    if (loadedFiles.isEmpty()) {
+      return;
+    }
     Map<String, String> uploadFileParams = new LinkedHashMap<String, String>();
+    uploadFileParams.put("action", ServerFileUpload.ACTION);
     uploadFileParams.put("data", gson.toJson(loadedFiles));
     server.post(baseUrl + "/fileSet", uploadFileParams);
   }
@@ -151,13 +207,13 @@ public class FileUploader {
     stopWatch.stop("reset %s", browserId);
   }
 
-  private Collection<FileInfo> findDependencies(FileInfo file) {
+  /**
+   * Determines what files must be reloaded in the browser, based on this file being updated.
+   */
+  private Collection<FileInfo> determineInBrowserDependencies(FileInfo file) {
     List<FileInfo> deps = new LinkedList<FileInfo>();
-
-    // TODO(jeremiele): replace filter with a plugin
-    for (String fileName : filter.resolveFilesDeps(file.getFilePath())) {
-      deps.add(new FileInfo(fileName, new File(fileName).lastModified(), file.isPatch(),
-          file.isServeOnly(), null));
+    for (FileInfo dep : filter.resolveFilesDeps(file)) {
+      deps.add(dep);
     }
     return deps;
   }

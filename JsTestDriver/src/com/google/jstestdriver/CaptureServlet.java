@@ -64,7 +64,7 @@ public class CaptureServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     final Map<String, String> parameterMap = getParameterMap(req);
-    String mode = parameterMap.get(QUIRKS) != null ? QUIRKS : STRICT;
+    String mode = parameterMap.get(QUIRKS) != null ? STRICT : QUIRKS;
     String id = parameterMap.get(ID);
     RunnerType runnerType = parseRunnerType(parameterMap.get(RUNNER_TYPE));
     Long timeout = parseLong(parameterMap.get(TIMEOUT));

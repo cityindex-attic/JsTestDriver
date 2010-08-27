@@ -57,4 +57,13 @@ public class RunDataTest extends TestCase {
     assertEquals(new RunData(Sets.newHashSet(one), Lists.newArrayList(streamOne, streamTwo)),
         runDataOne.recordResponse(streamTwo));
   }
+  
+  public void testUpdateFileSet() throws Exception {
+    ResponseStream streamOne = new NoopStream();
+    FileInfo one = new FileInfo("one", -1, false, false, null);
+    FileInfo two = new FileInfo("two", -1, false, false, null);
+    final RunData runData = new RunData(Sets.newHashSet(one), Lists.newArrayList(streamOne));
+    assertEquals(new RunData(Sets.newHashSet(one, two), Lists.newArrayList(streamOne)),
+      runData.updateFileSet(Sets.newHashSet(one, two)));
+  }
 }

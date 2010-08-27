@@ -15,7 +15,9 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.Gson;
 import com.google.inject.Provider;
+import com.google.jstestdriver.browser.BrowserFileSet;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
 
@@ -30,6 +32,7 @@ import java.util.List;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class JsTestDriverClientTest extends TestCase {
+  private final Gson gson = new Gson();
 
   public static class ResponseStreamFactoryStub implements ResponseStreamFactory {
 
@@ -83,7 +86,9 @@ public class JsTestDriverClientTest extends TestCase {
   public void testSendCommand() throws Exception {
     MockServer server = new MockServer();
     server.expect("http://localhost/heartbeat?id=1", "OK");
-    server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
+    server.expect("http://localhost/fileSet?POST?{id=1, data=[], action=browserFileCheck}",
+        gson.toJson(new BrowserFileSet()));
+    server.expect("http://localhost/fileSet?POST?{data=[], action=serverFileCheck}", "[]");
     server.expect("http://localhost/cmd?POST?{data={\"command\":\"execute\","
         + "\"parameters\":[\"cmd\"]}, id=1}", "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":"
@@ -165,7 +170,10 @@ public class JsTestDriverClientTest extends TestCase {
     MockServer server = new MockServer();
 
     server.expect("http://localhost/heartbeat?id=1", "OK");
-    server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
+    server.expect("http://localhost/fileSet?POST?{id=1, data=[], action=browserFileCheck}", gson.toJson(new BrowserFileSet()));
+    
+    server.expect("http://localhost/fileSet?POST?{data=[], action=serverFileCheck}", "[]");
+    
     server.expect("http://localhost/cmd?POST?{data={\"command\":\"runAllTests\","
         + "\"parameters\":[\"false\",\"false\",\"\"]}, id=1}", "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
@@ -173,7 +181,7 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"last\":true}");
     final NullStopWatch stopWatch = new NullStopWatch();
     CommandTaskFactory commandTaskFactory =
-        new CommandTaskFactory(new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
+        new CommandTaskFactory(new DefaultFileFilter(), new MockFileLoader(), new Provider<HeartBeatManager>() {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
@@ -192,16 +200,19 @@ public class JsTestDriverClientTest extends TestCase {
     MockServer server = new MockServer();
 
     server.expect("http://localhost/heartbeat?id=1", "OK");
-    server.expect("http://localhost/fileSet?POST?{id=1, fileSet=[]}", "");
-    server.expect("http://localhost/cmd?POST?{data={\"command\":\"runTests\","
-        + "\"parameters\":[\"[\\\"testCase.testFoo\\\",\\\"testCase.testBar\\\"]\",\"false\",\"\"]}, id=1}",
-        "");
+    server.expect("http://localhost/fileSet?POST?{id=1, data=[], action=browserFileCheck}",
+        gson.toJson(new BrowserFileSet()));
+    server.expect("http://localhost/fileSet?POST?{data=[], action=serverFileCheck}", "[]");
+    server
+        .expect(
+            "http://localhost/cmd?POST?{data={\"command\":\"runTests\","
+                + "\"parameters\":[\"[\\\"testCase.testFoo\\\",\\\"testCase.testBar\\\"]\",\"false\",\"\"]}, id=1}", "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
     final NullStopWatch stopWatch = new NullStopWatch();
     CommandTaskFactory commandTaskFactory =
-        new CommandTaskFactory(new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
+        new CommandTaskFactory(new DefaultFileFilter(), new MockFileLoader(), new Provider<HeartBeatManager>() {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }

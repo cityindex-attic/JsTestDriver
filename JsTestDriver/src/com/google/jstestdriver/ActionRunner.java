@@ -54,6 +54,7 @@ public class ActionRunner {
     RunData runData = factory.get();
     Iterator<Action> iterator = actions.iterator();
 
+    stopWatch.start("runActions");
     while (iterator.hasNext()) {
       Action action = iterator.next();
       stopWatch.start(action.toString());
@@ -62,6 +63,7 @@ public class ActionRunner {
       logger.info("Finished {}", action);
       stopWatch.stop(action.toString());
     }
+    stopWatch.stop("runActions");
     // TODO(corysmith): Finish the runData here?
 
     Writer writer = new StringWriter();

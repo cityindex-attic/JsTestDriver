@@ -27,7 +27,7 @@ import java.util.Set;
  * @author corysmith@google.com (Cory Smith)
  *
  */
-public class RunData {
+final public class RunData {
   private final List<ResponseStream> responses;
   private final Set<FileInfo> fileSet;
 
@@ -56,6 +56,10 @@ public class RunData {
     for (ResponseStream response : responses) {
       response.finish();
     }
+  }
+  
+  public RunData updateFileSet(Set<FileInfo> fileSet) {
+    return new RunData(fileSet, responses);
   }
 
   @Override
@@ -86,7 +90,5 @@ public class RunData {
   public String toString() {
     return "RunData [responses=" + responses + ", fileSet=" + fileSet + "]";
   }
-  
-  
-  
+
 }

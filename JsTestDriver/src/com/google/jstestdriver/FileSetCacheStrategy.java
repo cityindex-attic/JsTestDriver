@@ -25,7 +25,7 @@ public class FileSetCacheStrategy {
                                             Set<FileInfo> currentFileSet) {
     Set<FileInfo> expiredFileSet = new LinkedHashSet<FileInfo>();
   
-    if (currentFileSet.isEmpty() || !newFileSet.containsAll(currentFileSet)) {
+    if (currentFileSet.isEmpty()) {
       for (FileInfo info : newFileSet) {
         expiredFileSet.add(info);
       }

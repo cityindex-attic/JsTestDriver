@@ -19,8 +19,10 @@ import static org.mortbay.resource.Resource.newClassPathResource;
 
 import org.mortbay.resource.Resource;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -30,17 +32,23 @@ public class SlaveResourceService {
   public static final String RESOURCE_LOCATION = "/com/google/jstestdriver/javascript";
 
   private final String baseResourceLocation;
+  
+  private ConcurrentHashMap<String, byte[]> resourceCache = new ConcurrentHashMap<String, byte[]>();
 
   public SlaveResourceService(String baseResourceLocation) {
     this.baseResourceLocation = baseResourceLocation;
   }
 
   public void serve(String path, OutputStream out) throws IOException {
-    Resource resource = newClassPathResource(baseResourceLocation + path);
-
-    if (resource == null) {
-      throw new IllegalArgumentException(baseResourceLocation + path + ": resource is null");
+    if (!resourceCache.containsKey(baseResourceLocation + path)) {
+      Resource resource = newClassPathResource(baseResourceLocation + path);
+      if (resource == null) {
+        throw new IllegalArgumentException(baseResourceLocation + path + ": resource is null");
+      }
+      final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      resource.writeTo(outputStream, 0, resource.length());
+      resourceCache.put(baseResourceLocation + path, outputStream.toByteArray());
     }
-    resource.writeTo(out, 0, resource.length());
+    out.write(resourceCache.get(baseResourceLocation + path));
   }
 }

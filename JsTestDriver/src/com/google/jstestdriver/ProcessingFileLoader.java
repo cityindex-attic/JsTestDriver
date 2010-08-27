@@ -33,7 +33,6 @@ import com.google.jstestdriver.util.StopWatch;
  * @author corysmith@google.com (Cory Smith)
  */
 public class ProcessingFileLoader implements FileLoader {
-  private final JsTestDriverFileFilter filter;
   private final FileReader reader;
   private final Set<FileLoadPostProcessor> postprocessors;
   private final Set<FileLoadPreProcessor> preProcessors;
@@ -41,13 +40,11 @@ public class ProcessingFileLoader implements FileLoader {
   private final StopWatch stopWatch;
 
   @Inject
-  public ProcessingFileLoader(JsTestDriverFileFilter filter,
-                              FileReader reader,
+  public ProcessingFileLoader(FileReader reader,
                               Set<FileLoadPostProcessor> postprocessors,
                               Set<FileLoadPreProcessor> preProcessors,
                               @Named("basePath") File basePath,
                               StopWatch stopWatch) {
-    this.filter = filter;
     this.reader = reader;
     this.postprocessors = postprocessors;
     this.preProcessors = preProcessors;
@@ -88,8 +85,7 @@ public class ProcessingFileLoader implements FileLoader {
     }
     StringBuilder fileContent = new StringBuilder();
     long timestamp = file.getTimestamp();
-    fileContent.append(
-    		filter.filterFile(reader.readFile(file.getAbsoluteFileName(basePath)), !shouldReset));
+    fileContent.append(reader.readFile(file.getAbsoluteFileName(basePath)));
     List<FileInfo> patches = file.getPatches();
     if (patches != null) {
       for (FileInfo patch : patches) {

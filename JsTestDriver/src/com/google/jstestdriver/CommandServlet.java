@@ -54,6 +54,7 @@ public class CommandServlet extends HttpServlet {
     this.forwardingMapper = forwardingMapper;
   }
 
+  // TODO(corysmith): Clarify the command usage...All js, or more?
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     if (req.getParameter("listBrowsers") != null) {

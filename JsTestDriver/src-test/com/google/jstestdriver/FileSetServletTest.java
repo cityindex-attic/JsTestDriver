@@ -15,105 +15,88 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.jstestdriver.browser.BrowserFileSet;
+import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
+import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
+import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
 
 import junit.framework.TestCase;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class FileSetServletTest extends TestCase {
+  public void testServerCheckFileAction() throws Exception {
+    final String fileOne = "one.js";
+    final String fileTwo = "two.js";
+    final Map<String, FileInfo> fileMap = Maps.newHashMap();
+    fileMap.put(fileOne, createFile(fileOne, 1));
+    fileMap.put(fileTwo, createFile(fileTwo, 1));
 
-  private final Gson gson = new Gson();
-  private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-  private final PrintWriter writer = new PrintWriter(baos);
+    final ServerFileCheck serverFileCheck =
+        new ServerFileCheck(new FilesCache(fileMap), new FileSetCacheStrategy());
 
-  public void testAddFilesNameAndDataToMap() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    capturedBrowsers.addSlave(new SlaveBrowser(new MockTime(0), "1", new BrowserInfo(), SlaveBrowser.TIMEOUT));
-    Map<String, FileInfo> files = new HashMap<String, FileInfo>();
-    FilesCache filesCache = new FilesCache(files);
-    FileSetServlet fileSetServlet =
-        new FileSetServlet(capturedBrowsers, filesCache);
-
-    fileSetServlet.uploadFiles("[ { 'filePath': 'dummy.js', 'data': 'some data' }," +
-        "{ 'filePath': 'dummytoo.js', 'data': 'some more data' }]");
-    assertEquals(2, filesCache.getFilesNumber());
-    assertEquals("some data", filesCache.getFileContent("dummy.js"));
-    assertEquals("some more data", filesCache.getFileContent("dummytoo.js"));
+    assertEquals(
+        Sets.newHashSet(createFile(fileOne, 3)),
+        serverFileCheck.handle(
+            null,
+            Lists.newArrayList(
+                createFile(fileOne, 3),
+                createFile(fileTwo, 1))));
+  }
+  
+  FileInfo createFile(String path, long timestamp) {
+    return new FileInfo(path, timestamp, false, false, null);
   }
 
-  public void testDoNotReloadAlreadyLoadedFilesWithSameTimestamp() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    BrowserInfo browserInfo = new BrowserInfo();
+  FileInfo createFile(FileInfo info, long timestamp) {
+    return new FileInfo(info.getFilePath(), timestamp, false, false, null);
+  }
 
+  public void testBrowserCheckAction() throws Exception {
+    final String fileOne = "one.js";
+    final String fileTwo = "two.js";
+    final String fileThree = "three.js";
+
+
+    final CapturedBrowsers browsers = new CapturedBrowsers();
+    final BrowserInfo browserInfo = new BrowserInfo();
     browserInfo.setName("firefox");
-    SlaveBrowser slave = new SlaveBrowser(new MockTime(0), "1", browserInfo, SlaveBrowser.TIMEOUT);
+    final SlaveBrowser browser = new SlaveBrowser(new MockTime(0), "1", browserInfo, 100);
+    browser.addFiles(Lists.newArrayList(createFile(fileOne, 1), createFile(fileTwo, 1), createFile(fileThree, 1)));
+    browsers.addSlave(browser);
+    final BrowserFileCheck browserFileCheck =
+        new BrowserFileCheck(new FileSetCacheStrategy());
 
-    capturedBrowsers.addSlave(slave);
-    Map<String, FileInfo> files = new HashMap<String, FileInfo>();
-    FilesCache filesCache = new FilesCache(files);
-    FileSetServlet fileSetServlet = new FileSetServlet(capturedBrowsers, filesCache);
-    List<FileInfo> fileInfos = new LinkedList<FileInfo>();
+    assertEquals(
+        new BrowserFileSet(Lists.newArrayList(createFile(fileOne, 3)), Lists.newArrayList(createFile(fileThree, 3))),
+        browserFileCheck.handle(
+            browser,
+            Lists.newArrayList(
+                createFile(fileOne, 3),
+                createFile(fileTwo, 1))));
+  }
 
-    fileInfos.add(new FileInfo("filename1.js", 123, false, false, null));
-    fileInfos.add(new FileInfo("filename2.js", 456, false, false, null));
-    fileInfos.add(new FileInfo("filename3.js", 789, false, false, null));
-    fileInfos.add(new FileInfo("filename4.js", 101112, false, false, null));
-    fileSetServlet.checkFileSet(gson.toJson(fileInfos), "1", writer);
+  public void testUploadFilesToServer() throws Exception {
+    final String fileOne = "one.js";
+    final String fileTwo = "two.js";
+    final Map<String, FileInfo> expected = Maps.newHashMap();
+    final Map<String, FileInfo> actual = Maps.newHashMap();
+    expected.put(fileOne, createFile(fileOne, 1));
+    expected.put(fileTwo, createFile(fileTwo, 1));
 
-    BrowserFileSet response =
-        gson.fromJson(baos.toString(), BrowserFileSet.class);
+    final ServerFileUpload serverFileUpload =
+        new ServerFileUpload(new FilesCache(actual));
+    
+    serverFileUpload.handle(null, Lists.newArrayList(
+        createFile(fileOne, 3),
+        createFile(fileTwo, 1)));
 
-    baos.reset();
-
-    assertEquals(4, response.getFilesToUpload().size());
-    Iterator<FileInfo> iterator =  response.getFilesToUpload().iterator();
-
-    FileInfo info1 = iterator.next();
-    assertEquals("filename1.js", info1.getFilePath());
-    assertEquals(123, info1.getTimestamp());
-
-    FileInfo info2 = iterator.next();
-    assertEquals("filename2.js", info2.getFilePath());
-    assertEquals(456, info2.getTimestamp());
-
-    FileInfo info3 = iterator.next();
-    assertEquals("filename3.js", info3.getFilePath());
-    assertEquals(789, info3.getTimestamp());
-
-    FileInfo info4 = iterator.next();
-    assertEquals("filename4.js", info4.getFilePath());
-    assertEquals(101112, info4.getTimestamp());
-
-    slave.addFiles( response.getFilesToUpload());
-
-    List<FileInfo> updatedFileInfos = new LinkedList<FileInfo>();
-
-    updatedFileInfos.add(new FileInfo("filename1.js", 123, false, false, null));
-    updatedFileInfos.add(new FileInfo("filename2.js", 456, false, false, null));
-    updatedFileInfos.add(new FileInfo("filename3.js", 131415, false, false, null));
-    updatedFileInfos.add(new FileInfo("filename4.js", 101112, false, false, null));
-    fileSetServlet.checkFileSet(gson.toJson(updatedFileInfos), "1", writer);
-    BrowserFileSet updatedResponse = gson.fromJson(baos.toString(), BrowserFileSet.class);
-
-    baos.reset();
-
-    assertEquals(1, updatedResponse.getFilesToUpload().size());
-    Iterator<FileInfo> updatedIterator = updatedResponse.getFilesToUpload().iterator();
-
-    FileInfo updatedInfo = updatedIterator.next();
-
-    assertEquals("filename3.js", updatedInfo.getFilePath());
-    assertEquals(131415, updatedInfo.getTimestamp());
+    assertEquals(expected, actual);
   }
 }

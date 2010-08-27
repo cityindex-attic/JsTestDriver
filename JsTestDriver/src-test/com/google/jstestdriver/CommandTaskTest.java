@@ -16,9 +16,7 @@
 package com.google.jstestdriver;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -46,7 +44,8 @@ public class CommandTaskTest extends TestCase {
     MockServer server = new MockServer();
 
     server.expect(baseUrl + "heartbeat?id=1", "OK");
-    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet=[]}", "");
+    server.expect(baseUrl + "fileSet?POST?{data=[], action=serverFileCheck}", "[]");
+    server.expect(baseUrl + "fileSet?POST?{id=1, data=[], action=browserFileCheck}", gson.toJson(new BrowserFileSet()));
     server.expect(baseUrl + "cmd?POST?{data={mooh}, id=1}", "");
     server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
@@ -57,7 +56,8 @@ public class CommandTaskTest extends TestCase {
     params.put("id", "1");
     FakeResponseStream stream = new FakeResponseStream();
     LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
-    CommandTask task = createCommandTask(server, files, files, params, stream, null, true);
+    CommandTask task =
+        createCommandTask(server, files, files, params, stream, new MockFileLoader(), true);
 
     task.run(new RunData(files, null));
     Response response = stream.getResponse();
@@ -73,8 +73,10 @@ public class CommandTaskTest extends TestCase {
     FileInfo fileInfo = new FileInfo("foo.js", 1232, false, false, null);
 
     server.expect(baseUrl + "heartbeat?id=1", "OK");
-    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet=" + gson.toJson(Arrays.asList(fileInfo))
-        + "}", "");
+    server.expect(baseUrl + "fileSet?POST?{data=" + gson.toJson(Arrays.asList(fileInfo))
+        + ", action=serverFileCheck}", "[]");
+    server.expect(baseUrl + "fileSet?POST?{id=1, data=" + gson.toJson(Arrays.asList(fileInfo))
+      + ", action=browserFileCheck}", gson.toJson(new BrowserFileSet()));
     server.expect(baseUrl + "cmd?POST?{data={mooh}, id=1}", "");
     server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
@@ -116,8 +118,10 @@ public class CommandTaskTest extends TestCase {
 
     // server expects
     server.expect(baseUrl + "heartbeat?id=1", "OK");
-    server.expect(baseUrl + "fileSet?POST?{id=1, fileSet=" + gson.toJson(fileSet) + "}",
+    server.expect(baseUrl + "fileSet?POST?{id=1, data=" + gson.toJson(fileSet) + ", action=browserFileCheck}",
         gson.toJson(browserFileSet));
+    server.expect(baseUrl + "fileSet?POST?{data=" + gson.toJson(fileSet) + ", action=serverFileCheck}",
+      "[]");
 
     JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
     Map<String, String> resetParams = new LinkedHashMap<String, String>();
@@ -134,7 +138,7 @@ public class CommandTaskTest extends TestCase {
           new FileInfo(loadInfo.getFilePath(), loadInfo.getTimestamp(),
             loadInfo.isPatch(), loadInfo.isServeOnly(), loadInfoContents),
           new FileInfo(serveInfo.getFilePath(), serveInfo.getTimestamp(), serveInfo.isPatch(),
-                serveInfo.isServeOnly(), serveInfoContents))) + "}", "");
+                serveInfo.isServeOnly(), serveInfoContents))) + ", action=serverFileCheck}", "");
 
     String url =
         baseUrl + "cmd?POST?" + createLoadCommandString("1", CommandType.LOADTEST,
@@ -197,26 +201,6 @@ public class CommandTaskTest extends TestCase {
     return task;
   }
 
-  private class MockFileLoader implements FileLoader {
-    private HashMap<FileInfo, String> expected = new HashMap<FileInfo, String>();
-
-    public void addExpectation(FileInfo file, String contents) {
-      expected.put(file, contents);
-    }
-
-    public List<FileInfo> loadFiles(
-    		Collection<FileInfo> filesToLoad, boolean shouldReset) {
-      List<FileInfo> loaded = new LinkedList<FileInfo>();
-      for (FileInfo info : filesToLoad) {
-        assertTrue("File " + info + " was not found in " + expected.keySet(), expected
-            .containsKey(info));
-        loaded.add(new FileInfo(info.getFilePath(), info.getTimestamp(), info.isPatch(), info
-            .isServeOnly(), expected.get(info)));
-      }
-      return loaded;
-    }
-  }
-  
   private FileSource fileInfoToFileSource(FileInfo info) {
     if (info.getFilePath().startsWith("http://")) {
       return new FileSource(info.getFilePath(), info.getTimestamp());

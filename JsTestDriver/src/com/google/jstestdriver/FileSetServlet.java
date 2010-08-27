@@ -15,11 +15,10 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.BrowserCaptureEvent.Event;
-import com.google.jstestdriver.browser.BrowserFileSet;
+import com.google.jstestdriver.servlet.fileset.FileSetRequestHandler;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,17 +47,20 @@ public class FileSetServlet extends HttpServlet implements Observer {
   private final Map<String, Lock> locks = new ConcurrentHashMap<String, Lock>();
 
   private final CapturedBrowsers capturedBrowsers;
-  private final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
 
   // Shared with the TestResourceServlet
   private final FilesCache filesCache;
 
-  public FileSetServlet(CapturedBrowsers capturedBrowsers, FilesCache filesCache) {
+  private final List<FileSetRequestHandler<?>> handlers;
+
+  public FileSetServlet(CapturedBrowsers capturedBrowsers, FilesCache filesCache, List<FileSetRequestHandler<?>> handlers) {
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = filesCache;
     this.capturedBrowsers.addObserver(this);
+    this.handlers = handlers;
   }
 
+  // TODO(corysmith): Extract the session logic to it's own servlet.
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     String id = req.getParameter("id");
@@ -124,74 +125,38 @@ public class FileSetServlet extends HttpServlet implements Observer {
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    final String data = req.getParameter("data");
-    final String id = req.getParameter("id");
-    final String fileSet = req.getParameter("fileSet");
-
-    if (data != null) {
-      uploadFiles(data);
-    } else {
-      checkFileSet(fileSet, id, resp.getWriter());
-    }
+    final FileSetRequestHandler<?> handler = handlerFromAction(req);
+    resp.getOutputStream().print(gson.toJson(handler.handle(browserFromId(req.getParameter("id")),
+        fileInfosFromData(req.getParameter("data")))));
   }
 
-  public void checkFileSet(String fileSet, String browserId, PrintWriter writer) {
-    Collection<FileInfo> clientFileSet =
-      gson.fromJson(fileSet, new TypeToken<Collection<FileInfo>>() {}.getType());
-    SlaveBrowser browser = capturedBrowsers.getBrowser(browserId);
-    Set<FileInfo> browserFileSet = browser.getFileSet();
-    Set<FileInfo> filesToRequest = strategy.createExpiredFileSet(clientFileSet, browserFileSet);
-    if (!filesToRequest.isEmpty()) {
-      // reload all files if Safari, Opera, or Konqueror, because they don't overwrite properly.
-      // TODO(corysmith): Replace this with polymorphic browser classes.
-      if (browser.getBrowserInfo().getName().contains("Safari")
-          || browser.getBrowserInfo().getName().contains("Opera")
-          || browser.getBrowserInfo().getName().contains("Konqueror")) {
-        filesToRequest.clear();
-        for (FileInfo info : clientFileSet) {
-          filesToRequest.add(info);
-        }
-      }
-
-      final String json = gson.toJson(findExpiredFilesToUpload(filesToRequest));
-      writer.write(json);
-    }
-    writer.flush();
+  private Collection<FileInfo> fileInfosFromData(String data) {
+    return gson.fromJson(data, new TypeToken<Collection<FileInfo>>() {}.getType());
   }
 
-  private BrowserFileSet findExpiredFilesToUpload(Set<FileInfo> filesToRequest) {
-    Set<String> cachedFiles = filesCache.getAllFileNames();
-    final List<FileInfo> filesToUpload = Lists.newLinkedList();
-    final List<FileInfo> extraFiles = Lists.newLinkedList();
+  private SlaveBrowser browserFromId(String id) {
+    if (id == null) {
+      return null;
+    }
+    return capturedBrowsers.getBrowser(id);
+  }
 
-    for (FileInfo fileInfo : filesToRequest) {
-      if (!cachedFiles.contains(fileInfo.getFilePath())
-          || filesCache.getFileInfo(fileInfo.getFilePath()).getTimestamp() <
-              fileInfo.getTimestamp()) {
-        filesToUpload.add(fileInfo);
+  private FileSetRequestHandler<?> handlerFromAction(HttpServletRequest req) {
+    final String action = req.getParameter("action");
+    for (FileSetRequestHandler<?> handler : handlers) {
+      if (handler.canHandle(action)) {
+        return handler;
       }
     }
-
-    extraFiles.addAll(filesCache.getAllFileInfos());
-    extraFiles.removeAll(filesToRequest);
-
-    return new BrowserFileSet(filesToUpload, extraFiles);
+    throw new IllegalArgumentException("unknown action");
   }
+
 
   // TODO(corysmith): Remove this and add the Lock to the SlaveBrowser.
   public void update(Observable o, Object arg) {
     BrowserCaptureEvent captureEvent = (BrowserCaptureEvent) arg;
     if (captureEvent.event == Event.CONNECTED) {
       locks.put(captureEvent.getBrowser().getId(), new Lock());
-    }
-  }
-
-  public void uploadFiles(String data) {
-    Collection<FileInfo> filesData =
-        gson.fromJson(data, new TypeToken<Collection<FileInfo>>() {}.getType());
-
-    for (FileInfo f : filesData) {
-      filesCache.addFile(f);
     }
   }
 }

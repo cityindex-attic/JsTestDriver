@@ -123,7 +123,8 @@ public class BrowserQueryResponseServlet extends HttpServlet {
             }
             browser.addFiles(fileInfos);
             if (errorFiles.size() > 0) {
-              browser.removeFiles(errorFiles);
+              logger.debug("clearing fileset on browser errors:" + errorFiles.size());
+              browser.resetFileSet();
             }
           }
           break;

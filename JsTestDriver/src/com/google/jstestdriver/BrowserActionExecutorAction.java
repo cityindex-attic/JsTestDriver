@@ -92,12 +92,14 @@ public class BrowserActionExecutorAction implements Action {
           stopWatch,
           runData,
           sessionManager));
+      logger.debug("Queueing BrowserActionRunner {} for {}.", actions, browserInfo);
     }
     for (BrowserRunner runner : browserRunners) {
       String browserId = client.getNextBrowserId();
       final BrowserActionRunner actionRunner =
           new BrowserActionRunner(browserId, client, actions, stopWatch, runData, sessionManager);
       runners.add(createBrowserManagedRunner(runData, runner, browserId, actionRunner));
+      logger.debug("Queueing BrowserActionRunner {} for {}.", actions, runner);
     }
     List<Throwable> exceptions = Lists.newLinkedList();
     long currentTimeout = testSuiteTimeout;

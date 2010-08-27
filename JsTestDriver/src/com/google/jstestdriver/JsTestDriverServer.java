@@ -15,11 +15,14 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.Provider;
+import com.google.common.collect.ImmutableList;
 import com.google.jstestdriver.browser.BrowserReaper;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.servlet.BrowserLoggingServlet;
+import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
+import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
+import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
@@ -95,7 +98,15 @@ public class JsTestDriverServer extends Observable {
       urlRewriter, forwardingMapper));
     addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers,
       urlTranslator, forwardingMapper));
-    addServlet("/fileSet", new FileSetServlet(capturedBrowsers, filesCache));
+    final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
+    addServlet("/fileSet",
+        new FileSetServlet(
+            capturedBrowsers,
+            filesCache,
+            ImmutableList.of(
+                new BrowserFileCheck(strategy),
+                new ServerFileCheck(filesCache, strategy),
+                new ServerFileUpload(filesCache))));
     addServlet("/cache", new FileCacheServlet());
     addServlet("/log", new BrowserLoggingServlet());
     addServlet("/test/*", new TestResourceServlet(filesCache));
