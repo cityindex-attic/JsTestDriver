@@ -17,6 +17,9 @@ package com.google.jstestdriver;
 
 import static org.mortbay.resource.Resource.newClassPathResource;
 
+import com.google.inject.Inject;
+import com.google.jstestdriver.annotations.BaseResourceLocation;
+
 import org.mortbay.resource.Resource;
 
 import java.io.ByteArrayOutputStream;
@@ -35,7 +38,8 @@ public class SlaveResourceService {
   
   private ConcurrentHashMap<String, byte[]> resourceCache = new ConcurrentHashMap<String, byte[]>();
 
-  public SlaveResourceService(String baseResourceLocation) {
+  @Inject
+  public SlaveResourceService(@BaseResourceLocation String baseResourceLocation) {
     this.baseResourceLocation = baseResourceLocation;
   }
 

@@ -16,9 +16,12 @@
 package com.google.jstestdriver;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Guice;
 import com.google.jstestdriver.browser.BrowserReaper;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
+import com.google.jstestdriver.server.JettyModule;
+import com.google.jstestdriver.server.handlers.JstdHandlersModule;
 import com.google.jstestdriver.servlet.BrowserLoggingServlet;
 import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
@@ -46,6 +49,7 @@ public class JsTestDriverServer extends Observable {
       LoggerFactory.getLogger(JsTestDriverServer.class);
 
   private final Server server = new Server();
+  private Servlet handlerServlet;
 
   private final int port;
   private final CapturedBrowsers capturedBrowsers;
@@ -83,19 +87,26 @@ public class JsTestDriverServer extends Observable {
   private void initServlets() {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
     // TODO(corysmith): replace this with Guice injection
-    addServlet("/", new HomeServlet(capturedBrowsers));
-    addServlet("/hello", new HelloServlet());
-    addServlet("/heartbeat", new HeartbeatServlet(capturedBrowsers));
-    addServlet("/capture/*", new CaptureServlet(new BrowserHunter(
-      capturedBrowsers, browserTimeout)));
+    
+    handlerServlet = Guice.createInjector(
+        new JettyModule(port),
+        new JstdHandlersModule(capturedBrowsers, filesCache, forwardingMapper, browserTimeout))
+            .getInstance(Servlet.class);
+
+    addServlet("/", handlerServlet);
+    addServlet("/capture/*", handlerServlet);
+    addServlet("/cmd", handlerServlet);
+    addServlet("/heartbeat", handlerServlet);
+    addServlet("/hello", handlerServlet);
+    addServlet("/slave/*", handlerServlet);
+
+    // TODO(rdionne): Once all the servlets below are replaced with handlerServlet above,
+    // remove this sub-injector and all 'new' statements in this file.
+
     addServlet("/runner/*",
         new StandaloneRunnerServlet(capturedBrowsers, filesCache,
             new StandaloneRunnerFilesFilterImpl(),
             new SlaveResourceService(SlaveResourceService.RESOURCE_LOCATION)));
-    addServlet("/slave/*", new SlaveResourceServlet(new SlaveResourceService(
-      SlaveResourceService.RESOURCE_LOCATION)));
-    addServlet("/cmd", new CommandServlet(capturedBrowsers, urlTranslator,
-      urlRewriter, forwardingMapper));
     addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers,
       urlTranslator, forwardingMapper));
     final FileSetCacheStrategy strategy = new FileSetCacheStrategy();

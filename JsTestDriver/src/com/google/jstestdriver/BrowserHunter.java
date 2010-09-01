@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Inject;
+import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.runner.RunnerType;
 
 import org.slf4j.Logger;
@@ -38,7 +40,8 @@ public class BrowserHunter {
 
   private final long browserTimeout;
 
-  public BrowserHunter(CapturedBrowsers capturedBrowsers, long browserTimeout) {
+  @Inject
+  public BrowserHunter(CapturedBrowsers capturedBrowsers, @BrowserTimeout long browserTimeout) {
     this.capturedBrowsers = capturedBrowsers;
     this.browserTimeout = browserTimeout;
   }

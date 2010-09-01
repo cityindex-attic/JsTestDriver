@@ -21,19 +21,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
 /**
+ * // TODO(rdionne): remove once I replace the reference to SlaveResourceServlet#stripId()
+ * in StandaloneRunnerServlet with SlaveResourceHandler#stripId().
+ *
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class SlaveResourceServletTest extends TestCase {
-
-  public void testIdChoppedOffFromThePath() throws Exception {
-    String location = getClass().getPackage().getName().replace(".", "/");
-    SlaveResourceServlet servlet = new SlaveResourceServlet(new SlaveResourceService(location));
-    OutputStream oStream = new ByteArrayOutputStream();
-
-    servlet.service("/XXX/Test.file", oStream);
-    assertTrue(oStream.toString().length() > 0);
-    oStream.close();
-  }
 
   public void testStripOffId() throws Exception {
     assertEquals("/B/C", SlaveResourceServlet.stripId("/X/B/C"));

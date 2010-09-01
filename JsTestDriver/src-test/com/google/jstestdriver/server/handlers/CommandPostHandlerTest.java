@@ -13,12 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.server.handlers;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.Command;
+import com.google.jstestdriver.DefaultURLRewriter;
+import com.google.jstestdriver.DefaultURLTranslator;
+import com.google.jstestdriver.FileSource;
+import com.google.jstestdriver.ForwardingMapper;
+import com.google.jstestdriver.JsonCommand;
 import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.TimeImpl;
 
 import junit.framework.TestCase;
 
@@ -27,21 +37,9 @@ import java.util.List;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class CommandServletTest extends TestCase {
+public class CommandPostHandlerTest extends TestCase {
 
   private final Gson gson = new Gson();
-
-  public void testListBrowsers() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    BrowserInfo browserInfo = new BrowserInfo();
-    browserInfo.setId(1);
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), "1", browserInfo, SlaveBrowser.TIMEOUT);
-
-    capturedBrowsers.addSlave(slave);
-    CommandServlet servlet = new CommandServlet(capturedBrowsers, null, null, null);
-
-    assertEquals("[{\"id\":1}]", servlet.listBrowsers());
-  }
 
   public void testRewriteUrls() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
@@ -50,8 +48,8 @@ public class CommandServletTest extends TestCase {
     SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), "1", browserInfo, SlaveBrowser.TIMEOUT);
 
     capturedBrowsers.addSlave(slave);
-    CommandServlet servlet =
-        new CommandServlet(capturedBrowsers, new DefaultURLTranslator(), new DefaultURLRewriter(),
+    CommandPostHandler handler = new CommandPostHandler(
+        null,new Gson(), capturedBrowsers, new DefaultURLTranslator(), new DefaultURLRewriter(),
             new ForwardingMapper());
     List<String> parameters = Lists.newArrayList();
     List<FileSource> fileSources = Lists.newArrayList();
@@ -62,7 +60,7 @@ public class CommandServletTest extends TestCase {
     parameters.add("false");
     JsonCommand command = new JsonCommand(CommandType.LOADTEST, parameters);
 
-    servlet.service("1", gson.toJson(command));
+    handler.service("1", gson.toJson(command));
     Command cmd = slave.dequeueCommand();
 
     command = gson.fromJson(cmd.getCommand(), JsonCommand.class);

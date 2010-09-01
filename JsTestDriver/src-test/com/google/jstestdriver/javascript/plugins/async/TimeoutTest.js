@@ -63,7 +63,7 @@ timeoutTest.prototype.testDisarm = function() {
 
 timeoutTest.prototype.setTimeout = function(callback, timeout) {
   this.callback_ = callback;
-  return 'handle';
+  return 'handleIt';
 };
 
 

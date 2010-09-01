@@ -13,17 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.server.handlers;
+
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.MockTime;
+import com.google.jstestdriver.SlaveBrowser;
 
 import junit.framework.TestCase;
+
+import org.easymock.EasyMock;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class HomeServletTest extends TestCase {
+public class HomeHandlerTest extends TestCase {
 
   public void testDisplayInfo() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
@@ -36,16 +45,23 @@ public class HomeServletTest extends TestCase {
     SlaveBrowser slave = new SlaveBrowser(new MockTime(0), "1", browserInfo, SlaveBrowser.TIMEOUT);
 
     capturedBrowsers.addSlave(slave);
-    HomeServlet servlet = new HomeServlet(capturedBrowsers);
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     PrintWriter writer = new PrintWriter(stream);
+    HttpServletResponse response = EasyMock.createMock(HttpServletResponse.class);
+    HomeHandler handler = new HomeHandler(capturedBrowsers, response, writer);
 
-    servlet.service(writer);
+    /*expect*/ response.setContentType("text/html");
+
+    EasyMock.replay(response);
+
+    handler.handleIt();
     assertEquals("<html><head><title>JsTestDriver</title></head><body>"
         + "<a href=\"/capture\">Capture This Browser</a><br/><a href=\"/capture?strict\">"
         + "Capture This Browser in strict mode</a><br/><p><strong>Captured "
         + "Browsers: (1)</strong></p><p>Id: 1<br/>Name: browser<br/>Version:"
         + " 1.0<br/>Operating System: OS<br/>Currently" + " waiting...<br/></p></body></html>",
         stream.toString());
+
+    EasyMock.verify(response);
   }
 }

@@ -25,31 +25,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * TODO(rdionne): remove once I replace the reference to SlaveResourceServlet#stripId()
+ * in StandaloneRunnerServlet with SlaveResourceHandler#stripId().
+ *
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class SlaveResourceServlet extends HttpServlet {
 
-  private static final long serialVersionUID = 5205195140557748211L;
-
-  private final SlaveResourceService service;
-
-  public SlaveResourceServlet(SlaveResourceService service) {
-    this.service = service;
-  }
-
-  @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    service(req.getPathInfo(), resp.getOutputStream());
-  }
-
-  public void service(String pathInfo, OutputStream out) throws IOException {
-    
-    try {
-      service.serve(stripId(pathInfo), out);
-    } catch (IllegalArgumentException e) {
-      System.out.println(e);
-    }
-  }
+  private SlaveResourceServlet() {}
 
   private final static Pattern PATHWITHOUTID = Pattern.compile("/.*?(/.*)$");
 

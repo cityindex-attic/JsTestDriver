@@ -69,6 +69,7 @@ public class StandaloneRunnerServlet extends HttpServlet  {
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    // TODO(rdionne): replace with SlaveResourceHandler#stripId()
     String path = SlaveResourceServlet.stripId(req.getPathInfo());
     try {
       final SlaveBrowser browser = getBrowserFromUrl(req.getPathInfo());

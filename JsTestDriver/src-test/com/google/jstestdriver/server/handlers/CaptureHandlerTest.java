@@ -13,8 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.server.handlers;
 
+import com.google.jstestdriver.BrowserHunter;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.runner.RunnerType;
 
 import junit.framework.TestCase;
@@ -22,30 +25,33 @@ import junit.framework.TestCase;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class CaptureServletTest extends TestCase {
+public class CaptureHandlerTest extends TestCase {
 
   public void testRedirectQuirksUrl() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
+    CaptureHandler handler = new CaptureHandler(
+        null, null, new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
 
-    assertEquals("/slave/1/RemoteConsoleRunnerquirks.html", servlet.service("Chrome/2.0",
-        CaptureServlet.QUIRKS, null, RunnerType.CLIENT_CONTROLLED, null));
+    assertEquals("/slave/1/RemoteConsoleRunnerquirks.html", handler.service("Chrome/2.0",
+        CaptureHandler.QUIRKS, null, RunnerType.CLIENT_CONTROLLED, null));
   }
 
   public void testRedirectStrictUrl() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
+    CaptureHandler handler = new CaptureHandler(
+        null, null, new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
 
-    assertEquals("/slave/1/RemoteConsoleRunnerstrict.html", servlet.service("Chrome/2.0",
-        CaptureServlet.STRICT, null, RunnerType.CLIENT_CONTROLLED, null));
+    assertEquals("/slave/1/RemoteConsoleRunnerstrict.html", handler.service("Chrome/2.0",
+        CaptureHandler.STRICT, null, RunnerType.CLIENT_CONTROLLED, null));
   }
-  
+
   public void testRedirectStrictUrlWithId() throws Exception {
     String id = "5";
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    CaptureServlet servlet = new CaptureServlet(new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
-    
-    assertEquals("/slave/" + id + "/RemoteConsoleRunnerstrict.html", servlet.service("Chrome/2.0",
-        CaptureServlet.STRICT, id, RunnerType.CLIENT_CONTROLLED, null));
+    CaptureHandler handler = new CaptureHandler(
+        null, null, new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
+
+    assertEquals("/slave/" + id + "/RemoteConsoleRunnerstrict.html", handler.service("Chrome/2.0",
+        CaptureHandler.STRICT, id, RunnerType.CLIENT_CONTROLLED, null));
   }
 }
