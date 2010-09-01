@@ -89,10 +89,13 @@ public class JsTestDriverServer extends Observable {
     
     handlerServlet = Guice.createInjector(
         new JettyModule(port),
-        new JstdHandlersModule(capturedBrowsers, filesCache, forwardingMapper, browserTimeout, urlTranslator))
-            .getInstance(Servlet.class);
+        new JstdHandlersModule(
+            capturedBrowsers, filesCache, forwardingMapper,
+            browserTimeout, urlTranslator, urlRewriter))
+                .getInstance(Servlet.class);
 
     addServlet("/", handlerServlet);
+    addServlet("/cache", handlerServlet);
     addServlet("/capture/*", handlerServlet);
     addServlet("/cmd", handlerServlet);
     addServlet("/heartbeat", handlerServlet);
@@ -117,7 +120,6 @@ public class JsTestDriverServer extends Observable {
                 new BrowserFileCheck(strategy),
                 new ServerFileCheck(filesCache, strategy),
                 new ServerFileUpload(filesCache))));
-    addServlet("/cache", new FileCacheServlet());
     addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/forward/*", new ForwardingServlet(forwardingMapper,
       "localhost", port));

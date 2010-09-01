@@ -14,18 +14,20 @@
  * the License.
  */
 
-package com.google.jstestdriver;
+package com.google.jstestdriver.server.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.FileSetCacheStrategy;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,23 +35,29 @@ import javax.servlet.http.HttpServletResponse;
  * Provides a filecache for clients to determine if a file has changed since they last ran.
  * @author corysmith@google.com (Cory Smith)
  */
-public class FileCacheServlet extends HttpServlet {
+public class FileCacheHandler implements RequestHandler {
 
-  private static final long serialVersionUID = -285793401666562019L;
   private final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
   Set<FileInfo> currentFiles = new HashSet<FileInfo>();
   private Gson gson = new Gson();
 
-  @SuppressWarnings("unused")
-  @Override
-  protected void doPost(HttpServletRequest req,
-                        HttpServletResponse resp) throws ServletException,
-      IOException {
-    String fileSetString = req.getParameter("fileSet");
+  private final HttpServletRequest request;
+  private final HttpServletResponse response;
+
+  @Inject
+  public FileCacheHandler(
+      HttpServletRequest request,
+      HttpServletResponse response) {
+    this.request = request;
+    this.response = response;
+  }
+
+  public void handleIt() throws IOException {
+    String fileSetString = request.getParameter("fileSet");
     Collection<FileInfo> newFiles =
       gson.fromJson(fileSetString,
           new TypeToken<Collection<FileInfo>>() {}.getType());
-    resp.getWriter().write(
+    response.getWriter().write(
         gson.toJson(strategy.createExpiredFileSet(newFiles, currentFiles)));
     // updates the currentFiles, as FileInfo hashes by name.
     for (FileInfo fileInfo : newFiles) {

@@ -10,6 +10,7 @@ import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ForwardingMapper;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
+import com.google.jstestdriver.URLRewriter;
 import com.google.jstestdriver.URLTranslator;
 import com.google.jstestdriver.annotations.BaseResourceLocation;
 import com.google.jstestdriver.annotations.BrowserTimeout;
@@ -32,6 +33,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
   private final ForwardingMapper forwardingMapper;
   private final long browserTimeout;
   private final URLTranslator urlTranslator;
+  private final URLRewriter urlRewriter;
 
   /**
    * TODO(rdionne): Refactor so we don't depend upon manually instantiated
@@ -42,17 +44,20 @@ public class JstdHandlersModule extends RequestHandlersModule {
       FilesCache filesCache,
       ForwardingMapper forwardingMapper,
       long browserTimeout,
-      URLTranslator urlTranslator) {
+      URLTranslator urlTranslator,
+      URLRewriter urlRewriter) {
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = filesCache;
     this.forwardingMapper = forwardingMapper;
     this.browserTimeout = browserTimeout;
     this.urlTranslator = urlTranslator;
+    this.urlRewriter = urlRewriter;
   }
 
   @Override
   protected void configureHandlers() {
     serve( GET, "/", HomeHandler.class);
+    serve(POST, "/cache", FileCacheHandler.class);
     serve( GET, "/capture", CaptureHandler.class);
     serve( GET, "/capture/*", CaptureHandler.class);
     serve( GET, "/cmd", CommandGetHandler.class);
@@ -74,5 +79,6 @@ public class JstdHandlersModule extends RequestHandlersModule {
     bind(FilesCache.class).toInstance(filesCache);
     bind(ForwardingMapper.class).toInstance(forwardingMapper);
     bind(URLTranslator.class).toInstance(urlTranslator);
+    bind(URLRewriter.class).toInstance(urlRewriter);
   }
 }
