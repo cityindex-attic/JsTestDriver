@@ -49,7 +49,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class BrowserQueryResponseHandler implements RequestHandler {
+class BrowserQueryResponseHandler implements RequestHandler {
   private static final Logger logger =
       LoggerFactory.getLogger(BrowserQueryResponseHandler.class);
 

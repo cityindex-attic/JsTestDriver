@@ -60,6 +60,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve( GET, "/heartbeat", HeartbeatGetHandler.class);
     serve(POST, "/heartbeat", HeartbeatPostHandler.class);
     serve( GET, "/hello", HelloHandler.class);
+    serve(POST, "/log", BrowserLoggingHandler.class);
     serve(POST, "/query/*", BrowserQueryResponseHandler.class);
     serve( GET, "/slave/*", SlaveResourceHandler.class);
 

@@ -22,7 +22,6 @@ import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.server.JettyModule;
 import com.google.jstestdriver.server.handlers.JstdHandlersModule;
-import com.google.jstestdriver.servlet.BrowserLoggingServlet;
 import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
@@ -98,6 +97,7 @@ public class JsTestDriverServer extends Observable {
     addServlet("/cmd", handlerServlet);
     addServlet("/heartbeat", handlerServlet);
     addServlet("/hello", handlerServlet);
+    addServlet("/log", handlerServlet);
     addServlet("/query/*", handlerServlet);
     addServlet("/slave/*", handlerServlet);
 
@@ -118,7 +118,6 @@ public class JsTestDriverServer extends Observable {
                 new ServerFileCheck(filesCache, strategy),
                 new ServerFileUpload(filesCache))));
     addServlet("/cache", new FileCacheServlet());
-    addServlet("/log", new BrowserLoggingServlet());
     addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/forward/*", new ForwardingServlet(forwardingMapper,
       "localhost", port));

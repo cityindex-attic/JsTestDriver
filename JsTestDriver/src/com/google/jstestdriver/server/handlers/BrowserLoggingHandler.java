@@ -13,11 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.servlet;
+package com.google.jstestdriver.server.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
 import com.google.jstestdriver.protocol.BrowserLog;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 import org.mortbay.jetty.HttpStatus;
 import org.slf4j.Logger;
@@ -26,8 +28,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Collection;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,19 +35,27 @@ import javax.servlet.http.HttpServletResponse;
  * Allows the browser to log state directly to the application log.
  * @author corbinrsmith@google.com
  */
-public class BrowserLoggingServlet extends HttpServlet {
+class BrowserLoggingHandler implements RequestHandler {
   private static final Logger logger =
-      LoggerFactory.getLogger(BrowserLoggingServlet.class);
-  
+      LoggerFactory.getLogger(BrowserLoggingHandler.class);
+
   final private Gson gson = new Gson();
 
-  @Override
-  protected void doPost(HttpServletRequest req,
-                        HttpServletResponse resp) throws ServletException,
-      IOException {
+  private final HttpServletRequest request;
+  private final HttpServletResponse response;
+
+  @Inject
+  public BrowserLoggingHandler(
+      HttpServletRequest request,
+      HttpServletResponse response) {
+    this.request = request;
+    this.response = response;
+  }
+
+  public void handleIt() throws IOException {
     try{
       Collection<BrowserLog> logs =
-        gson.fromJson(req.getParameter("logs"),
+        gson.fromJson(request.getParameter("logs"),
             new TypeToken<Collection<BrowserLog>>() {}.getType());
       for (BrowserLog log : logs) {
         Logger logger = LoggerFactory.getLogger(log.getSource());
@@ -68,15 +76,15 @@ public class BrowserLoggingServlet extends HttpServlet {
             logger.error(log.getMessage());
             break;
           default:
-            throw new ServletException("Unknown logging level:" + log.getLevel());
+            throw new RuntimeException("Unknown logging level:" + log.getLevel());
         }
       }
-      resp.setStatus(HttpStatus.ORDINAL_200_OK);
+      response.setStatus(HttpStatus.ORDINAL_200_OK);
     } catch (RuntimeException e) {
-      resp.setStatus(HttpStatus.ORDINAL_500_Internal_Server_Error);
+      response.setStatus(HttpStatus.ORDINAL_500_Internal_Server_Error);
       logger.error("Error during BrowserLog write.", e);
     } finally {
-      resp.getOutputStream().flush();
+      response.getOutputStream().flush();
     }
   }
 }
