@@ -90,7 +90,7 @@ public class JsTestDriverServer extends Observable {
     
     handlerServlet = Guice.createInjector(
         new JettyModule(port),
-        new JstdHandlersModule(capturedBrowsers, filesCache, forwardingMapper, browserTimeout))
+        new JstdHandlersModule(capturedBrowsers, filesCache, forwardingMapper, browserTimeout, urlTranslator))
             .getInstance(Servlet.class);
 
     addServlet("/", handlerServlet);
@@ -98,6 +98,7 @@ public class JsTestDriverServer extends Observable {
     addServlet("/cmd", handlerServlet);
     addServlet("/heartbeat", handlerServlet);
     addServlet("/hello", handlerServlet);
+    addServlet("/query/*", handlerServlet);
     addServlet("/slave/*", handlerServlet);
 
     // TODO(rdionne): Once all the servlets below are replaced with handlerServlet above,
@@ -107,8 +108,6 @@ public class JsTestDriverServer extends Observable {
         new StandaloneRunnerServlet(capturedBrowsers, filesCache,
             new StandaloneRunnerFilesFilterImpl(),
             new SlaveResourceService(SlaveResourceService.RESOURCE_LOCATION)));
-    addServlet("/query/*", new BrowserQueryResponseServlet(capturedBrowsers,
-      urlTranslator, forwardingMapper));
     final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
     addServlet("/fileSet",
         new FileSetServlet(

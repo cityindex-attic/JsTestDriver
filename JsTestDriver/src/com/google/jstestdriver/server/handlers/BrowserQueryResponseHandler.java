@@ -13,10 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.server.handlers;
 
 import com.google.gson.Gson;
+import com.google.inject.Inject;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.Command;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.FileResult;
+import com.google.jstestdriver.FileSource;
+import com.google.jstestdriver.ForwardingMapper;
+import com.google.jstestdriver.JsonCommand;
+import com.google.jstestdriver.LoadedFiles;
+import com.google.jstestdriver.Response;
+import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.URLTranslator;
 import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,52 +43,57 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class BrowserQueryResponseServlet extends HttpServlet {
+public class BrowserQueryResponseHandler implements RequestHandler {
   private static final Logger logger =
-      LoggerFactory.getLogger(BrowserQueryResponseServlet.class);
-
-  private static final long serialVersionUID = 995720234973219411L;
+      LoggerFactory.getLogger(BrowserQueryResponseHandler.class);
 
   /** for something completely unrelated see: http://noop.googlecode.com/ */
   private static final String NOOP = "noop";
 
   private final Gson gson = new Gson();
 
+  private final HttpServletRequest request;
+  private final HttpServletResponse response;
   private final CapturedBrowsers browsers;
   private final URLTranslator urlTranslator;
   private final ForwardingMapper forwardingMapper;
-  // TODO(corysmith): factor out a streaming session class. 
+  // TODO(corysmith): factor out a streaming session class.
   private final ConcurrentMap<SlaveBrowser, List<String>> streamedResponses =
     new ConcurrentHashMap<SlaveBrowser, List<String>>();
 
-  public BrowserQueryResponseServlet(CapturedBrowsers browsers, URLTranslator urlTranslator,
+  @Inject
+  public BrowserQueryResponseHandler(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      CapturedBrowsers browsers,
+      URLTranslator urlTranslator,
       ForwardingMapper forwardingMapper) {
+    this.request = request;
+    this.response = response;
     this.browsers = browsers;
     this.urlTranslator = urlTranslator;
     this.forwardingMapper = forwardingMapper;
   }
 
-  @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+  public void handleIt() throws IOException {
     logger.trace("Browser Query Post:\n\tpath:{}\n\tresponse:{}\n\tdone:{}\n\tresponseId:{}",
         new Object[] {
-          req.getPathInfo().substring(1),
-          req.getParameter("response"),
-          req.getParameter("done"),
-          req.getParameter("responseId")
+          request.getPathInfo().substring(1),
+          request.getParameter("response"),
+          request.getParameter("done"),
+          request.getParameter("responseId")
         });
-    service(req.getPathInfo().substring(1),
-            req.getParameter("response"),
-            req.getParameter("done"),
-            req.getParameter("responseId"),
-            resp.getWriter());
+    service(request.getPathInfo().substring(1),
+            request.getParameter("response"),
+            request.getParameter("done"),
+            request.getParameter("responseId"),
+            response.getWriter());
   }
 
   public void service(String id,

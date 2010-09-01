@@ -13,12 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.server.handlers;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.Command;
+import com.google.jstestdriver.DefaultURLTranslator;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.FileResult;
+import com.google.jstestdriver.FileSource;
+import com.google.jstestdriver.ForwardingMapper;
+import com.google.jstestdriver.JsonCommand;
 import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.LoadedFiles;
+import com.google.jstestdriver.MockTime;
+import com.google.jstestdriver.Response;
 import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
 
 import junit.framework.TestCase;
@@ -35,7 +49,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class BrowserQueryResponseServletTest extends TestCase {
+public class BrowserQueryResponseHandlerTest extends TestCase {
 
   private final Gson gson = new Gson();
   private final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -49,9 +63,9 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
     slave.createCommand(data);
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
+    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null);
 
-    servlet.service(id, null, "true", null, writer);
+    handler.service(id, null, "true", null, writer);
     assertEquals(data, out.toString());
   }
 
@@ -61,7 +75,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
 
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
+    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null);
     slave.createCommand("awaitingResponse");
     slave.dequeueCommand();
     slave.createCommand("BrowserCommand");
@@ -76,7 +90,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browserInfo.setOs("OS");
     browserInfo.setVersion("version");
     response.setBrowser(browserInfo);
-    servlet.service(id, gson.toJson(response), "true", null, writer);
+    handler.service(id, gson.toJson(response), "true", null, writer);
     assertEquals("BrowserCommand", out.toString());
     assertEquals(response, slave.getResponse().getResponse());
   }
@@ -88,9 +102,9 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
     slave.setDequeueTimeout(0L, TimeUnit.NANOSECONDS);
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
+    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null);
 
-    servlet.service(id, null, "true", null, writer);
+    handler.service(id, null, "true", null, writer);
     assertEquals("noop", out.toString());
   }
 
@@ -103,18 +117,18 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
     slave.createCommand(data);
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
+    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null);
 
-    servlet.service(id, null, null, null, writer);
+    handler.service(id, null, null, null, writer);
     assertEquals(42L, slave.getLastHeartBeat().getMillis());
   }
 
   public void testBrowserIsNotSlave() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    BrowserQueryResponseServlet servlet =
-        new BrowserQueryResponseServlet(capturedBrowsers, null, null);
+    BrowserQueryResponseHandler handler =
+        new BrowserQueryResponseHandler(null, null, capturedBrowsers, null, null);
 
-    servlet.service("1", "response", "true", null, writer);
+    handler.service("1", "response", "true", null, writer);
     assertEquals(0, out.toString().length());
   }
 
@@ -124,7 +138,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
 
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet = new BrowserQueryResponseServlet(browsers, null, null);
+    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null);
     slave.createCommand("awaitingResponse");
     slave.dequeueCommand();
     slave.createCommand("BrowserCommand");
@@ -139,7 +153,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
     browserInfo.setOs("OS");
     browserInfo.setVersion("version");
     response.setBrowser(browserInfo);
-    servlet.service(id, gson.toJson(response), "", null, writer);
+    handler.service(id, gson.toJson(response), "", null, writer);
     assertEquals(new Gson().toJson(new BrowserStreamAcknowledged(Collections.<String>emptyList())),
         out.toString());
   }
@@ -150,8 +164,8 @@ public class BrowserQueryResponseServletTest extends TestCase {
     SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
 
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet =
-        new BrowserQueryResponseServlet(browsers, null, new ForwardingMapper());
+    BrowserQueryResponseHandler handler =
+        new BrowserQueryResponseHandler(null, null, browsers, null, new ForwardingMapper());
     List<FileResult> fileResults = new LinkedList<FileResult>();
 
     fileResults.add(new FileResult(new FileSource("/test/filename1.js", 123), true, ""));
@@ -164,7 +178,7 @@ public class BrowserQueryResponseServletTest extends TestCase {
 
     response.setType(ResponseType.FILE_LOAD_RESULT.name());
     response.setResponse(gson.toJson(new LoadedFiles(fileResults)));
-    servlet.service("1", gson.toJson(response), "", null, writer);
+    handler.service("1", gson.toJson(response), "", null, writer);
 
     Set<FileInfo> fileInfos = slave.getFileSet();
 
@@ -186,16 +200,16 @@ public class BrowserQueryResponseServletTest extends TestCase {
     assertEquals("filename3.js", info3.getFilePath());
     assertEquals(789, info3.getTimestamp());
   }
-  
+
   public void testResetClearsTheBrowserFileSet() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
     SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
-    
+
     browsers.addSlave(slave);
-    BrowserQueryResponseServlet servlet =
-      new BrowserQueryResponseServlet(browsers, new DefaultURLTranslator(), new ForwardingMapper());
-    
+    BrowserQueryResponseHandler handler =
+      new BrowserQueryResponseHandler(null, null, browsers, new DefaultURLTranslator(), new ForwardingMapper());
+
     slave.addFiles(Lists.newArrayList(new FileInfo()));
     Response response = new Response();
     response.setType(ResponseType.RESET_RESULT.name());
@@ -207,10 +221,10 @@ public class BrowserQueryResponseServletTest extends TestCase {
     slave.createCommand(gson.toJson(resetCommand));
     slave.dequeueCommand();
 
-    servlet.service(id, gson.toJson(response), "", null, writer);
+    handler.service(id, gson.toJson(response), "", null, writer);
 
     Set<FileInfo> fileInfos = slave.getFileSet();
-    
+
     assertEquals("Command is not in the approriate state to deal with race condition.",
         new Command(gson.toJson(resetCommand)), slave.getCommandRunning());
 

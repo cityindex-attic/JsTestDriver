@@ -10,6 +10,7 @@ import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ForwardingMapper;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
+import com.google.jstestdriver.URLTranslator;
 import com.google.jstestdriver.annotations.BaseResourceLocation;
 import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
@@ -30,6 +31,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
   private final FilesCache filesCache;
   private final ForwardingMapper forwardingMapper;
   private final long browserTimeout;
+  private final URLTranslator urlTranslator;
 
   /**
    * TODO(rdionne): Refactor so we don't depend upon manually instantiated
@@ -39,11 +41,13 @@ public class JstdHandlersModule extends RequestHandlersModule {
       CapturedBrowsers capturedBrowsers,
       FilesCache filesCache,
       ForwardingMapper forwardingMapper,
-      long browserTimeout) {
+      long browserTimeout,
+      URLTranslator urlTranslator) {
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = filesCache;
     this.forwardingMapper = forwardingMapper;
     this.browserTimeout = browserTimeout;
+    this.urlTranslator = urlTranslator;
   }
 
   @Override
@@ -56,6 +60,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve( GET, "/heartbeat", HeartbeatGetHandler.class);
     serve(POST, "/heartbeat", HeartbeatPostHandler.class);
     serve( GET, "/hello", HelloHandler.class);
+    serve(POST, "/query/*", BrowserQueryResponseHandler.class);
     serve( GET, "/slave/*", SlaveResourceHandler.class);
 
     bindConstant().annotatedWith(BaseResourceLocation.class)
@@ -67,5 +72,6 @@ public class JstdHandlersModule extends RequestHandlersModule {
         .toInstance(new ConcurrentHashMap<SlaveBrowser, List<String>>());
     bind(FilesCache.class).toInstance(filesCache);
     bind(ForwardingMapper.class).toInstance(forwardingMapper);
+    bind(URLTranslator.class).toInstance(urlTranslator);
   }
 }
