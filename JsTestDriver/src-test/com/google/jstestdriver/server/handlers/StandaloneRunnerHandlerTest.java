@@ -13,17 +13,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.server.handlers;
+
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.Command;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.FilesCache;
+import com.google.jstestdriver.MockTime;
+import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.SlaveResourceService;
+import com.google.jstestdriver.StandaloneRunnerFilesFilterImpl;
 
 import junit.framework.TestCase;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class StandaloneRunnerServletTest extends TestCase {
+public class StandaloneRunnerHandlerTest extends TestCase {
 
   public void testCaptureAddFilesToLoadAndRun() throws Exception {
     Map<String, FileInfo> files = new LinkedHashMap<String, FileInfo>();
@@ -36,10 +47,10 @@ public class StandaloneRunnerServletTest extends TestCase {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     SlaveBrowser slaveBrowser = new SlaveBrowser(new MockTime(10), "1", new BrowserInfo(), 1200);
     capturedBrowsers.addSlave(slaveBrowser);
-    StandaloneRunnerServlet runnerServlet =
-        new StandaloneRunnerServlet(capturedBrowsers, cache,
-            new StandaloneRunnerFilesFilterImpl(), new SlaveResourceService(""));
-    runnerServlet.service(slaveBrowser, "/runner/1/" + StandaloneRunnerServlet.STANDALONE_RUNNER_HTML);
+    StandaloneRunnerHandler handler =
+        new StandaloneRunnerHandler(null, null, capturedBrowsers, cache,
+            new StandaloneRunnerFilesFilterImpl(), new SlaveResourceService(""), new ConcurrentHashMap<SlaveBrowser, Thread>());
+    handler.service(slaveBrowser, "/runner/1/" + StandaloneRunnerHandler.STANDALONE_RUNNER_HTML);
 
     assertNotNull(slaveBrowser.peekCommand());
     Command cmd = slaveBrowser.dequeueCommand();

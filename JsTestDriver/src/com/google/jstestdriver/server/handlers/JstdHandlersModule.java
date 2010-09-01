@@ -4,14 +4,14 @@ package com.google.jstestdriver.server.handlers;
 import static com.google.jstestdriver.requesthandlers.HttpMethod.GET;
 import static com.google.jstestdriver.requesthandlers.HttpMethod.POST;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Key;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ForwardingMapper;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
+import com.google.jstestdriver.StandaloneRunnerFilesFilter;
+import com.google.jstestdriver.StandaloneRunnerFilesFilterImpl;
 import com.google.jstestdriver.URLRewriter;
 import com.google.jstestdriver.URLTranslator;
 import com.google.jstestdriver.annotations.BaseResourceLocation;
@@ -21,11 +21,9 @@ import com.google.jstestdriver.requesthandlers.RequestHandler;
 import com.google.jstestdriver.requesthandlers.RequestHandlersModule;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.http.Cookie;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Defines {@link RequestHandler} bindings for the JSTD server.
@@ -77,6 +75,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve( GET, "/hello", HelloHandler.class);
     serve(POST, "/log", BrowserLoggingHandler.class);
     serve(POST, "/query/*", BrowserQueryResponseHandler.class);
+    serve( GET, "/runner/*", StandaloneRunnerHandler.class);
     serve( GET, "/slave/*", SlaveResourceHandler.class);
 
     bindConstant().annotatedWith(BaseResourceLocation.class)
@@ -86,9 +85,12 @@ public class JstdHandlersModule extends RequestHandlersModule {
     bind(CapturedBrowsers.class).toInstance(capturedBrowsers);
     bind(FilesCache.class).toInstance(filesCache);
     bind(ForwardingMapper.class).toInstance(forwardingMapper);
-    bind(new Key<Map<SlaveBrowser, List<String>>>() {})
+    bind(new Key<ConcurrentMap<SlaveBrowser, List<String>>>() {})
         .toInstance(new ConcurrentHashMap<SlaveBrowser, List<String>>());
+    bind(new Key<ConcurrentMap<SlaveBrowser, Thread>>() {})
+        .toInstance(new ConcurrentHashMap<SlaveBrowser, Thread>());
     bind(new Key<Set<AuthStrategy>>() {}).toInstance(authStrategies);
+    bind(StandaloneRunnerFilesFilter.class).to(StandaloneRunnerFilesFilterImpl.class);
     bind(URLTranslator.class).toInstance(urlTranslator);
     bind(URLRewriter.class).toInstance(urlRewriter);
   }

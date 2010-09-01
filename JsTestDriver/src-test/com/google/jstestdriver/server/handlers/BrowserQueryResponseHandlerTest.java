@@ -44,6 +44,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,6 +57,9 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   private final ByteArrayOutputStream out = new ByteArrayOutputStream();
   private final PrintWriter writer = new PrintWriter(out);
 
+  private final ConcurrentMap<SlaveBrowser, List<String>> streamedResponses =
+      new ConcurrentHashMap<SlaveBrowser, List<String>>();
+
   public void testGetDataFromJsPuppetServer() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
@@ -63,7 +68,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
 
     slave.createCommand(data);
     browsers.addSlave(slave);
-    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null);
+    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null, streamedResponses);
 
     handler.service(id, null, "true", null, writer);
     assertEquals(data, out.toString());
@@ -75,7 +80,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
     SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
 
     browsers.addSlave(slave);
-    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null);
+    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null, streamedResponses);
     slave.createCommand("awaitingResponse");
     slave.dequeueCommand();
     slave.createCommand("BrowserCommand");
@@ -102,7 +107,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
 
     slave.setDequeueTimeout(0L, TimeUnit.NANOSECONDS);
     browsers.addSlave(slave);
-    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null);
+    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null, streamedResponses);
 
     handler.service(id, null, "true", null, writer);
     assertEquals("noop", out.toString());
@@ -117,7 +122,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
 
     slave.createCommand(data);
     browsers.addSlave(slave);
-    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null);
+    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null, streamedResponses);
 
     handler.service(id, null, null, null, writer);
     assertEquals(42L, slave.getLastHeartBeat().getMillis());
@@ -126,7 +131,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   public void testBrowserIsNotSlave() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     BrowserQueryResponseHandler handler =
-        new BrowserQueryResponseHandler(null, null, capturedBrowsers, null, null);
+        new BrowserQueryResponseHandler(null, null, capturedBrowsers, null, null, streamedResponses);
 
     handler.service("1", "response", "true", null, writer);
     assertEquals(0, out.toString().length());
@@ -138,7 +143,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
     SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
 
     browsers.addSlave(slave);
-    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null);
+    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, null, null, streamedResponses);
     slave.createCommand("awaitingResponse");
     slave.dequeueCommand();
     slave.createCommand("BrowserCommand");
@@ -165,7 +170,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
 
     browsers.addSlave(slave);
     BrowserQueryResponseHandler handler =
-        new BrowserQueryResponseHandler(null, null, browsers, null, new ForwardingMapper());
+        new BrowserQueryResponseHandler(null, null, browsers, null, new ForwardingMapper(), streamedResponses);
     List<FileResult> fileResults = new LinkedList<FileResult>();
 
     fileResults.add(new FileResult(new FileSource("/test/filename1.js", 123), true, ""));
@@ -208,7 +213,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
 
     browsers.addSlave(slave);
     BrowserQueryResponseHandler handler =
-      new BrowserQueryResponseHandler(null, null, browsers, new DefaultURLTranslator(), new ForwardingMapper());
+      new BrowserQueryResponseHandler(null, null, browsers, new DefaultURLTranslator(), new ForwardingMapper(), streamedResponses);
 
     slave.addFiles(Lists.newArrayList(new FileInfo()));
     Response response = new Response();

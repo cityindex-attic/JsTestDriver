@@ -15,14 +15,10 @@
  */
 package com.google.jstestdriver;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * TODO(rdionne): remove once I replace the reference to SlaveResourceServlet#stripId()

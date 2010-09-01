@@ -103,17 +103,14 @@ public class JsTestDriverServer extends Observable {
     addServlet("/jstd/auth", handlerServlet);
     addServlet("/log", handlerServlet);
     addServlet("/query/*", handlerServlet);
+    addServlet("/runner/*", handlerServlet);
     addServlet("/slave/*", handlerServlet);
 
     // TODO(rdionne): Once all the servlets below are replaced with handlerServlet above,
     // remove this sub-injector and all 'new' statements in this file.
     //
     // Note: Fix HttpServletRequest#getPathInfo() provided by RequestHandlerServlet.
-
-    addServlet("/runner/*",
-        new StandaloneRunnerServlet(capturedBrowsers, filesCache,
-            new StandaloneRunnerFilesFilterImpl(),
-            new SlaveResourceService(SlaveResourceService.RESOURCE_LOCATION)));
+    
     final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
     addServlet("/fileSet",
         new FileSetServlet(

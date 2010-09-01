@@ -39,6 +39,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -64,8 +65,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
   private final URLTranslator urlTranslator;
   private final ForwardingMapper forwardingMapper;
   // TODO(corysmith): factor out a streaming session class.
-  private final ConcurrentMap<SlaveBrowser, List<String>> streamedResponses =
-    new ConcurrentHashMap<SlaveBrowser, List<String>>();
+  private final ConcurrentMap<SlaveBrowser, List<String>> streamedResponses;
 
   @Inject
   public BrowserQueryResponseHandler(
@@ -73,12 +73,14 @@ class BrowserQueryResponseHandler implements RequestHandler {
       HttpServletResponse response,
       CapturedBrowsers browsers,
       URLTranslator urlTranslator,
-      ForwardingMapper forwardingMapper) {
+      ForwardingMapper forwardingMapper,
+      ConcurrentMap<SlaveBrowser, List<String>> streamedResponses) {
     this.request = request;
     this.response = response;
     this.browsers = browsers;
     this.urlTranslator = urlTranslator;
     this.forwardingMapper = forwardingMapper;
+    this.streamedResponses = streamedResponses;
   }
 
   public void handleIt() throws IOException {

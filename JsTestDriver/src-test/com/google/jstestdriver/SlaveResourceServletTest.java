@@ -17,9 +17,6 @@ package com.google.jstestdriver;
 
 import junit.framework.TestCase;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-
 /**
  * // TODO(rdionne): remove once I replace the reference to SlaveResourceServlet#stripId()
  * in StandaloneRunnerServlet with SlaveResourceHandler#stripId().
