@@ -91,7 +91,7 @@ public class JsTestDriverServer extends Observable {
         new JettyModule(port),
         new JstdHandlersModule(
             capturedBrowsers, filesCache, forwardingMapper,
-            browserTimeout, urlTranslator, urlRewriter))
+            browserTimeout, urlTranslator, urlRewriter, authStrategies))
                 .getInstance(Servlet.class);
 
     addServlet("/", handlerServlet);
@@ -100,12 +100,15 @@ public class JsTestDriverServer extends Observable {
     addServlet("/cmd", handlerServlet);
     addServlet("/heartbeat", handlerServlet);
     addServlet("/hello", handlerServlet);
+    addServlet("/jstd/auth", handlerServlet);
     addServlet("/log", handlerServlet);
     addServlet("/query/*", handlerServlet);
     addServlet("/slave/*", handlerServlet);
 
     // TODO(rdionne): Once all the servlets below are replaced with handlerServlet above,
     // remove this sub-injector and all 'new' statements in this file.
+    //
+    // Note: Fix HttpServletRequest#getPathInfo() provided by RequestHandlerServlet.
 
     addServlet("/runner/*",
         new StandaloneRunnerServlet(capturedBrowsers, filesCache,
@@ -123,7 +126,6 @@ public class JsTestDriverServer extends Observable {
     addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/forward/*", new ForwardingServlet(forwardingMapper,
       "localhost", port));
-    addServlet("/jstd/auth", new AuthServlet(authStrategies));
 
     if (destination != null) {
       ServletHolder proxyHolder =

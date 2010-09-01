@@ -1,17 +1,18 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 
-package com.google.jstestdriver;
+package com.google.jstestdriver.server.handlers;
 
-import com.google.inject.Provider;
+import com.google.inject.Inject;
 import com.google.jstestdriver.hooks.AuthStrategy;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
+
+import java.io.IOException;
+import java.util.Set;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.util.Set;
 
 /**
  * A servlet that provides the slaved browsers with cookies.
@@ -22,20 +23,21 @@ import java.util.Set;
  *
  * @author rdionne@google.com (Robert Dionne)
  */
-public class AuthServlet extends HttpServlet {
+public class AuthHandler implements RequestHandler {
 
+  private final HttpServletResponse response;
   private final Set<AuthStrategy> authStrategies;
 
-  public AuthServlet(Set<AuthStrategy> authStrategies) {
+  @Inject
+  public AuthHandler(HttpServletResponse response, Set<AuthStrategy> authStrategies) {
+    this.response = response;
     this.authStrategies = authStrategies;
   }
 
-  @Override
-  public void doGet(HttpServletRequest req, HttpServletResponse resp)
-      throws IOException {
+  public void handleIt() throws IOException {
     for (AuthStrategy strategy : authStrategies) {
       for (Cookie cookie : strategy.getCookies()) {
-        resp.addCookie(cookie);
+        response.addCookie(cookie);
       }
     }
   }
