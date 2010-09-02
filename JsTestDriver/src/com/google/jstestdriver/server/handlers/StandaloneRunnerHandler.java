@@ -29,7 +29,6 @@ import com.google.jstestdriver.Response;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveBrowser.CommandResponse;
 import com.google.jstestdriver.SlaveResourceService;
-import com.google.jstestdriver.SlaveResourceServlet;
 import com.google.jstestdriver.StandaloneRunnerFilesFilter;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResult.Result;
@@ -44,7 +43,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,7 +92,7 @@ public class StandaloneRunnerHandler implements RequestHandler {
 
   public void handleIt() throws IOException {
     // TODO(rdionne): replace with SlaveResourceHandler#stripId()
-    String path = SlaveResourceServlet.stripId(request.getPathInfo());
+    String path = SlaveResourceHandler.stripId(request.getRequestURI());
     try {
       final SlaveBrowser browser = getBrowserFromUrl(request.getPathInfo());
       // return the resources first.
