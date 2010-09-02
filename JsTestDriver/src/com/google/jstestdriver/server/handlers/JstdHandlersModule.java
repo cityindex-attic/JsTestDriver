@@ -9,7 +9,6 @@ import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.FileSetCacheStrategy;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ForwardingMapper;
 import com.google.jstestdriver.SlaveBrowser;
@@ -87,6 +86,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve(POST, "/query/*", BrowserQueryResponseHandler.class);
     serve( GET, "/runner/*", StandaloneRunnerHandler.class);
     serve( GET, "/slave/*", SlaveResourceHandler.class);
+    serve( GET, "/test/*", TestResourceHandler.class);
 
     bindConstant().annotatedWith(BaseResourceLocation.class)
         .to(SlaveResourceService.RESOURCE_LOCATION);

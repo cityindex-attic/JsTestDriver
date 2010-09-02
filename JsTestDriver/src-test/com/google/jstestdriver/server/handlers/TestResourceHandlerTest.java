@@ -13,7 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.server.handlers;
+
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.FilesCache;
 
 import junit.framework.TestCase;
 
@@ -25,16 +28,16 @@ import java.util.Map;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class TestResourceServletTest extends TestCase {
+public class TestResourceHandlerTest extends TestCase {
 
   private ByteArrayOutputStream out = new ByteArrayOutputStream();
   private PrintWriter writer = new PrintWriter(out);
 
   public void testEmptyReturnWhenFileNotPresent() throws Exception {
-    TestResourceServlet servlet =
-        new TestResourceServlet(new FilesCache(new HashMap<String, FileInfo>()));
+    TestResourceHandler handler =
+        new TestResourceHandler(null, null, new FilesCache(new HashMap<String, FileInfo>()));
 
-    servlet.service("nothing", writer);
+    handler.service("nothing", writer);
     assertEquals(0, out.toString().length());
   }
 
@@ -44,12 +47,12 @@ public class TestResourceServletTest extends TestCase {
     files.put("dummy.js", new FileInfo("dummy.js", -1, false, false, "data"));
     files.put("dummytoo.js", new FileInfo("dummytoo.js", 20, false, false, "more data"));
     FilesCache filesCache = new FilesCache(files);
-    TestResourceServlet resourceServlet = new TestResourceServlet(filesCache);
+    TestResourceHandler handler = new TestResourceHandler(null, null, filesCache);
 
-    resourceServlet.service("dummy.js", writer);
+    handler.service("dummy.js", writer);
     assertEquals("data", out.toString());
     out.reset();
-    resourceServlet.service("dummytoo.js", writer);
+    handler.service("dummytoo.js", writer);
     assertEquals("more data", out.toString());
   }
 }

@@ -15,16 +15,12 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 import com.google.jstestdriver.browser.BrowserReaper;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.server.JettyModule;
 import com.google.jstestdriver.server.handlers.JstdHandlersModule;
-import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
-import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
-import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
@@ -106,14 +102,13 @@ public class JsTestDriverServer extends Observable {
     addServlet("/query/*", handlerServlet);
     addServlet("/runner/*", handlerServlet);
     addServlet("/slave/*", handlerServlet);
+    addServlet("/test/*", handlerServlet);
 
     // TODO(rdionne): Once all the servlets below are replaced with handlerServlet above,
     // remove this sub-injector and all 'new' statements in this file.
     //
     // Note: Fix HttpServletRequest#getPathInfo() provided by RequestHandlerServlet.
     
-    final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
-    addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/forward/*", new ForwardingServlet(forwardingMapper,
       "localhost", port));
 
