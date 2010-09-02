@@ -91,7 +91,6 @@ public class StandaloneRunnerHandler implements RequestHandler {
   private final static Pattern ID = Pattern.compile("/(\\d+)/.*");
 
   public void handleIt() throws IOException {
-    // TODO(rdionne): replace with SlaveResourceHandler#stripId()
     String path = SlaveResourceHandler.stripId(request.getPathInfo());
     try {
       final SlaveBrowser browser = getBrowserFromUrl(request.getPathInfo());
