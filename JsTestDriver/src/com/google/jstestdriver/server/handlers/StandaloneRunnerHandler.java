@@ -92,7 +92,7 @@ public class StandaloneRunnerHandler implements RequestHandler {
 
   public void handleIt() throws IOException {
     // TODO(rdionne): replace with SlaveResourceHandler#stripId()
-    String path = SlaveResourceHandler.stripId(request.getRequestURI());
+    String path = SlaveResourceHandler.stripId(request.getPathInfo());
     try {
       final SlaveBrowser browser = getBrowserFromUrl(request.getPathInfo());
       // return the resources first.

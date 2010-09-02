@@ -38,6 +38,8 @@ class RequestHandlerServlet extends HttpServlet {
   @Override
   public void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+    // TODO(rdionne): Wrap request in an HttpServletRequestWrapper that corrects
+    // #getPathInfo() before we clean up JsTestDriverServer.
     localContext.set(new Context(request, response));
     requestScope.enter();
     try {

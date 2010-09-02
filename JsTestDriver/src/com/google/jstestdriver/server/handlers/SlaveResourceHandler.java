@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 class SlaveResourceHandler implements RequestHandler {
 
-  private final static Pattern PATHWITHOUTID = Pattern.compile("/slave/.*?(/.*)$");
+  private final static Pattern PATHWITHOUTID = Pattern.compile("/.*?(/.*)$");
 
   private final HttpServletRequest request;
   private final HttpServletResponse response;
@@ -35,7 +35,7 @@ class SlaveResourceHandler implements RequestHandler {
 
   public void handleIt() throws IOException {
     try {
-      service.serve(stripId(request.getRequestURI()), response.getOutputStream());
+      service.serve(stripId(request.getPathInfo()), response.getOutputStream());
     } catch (IllegalArgumentException e) {
       System.out.println(e);
     }

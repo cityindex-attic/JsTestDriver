@@ -42,7 +42,7 @@ public class SlaveResourceHandlerTest extends TestCase {
     OutputStream oStream = new ByteArrayOutputStream();
     ServletOutputStream servletOutputStream = buildServletOutputStream(oStream);
 
-    EasyMock.expect(request.getRequestURI()).andReturn("/slave/XXX/Test.file");
+    EasyMock.expect(request.getPathInfo()).andReturn("/XXX/Test.file");
     EasyMock.expect(response.getOutputStream()).andReturn(servletOutputStream);
 
     EasyMock.replay(request, response);
@@ -55,35 +55,14 @@ public class SlaveResourceHandlerTest extends TestCase {
   }
 
   public void testStripOffId() throws Exception {
-    assertEquals("/B/C", SlaveResourceHandler.stripId("/slave/X/B/C"));
+    assertEquals("/B/C", SlaveResourceHandler.stripId("/X/B/C"));
   }
 
   private ServletOutputStream buildServletOutputStream(final OutputStream oStream) {
     return new ServletOutputStream() {
-
       @Override
       public void write(int b) throws IOException {
         oStream.write(b);
-      }
-
-      @Override
-      public void write(byte[] b) throws IOException {
-        oStream.write(b);
-      }
-
-      @Override
-      public void write(byte[] b, int off, int len) throws IOException {
-        oStream.write(b, off, len);
-      }
-
-      @Override
-      public void flush() throws IOException {
-        oStream.flush();
-      }
-
-      @Override
-      public void close() throws IOException {
-        oStream.close();
       }
     };
   }
