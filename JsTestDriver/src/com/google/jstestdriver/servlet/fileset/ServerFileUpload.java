@@ -1,5 +1,6 @@
 package com.google.jstestdriver.servlet.fileset;
 
+import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.SlaveBrowser;
@@ -14,6 +15,7 @@ public class ServerFileUpload implements FileSetRequestHandler<String> {
   public static final String ACTION = "serverFileUpload";
   private final FilesCache filesCache;
 
+  @Inject
   public ServerFileUpload(FilesCache filesCache) {
     this.filesCache = filesCache;
     

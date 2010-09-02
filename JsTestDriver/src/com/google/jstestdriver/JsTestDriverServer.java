@@ -98,6 +98,7 @@ public class JsTestDriverServer extends Observable {
     addServlet("/cache", handlerServlet);
     addServlet("/capture/*", handlerServlet);
     addServlet("/cmd", handlerServlet);
+    addServlet("/fileSet", handlerServlet);
     addServlet("/heartbeat", handlerServlet);
     addServlet("/hello", handlerServlet);
     addServlet("/jstd/auth", handlerServlet);
@@ -112,14 +113,6 @@ public class JsTestDriverServer extends Observable {
     // Note: Fix HttpServletRequest#getPathInfo() provided by RequestHandlerServlet.
     
     final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
-    addServlet("/fileSet",
-        new FileSetServlet(
-            capturedBrowsers,
-            filesCache,
-            ImmutableList.of(
-                new BrowserFileCheck(strategy),
-                new ServerFileCheck(filesCache, strategy),
-                new ServerFileUpload(filesCache))));
     addServlet("/test/*", new TestResourceServlet(filesCache));
     addServlet("/forward/*", new ForwardingServlet(forwardingMapper,
       "localhost", port));

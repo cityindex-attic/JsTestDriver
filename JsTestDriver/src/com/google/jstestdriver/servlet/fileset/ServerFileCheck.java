@@ -1,6 +1,7 @@
 package com.google.jstestdriver.servlet.fileset;
 
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FileSetCacheStrategy;
 import com.google.jstestdriver.FilesCache;
@@ -21,6 +22,7 @@ public class ServerFileCheck implements FileSetRequestHandler<Set<FileInfo>>{
   /**
    * @param filesCache
    */
+  @Inject
   public ServerFileCheck(FilesCache filesCache, FileSetCacheStrategy strategy) {
     this.filesCache = filesCache;
     this.strategy = strategy;

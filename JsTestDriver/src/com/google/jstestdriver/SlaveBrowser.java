@@ -50,6 +50,7 @@ public class SlaveBrowser {
   private Command commandRunning = null;
   private Command lastCommandDequeued;
   private final long timeout;
+  private final Lock lock = new Lock();
 
   public SlaveBrowser(Time time, String id, BrowserInfo browserInfo, long timeout) {
     this.time = time;
@@ -61,6 +62,10 @@ public class SlaveBrowser {
 
   public String getId() {
     return id;
+  }
+
+  public Lock getLock() {
+    return lock;
   }
 
   public static class CommandResponse {

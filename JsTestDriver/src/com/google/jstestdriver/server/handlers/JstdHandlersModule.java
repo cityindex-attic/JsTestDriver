@@ -4,8 +4,12 @@ package com.google.jstestdriver.server.handlers;
 import static com.google.jstestdriver.requesthandlers.HttpMethod.GET;
 import static com.google.jstestdriver.requesthandlers.HttpMethod.POST;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.FileSetCacheStrategy;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ForwardingMapper;
 import com.google.jstestdriver.SlaveBrowser;
@@ -19,6 +23,10 @@ import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 import com.google.jstestdriver.requesthandlers.RequestHandlersModule;
+import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
+import com.google.jstestdriver.servlet.fileset.FileSetRequestHandler;
+import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
+import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
 
 import java.util.List;
 import java.util.Set;
@@ -69,6 +77,8 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve( GET, "/capture/*", CaptureHandler.class);
     serve( GET, "/cmd", CommandGetHandler.class);
     serve(POST, "/cmd", CommandPostHandler.class);
+    serve( GET, "/fileSet", FileSetGetHandler.class);
+    serve(POST, "/fileSet", FileSetPostHandler.class);
     serve( GET, "/heartbeat", HeartbeatGetHandler.class);
     serve(POST, "/heartbeat", HeartbeatPostHandler.class);
     serve( GET, "/jstd/auth", AuthHandler.class);
@@ -93,5 +103,10 @@ public class JstdHandlersModule extends RequestHandlersModule {
     bind(StandaloneRunnerFilesFilter.class).to(StandaloneRunnerFilesFilterImpl.class);
     bind(URLTranslator.class).toInstance(urlTranslator);
     bind(URLRewriter.class).toInstance(urlRewriter);
+  }
+
+  @Provides @Singleton List<FileSetRequestHandler<?>> provideFileSetRequestHandlers(
+      BrowserFileCheck browserFileCheck, ServerFileCheck serverFileCheck, ServerFileUpload serverFileUpload) {
+    return ImmutableList.of(browserFileCheck, serverFileCheck, serverFileUpload);
   }
 }

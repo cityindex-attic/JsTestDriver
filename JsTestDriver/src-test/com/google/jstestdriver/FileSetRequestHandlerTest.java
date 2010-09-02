@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class FileSetServletTest extends TestCase {
+public class FileSetRequestHandlerTest extends TestCase {
   public void testServerCheckFileAction() throws Exception {
     final String fileOne = "one.js";
     final String fileTwo = "two.js";

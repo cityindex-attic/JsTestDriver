@@ -1,6 +1,7 @@
 package com.google.jstestdriver.servlet.fileset;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FileSetCacheStrategy;
 import com.google.jstestdriver.SlaveBrowser;
@@ -18,6 +19,7 @@ public class BrowserFileCheck implements FileSetRequestHandler<BrowserFileSet> {
   public static final String ACTION = "browserFileCheck";
   private final FileSetCacheStrategy strategy;
 
+  @Inject
   public BrowserFileCheck(FileSetCacheStrategy strategy) {
     this.strategy = strategy;
   }
