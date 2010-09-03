@@ -47,22 +47,26 @@ class RequestDispatcher {
    * @throws IOException
    */
   public void dispatch() throws IOException {
-    HttpMethod method = HttpMethod.valueOf(request.getMethod());
-    String uri = request.getRequestURI();
-    boolean pathMatched = false;
-    for (RequestMatcher matcher : matchers) {
-      if (matcher.uriMatches(uri)) {
-        pathMatched = true;
-        if (matcher.methodMatches(method)) {
-          handlerProviders.get(matcher).get().handleIt();
-          return;
+    try {
+      HttpMethod method = HttpMethod.valueOf(request.getMethod());
+      String uri = request.getRequestURI();
+      boolean pathMatched = false;
+      for (RequestMatcher matcher : matchers) {
+        if (matcher.uriMatches(uri)) {
+          pathMatched = true;
+          if (matcher.methodMatches(method)) {
+            handlerProviders.get(matcher).get().handleIt();
+            return;
+          }
         }
       }
-    }
-    if (pathMatched) {
+      if (pathMatched) {
+        errorSender.methodNotAllowed();
+      } else {
+        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Not found.");
+      }
+    } catch (IllegalArgumentException e) {
       errorSender.methodNotAllowed();
-    } else {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND, "Not found.");
     }
   }
 }

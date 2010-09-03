@@ -61,7 +61,7 @@ public class RequestDispatcherTest extends TestCase {
         sender);
   }
 
-  public void testDispatch_GET_one_two() throws Exception {
+  public void testDispatch_GET() throws Exception {
     expect(request.getMethod()).andReturn("GET");
     expect(request.getRequestURI()).andReturn("/one/two").anyTimes();
     /*expect*/ handlerOne.handleIt();
@@ -73,7 +73,7 @@ public class RequestDispatcherTest extends TestCase {
     control.verify();
   }
 
-  public void testDispatch_POST_a_b() throws Exception {
+  public void testDispatch_POST() throws Exception {
     expect(request.getMethod()).andReturn("POST");
     expect(request.getRequestURI()).andReturn("/a/b").anyTimes();
     /*expect*/ handlerTwo.handleIt();
@@ -85,7 +85,7 @@ public class RequestDispatcherTest extends TestCase {
     control.verify();
   }
 
-  public void testDispatch_POST_one_two() throws Exception {
+  public void testDispatch_POST_methodNotAllowed() throws Exception {
     expect(request.getMethod()).andReturn("POST");
     expect(request.getRequestURI()).andReturn("/one/two").anyTimes();
     /*expect*/ sender.methodNotAllowed();
@@ -97,7 +97,7 @@ public class RequestDispatcherTest extends TestCase {
     control.verify();
   }
 
-  public void testDispatch_GET_a_b() throws Exception {
+  public void testDispatch_GET_methodNotAllowed() throws Exception {
     expect(request.getMethod()).andReturn("GET");
     expect(request.getRequestURI()).andReturn("/a/b").anyTimes();
     /*expect*/ sender.methodNotAllowed();
@@ -109,7 +109,18 @@ public class RequestDispatcherTest extends TestCase {
     control.verify();
   }
 
-  public void testDispatch_GET_nothing() throws Exception {
+  public void testDispatch_unsupportedMethod() throws Exception {
+    expect(request.getMethod()).andReturn("YOUR_MOM");
+    /*expect*/ sender.methodNotAllowed();
+
+    control.replay();
+
+    dispatcher.dispatch();
+
+    control.verify();
+  }
+
+  public void testDispatch_GET_notFound() throws Exception {
     expect(request.getMethod()).andReturn("GET");
     expect(request.getRequestURI()).andReturn("/nothing").anyTimes();
     /*expect*/ response.sendError(eq(HttpServletResponse.SC_NOT_FOUND), (String) anyObject());
