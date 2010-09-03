@@ -5,12 +5,14 @@ import static com.google.jstestdriver.requesthandlers.HttpMethod.GET;
 import static com.google.jstestdriver.requesthandlers.HttpMethod.POST;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ForwardingMapper;
+import com.google.jstestdriver.ProxyHandler;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
 import com.google.jstestdriver.StandaloneRunnerFilesFilter;
@@ -19,18 +21,27 @@ import com.google.jstestdriver.URLRewriter;
 import com.google.jstestdriver.URLTranslator;
 import com.google.jstestdriver.annotations.BaseResourceLocation;
 import com.google.jstestdriver.annotations.BrowserTimeout;
+import com.google.jstestdriver.annotations.ProxyConfig;
 import com.google.jstestdriver.hooks.AuthStrategy;
+import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 import com.google.jstestdriver.requesthandlers.RequestHandlersModule;
+import com.google.jstestdriver.server.proxy.ProxyServletConfig;
 import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
 import com.google.jstestdriver.servlet.fileset.FileSetRequestHandler;
 import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
 
+import org.mortbay.servlet.ProxyServlet;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 
 /**
  * Defines {@link RequestHandler} bindings for the JSTD server.
@@ -39,6 +50,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class JstdHandlersModule extends RequestHandlersModule {
 
+  private static final String PREFIX = "Prefix";
+  private static final String PROXY_TO = "ProxyTo";
+  
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache filesCache;
   private final ForwardingMapper forwardingMapper;
@@ -46,6 +60,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
   private final URLTranslator urlTranslator;
   private final URLRewriter urlRewriter;
   private final Set<AuthStrategy> authStrategies;
+  private ProxyDestination destination;
 
   /**
    * TODO(rdionne): Refactor so we don't depend upon manually instantiated
@@ -58,7 +73,8 @@ public class JstdHandlersModule extends RequestHandlersModule {
       long browserTimeout,
       URLTranslator urlTranslator,
       URLRewriter urlRewriter,
-      Set<AuthStrategy> authStrategies) {
+      Set<AuthStrategy> authStrategies,
+      ProxyDestination destination) {
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = filesCache;
     this.forwardingMapper = forwardingMapper;
@@ -66,6 +82,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     this.urlTranslator = urlTranslator;
     this.urlRewriter = urlRewriter;
     this.authStrategies = authStrategies;
+    this.destination = destination;
   }
 
   @Override
@@ -76,11 +93,18 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve( GET, "/capture/*", CaptureHandler.class);
     serve( GET, "/cmd", CommandGetHandler.class);
     serve(POST, "/cmd", CommandPostHandler.class);
+    serve( GET, "/favicon.ico", FaviconHandler.class);
     serve( GET, "/fileSet", FileSetGetHandler.class);
     serve(POST, "/fileSet", FileSetPostHandler.class);
     serve( GET, "/heartbeat", HeartbeatGetHandler.class);
     serve(POST, "/heartbeat", HeartbeatPostHandler.class);
     serve( GET, "/jstd/auth", AuthHandler.class);
+
+    if (destination != null) {
+      serve( GET, "/jstd/proxy/*", ProxyRequestHandler.class);
+      serve(POST, "/jstd/proxy/*", ProxyRequestHandler.class);
+    }
+    
     serve( GET, "/hello", HelloHandler.class);
     serve(POST, "/log", BrowserLoggingHandler.class);
     serve(POST, "/query/*", BrowserQueryResponseHandler.class);
@@ -100,6 +124,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     bind(new Key<ConcurrentMap<SlaveBrowser, Thread>>() {})
         .toInstance(new ConcurrentHashMap<SlaveBrowser, Thread>());
     bind(new Key<Set<AuthStrategy>>() {}).toInstance(authStrategies);
+    bind(ServletConfig.class).annotatedWith(ProxyConfig.class).to(ProxyServletConfig.class);
     bind(StandaloneRunnerFilesFilter.class).to(StandaloneRunnerFilesFilterImpl.class);
     bind(URLTranslator.class).toInstance(urlTranslator);
     bind(URLRewriter.class).toInstance(urlRewriter);
@@ -109,4 +134,22 @@ public class JstdHandlersModule extends RequestHandlersModule {
       BrowserFileCheck browserFileCheck, ServerFileCheck serverFileCheck, ServerFileUpload serverFileUpload) {
     return ImmutableList.of(browserFileCheck, serverFileCheck, serverFileUpload);
   }
+
+  @Provides @Singleton
+  @ProxyConfig Map<String, String> provideProxyConfig(ImmutableMap.Builder<String, String> builder) {
+    builder.put(PREFIX, ProxyHandler.PROXY_PREFIX);
+    if (destination != null) {
+      builder.put(PROXY_TO, destination.getDestinationAddress());
+    }
+    return builder.build();
+  }
+
+  @Provides @Singleton
+  ProxyServlet.Transparent provideTransparentProxy(@ProxyConfig ServletConfig config)
+      throws ServletException {
+    ProxyServlet.Transparent proxy = new ProxyServlet.Transparent();
+    proxy.init(config);
+    return proxy;
+  }
+
 }

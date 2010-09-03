@@ -18,7 +18,9 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.GenericServlet;
 import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -66,6 +68,10 @@ public abstract class RequestHandlersModule extends AbstractModule {
 
     bind(new Key<List<RequestMatcher>>() {}).toInstance(matchers.build());
     bind(Servlet.class).to(RequestHandlerServlet.class).in(Singleton.class);
+  }
+
+  @Provides @Singleton ServletContext provideServletContext(Servlet servlet) {
+    return ((GenericServlet) servlet).getServletContext();
   }
 
   @Provides @RequestScoped HttpServletRequest provideRequest() {

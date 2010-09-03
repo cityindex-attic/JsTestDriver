@@ -86,18 +86,20 @@ public class JsTestDriverServer extends Observable {
     handlerServlet = Guice.createInjector(
         new JettyModule(port),
         new JstdHandlersModule(
-            capturedBrowsers, filesCache, forwardingMapper,
-            browserTimeout, urlTranslator, urlRewriter, authStrategies))
+            capturedBrowsers, filesCache, forwardingMapper, browserTimeout,
+            urlTranslator, urlRewriter, authStrategies, destination))
                 .getInstance(Servlet.class);
 
     addServlet("/", handlerServlet);
     addServlet("/cache", handlerServlet);
     addServlet("/capture/*", handlerServlet);
     addServlet("/cmd", handlerServlet);
+    addServlet("/favicon.ico", handlerServlet);
     addServlet("/fileSet", handlerServlet);
     addServlet("/heartbeat", handlerServlet);
     addServlet("/hello", handlerServlet);
     addServlet("/jstd/auth", handlerServlet);
+    addServlet("/jstd/proxy/*", handlerServlet);
     addServlet("/log", handlerServlet);
     addServlet("/query/*", handlerServlet);
     addServlet("/runner/*", handlerServlet);
@@ -111,23 +113,10 @@ public class JsTestDriverServer extends Observable {
     
     addServlet("/forward/*", new ForwardingServlet(forwardingMapper,
       "localhost", port));
-
-    if (destination != null) {
-      ServletHolder proxyHolder =
-          new ServletHolder(new ProxyServlet.Transparent());
-      proxyHolder.setInitParameter(
-          "ProxyTo", destination.getDestinationAddress());
-      proxyHolder.setInitParameter("Prefix", ProxyHandler.PROXY_PREFIX);
-      addServlet(ProxyHandler.PROXY_PREFIX + "/*", proxyHolder);
-    }
   }
 
   private void addServlet(String url, Servlet servlet) {
     context.addServlet(new ServletHolder(servlet), url);
-  }
-
-  private void addServlet(String url, ServletHolder servletHolder) {
-    context.addServlet(servletHolder, url);
   }
 
   private void initJetty(int port) {
