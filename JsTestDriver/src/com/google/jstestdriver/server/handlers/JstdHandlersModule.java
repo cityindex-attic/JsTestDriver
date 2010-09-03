@@ -10,6 +10,7 @@ import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ForwardingMapper;
 import com.google.jstestdriver.ProxyHandler;
@@ -34,6 +35,7 @@ import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
 
 import org.mortbay.servlet.ProxyServlet;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -124,6 +126,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     bind(new Key<ConcurrentMap<SlaveBrowser, Thread>>() {})
         .toInstance(new ConcurrentHashMap<SlaveBrowser, Thread>());
     bind(new Key<Set<AuthStrategy>>() {}).toInstance(authStrategies);
+    bind(new Key<Set<FileInfo>>() {}).toInstance(new HashSet<FileInfo>());
     bind(ServletConfig.class).annotatedWith(ProxyConfig.class).to(ProxyServletConfig.class);
     bind(StandaloneRunnerFilesFilter.class).to(StandaloneRunnerFilesFilterImpl.class);
     bind(URLTranslator.class).toInstance(urlTranslator);

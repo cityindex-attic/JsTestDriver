@@ -4,6 +4,7 @@ package com.google.jstestdriver.server.handlers;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.FileSetCacheStrategy;
 
 import org.easymock.EasyMock;
 
@@ -11,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +28,8 @@ public class FileCacheHandlerTest extends junit.framework.TestCase {
   public void testFileCache() throws IOException, ServletException {
     HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
     HttpServletResponse response = EasyMock.createMock(HttpServletResponse.class);
-    FileCacheHandler handler = new FileCacheHandler(request, response);
+    FileCacheHandler handler = new FileCacheHandler(
+        request, response, new Gson(), new HashSet<FileInfo>(), new FileSetCacheStrategy());
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     PrintWriter writer = new PrintWriter(out);
 

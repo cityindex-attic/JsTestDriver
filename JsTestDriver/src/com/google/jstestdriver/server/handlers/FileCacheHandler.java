@@ -36,20 +36,25 @@ import javax.servlet.http.HttpServletResponse;
  * @author corysmith@google.com (Cory Smith)
  */
 class FileCacheHandler implements RequestHandler {
-
-  private final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
-  Set<FileInfo> currentFiles = new HashSet<FileInfo>();
-  private Gson gson = new Gson();
-
+  
   private final HttpServletRequest request;
   private final HttpServletResponse response;
+  private final Gson gson;
+  private final Set<FileInfo> currentFiles;
+  private final FileSetCacheStrategy strategy;
 
   @Inject
   public FileCacheHandler(
       HttpServletRequest request,
-      HttpServletResponse response) {
+      HttpServletResponse response,
+      Gson gson,
+      Set<FileInfo> currentFiles,
+      FileSetCacheStrategy strategy) {
     this.request = request;
     this.response = response;
+    this.gson = gson;
+    this.currentFiles = currentFiles;
+    this.strategy = strategy;
   }
 
   public void handleIt() throws IOException {
