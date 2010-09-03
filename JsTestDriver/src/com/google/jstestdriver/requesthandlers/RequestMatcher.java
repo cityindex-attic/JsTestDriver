@@ -35,9 +35,8 @@ class RequestMatcher {
   }
 
   /**
-   * 
-   * @param method
-   * @return
+   * @return true iff {@code this.method == method}
+   * @param method the {@link HttpMethod} of the request
    */
   public boolean methodMatches(HttpMethod method) {
     return this.method.equals(method);
