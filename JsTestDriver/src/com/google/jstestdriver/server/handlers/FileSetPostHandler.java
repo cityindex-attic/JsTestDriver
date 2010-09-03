@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class FileSetPostHandler implements RequestHandler {
+class FileSetPostHandler implements RequestHandler {
 
   private final Gson gson = new Gson();
   private final HttpServletRequest request;

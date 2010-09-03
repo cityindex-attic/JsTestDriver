@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author rdionne@google.com (Robert Dionne)
  */
-public class AuthHandler implements RequestHandler {
+class AuthHandler implements RequestHandler {
 
   private final HttpServletResponse response;
   private final Set<AuthStrategy> authStrategies;

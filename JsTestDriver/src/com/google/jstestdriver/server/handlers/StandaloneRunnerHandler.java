@@ -53,7 +53,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class StandaloneRunnerHandler implements RequestHandler {
+class StandaloneRunnerHandler implements RequestHandler {
 
   public static final String STANDALONE_RUNNER_HTML = "StandaloneRunner.html";
 

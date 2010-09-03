@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class FileSetGetHandler implements RequestHandler {
+class FileSetGetHandler implements RequestHandler {
 
   private static final int HEARTBEAT_TIMEOUT = 2000;
 

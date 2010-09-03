@@ -60,7 +60,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
   private final URLTranslator urlTranslator;
   private final URLRewriter urlRewriter;
   private final Set<AuthStrategy> authStrategies;
-  private ProxyDestination destination;
+  private final ProxyDestination destination;
 
   /**
    * TODO(rdionne): Refactor so we don't depend upon manually instantiated

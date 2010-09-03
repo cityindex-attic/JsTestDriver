@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author rdionne@google.com (Robert Dionne)
  */
-public class FaviconHandler implements RequestHandler {
+class FaviconHandler implements RequestHandler {
 
   private static final String IMAGE_PNG = "image/png";
   private static final String JS_TEST_DRIVER_PNG = "/com/google/jstestdriver/JsTestDriver.png";

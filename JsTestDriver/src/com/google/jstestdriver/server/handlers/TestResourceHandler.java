@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class TestResourceHandler implements RequestHandler {
+class TestResourceHandler implements RequestHandler {
 
   private static final String TIME_IN_THE_PAST = "Sat, 22 Sep 1984 00:00:00 GMT";
 

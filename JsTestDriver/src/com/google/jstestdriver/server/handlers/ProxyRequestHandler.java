@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author rdionne@google.com (Robert Dionne)
  */
-public class ProxyRequestHandler implements RequestHandler {
+class ProxyRequestHandler implements RequestHandler {
 
   private final HttpServletRequest request;
   private final HttpServletResponse response;

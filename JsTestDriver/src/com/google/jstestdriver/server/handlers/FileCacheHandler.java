@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
  * Provides a filecache for clients to determine if a file has changed since they last ran.
  * @author corysmith@google.com (Cory Smith)
  */
-public class FileCacheHandler implements RequestHandler {
+class FileCacheHandler implements RequestHandler {
 
   private final FileSetCacheStrategy strategy = new FileSetCacheStrategy();
   Set<FileInfo> currentFiles = new HashSet<FileInfo>();
