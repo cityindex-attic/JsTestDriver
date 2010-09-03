@@ -51,11 +51,12 @@ class RequestDispatcher {
     String uri = request.getRequestURI();
     boolean pathMatched = false;
     for (RequestMatcher matcher : matchers) {
-      if (matcher.matches(method, uri)) {
-        handlerProviders.get(matcher).get().handleIt();
-        return;
-      } else if (matcher.uriMatches(uri)) {
+      if (matcher.uriMatches(uri)) {
         pathMatched = true;
+        if (matcher.methodMatches(method)) {
+          handlerProviders.get(matcher).get().handleIt();
+          return;
+        }
       }
     }
     if (pathMatched) {

@@ -37,8 +37,10 @@ public class RequestHandlersModuleTest extends TestCase {
     List<RequestMatcher> matchers = injector.getInstance(new Key<List<RequestMatcher>>() {});
 
     assertEquals(2, matchers.size());
-    assertTrue(matchers.get(0).matches(HttpMethod.GET, "/get/something"));
-    assertTrue(matchers.get(1).matches(HttpMethod.POST, "/post"));
+    assertTrue(matchers.get(0).uriMatches("/get/something"));
+    assertTrue(matchers.get(0).methodMatches(HttpMethod.GET));
+    assertTrue(matchers.get(1).uriMatches("/post"));
+    assertTrue(matchers.get(1).methodMatches(HttpMethod.POST));
 
     RequestScope scope = injector.getInstance(RequestScope.class);
     assertNotNull(scope);

@@ -35,21 +35,12 @@ class RequestMatcher {
   }
 
   /**
-   * @return true iff the method and uri match the method and pattern of this matcher.
-   *
-   * @param method an {@link HttpMethod}
-   * @param uri the URI of the request
+   * 
+   * @param method
+   * @return
    */
-  public boolean matches(HttpMethod method, String uri) {
-    if (method == null || uri == null) {
-      return false;
-    }
-
-    if (!method.equals(this.method)) {
-      return false;
-    }
-
-    return uriMatches(uri);
+  public boolean methodMatches(HttpMethod method) {
+    return this.method.equals(method);
   }
 
   /**
@@ -58,6 +49,9 @@ class RequestMatcher {
    * @param uri the URI of the request
    */
   public boolean uriMatches(String uri) {
+    if (uri == null) {
+      return false;
+    }
     switch (kind) {
       case PREFIX:
         return uri.endsWith(pattern);

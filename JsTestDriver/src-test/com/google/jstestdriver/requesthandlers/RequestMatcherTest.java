@@ -44,7 +44,7 @@ public class RequestMatcherTest extends TestCase {
   public void testMethodMatcher() {
     RequestMatcher method = new RequestMatcher(POST, "asdf");
 
-    assertTrue(method.matches(POST, "asdf"));
-    assertFalse(method.matches(GET, "asdf"));
+    assertTrue(method.methodMatches(POST));
+    assertFalse(method.methodMatches(GET));
   }
 }
