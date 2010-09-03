@@ -23,18 +23,13 @@ import com.google.jstestdriver.server.JettyModule;
 import com.google.jstestdriver.server.handlers.JstdHandlersModule;
 
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.servlet.ProxyServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Observable;
 import java.util.Set;
 import java.util.Timer;
-
-import javax.servlet.Servlet;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -43,8 +38,7 @@ public class JsTestDriverServer extends Observable {
   private static final Logger logger =
       LoggerFactory.getLogger(JsTestDriverServer.class);
 
-  private final Server server = new Server();
-  private Servlet handlerServlet;
+  private Server server;
 
   private final int port;
   private final CapturedBrowsers capturedBrowsers;
@@ -75,58 +69,21 @@ public class JsTestDriverServer extends Observable {
     this.browserTimeout = browserTimeout;
     this.destination = destination;
     this.authStrategies = authStrategies;
-    initJetty(this.port);
-    initServlets();
+    initServer();
   }
 
-  private void initServlets() {
+  private void initServer() {
     ForwardingMapper forwardingMapper = new ForwardingMapper();
     // TODO(corysmith): replace this with Guice injection
     
-    handlerServlet = Guice.createInjector(
+    server = Guice.createInjector(
         new JettyModule(port),
         new JstdHandlersModule(
             capturedBrowsers, filesCache, forwardingMapper, browserTimeout,
             urlTranslator, urlRewriter, authStrategies, destination))
-                .getInstance(Servlet.class);
-
-    addServlet("/", handlerServlet);
-    addServlet("/cache", handlerServlet);
-    addServlet("/capture/*", handlerServlet);
-    addServlet("/cmd", handlerServlet);
-    addServlet("/favicon.ico", handlerServlet);
-    addServlet("/fileSet", handlerServlet);
-    addServlet("/forward/*", handlerServlet);
-    addServlet("/heartbeat", handlerServlet);
-    addServlet("/hello", handlerServlet);
-    addServlet("/jstd/auth", handlerServlet);
-    addServlet("/jstd/proxy/*", handlerServlet);
-    addServlet("/log", handlerServlet);
-    addServlet("/query/*", handlerServlet);
-    addServlet("/runner/*", handlerServlet);
-    addServlet("/slave/*", handlerServlet);
-    addServlet("/test/*", handlerServlet);
+                .getInstance(Server.class);
 
     // TODO(rdionne): Remove this sub-injector and all 'new' statements in this file.
-    //
-    // Note: Fix HttpServletRequest#getPathInfo() provided by RequestHandlerServlet.
-  }
-
-  private void addServlet(String url, Servlet servlet) {
-    context.addServlet(new ServletHolder(servlet), url);
-  }
-
-  private void initJetty(int port) {
-    SocketConnector connector = new SocketConnector();
-    connector.setPort(port);
-    server.addConnector(connector);
-
-    ProxyHandler proxyHandler = new ProxyHandler();
-
-    context = new Context(proxyHandler, "/", Context.SESSIONS);
-    context.setMaxFormContentSize(Integer.MAX_VALUE);
-
-    server.setHandler(proxyHandler);
   }
 
   public void start() {

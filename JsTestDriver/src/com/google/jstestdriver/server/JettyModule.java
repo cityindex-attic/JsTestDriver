@@ -4,6 +4,7 @@ package com.google.jstestdriver.server;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.jstestdriver.ProxyHandler;
 import com.google.jstestdriver.annotations.MaxFormContentSize;
 import com.google.jstestdriver.annotations.Port;
 
@@ -13,7 +14,6 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
 import javax.servlet.Servlet;
-import javax.servlet.http.HttpServlet;
 
 /**
  * Sippin' on Jetty and Guice.
@@ -45,12 +45,35 @@ public class JettyModule extends AbstractModule {
   }
 
   @Provides @Singleton Server provideJettyServer(
-      SocketConnector connector, @MaxFormContentSize Integer maxFormContentSize, ServletHolder servletHolder) {
+      SocketConnector connector,
+      ProxyHandler proxyHandler,
+      @MaxFormContentSize Integer maxFormContentSize,
+      ServletHolder servletHolder) {
     Server server = new Server();
     server.addConnector(connector);
-    Context context = new Context(server, "/", Context.SESSIONS);
+    server.setHandler(proxyHandler);
+
+    Context context = new Context(proxyHandler, "/", Context.SESSIONS);
     context.setMaxFormContentSize(maxFormContentSize);
-    context.addServlet(servletHolder, "/*");
+
+    // TODO(rdionne): Fix HttpServletRequest#getPathInfo() provided by RequestHandlerServlet.
+    context.addServlet(servletHolder, "/");
+    context.addServlet(servletHolder, "/cache");
+    context.addServlet(servletHolder, "/capture/*");
+    context.addServlet(servletHolder, "/cmd");
+    context.addServlet(servletHolder, "/favicon.ico");
+    context.addServlet(servletHolder, "/fileSet");
+    context.addServlet(servletHolder, "/forward/*");
+    context.addServlet(servletHolder, "/heartbeat");
+    context.addServlet(servletHolder, "/hello");
+    context.addServlet(servletHolder, "/jstd/auth");
+    context.addServlet(servletHolder, "/jstd/proxy/*");
+    context.addServlet(servletHolder, "/log");
+    context.addServlet(servletHolder, "/query/*");
+    context.addServlet(servletHolder, "/runner/*");
+    context.addServlet(servletHolder, "/slave/*");
+    context.addServlet(servletHolder, "/test/*");
+
     return server;
   }
 }
