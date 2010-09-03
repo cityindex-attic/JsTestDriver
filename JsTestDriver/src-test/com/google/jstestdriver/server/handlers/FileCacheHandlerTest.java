@@ -29,7 +29,7 @@ public class FileCacheHandlerTest extends junit.framework.TestCase {
     HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
     HttpServletResponse response = EasyMock.createMock(HttpServletResponse.class);
     FileCacheHandler handler = new FileCacheHandler(
-        request, response, new Gson(), new HashSet<FileInfo>(), new FileSetCacheStrategy());
+        request, response, gson, new HashSet<FileInfo>(), new FileSetCacheStrategy());
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     PrintWriter writer = new PrintWriter(out);
 
