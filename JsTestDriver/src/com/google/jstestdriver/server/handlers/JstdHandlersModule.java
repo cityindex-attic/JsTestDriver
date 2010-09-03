@@ -13,6 +13,7 @@ import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ForwardingMapper;
+import com.google.jstestdriver.ForwardingServlet;
 import com.google.jstestdriver.ProxyHandler;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
@@ -22,9 +23,11 @@ import com.google.jstestdriver.URLRewriter;
 import com.google.jstestdriver.URLTranslator;
 import com.google.jstestdriver.annotations.BaseResourceLocation;
 import com.google.jstestdriver.annotations.BrowserTimeout;
+import com.google.jstestdriver.annotations.Port;
 import com.google.jstestdriver.annotations.ProxyConfig;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
+import com.google.jstestdriver.requesthandlers.HttpMethod;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 import com.google.jstestdriver.requesthandlers.RequestHandlersModule;
 import com.google.jstestdriver.server.proxy.ProxyServletConfig;
@@ -43,6 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 /**
@@ -89,6 +93,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
 
   @Override
   protected void configureHandlers() {
+    // Handler bindings in alphabetical order
     serve( GET, "/", HomeHandler.class);
     serve(POST, "/cache", FileCacheHandler.class);
     serve( GET, "/capture", CaptureHandler.class);
@@ -98,13 +103,19 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve( GET, "/favicon.ico", FaviconHandler.class);
     serve( GET, "/fileSet", FileSetGetHandler.class);
     serve(POST, "/fileSet", FileSetPostHandler.class);
+
+    for (HttpMethod method : HttpMethod.values()) {
+      serve(method, "/forward/*", ForwardingHandler.class);
+    }
+    
     serve( GET, "/heartbeat", HeartbeatGetHandler.class);
     serve(POST, "/heartbeat", HeartbeatPostHandler.class);
     serve( GET, "/jstd/auth", AuthHandler.class);
 
     if (destination != null) {
-      serve( GET, "/jstd/proxy/*", ProxyRequestHandler.class);
-      serve(POST, "/jstd/proxy/*", ProxyRequestHandler.class);
+      for (HttpMethod method : HttpMethod.values()) {
+        serve(method, "/jstd/proxy/*", ProxyRequestHandler.class);
+      }
     }
     
     serve( GET, "/hello", HelloHandler.class);
@@ -114,10 +125,12 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve( GET, "/slave/*", SlaveResourceHandler.class);
     serve( GET, "/test/*", TestResourceHandler.class);
 
+    // Constant bindings
     bindConstant().annotatedWith(BaseResourceLocation.class)
         .to(SlaveResourceService.RESOURCE_LOCATION);
     bindConstant().annotatedWith(BrowserTimeout.class).to(browserTimeout);
 
+    // Miscellaneous bindings
     bind(CapturedBrowsers.class).toInstance(capturedBrowsers);
     bind(FilesCache.class).toInstance(filesCache);
     bind(ForwardingMapper.class).toInstance(forwardingMapper);
@@ -155,4 +168,14 @@ public class JstdHandlersModule extends RequestHandlersModule {
     return proxy;
   }
 
+  @Provides @Singleton
+  ForwardingServlet provideForwardingServlet(@Port Integer port, ServletContext context)
+      throws ServletException {
+    ForwardingServlet servlet = new ForwardingServlet(forwardingMapper, "localhost", port);
+
+    // Need to init the ForwardingServlet because it is a ProxyServlet.Transparent, a class
+    // that relies upon ServletContext#log().
+    servlet.init(new ProxyServletConfig(context, ImmutableMap.<String, String>of()));
+    return servlet;
+  }
 }

@@ -96,6 +96,7 @@ public class JsTestDriverServer extends Observable {
     addServlet("/cmd", handlerServlet);
     addServlet("/favicon.ico", handlerServlet);
     addServlet("/fileSet", handlerServlet);
+    addServlet("/forward/*", handlerServlet);
     addServlet("/heartbeat", handlerServlet);
     addServlet("/hello", handlerServlet);
     addServlet("/jstd/auth", handlerServlet);
@@ -106,13 +107,9 @@ public class JsTestDriverServer extends Observable {
     addServlet("/slave/*", handlerServlet);
     addServlet("/test/*", handlerServlet);
 
-    // TODO(rdionne): Once all the servlets below are replaced with handlerServlet above,
-    // remove this sub-injector and all 'new' statements in this file.
+    // TODO(rdionne): Remove this sub-injector and all 'new' statements in this file.
     //
     // Note: Fix HttpServletRequest#getPathInfo() provided by RequestHandlerServlet.
-    
-    addServlet("/forward/*", new ForwardingServlet(forwardingMapper,
-      "localhost", port));
   }
 
   private void addServlet(String url, Servlet servlet) {
