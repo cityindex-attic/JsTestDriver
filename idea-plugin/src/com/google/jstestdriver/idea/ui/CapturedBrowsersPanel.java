@@ -88,6 +88,4 @@ public class CapturedBrowsersPanel extends JPanel implements Observer {
       ieLabel.setIcon(ie.getIconForEvent(captureEvent.event));
     }
   }
-
-
 }

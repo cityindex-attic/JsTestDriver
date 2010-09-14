@@ -57,12 +57,13 @@ public class TestErrors extends RuntimeException {
       s.println(this);
       StackTraceElement[] trace = getStackTrace();
       for (int i=0; i < trace.length; i++) {
-          s.println("\tat " + trace[i]);
+        s.println("\tat " + trace[i]);
       }
 
       for (Throwable cause : causes) {
-        s.println("Caused by:");
-        s.println("\tat" + cause.toString());
+        s.println();
+        s.println("Caused by:" + cause.toString());
+        cause.printStackTrace(s);
       }
     }
   }

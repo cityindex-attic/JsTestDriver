@@ -18,25 +18,10 @@ package com.google.jstestdriver.idea;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
-import com.google.jstestdriver.ActionRunner;
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.ConfigurationParser;
-import com.google.jstestdriver.DefaultPathRewriter;
-import com.google.jstestdriver.DryRunInfo;
-import com.google.jstestdriver.IDEPluginActionBuilder;
-import com.google.jstestdriver.Plugin;
-import com.google.jstestdriver.PluginLoader;
-import com.google.jstestdriver.Response;
-import com.google.jstestdriver.ResponseStream;
-import com.google.jstestdriver.ResponseStreamFactory;
-import com.google.jstestdriver.TestResult;
-import com.google.jstestdriver.TestResultGenerator;
+import com.google.jstestdriver.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -70,7 +55,7 @@ public class TestRunner {
     ResponseStreamFactory responseStreamFactory = createResponseStreamFactory();
     final ActionRunner dryRunRunner =
         makeActionBuilder(responseStreamFactory)
-          .dryRunFor(Arrays.asList("all")).build();
+            .dryRunFor(Arrays.asList("all")).build();
     final ActionRunner testRunner =
         makeActionBuilder(responseStreamFactory)
             .addAllTests().build();
@@ -104,6 +89,11 @@ public class TestRunner {
       public ResponseStream getDryRunActionResponseStream() {
         return new ResponseStream() {
           public void stream(Response response) {
+            if (response.getResponseType() == Response.ResponseType.FILE_LOAD_RESULT) {
+              // TODO process it? 
+//              new Gson().fromJson(response.getResponse(), LoadedFiles.class);
+              return; // for now, don't send back to IDEA
+            }
             BrowserInfo browser = response.getBrowser();
             DryRunInfo dryRunInfo = DryRunInfo.fromJson(response);
             for (String testName : dryRunInfo.getTestNames()) {
@@ -163,10 +153,11 @@ public class TestRunner {
     String serverURL = args[0];
     String settingsFile = args[1];
     int port = Integer.parseInt(args[2]);
-    Socket socket = new Socket();
     int retries = RETRIES;
+    Socket socket = null;
     do {
       try {
+        socket = new Socket();
         socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), port), TIMEOUT_MILLIS);
         break;
       } catch (SocketException e) {
@@ -177,4 +168,5 @@ public class TestRunner {
     new TestRunner(serverURL, settingsFile, new File(""),
         new ObjectOutputStream(socket.getOutputStream())).execute();
   }
+
 }

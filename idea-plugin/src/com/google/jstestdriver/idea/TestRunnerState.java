@@ -32,8 +32,7 @@ import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
-import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
-import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
+import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -45,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.concurrent.*;
 
 /**
  * Encapsulates the execution state of the test runner.
@@ -56,6 +56,7 @@ public class TestRunnerState extends JavaCommandLineState {
   private final JSTestDriverConfiguration jsTestDriverConfiguration;
   protected final Project project;
   private final RunConfigurationModule configurationModule;
+  private final ExecutorService attachExecutor = Executors.newSingleThreadExecutor();
 
   // TODO(alexeagle): needs to be configurable?
   private static final int testResultPort = 10998;
@@ -72,37 +73,34 @@ public class TestRunnerState extends JavaCommandLineState {
     JavaParameters javaParameters = new JavaParameters();
     Module module = configurationModule.getModule();
     Sdk jdk = module == null ?
-        ProjectRootManager.getInstance(project).getProjectJdk() : 
-        ModuleRootManager.getInstance(module).getSdk();
+            ProjectRootManager.getInstance(project).getProjectJdk() :
+            ModuleRootManager.getInstance(module).getSdk();
     javaParameters.setJdk(jdk);
     javaParameters.setMainClass(TestRunner.class.getName());
     javaParameters.getClassPath().add(PathUtil.getJarPathForClass(JsTestDriverServer.class));
     javaParameters.getClassPath().add(PathUtil.getJarPathForClass(TestRunner.class));
     String serverURL = (jsTestDriverConfiguration.getServerType() == ServerType.INTERNAL ?
-        "http://localhost:" + ToolPanel.serverPort :
-        jsTestDriverConfiguration.getServerAddress());
+            "http://localhost:" + ToolPanel.serverPort :
+            jsTestDriverConfiguration.getServerAddress());
     javaParameters.getProgramParametersList().add(serverURL);
     File configFile = new File(jsTestDriverConfiguration.getSettingsFile());
     javaParameters.setWorkingDirectory(configFile.getParentFile());
     javaParameters.getProgramParametersList().add(jsTestDriverConfiguration.getSettingsFile());
     javaParameters.getProgramParametersList().add(String.valueOf(testResultPort));
+    // uncomment this thing if you want to debug jsTestDriver code in the test-runner process
+//    javaParameters.getVMParametersList().add("-Xdebug");
+//    javaParameters.getVMParametersList().add("-Xrunjdwp:transport=dt_socket,address=5000,server=y");
     return javaParameters;
   }
 
   @Nullable
   public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
-    TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(jsTestDriverConfiguration);
-    final SMTestRunnerResultsForm testRunnerResultsForm =
-        new SMTestRunnerResultsForm(jsTestDriverConfiguration, testConsoleProperties,
-            getRunnerSettings(), getConfigurationSettings());
-
-    ProcessHandler processHandler = startProcess();
-    processHandler.addProcessListener(new ProcessListener() {
-      RemoteTestListener listener;
-      public void startNotified(ProcessEvent event) {
-        listener = new RemoteTestListener(testRunnerResultsForm);
-        listener.listen(testResultPort);
-      }
+    TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(jsTestDriverConfiguration, "jsTestDriver");
+    TestListenerContext ctx = startAndAttach(testConsoleProperties);
+    final RemoteTestListener listener = new RemoteTestListener(ctx);
+    listener.listen(testResultPort);
+    ctx.processHandler().addProcessListener(new ProcessListener() {
+      public void startNotified(ProcessEvent event) {}
 
       public void processTerminated(ProcessEvent event) {
         listener.shutdown();
@@ -111,9 +109,31 @@ public class TestRunnerState extends JavaCommandLineState {
       public void processWillTerminate(ProcessEvent event, boolean willBeDestroyed) {}
       public void onTextAvailable(ProcessEvent event, Key outputType) {}
     });
+    return new DefaultExecutionResult(ctx.consoleView(), ctx.processHandler(), createActions(ctx.consoleView(), ctx.processHandler()));
+  }
 
-    BaseTestsOutputConsoleView consoleView =
-        SMTestRunnerConnectionUtil.attachRunner(project, processHandler, testConsoleProperties, testRunnerResultsForm);
-    return new DefaultExecutionResult(consoleView, processHandler, createActions(consoleView, processHandler));
+  private TestListenerContext startAndAttach(final TestConsoleProperties tcp) throws ExecutionException {
+    final CountDownLatch gate = new CountDownLatch(1);
+    Future<ProcessData> data = attachExecutor.submit(new Callable<ProcessData>() {
+      public ProcessData call() throws Exception {
+        gate.await();
+        ProcessHandler ph = startProcess();
+        SMTRunnerConsoleView cv = (SMTRunnerConsoleView) SMTestRunnerConnectionUtil
+            .attachRunner(project.getName(), ph, tcp, getRunnerSettings(), getConfigurationSettings());
+        return new ProcessData(cv, ph);
+      }
+    });
+    return new TestListenerContext(data, gate);
+  }
+
+  static class ProcessData {
+    final SMTRunnerConsoleView consoleView;
+    final ProcessHandler processHandler;
+
+
+    public ProcessData(SMTRunnerConsoleView consoleView, ProcessHandler processHandler) {
+      this.consoleView = consoleView;
+      this.processHandler = processHandler;
+    }
   }
 }

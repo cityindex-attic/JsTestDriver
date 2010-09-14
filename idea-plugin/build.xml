@@ -5,7 +5,7 @@
   <property name="src.dir" value="${basedir}/src"/>
   <property name="lib.dir" value="${basedir}/lib"/>
   <property name="jstestdriver.lib" value="../JsTestDriver/target/bin/JsTestDriver.jar"/>
-  <property name="idea.version" value="8.1.4-9939"/>
+  <property name="idea.version" value="IC-95.429"/>
   <property name="IDEA_JAR_PATH" value=""/>
 
   <path id="forms.classpath">
@@ -20,6 +20,7 @@
   <path id="compile.classpath">
     <pathelement location="${jstestdriver.lib}" />
     <pathelement location="${lib.dir}/com.intellij/openapi-${idea.version}/openapi.jar" />
+    <pathelement location="${lib.dir}/com.intellij/extensions-${idea.version}/extensions.jar" />
     <pathelement location="${lib.dir}/com.intellij/util-${idea.version}/util.jar" />
     <pathelement location="${IDEA_JAR_PATH}" />
     <pathelement location="${lib.dir}/com.intellij/annotations-${idea.version}/annotations.jar"/>

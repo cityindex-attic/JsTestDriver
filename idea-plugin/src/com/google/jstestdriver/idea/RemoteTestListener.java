@@ -20,6 +20,7 @@ import static com.google.jstestdriver.TestResult.Result;
 
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
+import com.intellij.openapi.util.Key;
 import com.intellij.util.concurrency.SwingWorker;
 
 import java.io.EOFException;
@@ -30,6 +31,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Sits on the IDE side of the socket communication of test results from the test runner.
@@ -38,20 +40,20 @@ import java.util.concurrent.CountDownLatch;
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class RemoteTestListener {
-  private final SMTestRunnerResultsForm testRunnerResultsForm;
+  private final TestListenerContext context;
   private volatile ServerSocket socket;
   private final Map<String, BrowserNode> browserMap = new HashMap<String, BrowserNode>();
   private final CountDownLatch resultsLatch = new CountDownLatch(1);
 
-  public RemoteTestListener(SMTestRunnerResultsForm testRunnerResultsForm) {
-    this.testRunnerResultsForm = testRunnerResultsForm;
+  public RemoteTestListener(TestListenerContext ctx) {
+    this.context = ctx;
   }
 
   public void onTestStarted(TestResultProtocolMessage message) {
     if (!browserMap.containsKey(message.browser)) {
       SMTestProxy browserNode = new SMTestProxy(message.browser, true, null);
       browserMap.put(message.browser, new BrowserNode(browserNode));
-      onSuiteStarted(testRunnerResultsForm.getTestsRootNode(), browserNode);
+      onSuiteStarted(testRunnerResultsForm().getTestsRootNode(), browserNode);
     }
     RemoteTestListener.BrowserNode browser = browserMap.get(message.browser);
 
@@ -65,23 +67,23 @@ public class RemoteTestListener {
     SMTestProxy testNode = new SMTestProxy(message.testName, false, null);
     testCase.testProxyMap.put(message.testName, testNode);
     testCase.node.addChild(testNode);
-    testRunnerResultsForm.onTestStarted(testNode);
+    testRunnerResultsForm().onTestStarted(testNode);
   }
 
   public void onTestFinished(TestResultProtocolMessage message) {
     RemoteTestListener.BrowserNode browserNode = browserMap.get(message.browser);
     RemoteTestListener.TestCaseNode testCaseNode = browserNode.testCaseMap.get(message.testCase);
     SMTestProxy testNode = testCaseNode.testProxyMap.get(message.testName);
-    testNode.addStdOutput(message.log);
+    testNode.addStdOutput(message.log, Key.create("result"));
     testNode.setDuration(Math.round(message.duration));
     Result result = Result.valueOf(message.result);
     if (result == Result.passed) {
       testNode.setFinished();
-      testRunnerResultsForm.onTestFinished(testNode);
+      testRunnerResultsForm().onTestFinished(testNode);
     } else {
       boolean isError = result == Result.error;
       testNode.setTestFailed(message.message, message.stack, isError);
-      testRunnerResultsForm.onTestFailed(testNode);
+      testRunnerResultsForm().onTestFailed(testNode);
       testCaseNode.setTestFailed(result);
       browserNode.setTestFailed(result);
     }
@@ -95,12 +97,12 @@ public class RemoteTestListener {
 
   public void onSuiteFinished(SMTestProxy node) {
     node.setFinished();
-    testRunnerResultsForm.onSuiteFinished(node);
+    testRunnerResultsForm().onSuiteFinished(node);
   }
 
   public void onSuiteStarted(SMTestProxy parent, SMTestProxy node) {
     parent.addChild(node);
-    testRunnerResultsForm.onSuiteStarted(node);
+    testRunnerResultsForm().onSuiteStarted(node);
   }
 
   public void listen(final int port) {
@@ -108,8 +110,11 @@ public class RemoteTestListener {
       public Object construct() {
         try {
           socket = new ServerSocket(port);
+          context.socketStarted();
           return socket.accept();
-        } catch (IOException e) {
+        } catch (Exception e) {
+          // finished will never be called
+          resultsLatch.countDown();
           throw new RuntimeException(e);
         }
       }
@@ -156,7 +161,7 @@ public class RemoteTestListener {
 
   public void shutdown() {
     try {
-      resultsLatch.await();
+      resultsLatch.await(2, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -167,6 +172,10 @@ public class RemoteTestListener {
         throw new RuntimeException(e);
       }
     }
+  }
+
+  private SMTestRunnerResultsForm testRunnerResultsForm() {
+    return context.resultsForm();
   }
 
   private class BrowserNode {

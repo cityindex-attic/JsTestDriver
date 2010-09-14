@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project relativePaths="false" version="4">
+<project version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
     <buildFile url="file://$PROJECT_DIR$/build.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <maximumStackSize value="32" />
-      <properties />
-    </buildFile>
-    <buildFile url="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/build.xml">
       <additionalClassPath />
       <antReference projectDefault="true" />
       <customJdkName value="" />
@@ -41,13 +33,8 @@
     <option name="PROJECT_PROFILE" />
     <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
   </component>
-  <component name="CodeStyleSettingsManager">
-    <option name="PER_PROJECT_SETTINGS" />
-    <option name="USE_PER_PROJECT_SETTINGS" value="false" />
-  </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <option name="DEPLOY_AFTER_MAKE" value="0" />
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html|dtd|tld)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />
@@ -55,6 +42,7 @@
     <wildcardResourcePatterns>
       <entry name="?*" />
     </wildcardResourcePatterns>
+    <annotationProcessing enabled="false" useClasspath="true" />
   </component>
   <component name="ContinuousBuildConfigurationComponent">
     <builds>
@@ -71,11 +59,8 @@
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
   <component name="EclipseCompilerSettings">
-    <option name="DEBUGGING_INFO" value="true" />
     <option name="GENERATE_NO_WARNINGS" value="true" />
     <option name="DEPRECATION" value="false" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
   <component name="EclipseEmbeddedCompilerSettings">
     <option name="DEBUGGING_INFO" value="true" />
@@ -90,14 +75,11 @@
   </component>
   <component name="IdProvider" IDEtalkID="5F94CCC2087CBF8D91154A98BBCE1646" />
   <component name="InspectionProjectProfileManager">
-    <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
-    <scopes />
     <profiles>
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
         <option name="myLocal" value="false" />
-        <inspection_tool class="HtmlUnknownTag" level="WARNING" enabled="true">
+        <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">
           <option name="myValues">
             <value>
               <list size="19">
@@ -125,20 +107,18 @@
           </option>
           <option name="myCustomValuesEnabled" value="true" />
         </inspection_tool>
-        <inspection_tool class="MissingOverrideAnnotation" level="WARNING" enabled="true" />
-        <inspection_tool class="RawUseOfParameterizedType" level="WARNING" enabled="true">
+        <inspection_tool class="MissingOverrideAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="RawUseOfParameterizedType" enabled="true" level="WARNING" enabled_by_default="true">
           <option name="ignoreObjectConstruction" value="true" />
           <option name="ignoreTypeCasts" value="false" />
         </inspection_tool>
       </profile>
     </profiles>
-    <list size="0" />
+    <option name="PROJECT_PROFILE" value="Project Default" />
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
   </component>
   <component name="JavacSettings">
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="DEPRECATION" value="true" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
     <option name="MAXIMUM_HEAP_SIZE" value="800" />
   </component>
   <component name="JavadocGenerationManager">
@@ -157,14 +137,6 @@
     <option name="HEAP_SIZE" />
     <option name="LOCALE" />
     <option name="OPEN_IN_BROWSER" value="true" />
-  </component>
-  <component name="JikesSettings">
-    <option name="JIKES_PATH" value="" />
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="DEPRECATION" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="IS_EMACS_ERRORS_MODE" value="true" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="Palette2">
     <group name="Swing">
@@ -293,17 +265,17 @@
   <component name="ProjectDetails">
     <option name="projectName" value="jstestdriver-plugin" />
   </component>
-  <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectKey">
     <option name="state" value="https://js-test-driver.googlecode.com/svn/trunk/idea-plugin/jstestdriver-plugin.ipr" />
   </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/JsTestDriver.iml" filepath="/usr/local/google/alexeagle/js-test-driver/JsTestDriver/JsTestDriver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../JsTestDriver/jstestdriver.iml" filepath="$PROJECT_DIR$/../JsTestDriver/jstestdriver.iml" />
       <module fileurl="file://$PROJECT_DIR$/jstestdriver-plugin.iml" filepath="$PROJECT_DIR$/jstestdriver-plugin.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 7973" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IC-95.429" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ResourceManagerContainer">
@@ -313,199 +285,7 @@
       </value>
     </option>
   </component>
-  <component name="RmicSettings">
-    <option name="IS_EANABLED" value="false" />
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="GENERATE_IIOP_STUBS" value="false" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-  </component>
   <component name="SvnBranchConfigurationManager">
-    <option name="myConfigurationMap">
-      <map>
-        <entry key="/usr/local/google/alexeagle/js-test-driver">
-          <value>
-            <SvnBranchConfiguration>
-              <option name="branchMap">
-                <map>
-                  <entry key="https://js-test-driver.googlecode.com/svn/branches">
-                    <value>
-                      <list>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1253746378765" />
-                          <option name="revision" value="355" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/branches/idea7" />
-                        </SvnBranchItem>
-                      </list>
-                    </value>
-                  </entry>
-                  <entry key="https://js-test-driver.googlecode.com/svn/com.google.jstestdriver.eclipse.ui_test">
-                    <value>
-                      <list />
-                    </value>
-                  </entry>
-                  <entry key="https://js-test-driver.googlecode.com/svn/samples">
-                    <value>
-                      <list>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1242968024395" />
-                          <option name="revision" value="45" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/samples/hello-world" />
-                        </SvnBranchItem>
-                      </list>
-                    </value>
-                  </entry>
-                  <entry key="https://js-test-driver.googlecode.com/svn/tags">
-                    <value>
-                      <list>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1255444862007" />
-                          <option name="revision" value="413" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/tags/1.1a" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1254270267444" />
-                          <option name="revision" value="394" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/tags/1.1" />
-                        </SvnBranchItem>
-                      </list>
-                    </value>
-                  </entry>
-                  <entry key="https://js-test-driver.googlecode.com/svn/update">
-                    <value>
-                      <list>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1254751903054" />
-                          <option name="revision" value="403" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/update/artifacts.jar" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1254751903054" />
-                          <option name="revision" value="403" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/update/content.jar" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1254751900245" />
-                          <option name="revision" value="402" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/update/features" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1254751900245" />
-                          <option name="revision" value="402" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/update/plugins" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1254751900245" />
-                          <option name="revision" value="402" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/update/site.xml" />
-                        </SvnBranchItem>
-                      </list>
-                    </value>
-                  </entry>
-                  <entry key="https://js-test-driver.googlecode.com/svn/wiki">
-                    <value>
-                      <list>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1255384117615" />
-                          <option name="revision" value="410" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/ForDevelopers.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1253891281740" />
-                          <option name="revision" value="373" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/HtmlDoc.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1253891150629" />
-                          <option name="revision" value="369" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/CodeCoverage.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1253891133086" />
-                          <option name="revision" value="368" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/Navigation.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1253824191064" />
-                          <option name="revision" value="360" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/XUnitCompatibility.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1253744283562" />
-                          <option name="revision" value="354" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/GettingStarted.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1251912243143" />
-                          <option name="revision" value="333" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/UsingTheEclipsePlugin.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1251663546686" />
-                          <option name="revision" value="328" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/QUnitAdapter.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1243355219192" />
-                          <option name="revision" value="47" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/DesignPrinciples.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1242967843772" />
-                          <option name="revision" value="44" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/DebuggingWithJsTestDriver.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1242967335584" />
-                          <option name="revision" value="41" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/ContinuousBuild.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1242958533239" />
-                          <option name="revision" value="39" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/CommandLineFlags.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1242958301248" />
-                          <option name="revision" value="37" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/ConfigurationFile.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1242957802148" />
-                          <option name="revision" value="32" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/TestCase.wiki" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1242840916049" />
-                          <option name="revision" value="8" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/Diagrams.graffle" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1242840916049" />
-                          <option name="revision" value="8" />
-                          <option name="url" value="https://js-test-driver.googlecode.com/svn/wiki/Overview.png" />
-                        </SvnBranchItem>
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-              <option name="branchUrls">
-                <list>
-                  <option value="https://js-test-driver.googlecode.com/svn/branches" />
-                  <option value="https://js-test-driver.googlecode.com/svn/com.google.jstestdriver.eclipse.ui_test" />
-                  <option value="https://js-test-driver.googlecode.com/svn/samples" />
-                  <option value="https://js-test-driver.googlecode.com/svn/tags" />
-                  <option value="https://js-test-driver.googlecode.com/svn/update" />
-                  <option value="https://js-test-driver.googlecode.com/svn/wiki" />
-                </list>
-              </option>
-              <option name="trunkUrl" value="https://js-test-driver.googlecode.com/svn/trunk" />
-            </SvnBranchConfiguration>
-          </value>
-        </entry>
-      </map>
-    </option>
     <option name="myVersion" value="123" />
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
@@ -514,8 +294,58 @@
     <option name="deletePackageOccurrences" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="/usr/local/google/alexeagle/js-test-driver/" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/.." vcs="svn" />
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
+  <component name="libraryTable">
+    <library name="Jstd deps">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/yuicompressor-2.4.2" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/xerces-2_9_1" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/testability-explorer" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/svnant-1.2.1" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/slf4j-1.5.6" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/objenesis" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/guice" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/cglib" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/easymock" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/antlr-3.1.3" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/args4j-2.0.12" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/ant-googlecode-0.0.2" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/junit" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/jvyaml-0.2" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/jetty" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/joda-time-1.6" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/google-gson-1.2.3" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/jakarta-oro-2.0.8" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/emma-2.0.5312-lib" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/google-collect-1.0-rc2" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/ant-googlecode-0.0.2" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/antlr-3.1.3" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/args4j-2.0.12" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/cglib" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/easymock" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/emma-2.0.5312-lib" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/google-collect-1.0-rc2" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/google-gson-1.2.3" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/guice" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/jakarta-oro-2.0.8" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/jetty" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/joda-time-1.6" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/junit" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/jvyaml-0.2" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/objenesis" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/slf4j-1.5.6" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/svnant-1.2.1" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/testability-explorer" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/xerces-2_9_1" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/../JsTestDriver/lib/yuicompressor-2.4.2" recursive="false" />
+    </library>
+  </component>
 </project>
 
