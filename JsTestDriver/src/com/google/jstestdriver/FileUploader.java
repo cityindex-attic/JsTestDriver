@@ -247,7 +247,9 @@ public class FileUploader {
   // TODO(corysmith): remove this function once FileInfo is used exclusively.
   // Hate static crap.
   private FileSource fileInfoToFileSource(FileInfo info) {
-    if (info.getFilePath().startsWith("http://")) {
+    // TODO(rdionne): Make these schemes pluggable
+    if (info.getFilePath().startsWith("http://") ||
+        info.getFilePath().startsWith("embedded:")) {
       return new FileSource(info.getFilePath(), info.getTimestamp());
     }
     return new FileSource("/test/" + info.getFilePath(), info.getTimestamp());
