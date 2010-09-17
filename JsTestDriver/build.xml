@@ -153,6 +153,7 @@
                  PluginRegistrar.js,
                  LibLoader.js,
                  FileLoader.js,
+                 StandAloneTestReporter.js,
                  TestCaseInfo.js,
                  TestResult.js,
                  TestRunConfiguration.js,
@@ -408,6 +409,23 @@
       </fileset>
       <exclude name="**/coverage/**"/>
       <exclude name="**/token/**"/>
+    </jar>
+  </target>
+
+  <target name="remote-plugin-jar" depends="jar">
+    <mkdir dir="${bin.dir}/plugins/" />
+    <jar destfile="${bin.dir}/plugins/remote.jar"
+      duplicate="preserve">
+      <fileset dir="${obj.dir}">
+        <include name="**/remote/**"/>
+      </fileset>
+      <manifest>
+        <!-- plugins will need to have a reference to the JsTestDriver jar they are working with.-->
+        <attribute name="Class-Path" value="../JsTestDriver.jar" />
+        <section name="jstd">
+          <attribute name="plugin-initializer" value="com.google.jstestdriver.remote.RemoteInitializer" />
+        </section>
+      </manifest>
     </jar>
   </target>
 

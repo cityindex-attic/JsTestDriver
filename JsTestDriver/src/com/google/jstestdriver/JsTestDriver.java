@@ -62,8 +62,8 @@ public class JsTestDriver {
 
       // load all the command line plugins.
       final List<Module> pluginModules = pluginLoader.load(cmdLinePlugins);
+      logger.debug("loaded plugins %s", pluginModules);
       List<Module> initializeModules = Lists.newLinkedList(pluginModules);
-
 
       Configuration configuration = getConfiguration(cmdLineFlags.getConfigPath());
       initializeModules.add(new InitializeModule(pluginLoader, basePath, new Args4jFlagsParser(),

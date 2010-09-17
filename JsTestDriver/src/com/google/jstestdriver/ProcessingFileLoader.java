@@ -54,7 +54,7 @@ public class ProcessingFileLoader implements FileLoader {
 
   //TODO(corysmith): Remove shouldReset.
   public List<FileInfo> loadFiles(
-  		Collection<FileInfo> filesToLoad, boolean shouldReset) {
+      Collection<FileInfo> filesToLoad, boolean shouldReset) {
     List<FileInfo> processed = new LinkedList<FileInfo>();
     List<FileInfo> loaded = new LinkedList<FileInfo>();
     try {

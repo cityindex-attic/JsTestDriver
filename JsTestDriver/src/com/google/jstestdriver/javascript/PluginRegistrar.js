@@ -58,6 +58,11 @@ jstestdriver.PluginRegistrar.IS_FAILURE = 'isFailure';
 jstestdriver.PluginRegistrar.GET_TEST_RUN_CONFIGURATIONS = 'getTestRunsConfigurationFor';
 
 
+jstestdriver.PluginRegistrar.ON_TESTS_START = 'onTestsStart';
+
+jstestdriver.PluginRegistrar.ON_TESTS_FINISH = 'onTestsFinish';
+
+
 jstestdriver.PluginRegistrar.prototype.register = function(plugin) {
   if (!plugin.name) {
     throw new Error("Plugins must define a name.");
@@ -270,4 +275,26 @@ jstestdriver.PluginRegistrar.prototype.isFailure = function(exception) {
 jstestdriver.PluginRegistrar.prototype.getTestRunsConfigurationFor =
     function(testCaseInfos, expressions, testRunsConfiguration) {
   return this.dispatch_(jstestdriver.PluginRegistrar.GET_TEST_RUN_CONFIGURATIONS, arguments);
+};
+
+
+/**
+ * onTestsStart
+ * 
+ * A setup hook called before all tests are run.
+ * 
+ */
+jstestdriver.PluginRegistrar.prototype.onTestsStart = function() {
+  return this.dispatch_(jstestdriver.PluginRegistrar.ON_TESTS_START, []);
+};
+
+
+/**
+ * onTestsFinish
+ * 
+ * A tear down hook called after all tests are run.
+ * 
+ */
+jstestdriver.PluginRegistrar.prototype.onTestsFinish = function() {
+  return this.dispatch_(jstestdriver.PluginRegistrar.ON_TESTS_FINISH, []);
 };

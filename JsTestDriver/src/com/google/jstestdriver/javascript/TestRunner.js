@@ -38,6 +38,7 @@ jstestdriver.TestRunner.prototype.runTests = function(testRunsConfiguration,
                                                       onComplete,
                                                       captureConsole) {
 
+  this.pluginRegistrar_.onTestsStart();
   this.testRunsConfiguration_ = testRunsConfiguration;
   this.onTestDone_ = onTestDone;
   this.onComplete_ = onComplete;
@@ -48,6 +49,7 @@ jstestdriver.TestRunner.prototype.runTests = function(testRunsConfiguration,
 
 jstestdriver.TestRunner.prototype.finish_ = function() {
   var onComplete = this.onComplete_;
+  this.pluginRegistrar_.onTestsFinish();
   this.testRunsConfiguration_ = null;
   this.onTestDone_ = null;
   this.onComplete_ = null;

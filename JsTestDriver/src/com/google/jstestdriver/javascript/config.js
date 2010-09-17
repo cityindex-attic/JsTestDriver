@@ -200,7 +200,7 @@ jstestdriver.config = (function(module) {
             pluginRegistrar,
             now,
             getBrowserInfo);
-    
+
     var boundExecuteCommand = jstestdriver.bind(executor, executor.executeCommand);
     
     function streamStop(response) {

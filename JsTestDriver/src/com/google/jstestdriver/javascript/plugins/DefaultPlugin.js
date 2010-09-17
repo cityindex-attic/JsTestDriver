@@ -50,3 +50,11 @@ jstestdriver.plugins.DefaultPlugin.prototype.getTestRunsConfigurationFor =
                                                                 expressions,
                                                                 testRunsConfiguration);
 };
+
+
+jstestdriver.plugins.DefaultPlugin.prototype.onTestsStart =
+    jstestdriver.EMPTY_FUNC;
+
+
+jstestdriver.plugins.DefaultPlugin.prototype.onTestsFinish =
+  jstestdriver.EMPTY_FUNC;
