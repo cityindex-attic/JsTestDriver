@@ -44,7 +44,7 @@ public class BrowserManagedRunner implements Callable<RunData> {
   }
 
   public RunData call() throws Exception {
-    final String url = String.format("%s/capture?id=%s", serverAddress, browserId);
+    final String url = String.format("%s/capture/id/%s", serverAddress, browserId);
     stopWatch.start("browser start %s", runner);
     runner.startBrowser(url);
     String sessionId = null;

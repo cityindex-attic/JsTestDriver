@@ -145,7 +145,7 @@ TestRunnerPluginTest.prototype.testClearBodyError = function() {
 
   assertNotNull(result);
   assertEquals("error", result.result);
-  assertEquals(JSON.stringify(clearBodyError), result.message);
+  assertEquals(testRunnerPlugin.serializeError(clearBodyError), result.message);
 };
 
 

@@ -31,7 +31,7 @@ jstestdriver.config = (function(module) {
     jstestdriver.testCaseManager =
         new jstestdriver.TestCaseManager(jstestdriver.pluginRegistrar);
 
-    var testRunner = new jstestdriver.TestRunner(
+    jstestdriver.testRunner = new jstestdriver.TestRunner(
         jstestdriver.pluginRegistrar,
         jstestdriver.testBreather(jstestdriver.setTimeout,
                                   jstestdriver.TIMEOUT)
@@ -79,7 +79,7 @@ jstestdriver.config = (function(module) {
     jstestdriver.testCaseManager.TestCase = jstestdriver.global.TestCase;
 
     jstestdriver.executor = createCommandExecutor(jstestdriver.testCaseManager,
-                                                  testRunner,
+                                                  jstestdriver.testRunner,
                                                   jstestdriver.pluginRegistrar,
                                                   jstestdriver.now,
                                                   window.location.toString());
@@ -227,7 +227,7 @@ jstestdriver.config = (function(module) {
                 jsonParse,
                 streamContinue,
                 streamStop);
-    
+
     executor.registerCommand('execute', executor, executor.execute);
     executor.registerCommand('runAllTests', runTestsCommand, runTestsCommand.runAllTests);
     executor.registerCommand('runTests', runTestsCommand, runTestsCommand.runTests);
@@ -238,7 +238,7 @@ jstestdriver.config = (function(module) {
     executor.registerCommand('streamAcknowledged',
             streamingService,
             streamingService.streamAcknowledged);
-    
+
     return executor;
   }
 

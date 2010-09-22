@@ -51,6 +51,22 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTestConfiguration =
   var tests = testRunConfiguration.getTests();
   var size = tests.length;
 
+  if (testCaseInfo.getType() != jstestdriver.TestCaseInfo.DEFAULT_TYPE) {
+    for (var i = 0; tests[i]; i++) {
+      onTestDone(new jstestdriver.TestResult(
+          testCaseName,
+          tests[i],
+          'error',
+          testCaseInfo.getTestCaseName() +
+            ' is not a default test case: ' +
+            testCaseInfo.getType(),
+          '',
+          0));
+    }
+    onTestRunConfigurationComplete();
+    return;
+  }
+
   this.runTestLoop_(testCaseInfo.getTestCaseName(),
                     testCaseInfo.getTemplate(),
                     tests,
@@ -102,7 +118,7 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest =
       // We use the global here because of a circular dependency. The isFailure plugin should be
       // refactored.
       res = jstestdriver.pluginRegistrar.isFailure(e) ? 'failed' : 'error';
-      msg = JSON.stringify(e);
+      msg = this.serializeError(e);
     }
     try {
       if (testCaseInstance.tearDown) {
@@ -112,15 +128,31 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest =
     } catch (e) {
       if (res == 'passed' && msg == '') {
         res = 'error';
-        msg = JSON.stringify(e);
       }
+      msg = this.serializeError(e);
     }
     var end = new this.dateObj_().getTime();
     return new jstestdriver.TestResult(testCaseName, testName, res, msg,
-            jstestdriver.console.getAndResetLog(), end - start);  
+            jstestdriver.console.getAndResetLog(), end - start);
   } catch (e) {
     return new jstestdriver.TestResult(testCaseName, testName,
-            'error', 'Unexpected runner error: ' + JSON.stringify(e),
+            'error', 'Unexpected runner error: ' + e.toString(),
             jstestdriver.console.getAndResetLog(), 0);
   }
+};
+
+/**
+ *@param {Error} e
+ */
+jstestdriver.plugins.TestRunnerPlugin.prototype.serializeError = function(e) {
+  //return JSON.stringify(e);
+  return JSON.stringify({
+    'message' : String(e.message),
+    'name' : String(e.name),
+    'fileName' : String(e.fileName),
+    'lineNumber' : Number(e.lineNumber),
+    'number' : Number(e.number),
+    'description' : String(e.description),
+    'stack' : String(e.stack)
+  });
 };

@@ -63,20 +63,36 @@ jstestdriver.TestRunner.prototype.runNextConfiguration_ = function() {
     this.finish_();
     return;
   }
+  this.runConfiguration(
+      this.testRunsConfiguration_.shift(),
+      this.onTestDone_,
+      this.boundRunNextConfiguration_);
+}
 
+
+/**
+ * Runs a test configuration.
+ * @param {jstestdriver.TestRunConfiguration} config
+ * @param {function(jstestdriver.TestCaseResult):null} onTestDone
+ *     Function to be called when test is done.
+ * @param {Function} onComplete Function to be called when all tests are done.
+ */
+jstestdriver.TestRunner.prototype.runConfiguration = function(config,
+                                                              onTestDone,
+                                                              onComplete) {
   if (this.captureConsole_) {
     this.overrideConsole_();
   }
 
   this.pluginRegistrar_.runTestConfiguration(
-      this.testRunsConfiguration_.shift(),
-      this.onTestDone_,
-      this.boundRunNextConfiguration_);
+      config,
+      onTestDone,
+      onComplete);
 
   if (this.captureConsole_) {
     this.resetConsole_();
   }
-}
+};
 
 
 jstestdriver.TestRunner.prototype.overrideConsole_ = function() {
