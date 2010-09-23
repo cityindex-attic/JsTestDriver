@@ -16,23 +16,36 @@
 
 package com.google.jstestdriver.model;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public class RunDataFactory {
   private final Set<FileInfo> fileSet;
+  private final Set<FileLoadPreProcessor> processors;
 
   @Inject
-  public RunDataFactory(@Named("fileSet") Set<FileInfo> fileSet) {
+  public RunDataFactory(@Named("fileSet") Set<FileInfo> fileSet,
+                        Set<FileLoadPreProcessor> processors) {
     this.fileSet = fileSet;
+    this.processors = processors;
   }
 
   public RunData get() {
-    return new RunData(fileSet, Collections.<ResponseStream> emptyList());
+    List<FileInfo> processedFileSet = Lists.newLinkedList(fileSet);
+    for (FileLoadPreProcessor processor : processors) {
+      processedFileSet = processor.process(processedFileSet);
+    }
+
+    return new RunData(Sets.newLinkedHashSet(processedFileSet),
+                       Collections.<ResponseStream> emptyList());
   }
 }

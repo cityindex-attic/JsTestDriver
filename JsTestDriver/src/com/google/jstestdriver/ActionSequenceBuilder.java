@@ -15,15 +15,15 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Provider;
+import com.google.jstestdriver.output.PrintXmlTestResultsAction;
+import com.google.jstestdriver.output.XmlPrinter;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import com.google.inject.Provider;
-import com.google.jstestdriver.output.PrintXmlTestResultsAction;
-import com.google.jstestdriver.output.XmlPrinter;
 
 /**
  * A builder for creating a sequence of {@link Action}s to be run by the

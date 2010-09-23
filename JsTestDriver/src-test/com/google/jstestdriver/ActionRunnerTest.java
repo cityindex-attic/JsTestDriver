@@ -15,6 +15,9 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.model.RunDataFactory;
 import com.google.jstestdriver.util.NullStopWatch;
@@ -48,7 +51,9 @@ public class ActionRunnerTest extends TestCase {
     TestRanAction action =  new TestRanAction();
 
     actions.add(action);
-    ActionRunner runner = new ActionRunner(actions, new NullStopWatch(), new RunDataFactory(null));
+    ActionRunner runner = new ActionRunner(actions, new NullStopWatch(),
+        new RunDataFactory(Sets.<FileInfo>newLinkedHashSet(),
+          Sets.<FileLoadPreProcessor>newHashSet()));
 
     runner.runActions();
     assertTrue(action.actionRan());

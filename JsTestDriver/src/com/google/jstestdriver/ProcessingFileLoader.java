@@ -35,19 +35,16 @@ import com.google.jstestdriver.util.StopWatch;
 public class ProcessingFileLoader implements FileLoader {
   private final FileReader reader;
   private final Set<FileLoadPostProcessor> postprocessors;
-  private final Set<FileLoadPreProcessor> preProcessors;
   private final File basePath;
   private final StopWatch stopWatch;
 
   @Inject
   public ProcessingFileLoader(FileReader reader,
                               Set<FileLoadPostProcessor> postprocessors,
-                              Set<FileLoadPreProcessor> preProcessors,
                               @Named("basePath") File basePath,
                               StopWatch stopWatch) {
     this.reader = reader;
     this.postprocessors = postprocessors;
-    this.preProcessors = preProcessors;
     this.basePath = basePath;
     this.stopWatch = stopWatch;
   }
@@ -59,7 +56,7 @@ public class ProcessingFileLoader implements FileLoader {
     List<FileInfo> loaded = new LinkedList<FileInfo>();
     try {
       stopWatch.start("preProcessFiles");
-      final List<FileInfo> preProcessedFiles = preProcessFiles(filesToLoad);
+      final List<FileInfo> preProcessedFiles = new LinkedList<FileInfo>(filesToLoad);;
       stopWatch.stop("preProcessFiles");
 
       stopWatch.start("loadFile");
@@ -104,13 +101,5 @@ public class ProcessingFileLoader implements FileLoader {
       processed = hook.process(processed);
     }
     return processed;
-  }
-
-  private List<FileInfo> preProcessFiles(Collection<FileInfo> filesToLoad) {
-    List<FileInfo> files = new LinkedList<FileInfo>(filesToLoad);
-    for (FileLoadPreProcessor processor : preProcessors) {
-      files = processor.process(files);
-    }
-    return files;
   }
 }
