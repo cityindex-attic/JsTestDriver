@@ -25,12 +25,13 @@ assertsTest.prototype.testAssertTrue = function() {
     assertEquals('expected true but was false', e.message);
     assertEquals('AssertError', e.name);
   }
+
   try {
     assertTrue(undefined);
-  fail("assertTrue did not throw an exception");
-  }catch (e){
+    fail("assertTrue did not throw an exception");
+  } catch (e){
     assertEquals('Not a boolean: [undefined]', e.message);
-  assertEquals('AssertError', e.name);
+    assertEquals('AssertError', e.name);
   }
 };
 
@@ -101,6 +102,7 @@ assertsTest.prototype.testAssertEquals = function() {
     assertEquals('expected "hello" but was "world"', e.message);
     assertEquals('AssertError', e.name);
   }
+
   try {
     assertEquals(new Array('mooh', 'meuh'), new Array('mooh', 'meuh'));
     assertEquals(new Array('mooh', 'meuh'), new Array('meuh'));
@@ -109,11 +111,100 @@ assertsTest.prototype.testAssertEquals = function() {
     assertEquals('expected ["mooh","meuh"] but was ["meuh"]', e.message);
     assertEquals('AssertError', e.name);
   }
-  try{
-  assertEquals(true,undefined);
-  fail('assertEquals did not throw an exception when testing against undefined');
-  }catch (e){
-  assertEquals('AssertError',e.name);
+
+  try {
+    assertEquals(true, undefined);
+    fail('assertEquals did not throw an exception when testing against undefined');
+  } catch (e) {
+    assertEquals('expected true but was [undefined]', e.message);
+    assertEquals('AssertError', e.name);
+  }
+
+  try {
+    assertEquals(null, {});
+    fail('assertEquals did not throw an exception when comparing null and {}');
+  } catch (e) {
+    assertEquals('expected null but was {}', e.message);
+    assertEquals('AssertError', e.name);
+  }
+
+  try {
+    assertEquals(null, 'bar');
+    fail('assertEquals did not throw an exception when comparing null and string');
+  } catch (e) {
+    assertEquals('expected null but was {}', e.message);
+    assertEquals('AssertError', e.name);
+  }
+
+  try {
+    assertEquals(null, true);
+    fail('assertEquals did not throw an exception when comparing null and true');
+  } catch (e) {
+    assertEquals('expected null but was {}', e.message);
+    assertEquals('AssertError', e.name);
+  }
+
+  try {
+    assertEquals(null, new Date());
+    fail('assertEquals did not throw an exception when comparing null and a date');
+  } catch (e) {
+    assertMatch(/^expected null but was "\d\d\d\d-\d\d-\d\d.*Z"$/, e.message);
+    assertEquals('AssertError', e.name);
+  }
+
+  try {
+    assertEquals(new Date(), null);
+    fail('assertEquals did not throw an exception when comparing null and a date');
+  } catch (e) {
+    assertMatch(/^expected "\d\d\d\d-\d\d-\d\d.*Z" but was null$/, e.message);
+    assertEquals('AssertError', e.name);
+  }
+
+  var domEl = document.createElement("div");
+
+  try {
+    assertEquals(domEl, domEl);
+  } catch (e) {
+    fail("assertEquals failed comparing DOM element to itself");
+  }
+
+  var domEl2 = document.createElement("span");
+
+  try {
+    assertEquals(domEl2, domEl);
+    fail("assertEquals passed comparing two different DOM nodes");
+  } catch (e) {
+    assertNotEquals("assertEquals passed comparing two different DOM nodes", e.message);
+  }
+
+  try {
+    assertEquals({}, new Date());
+    fail("assertEquals does not fail when comparing {} to a date");
+  } catch (e) {
+    assertEquals("AssertError", e.name);
+    assertNotEquals("assertEquals does not fail when comparing {} to a date", e.message);
+  }
+
+  try {
+    assertEquals({}, new String());
+    fail("assertEquals does not fail when comparing {} to an empty string");
+  } catch (e) {
+    assertEquals("AssertError", e.name);
+    assertNotEquals("assertEquals does not fail when comparing {} to an empty string", e.message);
+  }
+
+  var args;
+
+  function logArgs() {
+    args = arguments;
+  }
+
+  logArgs({}, [], 1, "");
+
+  try {
+    assertEquals([{}, [], 1, ""], args);
+  } catch (e) {
+    fail("assertEquals failed comparing arguments to array");
   }
 };
 
@@ -262,17 +353,16 @@ assertsTest.prototype.testAssertNotNull = function() {
   assertNotNull(undefined);
 };
 
-/*
+
 assertsTest.prototype.testAssertNullWithFunction = function() {
   try {
     assertNull(function(){});
     fail('assertNotNull did not throw an exception');
   } catch (e) {
-    assertEquals('expected  null but was [function]', e.message);
+    assertEquals('expected null but was [function]', e.message);
     assertEquals('AssertError', e.name);
   }
 };
-*/
 
 
 assertsTest.prototype.testAssertNotNullWithMsg = function() {
@@ -301,6 +391,7 @@ assertsTest.prototype.testAssertCount = function() {
   assertEquals("hello", "hello");
   assertEquals(3, jstestdriver.assertCount);
 };
+
 
 (function () {
   var GLOBAL = this;
@@ -1041,6 +1132,26 @@ assertsTest.prototype.testAssertCount = function() {
         assertEquals("AssertError", e.name);
         assertMatch(/msg expected {} to be instance of .*MyConstructor.*/, e.message);
       }
+    },
+
+    "test should fail if actual is undefined": function () {
+      try {
+        assertInstanceOf(Object, undefined);
+        fail("undefined is not an instance of Object");
+      } catch (e) {
+        assertEquals("AssertError", e.name);
+        assertMatch(/expected \[undefined\] to be instance of .*Object.*/, e.message.replace("\n", ""));
+      }
+    },
+
+    "test should fail if actual is null": function () {
+      try {
+        assertInstanceOf(Object, null);
+        fail("null is not an instance of Object");
+      } catch (e) {
+        assertEquals("AssertError", e.name);
+        assertMatch(/expected null to be instance of .*Object.*/, e.message.replace("\n", ""));
+      }
     }
   });
 
@@ -1079,6 +1190,42 @@ assertsTest.prototype.testAssertCount = function() {
   TestCase("AssertTest", {
     "test should alias assertTrue as assert": function () {
       assertEquals(assertTrue, assert);
+    }
+  });
+
+  TestCase("AssertFailureStringRepresentationTest", {
+    "test should provide nice string representation of DOM nodes": function () {
+      /*:DOC element = <div>
+          <p id="hey" class="note text">
+            What's up?
+          </p>
+          <ol class="items">
+            <li>What's up?</li>
+            <li>Up here?</li>
+            <li>Over there?</li>
+          </ol>
+        </div>*/
+
+      var p = this.element.getElementsByTagName("p")[0];
+      var ol = this.element.getElementsByTagName("ol")[0];
+
+      try {
+        assertEquals(p, ol);
+      } catch (e) {
+        assertEquals("AssertError", e.name);
+        assertMatch(/expected <p [^>]*>\.\.\.<\/p> but was <ol class="items"[^>]*>\.\.\.<\/ol>/, e.message);
+      }
+    },
+
+    "test should have nice string representation of functions": function () {
+      function aFunc() {}
+      function anotherOne() {}
+
+      try {
+        assertEquals(aFunc, anotherOne);
+      } catch (e) {
+        assertEquals("expected function aFunc() but was function anotherOne()", e.message);
+      }
     }
   });
 }());

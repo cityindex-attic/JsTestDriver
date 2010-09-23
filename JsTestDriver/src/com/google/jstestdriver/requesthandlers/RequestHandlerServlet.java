@@ -35,6 +35,7 @@ class RequestHandlerServlet extends HttpServlet {
     this.dispatcherProvider = dispatcherProvider;
   }
 
+  @SuppressWarnings("unused")
   @Override
   public void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {

@@ -86,6 +86,7 @@ public abstract class RequestHandlersModule extends AbstractModule {
     return RequestHandlerServlet.getRequest().getProtocol();
   }
 
+  @SuppressWarnings("unchecked")
   @Provides @RequestScoped @RequestParameters Map<String, String[]> provideRequestParameters() {
     return RequestHandlerServlet.getRequest().getParameterMap();
   }
