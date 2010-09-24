@@ -108,8 +108,12 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.nextTest = function()
     this.testName_ = null;
     this.start_ = null;
     this.errors_ = null;
-    this.onTestRunConfigurationComplete_();
+
+    // Unset this callback before running it because the next callback may be
+    // set by the code run by the callback.
+    var onTestRunConfigurationComplete = this.onTestRunConfigurationComplete_;
     this.onTestRunConfigurationComplete_ = null;
+    onTestRunConfigurationComplete.call(this);
   }
 };
 

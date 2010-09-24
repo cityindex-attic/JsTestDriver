@@ -16,6 +16,68 @@
 
 var asyncTestRunnerPluginTest = TestCase('asyncTestRunnerPluginTest');
 
+/**
+ * Regression test for Issue 125:
+ *     "Error in asynchronous tests:
+ *      [Object object].onTestRunConfigurationComplete_ is null."
+ * http://code.google.com/p/js-test-driver/issues/detail?id=125
+ */
+asyncTestRunnerPluginTest.prototype.
+    testMultipleAsyncTestCases = function() {
+  var asyncTestRunner = new jstestdriver.plugins.async.AsyncTestRunnerPlugin(
+      Date, function() {}, function(callback) {callback();});
+
+  var testCase0 = function() {};
+  testCase0.prototype.test0 = function(queue) {};
+
+  var info0 = new jstestdriver.TestCaseInfo(
+      'testCase0', testCase0, jstestdriver.TestCaseInfo.ASYNC_TYPE);
+
+  var config0 = {
+    getTestCaseInfo: function() {return info0;},
+    getTests: function() {return ['test0'];}
+  };
+
+  // ContinueTesting is the vital element to reproduce Issue 125. We use it to
+  // pause the second AsyncTestCase, testCase1, which allows the stack to
+  // unwind and return from the AsyncTestRunnerPlugin's first
+  // onRunTestConfigurationComplete_() invocation for testCase0 and then set the
+  // onRunTestConfigurationComplete_ to null. Setting to null interferes with
+  // the second test case's execution, as it's paused, and causes the error:
+  //     "this.onTestRunConfigurationComplete_ is not a function."
+  var continueTesting;
+
+  var testCase1 = function() {};
+  testCase1.prototype.test1 = function(queue) {
+    queue.defer(function(pool) {
+      continueTesting = pool.add(function() {});
+    });
+  };
+
+  var info1 = new jstestdriver.TestCaseInfo(
+      'testCase1', testCase1, jstestdriver.TestCaseInfo.ASYNC_TYPE);
+
+  var config1 = {
+    getTestCaseInfo: function() {return info1;},
+    getTests: function() {return ['test1'];}
+  };
+
+  var finalOnRunTestConfigurationCompleteIsCalled = false;
+
+  var onTestRunConfigurationComplete = function() {
+    asyncTestRunner.runTestConfiguration(config1, function() {}, function() {
+      finalOnRunTestConfigurationCompleteIsCalled = true;
+    });
+  };
+
+  asyncTestRunner.runTestConfiguration(
+      config0, function() {}, onTestRunConfigurationComplete);
+
+  continueTesting();
+
+  assertTrue(finalOnRunTestConfigurationCompleteIsCalled);
+};
+
 
 /**
  * Regression test for Issue 137: "expectAsserts does not work with
