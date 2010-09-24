@@ -17,6 +17,86 @@
 var asyncTestRunnerPluginTest = TestCase('asyncTestRunnerPluginTest');
 
 
+asyncTestRunnerPluginTest.prototype.testExpectedAsserts_correctAmount = function() {
+  // save expected assert state
+  var priorExpectedAssertCount = jstestdriver.expectedAssertCount;
+  var priorAssertCount = jstestdriver.assertCount;
+
+  var asyncTestRunner = new jstestdriver.plugins.async.AsyncTestRunnerPlugin(
+      Date, function() {}, function(callback) {callback();});
+
+  var testCase = function() {};
+  testCase.prototype.testWithExpectAsserts = function() {
+    expectAsserts(3);
+    assertEquals('a', 'a');
+    assertTrue(true);
+    assertNull(null);
+  };
+
+  var info = new jstestdriver.TestCaseInfo(
+      'testCase', testCase, jstestdriver.TestCaseInfo.ASYNC_TYPE);
+
+  var config = {
+    getTestCaseInfo: function() {return info;},
+    getTests: function() {return ['testWithExpectAsserts'];}
+  };
+
+  var result;
+  var onTestDone = function(r) {
+    result = r;
+  };
+
+  asyncTestRunner.runTestConfiguration(config, onTestDone, function() {});
+
+  // restore expected assert state before we really assert
+  jstestdriver.expectedAssertCount = priorExpectedAssertCount;
+  jstestdriver.assertCount = priorAssertCount;
+
+  assertEquals('passed', result.result);
+};
+
+
+asyncTestRunnerPluginTest.prototype.testExpectedAsserts_incorrectAmount = function() {
+  // save expected assert state
+  var priorExpectedAssertCount = jstestdriver.expectedAssertCount;
+  var priorAssertCount = jstestdriver.assertCount;
+
+  var asyncTestRunner = new jstestdriver.plugins.async.AsyncTestRunnerPlugin(
+      Date, function() {}, function(callback) {callback();});
+
+  var testCase = function() {};
+  testCase.prototype.testWithExpectAsserts = function() {
+    expectAsserts(5);
+    assertEquals('a', 'a');
+    assertTrue(true);
+    assertNull(null);
+  };
+
+  var info = new jstestdriver.TestCaseInfo(
+      'testCase', testCase, jstestdriver.TestCaseInfo.ASYNC_TYPE);
+
+  var config = {
+    getTestCaseInfo: function() {return info;},
+    getTests: function() {return ['testWithExpectAsserts'];}
+  };
+
+  var result;
+  var onTestDone = function(r) {
+    result = r;
+  };
+
+  asyncTestRunner.runTestConfiguration(config, onTestDone, function() {});
+
+  // restore expected assert state before we really assert
+  jstestdriver.expectedAssertCount = priorExpectedAssertCount;
+  jstestdriver.assertCount = priorAssertCount;
+
+  assertEquals('failed', result.result);
+  assertEquals('Expected \'5\' asserts but \'3\' encountered.',
+      JSON.parse(result.message).message);
+};
+
+
 asyncTestRunnerPluginTest.prototype.testScopeIsNotWindow = function() {
   var asyncTestRunner = new jstestdriver.plugins.async.AsyncTestRunnerPlugin(
       Date, function() {}, function(callback) {callback();});

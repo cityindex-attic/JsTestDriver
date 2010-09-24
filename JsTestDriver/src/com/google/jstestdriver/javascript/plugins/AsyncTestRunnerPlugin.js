@@ -93,6 +93,8 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.nextTest = function()
   //console.log('nextTest');
   this.start_ = new this.dateObj_().getTime();
   if (this.testIndex_ < this.testRunConfiguration_.getTests().length) {
+    jstestdriver.expectedAssertCount = -1;
+    jstestdriver.assertCount = 0;
     this.testCase_ = new (this.testCaseInfo_.getTemplate());
     this.testName_ = this.testRunConfiguration_.getTests()[this.testIndex_];
     this.errors_ = [];
@@ -221,6 +223,14 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.buildResult = functio
   if (this.errors_.length) {
     result = 'failed';
     message = JSON.stringify(this.errors_);
+  } else if (jstestdriver.expectedAssertCount != -1 &&
+             jstestdriver.expectedAssertCount != jstestdriver.assertCount) {
+    result = 'failed';
+    message = JSON.stringify(new Error("Expected '" +
+        jstestdriver.expectedAssertCount +
+        "' asserts but '" +
+        jstestdriver.assertCount +
+        "' encountered."));
   }
   return new jstestdriver.TestResult(
       this.testCaseInfo_.getTestCaseName(), this.testName_, result, message,
