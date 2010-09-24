@@ -36,6 +36,7 @@ jstestdriver.plugins.async.CallbackPool = function(setTimeout, testCase, onPoolC
   this.onPoolComplete_ = onPoolComplete;
   this.errors_ = [];
   this.count_ = 0;
+  this.active_ = false;
 };
 
 
@@ -46,15 +47,24 @@ jstestdriver.plugins.async.CallbackPool.TIMEOUT = 30000;
 
 
 /**
- * Calls onPoolComplete if the pool is empty.
+ * Calls onPoolComplete if the pool is active and empty.
  */
 jstestdriver.plugins.async.CallbackPool.prototype.maybeComplete = function() {
-  if (this.count_ == 0 && this.onPoolComplete_) {
+  if (this.active_ && this.count_ == 0 && this.onPoolComplete_) {
     var pool = this;
     this.setTimeout_(function() {
       pool.onPoolComplete_(pool.errors_);
     }, 0);
   }
+};
+
+
+/**
+ * Activates the pool and calls maybeComplete.
+ */
+jstestdriver.plugins.async.CallbackPool.prototype.activate = function() {
+    this.active_ = true;
+    this.maybeComplete();
 };
 
 

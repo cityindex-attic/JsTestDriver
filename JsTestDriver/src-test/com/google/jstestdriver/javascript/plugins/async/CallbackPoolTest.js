@@ -17,31 +17,70 @@
 var callbackPoolTest = TestCase('callbackPoolTest');
 
 
+callbackPoolTest.prototype.testCallbackCalledBeforePoolIsActive = function() {
+  var complete = false;
+  var pool = new jstestdriver.plugins.async.CallbackPool(function(callback) {
+    callback();
+  }, {}, function(errors) {
+    complete = true;
+  });
+
+  var callbackA = pool.add(function() {});
+  assertFalse(pool.active_);
+
+  callbackA();
+
+  assertFalse(pool.active_);
+  assertFalse(complete);
+};
+
+
+callbackPoolTest.prototype.testActivate = function() {
+  var complete = false;
+  var pool = new jstestdriver.plugins.async.CallbackPool(function(callback) {
+    callback();
+  }, {}, function(errors) {
+    complete = true;
+  });
+
+  var callbackA = pool.add(function() {});
+  assertFalse(pool.active_);
+
+  pool.activate();
+  callbackA();
+
+  assertTrue(pool.active_);
+  assertTrue(complete);
+};
+
+
 callbackPoolTest.prototype.testAdd = function() {
   var complete = false;
-  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
+  var pool = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
   }, {}, function(errors) {
     assertEquals(0, errors.length);
     complete = true;
   });
 
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
 
-  var callbackA = herd.add(function() {});
-  assertEquals(1, herd.count());
+  var callbackA = pool.add(function() {});
+  assertEquals(1, pool.count());
   assertFalse(complete);
 
-  var callbackB = herd.add(function() {});
-  assertEquals(2, herd.count());
+  var callbackB = pool.add(function() {});
+  assertEquals(2, pool.count());
   assertFalse(complete);
+
+  pool.activate();
 
   callbackA();
-  assertEquals(1, herd.count());
+  assertEquals(1, pool.count());
   assertFalse(complete);
 
   callbackB();
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
   assertTrue(complete);
 };
 
@@ -49,22 +88,24 @@ callbackPoolTest.prototype.testAdd = function() {
 callbackPoolTest.prototype.testScopeIsNotWindow = function() {
   var complete = false;
   var testCase = {};
-  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
+  var pool = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
   }, testCase, function(errors) {
     assertEquals(0, errors.length);
     complete = true;
   });
 
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
 
   var callbackAScope;
-  var callbackA = herd.add(function() {callbackAScope = this;});
-  assertEquals(1, herd.count());
+  var callbackA = pool.add(function() {callbackAScope = this;});
+  assertEquals(1, pool.count());
   assertFalse(complete);
 
+  pool.activate();
+
   callbackA();
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
   assertTrue(complete);
   assertFalse('window === callbackAScope', window === callbackAScope);
   assertTrue('testCase === callbackAScope', testCase === callbackAScope);
@@ -73,42 +114,44 @@ callbackPoolTest.prototype.testScopeIsNotWindow = function() {
 
 callbackPoolTest.prototype.testAddWithArguments = function() {
   var complete = false;
-  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
+  var pool = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
   }, {}, function(errors) {
     assertEquals(0, errors.length);
     complete = true;
   });
 
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
 
   var capturedOne;
   var capturedTwo;
-  var callbackA = herd.add(function(one, two) {
+  var callbackA = pool.add(function(one, two) {
     capturedOne = one;
     capturedTwo = two;
   });
-  assertEquals(1, herd.count());
+  assertEquals(1, pool.count());
   assertFalse(complete);
 
   var capturedThree;
-  var callbackB = herd.add(function(three) {
+  var callbackB = pool.add(function(three) {
     capturedThree = three;
   });
-  assertEquals(2, herd.count());
+  assertEquals(2, pool.count());
   assertFalse(complete);
   assertUndefined(capturedOne);
   assertUndefined(capturedTwo);
   assertUndefined(capturedThree);
 
+  pool.activate();
+
   callbackA(1, 2);
-  assertEquals(1, herd.count());
+  assertEquals(1, pool.count());
   assertEquals(1, capturedOne);
   assertEquals(2, capturedTwo);
   assertFalse(complete);
 
   callbackB(3);
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
   assertEquals(3, capturedThree);
   assertTrue(complete);
 };
@@ -116,72 +159,78 @@ callbackPoolTest.prototype.testAddWithArguments = function() {
 
 callbackPoolTest.prototype.testAddRepeated = function() {
   var complete = false;
-  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
+  var pool = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
   }, {}, function(errors) {
     assertEquals(0, errors.length);
     complete = true;
   });
 
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
 
-  var callbackA = herd.add(function() {}, 2);
-  assertEquals(2, herd.count());
+  var callbackA = pool.add(function() {}, 2);
+  assertEquals(2, pool.count());
+  assertFalse(complete);
+
+  pool.activate();
+
+  callbackA();
+  assertEquals(1, pool.count());
   assertFalse(complete);
 
   callbackA();
-  assertEquals(1, herd.count());
-  assertFalse(complete);
-
-  callbackA();
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
   assertTrue(complete);
 };
 
 
 callbackPoolTest.prototype.testAddNested = function() {
   var complete = false;
-  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
+  var pool = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
   }, {}, function(errors) {
     assertEquals(0, errors.length);
     complete = true;
   });
 
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
 
-  var callbackA = herd.add(function() {return herd.add(function() {});});
-  assertEquals(1, herd.count());
+  var callbackA = pool.add(function() {return pool.add(function() {});});
+  assertEquals(1, pool.count());
   assertFalse(complete);
 
+  pool.activate();
+
   var callbackB = callbackA();
-  assertEquals(1, herd.count());
+  assertEquals(1, pool.count());
   assertFalse(complete);
 
   callbackB();
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
   assertTrue(complete);
 };
 
 
 callbackPoolTest.prototype.testAddWithErrors = function() {
   var complete = false;
-  var herd = new jstestdriver.plugins.async.CallbackPool(function(callback) {
+  var pool = new jstestdriver.plugins.async.CallbackPool(function(callback) {
     callback();
   }, {}, function(errors) {
     assertEquals(1, errors.length);
     complete = true;
   });
 
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
 
-  var callbackA = herd.add(function() {throw 'error';});
-  assertEquals(1, herd.count());
+  var callbackA = pool.add(function() {throw 'error';});
+  assertEquals(1, pool.count());
   assertFalse(complete);
+
+  pool.activate();
 
   try {
     callbackA();
   } catch (expected) {}
-  assertEquals(0, herd.count());
+  assertEquals(0, pool.count());
   assertTrue(complete);
 };

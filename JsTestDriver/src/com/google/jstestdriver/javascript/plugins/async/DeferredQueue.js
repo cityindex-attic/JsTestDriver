@@ -58,7 +58,7 @@ jstestdriver.plugins.async.DeferredQueue.prototype.execute_ = function(operation
     }
   }
 
-  pool.maybeComplete();
+  pool.activate();
 };
 
 
