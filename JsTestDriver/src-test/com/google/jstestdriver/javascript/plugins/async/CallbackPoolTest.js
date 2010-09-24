@@ -17,6 +17,11 @@
 var callbackPoolTest = TestCase('callbackPoolTest');
 
 
+/**
+ * Regression test for Issue 140: "If all callbacks in a CallbackPool complete
+ *    before the test case function returns, the test runner goes haywire."
+ * @bug 140
+ */
 callbackPoolTest.prototype.testCallbackCalledBeforePoolIsActive = function() {
   var complete = false;
   var pool = new jstestdriver.plugins.async.CallbackPool(function(callback) {
@@ -35,6 +40,10 @@ callbackPoolTest.prototype.testCallbackCalledBeforePoolIsActive = function() {
 };
 
 
+/**
+ * Tests #activate(), added to fix Issue 140.
+ * @bug 140
+ */
 callbackPoolTest.prototype.testActivate = function() {
   var complete = false;
   var pool = new jstestdriver.plugins.async.CallbackPool(function(callback) {

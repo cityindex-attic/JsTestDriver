@@ -17,7 +17,13 @@
 var asyncTestRunnerPluginTest = TestCase('asyncTestRunnerPluginTest');
 
 
-asyncTestRunnerPluginTest.prototype.testExpectedAsserts_correctAmount = function() {
+/**
+ * Regression test for Issue 137: "expectAsserts does not work with
+ *    AsyncTestCase."
+ * @bug 137
+ */
+asyncTestRunnerPluginTest.prototype.
+    testExpectedAsserts_correctAmount = function() {
   // save expected assert state
   var priorExpectedAssertCount = jstestdriver.expectedAssertCount;
   var priorAssertCount = jstestdriver.assertCount;
@@ -56,7 +62,13 @@ asyncTestRunnerPluginTest.prototype.testExpectedAsserts_correctAmount = function
 };
 
 
-asyncTestRunnerPluginTest.prototype.testExpectedAsserts_incorrectAmount = function() {
+/**
+ * Regression test for Issue 137: "expectAsserts does not work with
+ *    AsyncTestCase."
+ * @bug 137
+ */
+asyncTestRunnerPluginTest.prototype.
+    testExpectedAsserts_incorrectAmount = function() {
   // save expected assert state
   var priorExpectedAssertCount = jstestdriver.expectedAssertCount;
   var priorAssertCount = jstestdriver.assertCount;
@@ -210,7 +222,8 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithoutSteps = function() {
 };
 
 
-asyncTestRunnerPluginTest.prototype.testTestCaseWithoutStepsWithSetupError = function() {
+asyncTestRunnerPluginTest.prototype.
+    testTestCaseWithoutStepsWithSetupError = function() {
   var timesSetUpCalled = 0;
   var timesTestMethodCalled = 0;
   var timesTearDownCalled = 0;
@@ -317,7 +330,8 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithSteps = function() {
 };
 
 
-asyncTestRunnerPluginTest.prototype.testTestCaseWithCallbacksWithSetupError = function() {
+asyncTestRunnerPluginTest.prototype.
+    testTestCaseWithCallbacksWithSetupError = function() {
   var timesSetUpCalled = 0;
   var timesSetUpStepCalled = 0;
   var timesTestMethodCalled = 0;
