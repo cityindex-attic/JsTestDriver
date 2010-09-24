@@ -20,7 +20,7 @@ var asyncTestRunnerPluginTest = TestCase('asyncTestRunnerPluginTest');
  * Regression test for Issue 125:
  *     "Error in asynchronous tests:
  *      [Object object].onTestRunConfigurationComplete_ is null."
- * http://code.google.com/p/js-test-driver/issues/detail?id=125
+ * @bug 125
  */
 asyncTestRunnerPluginTest.prototype.
     testMultipleAsyncTestCases = function() {
