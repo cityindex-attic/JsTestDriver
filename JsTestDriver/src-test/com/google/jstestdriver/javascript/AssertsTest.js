@@ -132,7 +132,7 @@ assertsTest.prototype.testAssertEquals = function() {
     assertEquals(null, 'bar');
     fail('assertEquals did not throw an exception when comparing null and string');
   } catch (e) {
-    assertEquals('expected null but was {}', e.message);
+    assertEquals('expected null but was "bar"', e.message);
     assertEquals('AssertError', e.name);
   }
 
@@ -140,7 +140,7 @@ assertsTest.prototype.testAssertEquals = function() {
     assertEquals(null, true);
     fail('assertEquals did not throw an exception when comparing null and true');
   } catch (e) {
-    assertEquals('expected null but was {}', e.message);
+    assertEquals('expected null but was true', e.message);
     assertEquals('AssertError', e.name);
   }
 
