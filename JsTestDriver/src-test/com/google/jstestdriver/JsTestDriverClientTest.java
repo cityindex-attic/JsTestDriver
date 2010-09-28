@@ -15,9 +15,11 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.inject.Provider;
 import com.google.jstestdriver.browser.BrowserFileSet;
+import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
 
@@ -109,7 +111,7 @@ public class JsTestDriverClientTest extends TestCase {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }, stopWatch);
+        }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
         server, false, stopWatch, null);
     FakeResponseStream stream = new FakeResponseStream();
@@ -144,7 +146,7 @@ public class JsTestDriverClientTest extends TestCase {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }, stopWatch);
+        }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
         server, false, stopWatch, null);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
@@ -185,7 +187,7 @@ public class JsTestDriverClientTest extends TestCase {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }, stopWatch);
+        }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
         server, false, stopWatch, null);
     FakeResponseStream stream = new FakeResponseStream();
@@ -216,7 +218,7 @@ public class JsTestDriverClientTest extends TestCase {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }, stopWatch);
+        }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
         server, false, stopWatch, null);
     FakeResponseStream stream = new FakeResponseStream();

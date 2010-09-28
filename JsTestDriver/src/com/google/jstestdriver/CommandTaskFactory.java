@@ -16,9 +16,11 @@
 package com.google.jstestdriver;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.util.StopWatch;
 
 /**
@@ -30,21 +32,24 @@ public class CommandTaskFactory {
   private final Provider<HeartBeatManager> heartBeatProvider;
   private final FileLoader fileLoader;
   private final StopWatch stopWatch;
+  private final Set<FileInfoScheme> schemes;
 
   @Inject
   public CommandTaskFactory(JsTestDriverFileFilter filter,
                             FileLoader fileLoader,
                             Provider<HeartBeatManager> heartBeatProvider,
-                            StopWatch stopWatch) {
+                            StopWatch stopWatch,
+                            Set<FileInfoScheme> schemes) {
     this.filter = filter;
     this.fileLoader = fileLoader;
     this.heartBeatProvider = heartBeatProvider;
     this.stopWatch = stopWatch;
+    this.schemes = schemes;
   }
 
   public CommandTask getCommandTask(ResponseStream stream, String baseUrl, Server server,
       Map<String, String> params, boolean upload) {
     return new CommandTask(filter, stream, baseUrl, server, params, fileLoader,
-        upload, stopWatch);
+        upload, stopWatch, schemes);
   }
 }

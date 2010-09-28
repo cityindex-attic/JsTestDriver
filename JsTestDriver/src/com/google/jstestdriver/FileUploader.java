@@ -26,6 +26,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.browser.BrowserFileSet;
+import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
@@ -57,16 +58,19 @@ public class FileUploader {
   private final String baseUrl;
   private final FileLoader fileLoader;
   private final JsTestDriverFileFilter filter;
+  private final Set<FileInfoScheme> schemes;
+
   private static final Logger logger = LoggerFactory.getLogger(FileUploader.class);
 
   @Inject
   public FileUploader(StopWatch stopWatch, Server server, @Named("server") String baseUrl,
-      FileLoader fileLoader, JsTestDriverFileFilter filter) {
+      FileLoader fileLoader, JsTestDriverFileFilter filter, Set<FileInfoScheme> schemes) {
     this.stopWatch = stopWatch;
     this.server = server;
     this.baseUrl = baseUrl;
     this.fileLoader = fileLoader;
     this.filter = filter;
+    this.schemes = schemes;
   }
 
   /** Determines what files have been changed as compared to the server. */
@@ -247,10 +251,10 @@ public class FileUploader {
   // TODO(corysmith): remove this function once FileInfo is used exclusively.
   // Hate static crap.
   private FileSource fileInfoToFileSource(FileInfo info) {
-    // TODO(rdionne): Make these schemes pluggable
-    if (info.getFilePath().startsWith("http://") ||
-        info.getFilePath().startsWith("embedded:")) {
-      return new FileSource(info.getFilePath(), info.getTimestamp());
+    for (FileInfoScheme scheme : schemes) {
+      if (scheme.matches(info.getFilePath())) {
+        return new FileSource(info.getFilePath(), info.getTimestamp());
+      }
     }
     return new FileSource("/test/" + info.getFilePath(), info.getTimestamp());
   }

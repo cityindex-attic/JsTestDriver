@@ -33,6 +33,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.util.Providers;
 import com.google.jstestdriver.hooks.AuthStrategy;
+import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.output.MultiTestResultListener;
 import com.google.jstestdriver.output.TestResultListener;
 import com.google.jstestdriver.output.XmlPrinter;
@@ -67,6 +68,8 @@ public class IDEPluginActionBuilderTest extends TestCase {
                      @Override
                      protected void configure() {
                        Multibinder.newSetBinder(binder(), AuthStrategy.class);
+                       Multibinder.newSetBinder(binder(), FileInfoScheme.class)
+                           .addBinding().to(HttpFileInfoScheme.class);
                        bind(Server.class).to(MyServer.class);
                        bind(XmlPrinter.class).to(XmlPrinterImpl.class);
                        bind(TestResultListener.class).toInstance(
@@ -92,6 +95,8 @@ public class IDEPluginActionBuilderTest extends TestCase {
                      @Override
                      protected void configure() {
                        Multibinder.newSetBinder(binder(), AuthStrategy.class);
+                       Multibinder.newSetBinder(binder(), FileInfoScheme.class)
+                           .addBinding().to(HttpFileInfoScheme.class);
                        bind(Server.class).to(MyServer.class);
                        bind(XmlPrinter.class).to(XmlPrinterImpl.class);
                        bind(TestResultListener.class)

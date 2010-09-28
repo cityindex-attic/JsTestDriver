@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 import static java.lang.String.format;
 
 import com.google.gson.Gson;
+import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.StopWatch;
 
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Handles the communication of a command to the JsTestDriverServer from the
@@ -51,14 +53,14 @@ public class CommandTask {
 
   public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, String baseUrl,
       Server server, Map<String, String> params, FileLoader fileLoader,
-      boolean upload, StopWatch stopWatch) {
+      boolean upload, StopWatch stopWatch, Set<FileInfoScheme> schemes) {
     this.stream = stream;
     this.baseUrl = baseUrl;
     this.server = server;
     this.params = params;
     this.upload = upload;
     this.stopWatch = stopWatch;
-    fileUploader = new FileUploader(stopWatch, server, baseUrl, fileLoader, filter);
+    fileUploader = new FileUploader(stopWatch, server, baseUrl, fileLoader, filter, schemes);
   }
   
   /**

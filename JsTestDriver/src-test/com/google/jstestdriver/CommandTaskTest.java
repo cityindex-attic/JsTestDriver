@@ -25,11 +25,13 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.browser.BrowserFileSet;
+import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
 
@@ -197,7 +199,7 @@ public class CommandTaskTest extends TestCase {
       MockFileLoader fileLoader, boolean upload) {
     CommandTask task = new CommandTask(new DefaultFileFilter(), stream, "http://localhost",
         server, params, fileLoader, upload,
-        new NullStopWatch());
+        new NullStopWatch(), ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
     return task;
   }
 

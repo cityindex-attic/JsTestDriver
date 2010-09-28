@@ -15,8 +15,10 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.jstestdriver.hooks.AuthStrategy;
+import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.util.NullStopWatch;
 
 import junit.framework.TestCase;
@@ -87,8 +89,9 @@ public class JsTestDriverServerTest extends TestCase {
   public void testListBrowsers() throws Exception {
     final NullStopWatch stopWatch = new NullStopWatch();
     JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new DefaultFileFilter(), null, null, stopWatch), "http://localhost:4224",
-        new HttpServer(), false, stopWatch, null);
+        new DefaultFileFilter(), null, null, stopWatch,
+        ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme())),
+        "http://localhost:4224", new HttpServer(), false, stopWatch, null);
 
     server.start();
     Collection<BrowserInfo> browsers = client.listBrowsers();
