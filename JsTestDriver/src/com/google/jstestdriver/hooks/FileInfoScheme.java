@@ -13,5 +13,9 @@ import com.google.jstestdriver.FileInfo;
  */
 public interface FileInfoScheme {
 
+  /**
+   * @param path the path of the FileInfo.
+   * @return true iff this scheme applies to the given FileInfo.
+   */
   boolean matches(String path);
 }
