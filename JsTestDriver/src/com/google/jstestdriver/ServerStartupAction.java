@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.Provider;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.model.RunData;
@@ -44,6 +43,8 @@ public class ServerStartupAction implements ObservableAction {
   private final long browserTimeout;
   private final ProxyDestination destination;
   private final Set<AuthStrategy> authStrategies;
+  private final boolean preloadFiles;
+  private final FileLoader fileLoader;
   
   /**
    * @deprecated In favor of using the constructor that defines browser timeout.
@@ -61,7 +62,9 @@ public class ServerStartupAction implements ObservableAction {
          urlRewriter,
          SlaveBrowser.TIMEOUT,
          null,
-         Collections.<AuthStrategy>emptySet());
+         Collections.<AuthStrategy>emptySet(),
+         false,
+         null);
   }
 
   public ServerStartupAction(int port,
@@ -71,7 +74,8 @@ public class ServerStartupAction implements ObservableAction {
                              URLRewriter urlRewriter,
                              long browserTimeout,
                              ProxyDestination destination,
-                             Set<AuthStrategy> authStrategies) {
+                             Set<AuthStrategy> authStrategies,
+                             boolean preloadFiles, FileLoader fileLoader) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.preloadedFilesCache = preloadedFilesCache;
@@ -80,14 +84,23 @@ public class ServerStartupAction implements ObservableAction {
     this.browserTimeout = browserTimeout;
     this.destination = destination;
     this.authStrategies = authStrategies;
+    this.preloadFiles = preloadFiles;
+    this.fileLoader = fileLoader;
   }
 
   public JsTestDriverServer getServer() {
     return server;
   }
 
-  public RunData run(RunData testCase) {
+  public RunData run(RunData runData) {
     logger.info("Starting server...");
+
+    if (preloadFiles) {
+      for (FileInfo fileInfo :
+          fileLoader.loadFiles(runData.getFileSet(), false)) {
+        preloadedFilesCache.addFile(fileInfo);
+      }
+    }
     server =
         new JsTestDriverServer(port, capturedBrowsers, preloadedFilesCache, urlTranslator,
             urlRewriter, browserTimeout, destination, authStrategies);
@@ -99,7 +112,7 @@ public class ServerStartupAction implements ObservableAction {
     } catch (Exception e) {
       throw new RuntimeException("Error starting the server on " + port, e);
     }
-    return testCase;
+    return runData;
   }
 
   public void addObservers(List<Observer> observers) {

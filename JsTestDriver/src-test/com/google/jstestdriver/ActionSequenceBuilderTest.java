@@ -33,7 +33,9 @@ import com.google.jstestdriver.hooks.TestsPreProcessor;
 public class ActionSequenceBuilderTest extends TestCase {
 
   private LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
-  ActionFactory actionFactory = new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT, Collections.<AuthStrategy>emptySet());
+  ActionFactory actionFactory =
+      new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT,
+          Collections.<AuthStrategy>emptySet(), false, null);
 
   public void testAddTestsWithRemoteServerAddress() throws Exception {
     List<String> tests = tests();
@@ -62,7 +64,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionFactory(
             null,
             Collections.<TestsPreProcessor> emptySet(), SlaveBrowser.TIMEOUT,
-            Collections.<AuthStrategy>emptySet()),
+            Collections.<AuthStrategy>emptySet(), false, null),
             null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
             Providers.<URLTranslator> of(null),
             Providers.<URLRewriter> of(null),
@@ -85,11 +87,14 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<String> tests = tests();
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(
-        		new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(),
-        				SlaveBrowser.TIMEOUT,
-                                        Collections.<AuthStrategy>emptySet()), null, null,
-            new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null), Providers
-                .<URLTranslator> of(null), Providers.<URLRewriter> of(null),
+            new ActionFactory(null,
+                Collections.<TestsPreProcessor>emptySet(),
+                SlaveBrowser.TIMEOUT,
+                Collections.<AuthStrategy>emptySet(), false, null),
+            null, null, new BrowserActionExecutorAction(
+                null, null, null, null, null, 0, null, null),
+                Providers.<URLTranslator> of(null),
+                Providers.<URLRewriter> of(null),
             new FailureAccumulator());
 
     List<Action> actions = builder.addTests(tests).withLocalServerPort(999)

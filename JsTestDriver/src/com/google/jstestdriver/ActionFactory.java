@@ -45,16 +45,22 @@ public class ActionFactory {
   private final long browserTimeout;
   private ProxyDestination destination;
   private final Set<AuthStrategy> authStrategies;
+  private final boolean preloadFiles;
+  private final FileLoader fileLoader;
 
   @Inject
   public ActionFactory(Provider<JsTestDriverClient> clientProvider,
                        Set<TestsPreProcessor> testPreProcessors,
                        @Named("browserTimeout") long browserTimeout,
-                       Set<AuthStrategy> authStrategies) {
+                       Set<AuthStrategy> authStrategies,
+                       @Named("preloadFiles") boolean preloadFiles,
+                       FileLoader fileLoader) {
     this.clientProvider = clientProvider;
     this.testPreProcessors = testPreProcessors;
     this.browserTimeout = browserTimeout;
     this.authStrategies = authStrategies;
+    this.preloadFiles = preloadFiles;
+    this.fileLoader = fileLoader;
   }
 
   @Inject(optional = true)
@@ -73,7 +79,9 @@ public class ActionFactory {
                                 urlRewriter,
                                 browserTimeout,
                                 destination,
-                                authStrategies);
+                                authStrategies,
+                                preloadFiles,
+                                fileLoader);
 
     if (observers.containsKey(CapturedBrowsers.class)) {
       for (Observer o : observers.get(CapturedBrowsers.class)) {

@@ -1,9 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
 <head>
 <title>Remote Console Runner</title>
+<style>
+body, html, iframe {
+  margin:0;
+  padding:0;
+  border-style: none;
+}
+body, html, #body {
+  height:100%;
+  
+}
+#body, #heartbeat {
+  width:100%;
+  position:absolute;
+}
+
+#heartbeat {
+  position:absolute;
+  border-bottom:1px solid #000;
+  top:0;
+  left:0;
+  opacity:0.4;
+  filter:alpha(opacity=40);
+  height:72px;
+}
+</style>
 </head>
-<frameset rows="70px,*" style="border:0 none;">
-  <frame src="HeartbeatClientquirks.html" />
-  <frame src="Runnerquirks.html" />
-</frameset>
+<body>
+<iframe id="heartbeat" src="HeartbeatClientquirks.html"></iframe>
+<iframe id="body" src="Runnerquirks.html"></iframe>
+</body>
 </html>

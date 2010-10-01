@@ -38,3 +38,34 @@ jstestdriver.TestCaseBuilder.prototype.TestCase = function(testCaseName, opt_pro
 jstestdriver.TestCaseBuilder.prototype.AsyncTestCase = function(testCaseName, opt_proto) {
   return this.TestCase(testCaseName, opt_proto, jstestdriver.TestCaseInfo.ASYNC_TYPE);
 };
+
+
+/**
+ * A TestCase that will only be executed when a certain condition is true.
+ * @param {String} The name of the TestCase.
+ * @param {function():boolean} A function that indicates if this case should be run.
+ * @return {Function} Base function that represents the TestCase class.
+ */
+jstestdriver.TestCaseBuilder.prototype.ConditionalTestCase = function(testCaseName, condition, opt_proto) {
+  if (condition()) {
+    return this.TestCase(testCaseName, opt_proto, jstestdriver.TestCaseInfo.DEFAULT_TYPE);
+  }
+  var testCaseClass =
+      jstestdriver.TestCaseBuilder.PlaceHolderCase;
+  this.testCaseManager_.add(
+      new jstestdriver.TestCaseInfo(testCaseName,
+              testCaseClass,
+          jstestdriver.TestCaseInfo.DEFAULT_TYPE));
+  return function(){};
+};
+
+
+jstestdriver.TestCaseBuilder.PlaceHolderCase = function() {};
+
+
+/**
+ * Ensures there is at least one test to demonstrate a correct exclusion.
+ */
+jstestdriver.TestCaseBuilder.PlaceHolderCase.prototype.testExcludedByCondition =
+      jstestdriver.EMPTY_FUNC;
+
