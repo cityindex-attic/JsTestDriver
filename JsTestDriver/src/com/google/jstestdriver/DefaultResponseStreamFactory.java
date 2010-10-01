@@ -23,7 +23,6 @@ import com.google.jstestdriver.EvalAction.EvalActionResponseStream;
 import com.google.jstestdriver.ResetAction.ResetActionResponseStream;
 import com.google.jstestdriver.output.TestResultListener;
 
-import java.io.File;
 import java.io.PrintStream;
 
 /**
@@ -35,17 +34,14 @@ public class DefaultResponseStreamFactory implements ResponseStreamFactory {
   private final Provider<TestResultListener> responsePrinterFactory;
   private final FailureAccumulator accumulator;
   private final PrintStream out;
-  private final File basePath;
 
   @Inject
   public DefaultResponseStreamFactory(Provider<TestResultListener> responsePrinterFactory,
                                       FailureAccumulator accumulator,
-                                      @Named("outputStream") PrintStream out,
-                                      @Named("basePath") File basePath) {
+                                      @Named("outputStream") PrintStream out) {
     this.responsePrinterFactory = responsePrinterFactory;
     this.accumulator = accumulator;
     this.out = out;
-    this.basePath = basePath;
   }
 
   public ResponseStream getRunTestsActionResponseStream(String browserId) {

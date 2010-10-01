@@ -36,7 +36,7 @@ public class BrowserFileCheck implements FileSetRequestHandler<BrowserFileSet> {
     if (browser.getBrowserInfo().getName().contains("Safari")
         || browser.getBrowserInfo().getName().contains("Opera")
         || browser.getBrowserInfo().getName().contains("Konqueror")) {
-      filesToUpdate.addAll(browser.getFileSet());
+      filesToUpdate.addAll(clientFiles);
       browser.resetFileSet();
     } else {
       filesToUpdate.addAll(strategy.createExpiredFileSet(clientFiles, browser.getFileSet()));

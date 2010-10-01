@@ -30,7 +30,7 @@ public class FailureCheckerAction implements Action {
 
   public RunData run(RunData runData) {
     if (accumulator.hasFailures()) {
-      throw new FailureException("Tests failed. (Useful, isn't this?)");
+      throw new FailureException("Tests failed. See log for details.");
     }
     return runData;
   }

@@ -64,7 +64,7 @@ public class CaptureHandler implements RequestHandler {
 
   public void handleIt() throws IOException {
     final Map<String, String> parameterMap = getParameterMap(request);
-    String mode = parameterMap.get(QUIRKS) != null ? QUIRKS : STRICT;
+    String mode = parameterMap.get(STRICT) != null ? STRICT : QUIRKS;
     String id = parameterMap.get(ID);
     RunnerType runnerType = parseRunnerType(parameterMap.get(RUNNER_TYPE));
     Long timeout = parseLong(parameterMap.get(TIMEOUT));

@@ -23,7 +23,6 @@ import com.google.jstestdriver.server.JettyModule;
 import com.google.jstestdriver.server.handlers.JstdHandlersModule;
 
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +44,6 @@ public class JsTestDriverServer extends Observable {
   private final FilesCache filesCache;
   private final URLTranslator urlTranslator;
   private final URLRewriter urlRewriter;
-  private Context context;
-
   private final long browserTimeout;
   private final ProxyDestination destination;
   private final Set<AuthStrategy> authStrategies;
