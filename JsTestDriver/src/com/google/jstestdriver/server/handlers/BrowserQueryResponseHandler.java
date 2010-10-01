@@ -22,7 +22,6 @@ import com.google.jstestdriver.Command;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FileResult;
 import com.google.jstestdriver.FileSource;
-import com.google.jstestdriver.ForwardingMapper;
 import com.google.jstestdriver.JsonCommand;
 import com.google.jstestdriver.LoadedFiles;
 import com.google.jstestdriver.Response;
@@ -39,8 +38,6 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -62,8 +59,6 @@ class BrowserQueryResponseHandler implements RequestHandler {
   private final HttpServletRequest request;
   private final HttpServletResponse response;
   private final CapturedBrowsers browsers;
-  private final URLTranslator urlTranslator;
-  private final ForwardingMapper forwardingMapper;
   // TODO(corysmith): factor out a streaming session class.
   private final ConcurrentMap<SlaveBrowser, List<String>> streamedResponses;
 
@@ -72,14 +67,10 @@ class BrowserQueryResponseHandler implements RequestHandler {
       HttpServletRequest request,
       HttpServletResponse response,
       CapturedBrowsers browsers,
-      URLTranslator urlTranslator,
-      ForwardingMapper forwardingMapper,
       ConcurrentMap<SlaveBrowser, List<String>> streamedResponses) {
     this.request = request;
     this.response = response;
     this.browsers = browsers;
-    this.urlTranslator = urlTranslator;
-    this.forwardingMapper = forwardingMapper;
     this.streamedResponses = streamedResponses;
   }
 
@@ -163,8 +154,6 @@ class BrowserQueryResponseHandler implements RequestHandler {
         case BROWSER_READY:
           logger.debug("Clearing fileset for {}", browser);
           browser.resetFileSet();
-          urlTranslator.clear();
-          forwardingMapper.clear();
           break;
       }
       //logger.trace("Received:\n done: {} \n res:\n {}\n", new Object[] {done, res});

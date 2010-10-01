@@ -69,14 +69,11 @@ public class ActionFactory {
   }
 
   public ServerStartupAction getServerStartupAction(Integer port,
-      CapturedBrowsers capturedBrowsers, FilesCache preloadedFilesCache,
-      URLTranslator urlTranslator, URLRewriter urlRewriter) {
+      CapturedBrowsers capturedBrowsers, FilesCache preloadedFilesCache) {
     ServerStartupAction serverStartupAction =
         new ServerStartupAction(port,
                                 capturedBrowsers,
                                 preloadedFilesCache,
-                                urlTranslator,
-                                urlRewriter,
                                 browserTimeout,
                                 destination,
                                 authStrategies,

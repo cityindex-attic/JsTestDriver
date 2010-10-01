@@ -16,14 +16,14 @@
 
 package com.google.jstestdriver;
 
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.browser.CommandLineBrowserRunner;
+
 import junit.framework.TestCase;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
-
-import com.google.common.collect.Sets;
-import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.browser.CommandLineBrowserRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;

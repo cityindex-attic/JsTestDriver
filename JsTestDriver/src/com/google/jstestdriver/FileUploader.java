@@ -248,9 +248,8 @@ public class FileUploader {
     return deps;
   }
 
-  // TODO(corysmith): remove this function once FileInfo is used exclusively.
-  // Hate static crap.
   private FileSource fileInfoToFileSource(FileInfo info) {
+    logger.debug("Schemes: {}", schemes);
     for (FileInfoScheme scheme : schemes) {
       if (scheme.matches(info.getFilePath())) {
         return new FileSource(info.getFilePath(), info.getTimestamp());

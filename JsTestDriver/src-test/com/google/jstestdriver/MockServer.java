@@ -16,7 +16,6 @@
 package com.google.jstestdriver;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 import java.util.HashMap;

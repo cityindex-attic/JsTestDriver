@@ -15,16 +15,15 @@
  */
 package com.google.jstestdriver;
 
-import java.util.List;
-import java.util.Set;
-
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.output.XmlPrinter;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Provides a sequence of actions from a large number of arguments.
@@ -46,8 +45,6 @@ public class DefaultActionListProvider implements ActionListProvider {
   private final Set<FileInfo> fileSet;
   private final String testOutput;
   private final ResponseStreamFactory responseStreamFactory;
-  private final Provider<URLTranslator> urlTranslatorProvider;
-  private final Provider<URLRewriter> urlRewriterProvider;
   private final FailureAccumulator accumulator;
   private final Set<ActionListProcessor> processors;
   private final XmlPrinter xmlPrinter;
@@ -69,8 +66,6 @@ public class DefaultActionListProvider implements ActionListProvider {
       @Named("testOutput") String testOutput,
       ResponseStreamFactory responseStreamFactory,
       BrowserActionExecutorAction browserActionsRunner,
-      Provider<URLTranslator> urlTranslatorProvider,
-      Provider<URLRewriter> urlRewriterProvider,
       FailureAccumulator accumulator,
       Set<ActionListProcessor> processors,
       XmlPrinter xmlPrinter) {
@@ -86,8 +81,6 @@ public class DefaultActionListProvider implements ActionListProvider {
     this.testOutput = testOutput;
     this.responseStreamFactory = responseStreamFactory;
     this.browserActionsRunner = browserActionsRunner;
-    this.urlTranslatorProvider = urlTranslatorProvider;
-    this.urlRewriterProvider = urlRewriterProvider;
     this.accumulator = accumulator;
     this.processors = processors;
     this.xmlPrinter = xmlPrinter;
@@ -100,8 +93,6 @@ public class DefaultActionListProvider implements ActionListProvider {
                                   fileLoader,
                                   responseStreamFactory,
                                   browserActionsRunner,
-                                  urlTranslatorProvider,
-                                  urlRewriterProvider,
                                   accumulator);
     builder.usingFiles(fileSet, preloadFiles)
            .addTests(tests)

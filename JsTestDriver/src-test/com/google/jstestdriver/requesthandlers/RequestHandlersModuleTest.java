@@ -17,10 +17,12 @@ import java.util.Map;
 public class RequestHandlersModuleTest extends TestCase {
 
   private static class HandlerOne implements RequestHandler {
+    @SuppressWarnings("unused")
     public void handleIt() throws IOException {}
   }
 
   private static class HandlerTwo implements RequestHandler {
+    @SuppressWarnings("unused")
     public void handleIt() throws IOException {}
   }
 

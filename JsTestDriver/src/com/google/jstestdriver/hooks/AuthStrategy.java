@@ -7,7 +7,7 @@ import javax.servlet.http.Cookie;
 import java.util.List;
 
 /**
- * A strategy for supplying an {@link AuthServlet} with {@link Cookie}s.
+ * A strategy for supplying an {@link com.google.jstestdriver.server.handlers.AuthHandler} with {@link Cookie}s.
  *
  * @author rdionne@google.com (Robert Dionne)
  */
@@ -18,7 +18,7 @@ public interface AuthStrategy {
    * tests that send network requests
    *
    * TODO(rdionne): Add an AuthInput class that {@link AuthStrategy} can accept
-   * from {@link AuthServlet} for providing nuanced {@link Cookie}s.
+   * from {@link com.google.jstestdriver.server.handlers.AuthHandler} for providing nuanced {@link Cookie}s.
    */
   List<Cookie> getCookies();
 }

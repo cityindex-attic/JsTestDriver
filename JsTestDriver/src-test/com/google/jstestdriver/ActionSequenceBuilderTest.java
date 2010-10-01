@@ -15,20 +15,19 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.browser.CommandLineBrowserRunner;
+import com.google.jstestdriver.hooks.AuthStrategy;
+import com.google.jstestdriver.hooks.TestsPreProcessor;
+
+import junit.framework.TestCase;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import junit.framework.TestCase;
-
-import com.google.common.collect.Sets;
-import com.google.inject.util.Providers;
-import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.browser.CommandLineBrowserRunner;
-import com.google.jstestdriver.hooks.AuthStrategy;
-import com.google.jstestdriver.hooks.TestsPreProcessor;
 
 public class ActionSequenceBuilderTest extends TestCase {
 
@@ -44,7 +43,6 @@ public class ActionSequenceBuilderTest extends TestCase {
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(actionFactory, null, null,
             new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
-            Providers.<URLTranslator> of(null), Providers.<URLRewriter> of(null),
             new FailureAccumulator());
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
@@ -66,8 +64,6 @@ public class ActionSequenceBuilderTest extends TestCase {
             Collections.<TestsPreProcessor> emptySet(), SlaveBrowser.TIMEOUT,
             Collections.<AuthStrategy>emptySet(), false, null),
             null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
-            Providers.<URLTranslator> of(null),
-            Providers.<URLRewriter> of(null),
         new FailureAccumulator());
     Set<BrowserRunner> browsers = browsers();
 
@@ -93,8 +89,6 @@ public class ActionSequenceBuilderTest extends TestCase {
                 Collections.<AuthStrategy>emptySet(), false, null),
             null, null, new BrowserActionExecutorAction(
                 null, null, null, null, null, 0, null, null),
-                Providers.<URLTranslator> of(null),
-                Providers.<URLRewriter> of(null),
             new FailureAccumulator());
 
     List<Action> actions = builder.addTests(tests).withLocalServerPort(999)

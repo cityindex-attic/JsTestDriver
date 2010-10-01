@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
  *
  */
 @ImplementedBy(DefaultURLTranslator.class)
+@Deprecated
 public interface URLTranslator {
 
   public void translate(String url) throws MalformedURLException; 

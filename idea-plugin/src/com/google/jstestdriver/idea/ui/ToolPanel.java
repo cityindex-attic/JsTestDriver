@@ -100,7 +100,7 @@ public class ToolPanel extends JPanel implements Observer {
       browsers.addObserver(capturedBrowsersPanel);
       browsers.addObserver(statusBar);
       serverStartupAction = new ServerStartupAction(serverPort, browsers, cache,
-          new DefaultURLTranslator(), new DefaultURLRewriter(), SlaveBrowser.TIMEOUT, null, Collections.<AuthStrategy>emptySet());
+          SlaveBrowser.TIMEOUT, null, Collections.<AuthStrategy>emptySet(), false, null);
       serverStartupAction.addObservers(Arrays.<Observer>asList(statusBar, ToolPanel.this));
       serverStartupAction.run(null);
       final String serverUrl = format("http://{0}:{1,number,###}/capture", InfoPanel.getHostName(), serverPort);

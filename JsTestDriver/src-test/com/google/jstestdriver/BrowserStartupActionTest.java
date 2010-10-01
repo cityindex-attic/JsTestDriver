@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.browser.BrowserRunner;
 
 import junit.framework.TestCase;
 
-import com.google.common.collect.Sets;
-import com.google.jstestdriver.browser.BrowserRunner;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author corysmith@google.com (Cory Smith)

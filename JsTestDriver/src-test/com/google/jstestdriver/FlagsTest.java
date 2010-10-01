@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.browser.CommandLineBrowserRunner;
+
 import junit.framework.TestCase;
 
 import org.kohsuke.args4j.CmdLineException;
-
-import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.browser.CommandLineBrowserRunner;
 
 import java.util.List;
 import java.util.Set;

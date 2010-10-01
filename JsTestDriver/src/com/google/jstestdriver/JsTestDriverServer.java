@@ -42,8 +42,6 @@ public class JsTestDriverServer extends Observable {
   private final int port;
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache filesCache;
-  private final URLTranslator urlTranslator;
-  private final URLRewriter urlRewriter;
   private final long browserTimeout;
   private final ProxyDestination destination;
   private final Set<AuthStrategy> authStrategies;
@@ -53,16 +51,12 @@ public class JsTestDriverServer extends Observable {
   public JsTestDriverServer(int port,
                             CapturedBrowsers capturedBrowsers,
                             FilesCache preloadedFilesCache,
-                            URLTranslator urlTranslator,
-                            URLRewriter urlRewriter,
                             long browserTimeout,
                             ProxyDestination destination,
                             Set<AuthStrategy> authStrategies) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = preloadedFilesCache;
-    this.urlTranslator = urlTranslator;
-    this.urlRewriter = urlRewriter;
     this.browserTimeout = browserTimeout;
     this.destination = destination;
     this.authStrategies = authStrategies;
@@ -70,14 +64,11 @@ public class JsTestDriverServer extends Observable {
   }
 
   private void initServer() {
-    ForwardingMapper forwardingMapper = new ForwardingMapper();
     // TODO(corysmith): replace this with Guice injection
-    
     server = Guice.createInjector(
         new JettyModule(port),
         new JstdHandlersModule(
-            capturedBrowsers, filesCache, forwardingMapper, browserTimeout,
-            urlTranslator, urlRewriter, authStrategies, destination))
+            capturedBrowsers, filesCache, browserTimeout, authStrategies, destination))
                 .getInstance(Server.class);
 
     // TODO(rdionne): Remove this sub-injector and all 'new' statements in this file.

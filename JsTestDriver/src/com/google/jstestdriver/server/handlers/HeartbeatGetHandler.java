@@ -49,7 +49,7 @@ class HeartbeatGetHandler implements RequestHandler {
       String id = ids[0];
       SlaveBrowser browser = capturedBrowsers.getBrowser(id);
       if (browser != null) {
-        LOGGER.debug("heartbeat " + browser);
+        LOGGER.debug("requesting " + browser);
         if (!browser.isAlive()) {
           capturedBrowsers.removeSlave(id);
           writer.write("DEAD:" + gson.toJson(browser.getBrowserInfo()));

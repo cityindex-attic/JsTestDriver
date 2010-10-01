@@ -15,16 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import junit.framework.TestCase;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -34,6 +24,16 @@ import com.google.jstestdriver.browser.BrowserFileSet;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
+
+import junit.framework.TestCase;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

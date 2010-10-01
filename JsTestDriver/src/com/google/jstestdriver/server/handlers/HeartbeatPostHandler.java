@@ -8,6 +8,9 @@ import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.annotations.ResponseWriter;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
@@ -18,6 +21,9 @@ import java.util.Map;
  * @author rdionne@google.com (Robert Dionne)
  */
 class HeartbeatPostHandler implements RequestHandler {
+
+  private static final Logger logger = LoggerFactory.getLogger(
+      HeartbeatPostHandler.class);
 
   private final CapturedBrowsers capturedBrowsers;
   private final Map<String, String[]> parameters;
@@ -41,6 +47,7 @@ class HeartbeatPostHandler implements RequestHandler {
 
       if (browser != null) {
         browser.heartBeat();
+        logger.trace("browser heartbeat {}", browser);
         if (browser.getCommandRunning() == null) {
           writer.write("Waiting...");
         } else {

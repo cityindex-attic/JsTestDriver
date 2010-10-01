@@ -77,10 +77,6 @@ public class JsTestDriverModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    Multibinder.newSetBinder(binder(), AuthStrategy.class);
-    Multibinder.newSetBinder(binder(), FileInfoScheme.class)
-        .addBinding().to(HttpFileInfoScheme.class);
-
     bind(PrintStream.class)
          .annotatedWith(Names.named("outputStream")).toInstance(outputStream);
     bind(String.class)

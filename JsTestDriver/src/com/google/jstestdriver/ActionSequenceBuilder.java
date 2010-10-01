@@ -35,8 +35,6 @@ public class ActionSequenceBuilder {
 
   private final ActionFactory actionFactory;
   private final FileLoader fileLoader;
-  private final Provider<URLTranslator> urlTranslatorProvider;
-  private final Provider<URLRewriter> urlRewriterProvider;
   private final FailureAccumulator accumulator;
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
   private HashMap<String, FileInfo> files = new LinkedHashMap<String, FileInfo>();
@@ -59,14 +57,10 @@ public class ActionSequenceBuilder {
                                FileLoader fileLoader,
                                ResponseStreamFactory responseStreamFactory,
                                BrowserActionExecutorAction browserActionsRunner,
-                               Provider<URLTranslator> urlTranslatorProvider,
-                               Provider<URLRewriter> urlRewriterProvider,
                                FailureAccumulator accumulator) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.browserActionsRunner = browserActionsRunner;
-    this.urlTranslatorProvider = urlTranslatorProvider;
-    this.urlRewriterProvider = urlRewriterProvider;
     this.accumulator = accumulator;
   }
 
@@ -81,8 +75,8 @@ public class ActionSequenceBuilder {
       }
     }
     ServerStartupAction serverStartupAction =
-        actionFactory.getServerStartupAction(localServerPort, capturedBrowsers, new FilesCache(
-            files), urlTranslatorProvider.get(), urlRewriterProvider.get());
+        actionFactory.getServerStartupAction(localServerPort, capturedBrowsers,
+            new FilesCache(files));
     actions.add(0, serverStartupAction);
     if (!leaveServerRunning) {
       actions.add(new ServerShutdownAction(serverStartupAction));

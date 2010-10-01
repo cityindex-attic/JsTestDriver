@@ -37,6 +37,7 @@ public class RequestDispatcherTest extends TestCase {
   
   private RequestDispatcher dispatcher;
 
+  @Override
   protected void setUp() throws Exception {
     control = EasyMock.createControl();
 

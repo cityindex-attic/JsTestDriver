@@ -15,19 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import junit.framework.TestCase;
-
 import com.google.gson.Gson;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
@@ -38,6 +25,19 @@ import com.google.jstestdriver.output.MultiTestResultListener;
 import com.google.jstestdriver.output.TestResultListener;
 import com.google.jstestdriver.output.XmlPrinter;
 import com.google.jstestdriver.output.XmlPrinterImpl;
+
+import junit.framework.TestCase;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Tests for {@link com.google.jstestdriver.IDEPluginActionBuilder}

@@ -61,10 +61,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
   
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache filesCache;
-  private final ForwardingMapper forwardingMapper;
   private final long browserTimeout;
-  private final URLTranslator urlTranslator;
-  private final URLRewriter urlRewriter;
   private final Set<AuthStrategy> authStrategies;
   private final ProxyDestination destination;
 
@@ -75,18 +72,12 @@ public class JstdHandlersModule extends RequestHandlersModule {
   public JstdHandlersModule(
       CapturedBrowsers capturedBrowsers,
       FilesCache filesCache,
-      ForwardingMapper forwardingMapper,
       long browserTimeout,
-      URLTranslator urlTranslator,
-      URLRewriter urlRewriter,
       Set<AuthStrategy> authStrategies,
       ProxyDestination destination) {
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = filesCache;
-    this.forwardingMapper = forwardingMapper;
     this.browserTimeout = browserTimeout;
-    this.urlTranslator = urlTranslator;
-    this.urlRewriter = urlRewriter;
     this.authStrategies = authStrategies;
     this.destination = destination;
   }
@@ -133,7 +124,6 @@ public class JstdHandlersModule extends RequestHandlersModule {
     // Miscellaneous bindings
     bind(CapturedBrowsers.class).toInstance(capturedBrowsers);
     bind(FilesCache.class).toInstance(filesCache);
-    bind(ForwardingMapper.class).toInstance(forwardingMapper);
     bind(new Key<ConcurrentMap<SlaveBrowser, List<String>>>() {})
         .toInstance(new ConcurrentHashMap<SlaveBrowser, List<String>>());
     bind(new Key<ConcurrentMap<SlaveBrowser, Thread>>() {})
@@ -142,8 +132,6 @@ public class JstdHandlersModule extends RequestHandlersModule {
     bind(new Key<Set<FileInfo>>() {}).toInstance(new HashSet<FileInfo>());
     bind(ServletConfig.class).annotatedWith(ProxyConfig.class).to(ProxyServletConfig.class);
     bind(StandaloneRunnerFilesFilter.class).to(StandaloneRunnerFilesFilterImpl.class);
-    bind(URLTranslator.class).toInstance(urlTranslator);
-    bind(URLRewriter.class).toInstance(urlRewriter);
   }
 
   @Provides @Singleton List<FileSetRequestHandler<?>> provideFileSetRequestHandlers(
@@ -171,7 +159,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
   @Provides @Singleton
   ForwardingServlet provideForwardingServlet(@Port Integer port, ServletContext context)
       throws ServletException {
-    ForwardingServlet servlet = new ForwardingServlet(forwardingMapper, "localhost", port);
+    ForwardingServlet servlet = new ForwardingServlet("localhost", port);
 
     // Need to init the ForwardingServlet because it is a ProxyServlet.Transparent, a class
     // that relies upon ServletContext#log().

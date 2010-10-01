@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 import com.google.jstestdriver.model.RunData;

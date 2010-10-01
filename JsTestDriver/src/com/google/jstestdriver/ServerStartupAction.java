@@ -36,8 +36,6 @@ public class ServerStartupAction implements ObservableAction {
   private final int port;
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache preloadedFilesCache;
-  private final URLTranslator urlTranslator;
-  private final URLRewriter urlRewriter;
   private JsTestDriverServer server;
   private List<Observer> observerList = new LinkedList<Observer>();
   private final long browserTimeout;
@@ -45,42 +43,24 @@ public class ServerStartupAction implements ObservableAction {
   private final Set<AuthStrategy> authStrategies;
   private final boolean preloadFiles;
   private final FileLoader fileLoader;
-  
+
   /**
-   * @deprecated In favor of using the constructor that defines browser timeout.
+   * Exists for backwards compatibility.
+   * @deprecated Use other constructor.
    */
   @Deprecated
-  public ServerStartupAction(int port,
-                             CapturedBrowsers capturedBrowsers,
-                             FilesCache preloadedFilesCache,
-                             URLTranslator urlTranslator,
-                             URLRewriter urlRewriter) {
-    this(port,
-         capturedBrowsers,
-         preloadedFilesCache,
-         urlTranslator,
-         urlRewriter,
-         SlaveBrowser.TIMEOUT,
-         null,
-         Collections.<AuthStrategy>emptySet(),
-         false,
-         null);
+  public ServerStartupAction(int port, CapturedBrowsers capturedBrowsers,
+      FilesCache preloadedFilesCache, URLTranslator urlTranslator, URLRewriter urlRewriter) {
+    this(port, capturedBrowsers, preloadedFilesCache, SlaveBrowser.TIMEOUT, null, Collections
+        .<AuthStrategy>emptySet(), false, null);
   }
 
-  public ServerStartupAction(int port,
-                             CapturedBrowsers capturedBrowsers,
-                             FilesCache preloadedFilesCache,
-                             URLTranslator urlTranslator,
-                             URLRewriter urlRewriter,
-                             long browserTimeout,
-                             ProxyDestination destination,
-                             Set<AuthStrategy> authStrategies,
-                             boolean preloadFiles, FileLoader fileLoader) {
+  public ServerStartupAction(int port, CapturedBrowsers capturedBrowsers,
+      FilesCache preloadedFilesCache, long browserTimeout, ProxyDestination destination,
+      Set<AuthStrategy> authStrategies, boolean preloadFiles, FileLoader fileLoader) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.preloadedFilesCache = preloadedFilesCache;
-    this.urlTranslator = urlTranslator;
-    this.urlRewriter = urlRewriter;
     this.browserTimeout = browserTimeout;
     this.destination = destination;
     this.authStrategies = authStrategies;
@@ -96,14 +76,13 @@ public class ServerStartupAction implements ObservableAction {
     logger.info("Starting server...");
 
     if (preloadFiles) {
-      for (FileInfo fileInfo :
-          fileLoader.loadFiles(runData.getFileSet(), false)) {
+      for (FileInfo fileInfo : fileLoader.loadFiles(runData.getFileSet(), false)) {
         preloadedFilesCache.addFile(fileInfo);
       }
     }
     server =
-        new JsTestDriverServer(port, capturedBrowsers, preloadedFilesCache, urlTranslator,
-            urlRewriter, browserTimeout, destination, authStrategies);
+        new JsTestDriverServer(port, capturedBrowsers, preloadedFilesCache, browserTimeout,
+            destination, authStrategies);
     for (Observer o : observerList) {
       server.addObserver(o);
     }
