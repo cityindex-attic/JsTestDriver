@@ -76,7 +76,8 @@ public class Initializer {
     // Then, flags can have a method to retrieve them.
     Flags flags = flagsParser.parseArgument(args);
     final List<Module> modules = Lists.newLinkedList();
-    Configuration resolvedConfiguration = configuration.resolvePaths(pathResolver);
+    Configuration resolvedConfiguration =
+        configuration.resolvePaths(pathResolver, flags);
 
     modules.addAll(pluginLoader.load(resolvedConfiguration.getPlugins()));
 
@@ -90,8 +91,10 @@ public class Initializer {
     modules.add(
         new JsTestDriverModule(flags,
             resolvedConfiguration.getFilesList(),
-            resolvedConfiguration.createServerAddress(flags.getServer(),
-                flags.getPort()),
+            resolvedConfiguration.getServer(
+                flags.getServer(),
+                flags.getPort(),
+                flags.getServerHandlerPrefix()),
             outputStream,
             basePath,
             resolvedConfiguration.getTestSuiteTimeout(),

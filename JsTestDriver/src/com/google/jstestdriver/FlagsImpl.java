@@ -26,6 +26,9 @@ import org.kohsuke.args4j.Option;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.browser.CommandLineBrowserRunner;
+import com.google.jstestdriver.model.ConcretePathPrefix;
+import com.google.jstestdriver.model.NullPathPrefix;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.runner.RunnerMode;
 
 /**
@@ -51,6 +54,7 @@ public class FlagsImpl implements Flags {
   private List<String> arguments = new ArrayList<String>();
   private RunnerMode runnerMode = RunnerMode.QUIET;
   private HashSet<String> requiredBrowsers;
+  private HandlerPathPrefix serverHandlerPrefix = new NullPathPrefix();
 
   @Option(name="--port", usage="The port on which to start the JsTestDriver server")
   public void setPort(Integer port) {
@@ -191,5 +195,16 @@ public class FlagsImpl implements Flags {
   
   public Set<String> getRequiredBrowsers() {
     return requiredBrowsers;
+  }
+
+  @Option(name="--serverHandlerPrefix",
+      usage="Whether the handlers will be prefixed with jstd")
+  public void setServerHandlerPrefix(String serverHandlerPrefix) {
+    this.serverHandlerPrefix = new ConcretePathPrefix(serverHandlerPrefix.startsWith("/") ?
+        serverHandlerPrefix.substring(1) : serverHandlerPrefix);
+  }
+
+  public HandlerPathPrefix getServerHandlerPrefix() {
+    return serverHandlerPrefix;
   }
 }

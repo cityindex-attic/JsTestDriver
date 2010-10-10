@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.browser.BrowserHunter;
+import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.runner.RunnerType;
 
 /**
@@ -30,7 +31,7 @@ public class CaptureHandlerTest extends TestCase {
   public void testRedirectQuirksUrl() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     CaptureHandler handler = new CaptureHandler(
-        null, null, new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
+        null, null, new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT, new NullPathPrefix()));
 
     assertEquals("/slave/1/RemoteConsoleRunnerquirks.html", handler.service("Chrome/2.0",
         CaptureHandler.QUIRKS, null, RunnerType.CLIENT_CONTROLLED, null));
@@ -39,7 +40,7 @@ public class CaptureHandlerTest extends TestCase {
   public void testRedirectStrictUrl() throws Exception {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     CaptureHandler handler = new CaptureHandler(
-        null, null, new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
+        null, null, new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT, new NullPathPrefix()));
 
     assertEquals("/slave/1/RemoteConsoleRunnerstrict.html", handler.service("Chrome/2.0",
         CaptureHandler.STRICT, null, RunnerType.CLIENT_CONTROLLED, null));
@@ -49,7 +50,7 @@ public class CaptureHandlerTest extends TestCase {
     String id = "5";
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     CaptureHandler handler = new CaptureHandler(
-        null, null, new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT));
+        null, null, new BrowserHunter(capturedBrowsers, SlaveBrowser.TIMEOUT, new NullPathPrefix()));
 
     assertEquals("/slave/" + id + "/RemoteConsoleRunnerstrict.html", handler.service("Chrome/2.0",
         CaptureHandler.STRICT, id, RunnerType.CLIENT_CONTROLLED, null));

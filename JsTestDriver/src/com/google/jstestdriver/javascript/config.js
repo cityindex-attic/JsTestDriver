@@ -105,7 +105,8 @@ jstestdriver.config = (function(module) {
                                    now,
                                    location) {
     var id = parseInt(jstestdriver.extractId(location));
-    var url = jstestdriver.SERVER_URL + id;
+    var url =jstestdriver.createPath(top.location.toString(),
+                                     jstestdriver.SERVER_URL + id);
 
     var streamingService = new jstestdriver.StreamingService(
             url,
@@ -180,7 +181,8 @@ jstestdriver.config = (function(module) {
           now,
           location) {
     var id = parseInt(jstestdriver.extractId(location));
-    var url = jstestdriver.SERVER_URL + id;
+    var url =jstestdriver.createPath(top.location.toString(),
+        jstestdriver.SERVER_URL + id);
     
     var streamingService = new jstestdriver.StreamingService(
             url,

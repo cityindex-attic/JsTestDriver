@@ -28,6 +28,7 @@ import com.google.inject.Provider;
 import com.google.jstestdriver.browser.BrowserFileSet;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.JstdTestCase;
+import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.util.NullStopWatch;
 
 /**
@@ -112,7 +113,8 @@ public class JsTestDriverClientTest extends TestCase {
             null,
             null,
             stopWatch,
-            ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
+            ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()),
+            new NullPathPrefix());
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
         server, false, null);
     FakeResponseStream stream = new FakeResponseStream();
@@ -148,7 +150,10 @@ public class JsTestDriverClientTest extends TestCase {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
+        },
+        stopWatch,
+        ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()),
+        new NullPathPrefix());
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
         server, false, null);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
@@ -189,7 +194,7 @@ public class JsTestDriverClientTest extends TestCase {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
+        }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()), new NullPathPrefix());
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
         server, false, null);
     FakeResponseStream stream = new FakeResponseStream();
@@ -215,12 +220,19 @@ public class JsTestDriverClientTest extends TestCase {
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
     final NullStopWatch stopWatch = new NullStopWatch();
+    DefaultFileFilter filter = new DefaultFileFilter();
+    ImmutableSet<FileInfoScheme> schemes = ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme());
     CommandTaskFactory commandTaskFactory =
-        new CommandTaskFactory(new DefaultFileFilter(), new MockFileLoader(), new Provider<HeartBeatManager>() {
+        new CommandTaskFactory(filter,
+            new MockFileLoader(),
+            new Provider<HeartBeatManager>() {
           public HeartBeatManager get() {
             return new HeartBeatManagerStub();
           }
-        }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
+        },
+        stopWatch,
+        schemes,
+        new NullPathPrefix());
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
         server, false, null);
     FakeResponseStream stream = new FakeResponseStream();

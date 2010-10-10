@@ -8,6 +8,9 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Inject;
 import com.google.jstestdriver.SlaveResourceService;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
@@ -16,6 +19,7 @@ import com.google.jstestdriver.requesthandlers.RequestHandler;
  * @author rdionne@google.com (Robert Dionne)
  */
 class SlaveResourceHandler implements RequestHandler {
+  private static final Logger logger = LoggerFactory.getLogger(SlaveResourceHandler.class);
 
   private final static Pattern PATHWITHOUTID = Pattern.compile("/.*?(/.*)$");
 
@@ -37,7 +41,7 @@ class SlaveResourceHandler implements RequestHandler {
     try {
       service.serve(stripId(request.getPathInfo()), response.getOutputStream());
     } catch (IllegalArgumentException e) {
-      System.out.println(e);
+      logger.error("Could not handle request.", e);
     }
   }
 

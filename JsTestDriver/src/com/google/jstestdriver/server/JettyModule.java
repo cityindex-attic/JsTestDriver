@@ -1,4 +1,18 @@
-// Copyright 2010 Google Inc. All Rights Reserved.
+/*
+ * Copyright 2009 Google Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.google.jstestdriver.server;
 
 import javax.servlet.Servlet;
@@ -14,6 +28,7 @@ import com.google.inject.Singleton;
 import com.google.jstestdriver.ProxyHandler;
 import com.google.jstestdriver.annotations.MaxFormContentSize;
 import com.google.jstestdriver.annotations.Port;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 
 /**
  * Sippin' on Jetty and Guice.
@@ -23,9 +38,11 @@ import com.google.jstestdriver.annotations.Port;
 public class JettyModule extends AbstractModule {
 
   private final int port;
+  private final HandlerPathPrefix handlerPrefix;
 
-  public JettyModule(int port) {
+  public JettyModule(int port, HandlerPathPrefix handlerPrefix) {
     this.port = port;
+    this.handlerPrefix = handlerPrefix;
   }
 
   @Override
@@ -57,22 +74,22 @@ public class JettyModule extends AbstractModule {
     context.setMaxFormContentSize(maxFormContentSize);
 
     // TODO(rdionne): Fix HttpServletRequest#getPathInfo() provided by RequestHandlerServlet.
-    context.addServlet(servletHolder, "/");
-    context.addServlet(servletHolder, "/cache");
-    context.addServlet(servletHolder, "/capture/*");
-    context.addServlet(servletHolder, "/cmd");
-    context.addServlet(servletHolder, "/favicon.ico");
-    context.addServlet(servletHolder, "/fileSet");
-    context.addServlet(servletHolder, "/forward/*");
-    context.addServlet(servletHolder, "/heartbeat");
-    context.addServlet(servletHolder, "/hello");
-    context.addServlet(servletHolder, "/jstd/auth");
-    context.addServlet(servletHolder, "/jstd/proxy/*");
-    context.addServlet(servletHolder, "/log");
-    context.addServlet(servletHolder, "/query/*");
-    context.addServlet(servletHolder, "/runner/*");
-    context.addServlet(servletHolder, "/slave/*");
-    context.addServlet(servletHolder, "/test/*");
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/cache"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/capture/*"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/cmd"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/favicon.ico"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/fileSet"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/forward/*"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/heartbeat"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/hello"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/jstd/auth"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/jstd/proxy/*"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/log"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/query/*"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/runner/*"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/slave/*"));
+    context.addServlet(servletHolder, handlerPrefix.prefixPath("/test/*"));
 
     return server;
   }

@@ -29,6 +29,7 @@ import com.google.inject.name.Named;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 
 /**
  * Produces instances of Actions, so they can have observers, and other stuff.
@@ -47,6 +48,7 @@ public class ActionFactory {
   private final Set<AuthStrategy> authStrategies;
   private final boolean preloadFiles;
   private final FileLoader fileLoader;
+  private final HandlerPathPrefix serverHandlerPrefix;
 
   @Inject
   public ActionFactory(Provider<JsTestDriverClient> clientProvider,
@@ -54,13 +56,15 @@ public class ActionFactory {
                        @Named("browserTimeout") long browserTimeout,
                        Set<AuthStrategy> authStrategies,
                        @Named("preloadFiles") boolean preloadFiles,
-                       FileLoader fileLoader) {
+                       FileLoader fileLoader,
+                       @Named("serverHandlerPrefix") HandlerPathPrefix serverHandlerPrefix) {
     this.clientProvider = clientProvider;
     this.testPreProcessors = testPreProcessors;
     this.browserTimeout = browserTimeout;
     this.authStrategies = authStrategies;
     this.preloadFiles = preloadFiles;
     this.fileLoader = fileLoader;
+    this.serverHandlerPrefix = serverHandlerPrefix;
   }
 
   @Inject(optional = true)
@@ -78,7 +82,8 @@ public class ActionFactory {
                                 destination,
                                 authStrategies,
                                 preloadFiles,
-                                fileLoader);
+                                fileLoader,
+                                serverHandlerPrefix);
 
     if (observers.containsKey(CapturedBrowsers.class)) {
       for (Observer o : observers.get(CapturedBrowsers.class)) {

@@ -27,6 +27,7 @@ import com.google.inject.Guice;
 import com.google.jstestdriver.browser.BrowserReaper;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.server.JettyModule;
 import com.google.jstestdriver.server.handlers.JstdHandlersModule;
 
@@ -48,30 +49,36 @@ public class JsTestDriverServer extends Observable {
 
   private Timer timer;
 
+  private final HandlerPathPrefix handlerPrefix;
+
   public JsTestDriverServer(int port,
                             CapturedBrowsers capturedBrowsers,
                             FilesCache preloadedFilesCache,
                             long browserTimeout,
                             ProxyDestination destination,
-                            Set<AuthStrategy> authStrategies) {
+                            Set<AuthStrategy> authStrategies,
+                            HandlerPathPrefix handlerPrefix) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = preloadedFilesCache;
     this.browserTimeout = browserTimeout;
     this.destination = destination;
     this.authStrategies = authStrategies;
+    this.handlerPrefix = handlerPrefix;
     initServer();
   }
 
   private void initServer() {
-    // TODO(corysmith): replace this with Guice injection
+    // TODO(corysmith): move this to the normal guice injection scope.
     server = Guice.createInjector(
-        new JettyModule(port),
+        new JettyModule(port, handlerPrefix),
         new JstdHandlersModule(
-            capturedBrowsers, filesCache, browserTimeout, authStrategies, destination))
-                .getInstance(Server.class);
-
-    // TODO(rdionne): Remove this sub-injector and all 'new' statements in this file.
+            capturedBrowsers,
+            filesCache,
+            browserTimeout,
+            authStrategies,
+            destination,
+            handlerPrefix)).getInstance(Server.class);
   }
 
   public void start() {

@@ -19,8 +19,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 
 /**
  * A configuration were all the paths have been resolved.
@@ -47,17 +49,9 @@ public class ResolvedConfiguration implements Configuration {
     this.tests = tests;
   }
 
-  public String createServerAddress(String flagValue, int port) {
-    if (flagValue != null && flagValue.length() != 0) {
-      return flagValue;
-    }
-    if (server.length() > 0) {
-      return server;
-    }
-    if (port == -1) {
-      throw new RuntimeException("Oh Snap! No server defined!");
-    }
-    return String.format("http://%s:%d", "127.0.0.1", port);
+  // TODO(corysmith): fix this interface to not require extra information.
+  public String getServer(String flagValue, int port, HandlerPathPrefix handlerPrefix) {
+    return server;
   }
 
   public Set<FileInfo> getFilesList() {
@@ -68,7 +62,7 @@ public class ResolvedConfiguration implements Configuration {
     return plugins;
   }
 
-  public Configuration resolvePaths(PathResolver resolver) {
+  public Configuration resolvePaths(PathResolver resolver, Flags flags) {
     return this;
   }
 

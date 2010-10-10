@@ -39,13 +39,15 @@
 
     function redirectToPath(path){
       var location = top.location;
-      top.location = location.protocol + "//" + location.host + path;
+      top.location = jstestdriver.createPath(location.toString(), path);
     }
 
     var id = jstestdriver.extractId(window.location.toString());
+    var heartbeatPath = jstestdriver.createPath(window.location.toString(),
+        jstestdriver.HEARTBEAT_URL);
     
     return new jstestdriver.Heartbeat(id,
-                                      jstestdriver.HEARTBEAT_URL,
+                                      heartbeatPath,
                                       "quirks",
                                       sendRequest,
                                       2000,

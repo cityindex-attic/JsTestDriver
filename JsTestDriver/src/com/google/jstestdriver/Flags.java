@@ -20,6 +20,7 @@ import java.util.Set;
 
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.guice.GuiceBinding;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -66,6 +67,9 @@ public interface Flags {
   
   @GuiceBinding(name="browserTimeout")
   public long getBrowserTimeout();
+  
+  @GuiceBinding(name="serverHandlerPrefix")
+  public HandlerPathPrefix getServerHandlerPrefix();
   
   public boolean getDisplayHelp();
 }

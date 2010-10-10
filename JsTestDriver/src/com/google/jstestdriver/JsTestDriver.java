@@ -88,7 +88,7 @@ public class JsTestDriver {
       System.out.println(e.getMessage());
       System.exit(1);
     } catch (FailureException e) {
-      System.out.println("Tests failed.");
+      System.out.println("Tests failed: " + e.getMessage());
       System.exit(1);
     } catch (Exception e) {
       logger.debug("Error {}", e);

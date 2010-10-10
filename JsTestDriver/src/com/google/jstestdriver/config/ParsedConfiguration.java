@@ -22,8 +22,10 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 
 /**
  * Represents a parsed configuration.
@@ -58,27 +60,35 @@ public class ParsedConfiguration implements Configuration {
     return plugins;
   }
 
-  public String createServerAddress(String flagValue, int port) {
+  public String getServer(String flagValue, int port, HandlerPathPrefix handlerPrefix) {
     if (flagValue != null && flagValue.length() != 0) {
       return flagValue;
     }
     if (server.length() > 0) {
-      return server;
+      return handlerPrefix.suffixServer(server);
     }
     if (port == -1) {
       throw new RuntimeException("Oh Snap! No server defined!");
     }
-    return String.format("http://%s:%d", "127.0.0.1", port);
+
+    return handlerPrefix.suffixServer(String.format("http://%s:%d", "127.0.0.1", port));
   }
 
-  public Configuration resolvePaths(PathResolver resolver) {
+  public Configuration resolvePaths(PathResolver resolver, Flags flags) {
     Set<FileInfo> resolvedFiles = resolver.resolve(filesList);
     Set<FileInfo> testFiles = resolver.resolve(Sets.newLinkedHashSet(tests));
     Set<FileInfo> resolvedExcluded = resolver.resolve(excludedFiles);
     resolvedFiles.removeAll(resolvedExcluded);
     testFiles.removeAll(resolvedExcluded);
-    return new ResolvedConfiguration(resolvedFiles, resolver.resolve(plugins), server,
-        testTimeout, Lists.newArrayList(testFiles));
+    return new ResolvedConfiguration(
+        resolvedFiles,
+        resolver.resolve(plugins),
+        getServer(
+            flags.getServer(),
+            flags.getPort(),
+            flags.getServerHandlerPrefix()),
+        testTimeout,
+        Lists.newArrayList(testFiles));
   }
 
   public long getTestSuiteTimeout() {

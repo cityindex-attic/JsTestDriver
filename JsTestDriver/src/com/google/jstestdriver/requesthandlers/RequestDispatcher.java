@@ -51,6 +51,7 @@ class RequestDispatcher {
       HttpMethod method = HttpMethod.valueOf(request.getMethod());
       String uri = request.getRequestURI();
       boolean pathMatched = false;
+      
       for (RequestMatcher matcher : matchers) {
         if (matcher.uriMatches(uri)) {
           pathMatched = true;

@@ -41,17 +41,17 @@ import com.google.jstestdriver.output.TestResultListener;
  */
 public class TestResultPrintingModule extends AbstractModule {
 
-  // TODO(corysmith): Figure out if this is the right approach.
   public static class TestResultPrintingInitializer implements PluginInitializer {
     public Module initializeModule(Flags flags, Configuration config) {
-      return new TestResultPrintingModule(flags.getTestOutput());
+      return new TestResultPrintingModule();
     }
   }
 
-  private final String testOutput;
-
+  @Deprecated
   public TestResultPrintingModule(String testOutput) {
-    this.testOutput = testOutput;
+  }
+
+  public TestResultPrintingModule() {
   }
 
   @Override
@@ -59,9 +59,7 @@ public class TestResultPrintingModule extends AbstractModule {
     Multibinder<TestResultListener> testResultListeners =
         newSetBinder(binder(), TestResultListener.class);
 
-    if (testOutput.length() > 0) {
-      testResultListeners.addBinding().to(TestResultHolder.class).in(Singleton.class);
-    }
+    testResultListeners.addBinding().to(TestResultHolder.class);
     testResultListeners.addBinding().to(DefaultListener.class).in(Singleton.class);
 
     bind(TestResultListener.class).to(MultiTestResultListener.class);

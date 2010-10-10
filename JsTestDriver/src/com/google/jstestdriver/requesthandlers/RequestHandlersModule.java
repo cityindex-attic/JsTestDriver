@@ -12,6 +12,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -33,6 +36,7 @@ import com.google.jstestdriver.annotations.ResponseWriter;
  * @author rdionne@google.com (Robert Dionne)
  */
 public abstract class RequestHandlersModule extends AbstractModule {
+  private static final Logger logger = LoggerFactory.getLogger(RequestHandlersModule.class);
   
   private final ImmutableList.Builder<RequestMatcher> matchers;
   private final RequestScope requestScope;
@@ -100,6 +104,7 @@ public abstract class RequestHandlersModule extends AbstractModule {
   }
 
   protected void serve(HttpMethod method, String pattern, Class<? extends RequestHandler> withHttpHandler) {
+    logger.debug("Registering {} on {} to {}", new Object[]{method, pattern, withHttpHandler});
     RequestMatcher matcher = new RequestMatcher(method, pattern);
     matchers.add(matcher);
     MapBinder.newMapBinder(binder(), RequestMatcher.class, RequestHandler.class)

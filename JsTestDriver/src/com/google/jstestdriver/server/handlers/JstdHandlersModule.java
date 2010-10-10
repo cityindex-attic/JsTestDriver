@@ -1,4 +1,18 @@
-// Copyright 2010 Google Inc. All Rights Reserved.
+/*
+ * Copyright 2010 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.google.jstestdriver.server.handlers;
 
 import static com.google.jstestdriver.requesthandlers.HttpMethod.GET;
@@ -25,21 +39,19 @@ import com.google.inject.Singleton;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
-import com.google.jstestdriver.ForwardingMapper;
 import com.google.jstestdriver.ForwardingServlet;
 import com.google.jstestdriver.ProxyHandler;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
 import com.google.jstestdriver.StandaloneRunnerFilesFilter;
 import com.google.jstestdriver.StandaloneRunnerFilesFilterImpl;
-import com.google.jstestdriver.URLRewriter;
-import com.google.jstestdriver.URLTranslator;
 import com.google.jstestdriver.annotations.BaseResourceLocation;
 import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.annotations.Port;
 import com.google.jstestdriver.annotations.ProxyConfig;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.requesthandlers.HttpMethod;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 import com.google.jstestdriver.requesthandlers.RequestHandlersModule;
@@ -64,57 +76,61 @@ public class JstdHandlersModule extends RequestHandlersModule {
   private final long browserTimeout;
   private final Set<AuthStrategy> authStrategies;
   private final ProxyDestination destination;
+  private final HandlerPathPrefix handlerPrefix;
 
   /**
    * TODO(rdionne): Refactor so we don't depend upon manually instantiated
    * classes from other object graphs. 
+   * @param handlerPrefix TODO
    */
   public JstdHandlersModule(
       CapturedBrowsers capturedBrowsers,
       FilesCache filesCache,
       long browserTimeout,
       Set<AuthStrategy> authStrategies,
-      ProxyDestination destination) {
+      ProxyDestination destination,
+      HandlerPathPrefix handlerPrefix) {
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = filesCache;
     this.browserTimeout = browserTimeout;
     this.authStrategies = authStrategies;
     this.destination = destination;
+    this.handlerPrefix = handlerPrefix;
   }
-
+  
   @Override
   protected void configureHandlers() {
     // Handler bindings in alphabetical order
-    serve( GET, "/", HomeHandler.class);
-    serve(POST, "/cache", FileCacheHandler.class);
-    serve( GET, "/capture", CaptureHandler.class);
-    serve( GET, "/capture/*", CaptureHandler.class);
-    serve( GET, "/cmd", CommandGetHandler.class);
-    serve(POST, "/cmd", CommandPostHandler.class);
-    serve( GET, "/favicon.ico", FaviconHandler.class);
-    serve( GET, "/fileSet", FileSetGetHandler.class);
-    serve(POST, "/fileSet", FileSetPostHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/"), HomeHandler.class);
+    serve(POST, handlerPrefix.prefixPath("/cache"), FileCacheHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/capture"), CaptureHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/capture/*"), CaptureHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/cmd"), CommandGetHandler.class);
+    serve(POST, handlerPrefix.prefixPath("/cmd"), CommandPostHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/favicon.ico"), FaviconHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/fileSet"), FileSetGetHandler.class);
+    serve(POST, handlerPrefix.prefixPath("/fileSet"), FileSetPostHandler.class);
 
     for (HttpMethod method : HttpMethod.values()) {
-      serve(method, "/forward/*", ForwardingHandler.class);
+      serve(method, handlerPrefix.prefixPath("/forward/*"), ForwardingHandler.class);
     }
     
-    serve( GET, "/heartbeat", HeartbeatGetHandler.class);
-    serve(POST, "/heartbeat", HeartbeatPostHandler.class);
-    serve( GET, "/jstd/auth", AuthHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/heartbeat"), HeartbeatGetHandler.class);
+    serve(POST, handlerPrefix.prefixPath("/heartbeat"), HeartbeatPostHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/auth", "jstd"), AuthHandler.class);
 
     if (destination != null) {
       for (HttpMethod method : HttpMethod.values()) {
-        serve(method, "/jstd/proxy/*", ProxyRequestHandler.class);
+        serve(method, handlerPrefix.prefixPath("/proxy/*", "jstd"), ProxyRequestHandler.class);
       }
     }
     
-    serve( GET, "/hello", HelloHandler.class);
-    serve(POST, "/log", BrowserLoggingHandler.class);
-    serve(POST, "/query/*", BrowserQueryResponseHandler.class);
-    serve( GET, "/runner/*", StandaloneRunnerHandler.class);
-    serve( GET, "/slave/*", SlaveResourceHandler.class);
-    serve( GET, "/test/*", TestResourceHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/hello"), HelloHandler.class);
+    serve(POST, handlerPrefix.prefixPath("/log"), BrowserLoggingHandler.class);
+    serve(POST, handlerPrefix.prefixPath("/query/*"), BrowserQueryResponseHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/runner/*"), StandaloneRunnerHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/slave/*"), SlaveResourceHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/test/*"), TestResourceHandler.class);
 
     // Constant bindings
     bindConstant().annotatedWith(BaseResourceLocation.class)
@@ -132,6 +148,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     bind(new Key<Set<FileInfo>>() {}).toInstance(new HashSet<FileInfo>());
     bind(ServletConfig.class).annotatedWith(ProxyConfig.class).to(ProxyServletConfig.class);
     bind(StandaloneRunnerFilesFilter.class).to(StandaloneRunnerFilesFilterImpl.class);
+    bind(HandlerPathPrefix.class).toInstance(handlerPrefix);
   }
 
   @Provides @Singleton List<FileSetRequestHandler<?>> provideFileSetRequestHandlers(

@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.ProxyDestination;
+import com.google.jstestdriver.model.NullPathPrefix;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.RunData;
 
 /**
@@ -43,6 +45,7 @@ public class ServerStartupAction implements ObservableAction {
   private final Set<AuthStrategy> authStrategies;
   private final boolean preloadFiles;
   private final FileLoader fileLoader;
+  private final HandlerPathPrefix handlerPrefix;
 
   /**
    * Exists for backwards compatibility.
@@ -52,12 +55,19 @@ public class ServerStartupAction implements ObservableAction {
   public ServerStartupAction(int port, CapturedBrowsers capturedBrowsers,
       FilesCache preloadedFilesCache, URLTranslator urlTranslator, URLRewriter urlRewriter) {
     this(port, capturedBrowsers, preloadedFilesCache, SlaveBrowser.TIMEOUT, null, Collections
-        .<AuthStrategy>emptySet(), false, null);
+        .<AuthStrategy>emptySet(), false, null, new NullPathPrefix());
   }
 
-  public ServerStartupAction(int port, CapturedBrowsers capturedBrowsers,
-      FilesCache preloadedFilesCache, long browserTimeout, ProxyDestination destination,
-      Set<AuthStrategy> authStrategies, boolean preloadFiles, FileLoader fileLoader) {
+  public ServerStartupAction(
+      int port,
+      CapturedBrowsers capturedBrowsers,
+      FilesCache preloadedFilesCache,
+      long browserTimeout,
+      ProxyDestination destination,
+      Set<AuthStrategy> authStrategies,
+      boolean preloadFiles,
+      FileLoader fileLoader,
+      HandlerPathPrefix handlerPrefix) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.preloadedFilesCache = preloadedFilesCache;
@@ -66,6 +76,7 @@ public class ServerStartupAction implements ObservableAction {
     this.authStrategies = authStrategies;
     this.preloadFiles = preloadFiles;
     this.fileLoader = fileLoader;
+    this.handlerPrefix = handlerPrefix;
   }
 
   public JsTestDriverServer getServer() {
@@ -73,16 +84,24 @@ public class ServerStartupAction implements ObservableAction {
   }
 
   public RunData run(RunData runData) {
-    logger.info("Starting server...");
+    logger.info("Starting server on {}", port);
 
     if (preloadFiles) {
+      logger.debug("Preloading files...", port);
       for (FileInfo fileInfo : fileLoader.loadFiles(runData.getFileSet(), false)) {
         preloadedFilesCache.addFile(fileInfo);
       }
     }
-    server =
-        new JsTestDriverServer(port, capturedBrowsers, preloadedFilesCache, browserTimeout,
-            destination, authStrategies);
+
+    server = new JsTestDriverServer(
+        port,
+        capturedBrowsers,
+        preloadedFilesCache,
+        browserTimeout,
+        destination,
+        authStrategies,
+        handlerPrefix);
+
     for (Observer o : observerList) {
       server.addObserver(o);
     }

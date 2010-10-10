@@ -22,6 +22,8 @@ import com.google.inject.Provider;
  */
 class RequestHandlerServlet extends HttpServlet {
 
+  private static final long serialVersionUID = -186242854065156745L;
+
   private static ThreadLocal<Context> localContext = new ThreadLocal<Context>();
 
   private final RequestScope requestScope;
@@ -35,7 +37,6 @@ class RequestHandlerServlet extends HttpServlet {
     this.dispatcherProvider = dispatcherProvider;
   }
 
-  @SuppressWarnings("unused")
   @Override
   public void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {

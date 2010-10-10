@@ -6,7 +6,7 @@ import static com.google.common.collect.Multimaps.newMultimap;
 import static com.google.common.collect.Multimaps.synchronizedMultimap;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Map;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Multimap;
@@ -24,17 +24,26 @@ import com.google.jstestdriver.TestResult;
  */
 @Singleton
 public class TestResultHolder implements TestResultListener {
+  private static final class LinkListSupplier implements
+      Supplier<Collection<TestResult>> {
+    public Collection<TestResult> get() {
+          return newLinkedList();
+        }
+  }
+
   private final Multimap<BrowserInfo, TestResult> results;
 
   public TestResultHolder() {
-    HashMap<BrowserInfo, Collection<TestResult>> map = newLinkedHashMap();
-    Supplier<Collection<TestResult>> collectionSupplier = new Supplier<Collection<TestResult>>() {
-      public Collection<TestResult> get() {
-        return newLinkedList();
-      }
-    };
-    Multimap<BrowserInfo, TestResult> resultMultimap = newMultimap(map, collectionSupplier);
-    results = synchronizedMultimap(resultMultimap);
+    Map<BrowserInfo, Collection<TestResult>> map = newLinkedHashMap();
+    results = synchronizedMultimap(createMultiMap(map));
+  }
+
+  private Multimap<BrowserInfo, TestResult> createMultiMap(
+      Map<BrowserInfo, Collection<TestResult>> map) {
+    Supplier<Collection<TestResult>> collectionSupplier = new LinkListSupplier();
+    Multimap<BrowserInfo, TestResult> resultMultimap =
+        newMultimap(map, collectionSupplier);
+    return resultMultimap;
   }
 
   /**

@@ -19,6 +19,7 @@ import static com.google.jstestdriver.runner.RunnerType.CLIENT_CONTROLLED;
 import junit.framework.TestCase;
 
 import com.google.jstestdriver.browser.BrowserHunter;
+import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.server.handlers.CaptureHandler;
 
 /**
@@ -27,26 +28,32 @@ import com.google.jstestdriver.server.handlers.CaptureHandler;
 public class BrowserHunterTest extends TestCase {
 
   public void testCaptureAndGenerateUrlQuirks() throws Exception {
-    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(), SlaveBrowser.TIMEOUT);
-    SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version", "os");
+    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(),
+        SlaveBrowser.TIMEOUT, new NullPathPrefix());
+    SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version",
+        "os");
     BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
 
     assertEquals("name", browserInfo.getName());
     assertEquals("version", browserInfo.getVersion());
     assertEquals("os", browserInfo.getOs());
-    assertEquals("/slave/1/RemoteConsoleRunnerquirks.html", browserHunter.getCaptureUrl(
-        slaveBrowser.getId(), CaptureHandler.QUIRKS, CLIENT_CONTROLLED));
+    assertEquals("/slave/1/RemoteConsoleRunnerquirks.html", browserHunter
+        .getCaptureUrl(slaveBrowser.getId(), CaptureHandler.QUIRKS,
+            CLIENT_CONTROLLED));
   }
 
   public void testCaptureAndGenerateUrlStrict() throws Exception {
-    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(), SlaveBrowser.TIMEOUT);
-    SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version", "os");
+    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(),
+        SlaveBrowser.TIMEOUT, new NullPathPrefix());
+    SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version",
+        "os");
     BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
 
     assertEquals("name", browserInfo.getName());
     assertEquals("version", browserInfo.getVersion());
     assertEquals("os", browserInfo.getOs());
-    assertEquals("/slave/1/RemoteConsoleRunnerstrict.html", browserHunter.getCaptureUrl(
-        slaveBrowser.getId(), CaptureHandler.STRICT, CLIENT_CONTROLLED));
+    assertEquals("/slave/1/RemoteConsoleRunnerstrict.html", browserHunter
+        .getCaptureUrl(slaveBrowser.getId(), CaptureHandler.STRICT,
+            CLIENT_CONTROLLED));
   }
 }

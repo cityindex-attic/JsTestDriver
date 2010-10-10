@@ -84,6 +84,12 @@ jstestdriver.extractId = function(url) {
 };
 
 
+jstestdriver.createPath = function(basePath, path) {
+  var prefix = basePath.match(/^(.*)\/(slave|runner)\//)[1];
+  return prefix + path;
+};
+
+
 jstestdriver.getBrowserFriendlyName = function() {
   if (jstestdriver.jQuery.browser.safari) {
     if (navigator.userAgent.indexOf('Chrome') != -1) {

@@ -24,6 +24,7 @@ import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.annotations.BrowserTimeout;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.runner.RunnerType;
 
 /**
@@ -44,10 +45,15 @@ public class BrowserHunter {
 
   private final long browserTimeout;
 
+  private final HandlerPathPrefix prefix;
+
   @Inject
-  public BrowserHunter(CapturedBrowsers capturedBrowsers, @BrowserTimeout long browserTimeout) {
+  public BrowserHunter(CapturedBrowsers capturedBrowsers,
+      @BrowserTimeout long browserTimeout,
+      HandlerPathPrefix prefix) {
     this.capturedBrowsers = capturedBrowsers;
     this.browserTimeout = browserTimeout;
+    this.prefix = prefix;
   }
 
   public SlaveBrowser captureBrowser(String name, String version, String os) {
@@ -57,9 +63,9 @@ public class BrowserHunter {
   public String getCaptureUrl(String id, String mode, RunnerType type) {
     switch(type) {
       case CLIENT_CONTROLLED:
-        return String.format(REMOTE_CONSOLE_RUNNER, id, mode);
+        return String.format(prefix.prefixPath(REMOTE_CONSOLE_RUNNER), id, mode);
       case STANDALONE:
-        return String.format(STANDALONE_CONSOLE_RUNNER, id);
+        return String.format(prefix.prefixPath(STANDALONE_CONSOLE_RUNNER), id);
     }
     throw new UnsupportedOperationException("Unsupported Runner type: " + type);
   }

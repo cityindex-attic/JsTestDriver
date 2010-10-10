@@ -19,8 +19,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 
 
 
@@ -32,7 +34,9 @@ public interface Configuration {
 
   public Set<FileInfo> getFilesList();
 
-  public String createServerAddress(String flagValue, int port);
+  /** Creates a server address. */
+  // TODO(corysmith): replace this with a URI/URL model.
+  public String getServer(String flagValue, int port, HandlerPathPrefix handlerPrefix);
 
   /** A list of plugin from the configuration file. */
   public List<Plugin> getPlugins();
@@ -40,8 +44,9 @@ public interface Configuration {
   /** The total length of time a test should take to run.*/
   public long getTestSuiteTimeout();
   
-  /** Resolves all wildcard paths and places them in a new configuration. */
-  public Configuration resolvePaths(PathResolver resolver);
+  /** Resolves all wildcard paths and places them in a new configuration. 
+   * @param flags TODO*/
+  public Configuration resolvePaths(PathResolver resolver, Flags flags);
 
   /** Returns a list of files containing test. */
   public List<FileInfo> getTests();

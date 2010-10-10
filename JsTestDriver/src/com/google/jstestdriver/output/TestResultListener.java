@@ -23,12 +23,12 @@ import com.google.jstestdriver.TestResult;
  */
 public interface TestResultListener {
   /**
-   * Called on the browser thread
+   * Called on the browser thread.
    */
   public void onTestComplete(TestResult testResult);
 
   /**
-   * Called on the browser thread
+   * Called on the browser thread.
    */
   public void onFileLoad(String browser, FileResult fileResult);
 

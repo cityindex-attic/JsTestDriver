@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
-import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.util.StopWatch;
 
@@ -52,16 +51,21 @@ public class CommandTask {
   private final FileUploader fileUploader;
 
 
-  public CommandTask(JsTestDriverFileFilter filter, ResponseStream stream, String baseUrl,
-      Server server, Map<String, String> params, FileLoader fileLoader,
-      boolean upload, StopWatch stopWatch, Set<FileInfoScheme> schemes) {
+  public CommandTask(
+      ResponseStream stream,
+      String baseUrl,
+      Server server,
+      Map<String, String> params,
+      boolean upload,
+      StopWatch stopWatch,
+      FileUploader uploader) {
     this.stream = stream;
     this.baseUrl = baseUrl;
     this.server = server;
     this.params = params;
     this.upload = upload;
     this.stopWatch = stopWatch;
-    fileUploader = new FileUploader(stopWatch, server, baseUrl, fileLoader, filter, schemes);
+    this.fileUploader = uploader;
   }
   
   /**

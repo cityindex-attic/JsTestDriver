@@ -32,6 +32,7 @@ import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.browser.BrowserFileSet;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.JstdTestCase;
+import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.util.NullStopWatch;
 
 /**
@@ -190,9 +191,25 @@ public class CommandTaskTest extends TestCase {
 
   private CommandTask createCommandTask(MockServer server, Map<String, String> params, FakeResponseStream stream,
       MockFileLoader fileLoader, boolean upload) {
-    CommandTask task = new CommandTask(new DefaultFileFilter(), stream, "http://localhost",
-        server, params, fileLoader, upload,
-        new NullStopWatch(), ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
+    NullStopWatch stopWatch = new NullStopWatch();
+    ImmutableSet<FileInfoScheme> schemes = ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme());
+    NullPathPrefix prefix = new NullPathPrefix();
+    DefaultFileFilter filter = new DefaultFileFilter();
+    String baseUrl = "http://localhost";
+    CommandTask task = new CommandTask(stream,
+        baseUrl,
+        server,
+        params,
+        upload,
+        stopWatch,
+        new FileUploader(
+            stopWatch,
+            server,
+            baseUrl,
+            fileLoader,
+            filter,
+            schemes,
+            prefix));
     return task;
   }
 

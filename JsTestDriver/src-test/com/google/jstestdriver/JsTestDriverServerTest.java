@@ -29,6 +29,7 @@ import junit.framework.TestCase;
 import com.google.common.collect.ImmutableSet;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.FileInfoScheme;
+import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.util.NullStopWatch;
 
 /**
@@ -37,9 +38,9 @@ import com.google.jstestdriver.util.NullStopWatch;
 public class JsTestDriverServerTest extends TestCase {
 
   private CapturedBrowsers browsers = new CapturedBrowsers();
-  private JsTestDriverServer server =
-      new JsTestDriverServer(4224, browsers, new FilesCache(
-          new HashMap<String, FileInfo>()), SlaveBrowser.TIMEOUT, null, Collections.<AuthStrategy>emptySet());
+  private JsTestDriverServer server = new JsTestDriverServer(4224, browsers,
+      new FilesCache(new HashMap<String, FileInfo>()), SlaveBrowser.TIMEOUT,
+      null, Collections.<AuthStrategy> emptySet(), new NullPathPrefix());
 
   @Override
   protected void tearDown() throws Exception {
@@ -92,7 +93,8 @@ public class JsTestDriverServerTest extends TestCase {
             null,
             null,
             stopWatch,
-           ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme())),
+           ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()),
+           new NullPathPrefix()),
         "http://localhost:4224",
         new HttpServer(),
         false,

@@ -82,4 +82,10 @@ class RequestMatcher {
         && this.pattern.equals(that.pattern)
         && this.kind.equals(that.kind);
   }
+
+  @Override
+  public String toString() {
+    return "RequestMatcher [kind=" + kind + ", method=" + method + ", pattern="
+        + pattern + "]";
+  }
 }

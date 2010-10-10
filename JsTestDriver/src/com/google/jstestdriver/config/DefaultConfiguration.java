@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 
 /**
  * @author corysmith@google.com (Cory Smith)
@@ -38,17 +40,18 @@ public class DefaultConfiguration implements Configuration{
     return Collections.<Plugin>emptyList();
   }
 
-  public String createServerAddress(String flagValue, int port) {
+  public String getServer(String flagValue, int port, HandlerPathPrefix handlerPrefix) {
     if (flagValue != null && flagValue.length() != 0) {
       return flagValue;
     }
+
     if (port == -1) {
       throw new RuntimeException("Oh Snap! No server defined!");
     }
-    return String.format("http://%s:%d", "127.0.0.1", port);
+    return handlerPrefix.suffixServer(String.format("http://%s:%d", "127.0.0.1"));
   }
 
-  public Configuration resolvePaths(PathResolver resolver) {
+  public Configuration resolvePaths(PathResolver resolver, Flags flags) {
     return this;
   }
 
