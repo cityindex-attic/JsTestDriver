@@ -15,15 +15,15 @@
  */
 package com.google.jstestdriver.server.handlers;
 
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.FilesCache;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.FilesCache;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

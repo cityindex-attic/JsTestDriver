@@ -27,6 +27,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
 
 /**
  * @author corysmith@google.com (Your Name Here)
@@ -46,9 +47,10 @@ public class RunDataFactoryTest extends TestCase {
 
     final Set<FileInfo> fileSet = Sets.newLinkedHashSet();
     fileSet.add(info);
-    final List<FileInfo> actual =
-        Lists.newArrayList(new RunDataFactory(fileSet, Sets.newHashSet(preProcessor)).get()
-            .getFileSet());
+    final List<FileInfo> actual = Lists.newArrayList(new RunDataFactory(
+        fileSet, Collections.<FileInfo> emptyList(), Sets
+            .newHashSet(preProcessor), Collections
+            .<JstdTestCaseProcessor> emptySet()).get().getFileSet());
 
     assertEquals(info.getFilePath(), actual.get(0).getFilePath());
     assertEquals(info.getTimestamp(), actual.get(0).getTimestamp());
@@ -68,13 +70,15 @@ public class RunDataFactoryTest extends TestCase {
     fileSet.add(one);
     fileSet.add(two);
     fileSet.add(three);
-    
+
     FileInfo testOne = new FileInfo("oneTest.js", 1234, false, false, null);
     FileInfo testTwo = new FileInfo("twoTest.js", 1234, false, false, null);
     FileInfo testThree = new FileInfo("threeTest.js", 1234, false, false, null);
     List<FileInfo> tests = Lists.newArrayList(testOne, testTwo, testThree);
-    RunData runData = new RunDataFactory(fileSet, Collections.<FileLoadPreProcessor>emptySet()).get();
-    
+    RunData runData = new RunDataFactory(fileSet, tests, Collections
+        .<FileLoadPreProcessor> emptySet(), Collections
+        .<JstdTestCaseProcessor> emptySet()).get();
+
     List<JstdTestCase> testCases = runData.getTestCases();
     assertEquals(1, testCases.size());
     JstdTestCase jstdTestCase = testCases.get(0);
@@ -97,7 +101,9 @@ public class RunDataFactoryTest extends TestCase {
     fileSet.add(testTwo);
     fileSet.add(testThree);
 
-    RunData runData = new RunDataFactory(fileSet, Collections.<FileLoadPreProcessor>emptySet()).get();
+    RunData runData = new RunDataFactory(fileSet, Collections
+        .<FileInfo> emptyList(), Collections.<FileLoadPreProcessor> emptySet(),
+        Collections.<JstdTestCaseProcessor> emptySet()).get();
 
     List<JstdTestCase> testCases = runData.getTestCases();
     assertEquals(1, testCases.size());

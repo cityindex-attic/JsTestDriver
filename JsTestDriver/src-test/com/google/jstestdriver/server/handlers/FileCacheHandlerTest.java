@@ -1,13 +1,6 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.handlers;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.FileSetCacheStrategy;
-
-import org.easymock.EasyMock;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,6 +10,13 @@ import java.util.HashSet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.easymock.EasyMock;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.FileSetCacheStrategy;
 
 /**
  * @author rdionne@google.com (Robert Dionne)

@@ -43,7 +43,6 @@ import com.google.jstestdriver.guice.TestResultPrintingModule.TestResultPrinting
 import com.google.jstestdriver.hooks.PluginInitializer;
 import com.google.jstestdriver.runner.RunnerMode;
 
-import org.apache.commons.logging.LogFactory;
 import org.kohsuke.args4j.CmdLineException;
 import org.mortbay.log.Slf4jLog;
 

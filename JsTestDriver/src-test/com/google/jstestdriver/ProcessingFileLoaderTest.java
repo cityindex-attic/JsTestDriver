@@ -16,14 +16,14 @@
 
 package com.google.jstestdriver;
 
-import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import junit.framework.TestCase;
+
+import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 
 public class ProcessingFileLoaderTest extends TestCase {
 

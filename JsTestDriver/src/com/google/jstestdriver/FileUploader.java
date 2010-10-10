@@ -76,6 +76,7 @@ public class FileUploader {
   /** Determines what files have been changed as compared to the server. */
   public List<FileInfo> determineBrowserFileSet(String browserId, Set<FileInfo> files,
       ResponseStream stream) {
+    
     stopWatch.start("get upload set %s", browserId);
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
 
@@ -120,14 +121,33 @@ public class FileUploader {
   /** Uploads the changed files to the server and the browser. */
   public void uploadFileSet(String browserId, Set<FileInfo> files, ResponseStream stream) {
 
+    logger.debug("Files: {}",
+        Lists.transform(Lists.newArrayList(files), new Function<FileInfo, String>() {
+          public String apply(FileInfo in) {
+            return "\n" + in.getFilePath();
+          }
+        }));
+    
     stopWatch.start("determineServerFileSet(%s)", browserId);
     final List<FileInfo> serverFilesToUpdate = determineServerFileSet(files);
     stopWatch.stop("determineServerFileSet(%s)", browserId);
 
+    logger.debug("Files: {}",
+        Lists.transform(Lists.newArrayList(files), new Function<FileInfo, String>() {
+          public String apply(FileInfo in) {
+            return "\n" + in.getFilePath();
+          }
+        }));
     stopWatch.start("upload to server %s", browserId);
     uploadToServer(serverFilesToUpdate);
     stopWatch.stop("upload to server %s", browserId);
 
+    logger.debug("Files: {}",
+        Lists.transform(Lists.newArrayList(files), new Function<FileInfo, String>() {
+          public String apply(FileInfo in) {
+            return "\n" + in.getFilePath();
+          }
+        }));
     stopWatch.start("determineBrowserFileSet(%s)", browserId);
     final List<FileInfo> browserFilesToUpdate = determineBrowserFileSet(browserId, files, stream);
     stopWatch.stop("determineBrowserFileSet(%s)", browserId);

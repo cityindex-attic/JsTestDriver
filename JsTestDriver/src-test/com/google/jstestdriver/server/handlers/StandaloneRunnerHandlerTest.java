@@ -15,6 +15,12 @@
  */
 package com.google.jstestdriver.server.handlers;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import junit.framework.TestCase;
+
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.Command;
@@ -24,12 +30,6 @@ import com.google.jstestdriver.MockTime;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
 import com.google.jstestdriver.StandaloneRunnerFilesFilterImpl;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

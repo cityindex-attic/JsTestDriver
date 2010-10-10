@@ -15,6 +15,19 @@
  */
 package com.google.jstestdriver.server.handlers;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
+
+import junit.framework.TestCase;
+
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.jstestdriver.BrowserInfo;
@@ -32,19 +45,6 @@ import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.Response.ResponseType;
 import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
-
-import junit.framework.TestCase;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

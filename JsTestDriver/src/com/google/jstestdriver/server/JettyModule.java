@@ -1,19 +1,19 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.jstestdriver.ProxyHandler;
-import com.google.jstestdriver.annotations.MaxFormContentSize;
-import com.google.jstestdriver.annotations.Port;
+import javax.servlet.Servlet;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-import javax.servlet.Servlet;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.jstestdriver.ProxyHandler;
+import com.google.jstestdriver.annotations.MaxFormContentSize;
+import com.google.jstestdriver.annotations.Port;
 
 /**
  * Sippin' on Jetty and Guice.

@@ -22,6 +22,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.model.RunDataFactory;
 import com.google.jstestdriver.util.NullStopWatch;
@@ -53,7 +54,9 @@ public class ActionRunnerTest extends TestCase {
     ActionRunner runner = new ActionRunner(actions, new NullStopWatch(),
         new RunDataFactory(
             Collections.<FileInfo>emptySet(),
-            Collections.<FileLoadPreProcessor>emptySet()));
+            Collections.<FileInfo>emptyList(),
+            Collections.<FileLoadPreProcessor>emptySet(),
+            Collections.<JstdTestCaseProcessor>emptySet()));
 
     runner.runActions();
     assertTrue(action.actionRan());

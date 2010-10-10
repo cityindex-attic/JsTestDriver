@@ -15,6 +15,20 @@
  */
 package com.google.jstestdriver.server.handlers;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.jstestdriver.CapturedBrowsers;
@@ -30,6 +44,7 @@ import com.google.jstestdriver.URLTranslator;
 import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 
+<<<<<<< HEAD
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +59,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+=======
+>>>>>>> rebase fixing
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */

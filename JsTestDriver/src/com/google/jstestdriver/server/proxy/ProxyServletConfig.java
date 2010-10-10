@@ -1,15 +1,15 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.proxy;
 
-import com.google.common.collect.Iterators;
-import com.google.inject.Inject;
-import com.google.jstestdriver.annotations.ProxyConfig;
-
 import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+
+import com.google.common.collect.Iterators;
+import com.google.inject.Inject;
+import com.google.jstestdriver.annotations.ProxyConfig;
 
 /**
  * A {@link ServletConfig} that configures the server-under-test proxy by

@@ -4,6 +4,19 @@ package com.google.jstestdriver.server.handlers;
 import static com.google.jstestdriver.requesthandlers.HttpMethod.GET;
 import static com.google.jstestdriver.requesthandlers.HttpMethod.POST;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
+import org.mortbay.servlet.ProxyServlet;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Key;
@@ -35,19 +48,6 @@ import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
 import com.google.jstestdriver.servlet.fileset.FileSetRequestHandler;
 import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
-
-import org.mortbay.servlet.ProxyServlet;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 /**
  * Defines {@link RequestHandler} bindings for the JSTD server.

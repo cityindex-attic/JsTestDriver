@@ -1,14 +1,14 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.handlers;
 
-import com.google.inject.Inject;
-import com.google.jstestdriver.requesthandlers.RequestHandler;
-
-import org.mortbay.resource.Resource;
-
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
+
+import org.mortbay.resource.Resource;
+
+import com.google.inject.Inject;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 /**
  * A {@link RequestHandler} that provides browsers with the JSTD favicon.

@@ -25,7 +25,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 import com.google.jstestdriver.util.StopWatch;
 
 /**

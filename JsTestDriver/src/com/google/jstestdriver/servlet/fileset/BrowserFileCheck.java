@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
@@ -16,6 +19,8 @@ import com.google.jstestdriver.browser.BrowserFileSet;
  */
 public class BrowserFileCheck implements FileSetRequestHandler<BrowserFileSet> {
 
+  private static final Logger logger = LoggerFactory.getLogger(BrowserFileCheck.class);
+
   public static final String ACTION = "browserFileCheck";
   private final FileSetCacheStrategy strategy;
 
@@ -26,6 +31,7 @@ public class BrowserFileCheck implements FileSetRequestHandler<BrowserFileSet> {
 
   public BrowserFileSet handle(SlaveBrowser browser, Collection<FileInfo> clientFiles) {
     if (browser == null) {
+      logger.debug("no browser, returning empty set.");
       return new BrowserFileSet(Collections.<FileInfo>emptyList(),
           Collections.<FileInfo>emptyList());
     }
@@ -36,9 +42,11 @@ public class BrowserFileCheck implements FileSetRequestHandler<BrowserFileSet> {
     if (browser.getBrowserInfo().getName().contains("Safari")
         || browser.getBrowserInfo().getName().contains("Opera")
         || browser.getBrowserInfo().getName().contains("Konqueror")) {
+      logger.debug("Resetting browser fileset to ensure proper overwriting.");
       filesToUpdate.addAll(clientFiles);
       browser.resetFileSet();
     } else {
+      logger.debug("Determing files to update {}, {}", clientFiles, browser.getFileSet());
       filesToUpdate.addAll(strategy.createExpiredFileSet(clientFiles, browser.getFileSet()));
     }
     extraFiles.addAll(browser.getFileSet());
