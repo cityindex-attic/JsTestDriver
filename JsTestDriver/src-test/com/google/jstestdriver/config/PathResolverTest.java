@@ -71,8 +71,13 @@ public class PathResolverTest extends TestCase {
     createTmpFile(testDir, "test2.js");
     createTmpFile(testDir, "test3.js");
 
-    String configFile = "load:\n - code/*.js\n - test/*.js\nexclude:\n"
-      + " - code/code2.js\n - test/test2.js";
+    String configFile =
+        "load:\n" +
+        " - code/*.js\n" +
+        " - test/*.js\n" +
+        "exclude:\n" +
+        " - code/code2.js\n" +
+        " - test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
     YamlParser parser = new YamlParser();
 
@@ -86,6 +91,40 @@ public class PathResolverTest extends TestCase {
     assertTrue(listFiles.get(0).getFilePath().endsWith("code/code.js"));
     assertTrue(listFiles.get(1).getFilePath().endsWith("test/test.js"));
     assertTrue(listFiles.get(2).getFilePath().endsWith("test/test3.js"));
+  }
+
+  public void testParseConfigFileAndHaveListOfFilesWithTests() throws Exception {
+    File codeDir = createTmpSubDir("code");
+    File testDir = createTmpSubDir("test");
+    createTmpFile(codeDir, "code.js");
+    createTmpFile(codeDir, "code2.js");
+    createTmpFile(testDir, "test.js");
+    createTmpFile(testDir, "test2.js");
+    createTmpFile(testDir, "test3.js");
+    
+    String configFile =
+      "load:\n" +
+      " - code/*.js\n" +
+      "test:\n" +
+      " - test/*.js\n" +
+      "exclude:\n" +
+      " - code/code2.js\n" +
+      " - test/test2.js";
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    YamlParser parser = new YamlParser();
+    
+    Configuration config = parser.parse(new InputStreamReader(bais)).resolvePaths(
+        new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
+    
+    Set<FileInfo> files = config.getFilesList();
+    List<FileInfo> listFiles = Lists.newArrayList(files);
+    
+    assertEquals(1, files.size());
+    assertTrue(listFiles.get(0).getFilePath().endsWith("code/code.js"));
+    
+    List<FileInfo> tests = config.getTests();
+    assertEquals("test/test.js", tests.get(0).getFilePath());
+    assertEquals("test/test3.js", tests.get(1).getFilePath());
   }
 
   public void testParseConfigFileAndProcessAListOfFiles() throws Exception {
@@ -117,24 +156,24 @@ public class PathResolverTest extends TestCase {
     assertTrue(listFiles.get(0).isServeOnly());
   }
 
-	public void testGlobIsExpanded() throws Exception {
-		File codeDir = createTmpSubDir("code");
-		createTmpFile(codeDir, "code.js");
-		createTmpFile(codeDir, "code2.js");
+  public void testGlobIsExpanded() throws Exception {
+    File codeDir = createTmpSubDir("code");
+    createTmpFile(codeDir, "code.js");
+    createTmpFile(codeDir, "code2.js");
 
     String configFile = "load:\n - code/*.js";
-		ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-		YamlParser parser = new YamlParser();
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    YamlParser parser = new YamlParser();
 
-		Configuration config = parser.parse(new InputStreamReader(bais)).resolvePaths(
-				new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
-		Set<FileInfo> files = config.getFilesList();
-		List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
+    Configuration config = parser.parse(new InputStreamReader(bais)).resolvePaths(
+        new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
+    Set<FileInfo> files = config.getFilesList();
+    List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
 
-		assertEquals(2, files.size());
-		assertTrue(listFiles.get(0).getFilePath().endsWith("code/code.js"));
-		assertTrue(listFiles.get(1).getFilePath().endsWith("code/code2.js"));
-	}
+    assertEquals(2, files.size());
+    assertTrue(listFiles.get(0).getFilePath().endsWith("code/code.js"));
+    assertTrue(listFiles.get(1).getFilePath().endsWith("code/code2.js"));
+  }
 
   public void testParseConfigFileAndHaveListOfFilesWithPatches()
       throws Exception {
@@ -184,7 +223,7 @@ public class PathResolverTest extends TestCase {
     YamlParser parser = new YamlParser();
     try {
       parser.parse(new InputStreamReader(bais)).resolvePaths(
-      		new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
+          new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
       fail("should have thrown an exception due to patching a non-existant file");
     } catch (IllegalStateException e) {
       // pass
@@ -200,7 +239,7 @@ public class PathResolverTest extends TestCase {
     YamlParser parser = new YamlParser();
 
     Configuration config = parser.parse(new InputStreamReader(bais)).resolvePaths(
-    		new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
+        new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
     List<Plugin> plugins = config.getPlugins();
     assertEquals(expected, plugins.get(0));
   }
@@ -220,8 +259,8 @@ public class PathResolverTest extends TestCase {
     YamlParser parser = new YamlParser();
 
     Configuration config = parser.parse(
-    		new InputStreamReader(bais))
-    		.resolvePaths(new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
+        new InputStreamReader(bais))
+        .resolvePaths(new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
     List<Plugin> plugins = config.getPlugins();
 
     assertEquals(2, plugins.size());
@@ -238,7 +277,7 @@ public class PathResolverTest extends TestCase {
     YamlParser parser = new YamlParser();
 
     Configuration config = parser.parse(new InputStreamReader(bais)).resolvePaths(
-    		new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
+        new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
     List<Plugin> plugins = config.getPlugins();
     Plugin plugin = plugins.get(0);
     List<String> args = plugin.getArgs();
@@ -257,7 +296,7 @@ public class PathResolverTest extends TestCase {
     YamlParser parser = new YamlParser();
 
     Configuration config = parser.parse(new InputStreamReader(bais)).resolvePaths(
-    		new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
+        new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
     List<Plugin> plugins = config.getPlugins();
     Plugin plugin = plugins.get(0);
     List<String> args = plugin.getArgs();
@@ -283,7 +322,7 @@ public class PathResolverTest extends TestCase {
     YamlParser parser = new YamlParser();
 
     Configuration config = parser.parse(new InputStreamReader(bais)).resolvePaths(
-    		new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
+        new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
     Set<FileInfo> serveFilesSet = config.getFilesList();
     List<FileInfo> serveFiles = new ArrayList<FileInfo>(serveFilesSet);
 
@@ -310,7 +349,7 @@ public class PathResolverTest extends TestCase {
     YamlParser parser = new YamlParser();
 
     Configuration config = parser.parse(new InputStreamReader(bais)).resolvePaths(
-    		new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
+        new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
     Set<FileInfo> files = config.getFilesList();
     List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
 
@@ -320,19 +359,19 @@ public class PathResolverTest extends TestCase {
     assertTrue(listFiles.get(2).getTimestamp() > 0);
   }
 
-	public void testExceptionIsThrownIfFileNotFound() throws Exception {
-		File codeDir = createTmpSubDir("code");
-		createTmpFile(codeDir, "code.js");
+  public void testExceptionIsThrownIfFileNotFound() throws Exception {
+    File codeDir = createTmpSubDir("code");
+    createTmpFile(codeDir, "code.js");
 
     String configFile = "load:\n - invalid-dir/code.js";
-		ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
-		YamlParser parser = new YamlParser();
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    YamlParser parser = new YamlParser();
 
-		try {
-		  parser.parse(new InputStreamReader(bais))
-		      .resolvePaths(new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
-			fail("Exception not caught");
-		} catch (IllegalArgumentException e) {
-		}
-	}
+    try {
+      parser.parse(new InputStreamReader(bais))
+          .resolvePaths(new PathResolver(tmpDir, Collections.<FileParsePostProcessor> emptySet()));
+      fail("Exception not caught");
+    } catch (IllegalArgumentException e) {
+    }
+  }
 }

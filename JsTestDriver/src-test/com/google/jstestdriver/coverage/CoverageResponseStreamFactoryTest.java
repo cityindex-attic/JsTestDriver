@@ -41,7 +41,6 @@ public class CoverageResponseStreamFactoryTest extends TestCase {
     }
 
     public void onFileLoad(String browser, FileResult fileResult) {
-      // TODO Auto-generated method stub
       
     }
   }

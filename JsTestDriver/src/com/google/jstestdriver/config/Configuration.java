@@ -42,4 +42,7 @@ public interface Configuration {
   
   /** Resolves all wildcard paths and places them in a new configuration. */
   public Configuration resolvePaths(PathResolver resolver);
+
+  /** Returns a list of files containing test. */
+  public List<FileInfo> getTests();
 }

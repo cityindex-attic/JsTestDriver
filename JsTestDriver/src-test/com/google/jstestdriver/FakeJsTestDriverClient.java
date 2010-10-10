@@ -91,15 +91,9 @@ final public class FakeJsTestDriverClient implements JsTestDriverClient {
   }
 
   public String getNextBrowserId() {
-    // TODO Auto-generated method stub
     return null;
   }
-
-  /* (non-Javadoc)
-   * @see com.google.jstestdriver.JsTestDriverClient#uploadFiles(java.lang.String, com.google.jstestdriver.model.RunData)
-   */
   public void uploadFiles(String browserId, RunData runData) {
-    // TODO Auto-generated method stub
     
   }
 }

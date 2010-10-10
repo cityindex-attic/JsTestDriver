@@ -61,7 +61,6 @@ public class YamlParserTest extends TestCase {
 
     Configuration config = parser.parse( new InputStreamReader(bais));
     Set<FileInfo> files = config.getFilesList();
-    System.out.println("FILES: " + files);
     List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
 
     assertEquals(3, files.size());
@@ -141,7 +140,6 @@ public class YamlParserTest extends TestCase {
   }
 
   public void testServeFile() throws Exception {
-
     String configFile = "load:\n" + " - code/*.js\n" + " - test/*.js\n"
       + "serve:\n" + " - serve/serve1.js\n" + "exclude:\n"
       + " - code/code2.js\n" + " - test/test2.js";
@@ -157,5 +155,32 @@ public class YamlParserTest extends TestCase {
     assertTrue(serveFiles.get(1).getFilePath().endsWith("test/*.js"));
     assertTrue(serveFiles.get(2).getFilePath().endsWith("serve/serve1.js"));
     assertTrue(serveFiles.get(2).isServeOnly());
+  }
+  
+  public void testParseTests() throws Exception {
+    String configFile =
+          "load:\n"
+        + " - code/*.js\n"
+        + "test:\n"
+        + " - test/*.js\n"
+        + "serve:\n"
+        + " - serve/serve1.js\n"
+        + "exclude:\n"
+        + " - code/code2.js\n"
+        + " - test/test2.js";
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    YamlParser parser = new YamlParser();
+    
+    Configuration config = parser.parse(new InputStreamReader(bais));
+    Set<FileInfo> serveFilesSet = config.getFilesList();
+    List<FileInfo> serveFiles = Lists.newArrayList(serveFilesSet);
+    
+    assertEquals(2, serveFilesSet.size());
+    assertTrue(serveFiles.get(0).getFilePath().endsWith("code/*.js"));
+    assertTrue(serveFiles.get(1).getFilePath().endsWith("serve/serve1.js"));
+    assertTrue(serveFiles.get(1).isServeOnly());
+    
+    List<FileInfo> tests = config.getTests();
+    assertEquals("test/*.js", tests.get(0).getFilePath());
   }
 }

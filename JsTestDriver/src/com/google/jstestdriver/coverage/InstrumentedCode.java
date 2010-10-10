@@ -33,7 +33,6 @@ public class InstrumentedCode {
     this.fileId = fileId;
     this.path = path;
     this.executableLines = executableLines;
-    // TODO Auto-generated constructor stub
     this.instrumentedCode = instrumentedCode;
   }
 

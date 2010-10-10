@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver.model;
 
+import java.util.Collections;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
@@ -24,16 +26,14 @@ import com.google.jstestdriver.ResponseStream;
 import junit.framework.TestCase;
 
 public class RunDataTest extends TestCase {
-  
+
   private final class NoopStream implements ResponseStream {
     public void stream(Response response) {
-      // TODO Auto-generated method stub
-      
+
     }
 
     public void finish() {
-      // TODO Auto-generated method stub
-      
+
     }
   }
 
@@ -41,29 +41,44 @@ public class RunDataTest extends TestCase {
     FileInfo one = new FileInfo("one", -1, false, false, null);
     ResponseStream streamOne = new NoopStream();
     ResponseStream streamTwo = new NoopStream();
-    final RunData runDataOne = new RunData(Sets.newHashSet(one), Lists.newArrayList(streamOne));
-    final RunData runDataTwo = new RunData(Sets.newHashSet(one), Lists.newArrayList(streamTwo));
+    final RunData runDataOne = new RunData(Sets.newHashSet(one), Lists
+        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList());
+    final RunData runDataTwo = new RunData(Sets.newHashSet(one), Lists
+        .newArrayList(streamTwo), Collections.<JstdTestCase> emptyList());
 
-    assertEquals(new RunData(Sets.newHashSet(one), Lists.newArrayList(streamOne, streamTwo)),
+    assertEquals(new RunData(Sets.newHashSet(one), Lists.newArrayList(
+        streamOne, streamTwo), Collections.<JstdTestCase> emptyList()),
         runDataOne.aggregateResponses(runDataTwo));
   }
-  
+
   public void testRecordResponse() throws Exception {
     FileInfo one = new FileInfo("one", -1, false, false, null);
     ResponseStream streamOne = new NoopStream();
     ResponseStream streamTwo = new NoopStream();
-    final RunData runDataOne = new RunData(Sets.newHashSet(one), Lists.newArrayList(streamOne));
+    final RunData runDataOne = new RunData(Sets.newHashSet(one), Lists
+        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList());
 
-    assertEquals(new RunData(Sets.newHashSet(one), Lists.newArrayList(streamOne, streamTwo)),
+    assertEquals(new RunData(Sets.newHashSet(one), Lists.newArrayList(
+        streamOne, streamTwo), Collections.<JstdTestCase> emptyList()),
         runDataOne.recordResponse(streamTwo));
   }
-  
+
   public void testUpdateFileSet() throws Exception {
     ResponseStream streamOne = new NoopStream();
     FileInfo one = new FileInfo("one", -1, false, false, null);
     FileInfo two = new FileInfo("two", -1, false, false, null);
-    final RunData runData = new RunData(Sets.newHashSet(one), Lists.newArrayList(streamOne));
-    assertEquals(new RunData(Sets.newHashSet(one, two), Lists.newArrayList(streamOne)),
-      runData.updateFileSet(Sets.newHashSet(one, two)));
+    final RunData runData = new RunData(Sets.newHashSet(one), Lists
+        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList());
+    assertEquals(new RunData(Sets.newHashSet(one, two), Lists
+        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList()),
+        runData.updateFileSet(Sets.newHashSet(one, two)));
+  }
+
+  public void testGetTestCases() throws Exception {
+
+  }
+
+  public void testUpdateTestCases() throws Exception {
+
   }
 }

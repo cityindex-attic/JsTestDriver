@@ -32,6 +32,7 @@ import com.google.jstestdriver.hooks.FileInfoScheme;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -51,14 +52,20 @@ public class JsTestDriverModule extends AbstractModule {
   private final PrintStream outputStream;
   private final File basePath;
   private final long testSuiteTimeout;
+  private final List<FileInfo> tests;
 
   public JsTestDriverModule(Flags flags,
       Set<FileInfo> fileSet,
       String serverAddress,
       PrintStream outputStream,
       File basePath) {
-    this(flags, fileSet, serverAddress, outputStream, basePath,
-         DefaultConfiguration.DEFAULT_TEST_TIMEOUT);
+    this(flags,
+         fileSet,
+         serverAddress,
+         outputStream,
+         basePath,
+         DefaultConfiguration.DEFAULT_TEST_TIMEOUT,
+         Collections.<FileInfo>emptyList());
   }
 
   public JsTestDriverModule(Flags flags,
@@ -66,13 +73,15 @@ public class JsTestDriverModule extends AbstractModule {
       String serverAddress,
       PrintStream outputStream,
       File basePath,
-      long testSuiteTimeout) {
+      long testSuiteTimeout,
+      List<FileInfo> tests) {
     this.flags = flags;
     this.fileSet = fileSet;
     this.serverAddress = serverAddress;
     this.outputStream = outputStream;
     this.basePath = basePath;
     this.testSuiteTimeout = testSuiteTimeout;
+    this.tests = tests;
   }
 
   @Override
@@ -103,8 +112,10 @@ public class JsTestDriverModule extends AbstractModule {
           BrowserRunner.class).addBinding().toInstance(runner);
     }
 
-    bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet")).
-        toProvider(FileSetProvider.class).in(Singleton.class);
+    bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet"))
+       .toProvider(FileSetProvider.class).in(Singleton.class);
+    bind(new TypeLiteral<List<FileInfo>>() {}).annotatedWith(Names.named("tests"))
+       .toInstance(tests);
     bind(Integer.class).annotatedWith(BrowserCount.class).
         toProvider(BrowserCountProvider.class).in(Singleton.class);
   }

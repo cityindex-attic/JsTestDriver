@@ -22,6 +22,7 @@ import com.google.jstestdriver.JsTestDriverClientTest.FakeResponseStream;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.browser.BrowserFileSet;
 import com.google.jstestdriver.hooks.FileInfoScheme;
+import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
 
@@ -61,7 +62,7 @@ public class CommandTaskTest extends TestCase {
     CommandTask task =
         createCommandTask(server, files, files, params, stream, new MockFileLoader(), true);
 
-    task.run(new RunData(files, null));
+    task.run(new RunData(files, null, Collections.<JstdTestCase>emptyList()));
     Response response = stream.getResponse();
 
     assertEquals("response", response.getResponse());
@@ -95,7 +96,7 @@ public class CommandTaskTest extends TestCase {
     CommandTask task = createCommandTask(server, files, new LinkedHashSet<FileInfo>(), params,
         stream, fileReader, true);
 
-    task.run(new RunData(files, null));
+    task.run(new RunData(files, null, Collections.<JstdTestCase>emptyList()));
     Response response = stream.getResponse();
 
     assertEquals("response", response.getResponse());
@@ -166,7 +167,7 @@ public class CommandTaskTest extends TestCase {
     CommandTask task = createCommandTask(server, files,
         new LinkedHashSet<FileInfo>(Arrays.asList(serveInfo)), params, stream, fileReader, true);
 
-    task.run(new RunData(files, null));
+    task.run(new RunData(files, null, Collections.<JstdTestCase>emptyList()));
     Response response = stream.getResponse();
 
     assertEquals("{\"loadedFiles\":[]}", response.getResponse());

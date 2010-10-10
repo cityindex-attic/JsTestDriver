@@ -100,6 +100,7 @@ public class PathResolver {
     return consolidated;
   }
 
+  
   /**
    * Resolves files for a set of FileInfos:
    *  - Expands glob paths (e.g. "*.js") into distinct FileInfos

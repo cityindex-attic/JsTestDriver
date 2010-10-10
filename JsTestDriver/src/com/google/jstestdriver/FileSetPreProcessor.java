@@ -17,6 +17,7 @@ package com.google.jstestdriver;
 
 import java.util.Set;
 
+//TODO(corysmith): Remove this hook! It duplicates existing hooks.
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */

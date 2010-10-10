@@ -24,6 +24,7 @@ import java.util.Set;
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+//TODO(corysmith): Remove this provider!
 public class FileSetProvider implements Provider<Set<FileInfo>> {
 
   private final Set<FileSetPreProcessor> preProcessors;

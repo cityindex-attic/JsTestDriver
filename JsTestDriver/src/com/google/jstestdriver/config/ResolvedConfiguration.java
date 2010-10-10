@@ -33,15 +33,18 @@ public class ResolvedConfiguration implements Configuration {
   private final List<Plugin> plugins;
   private final String server;
   private final long testSuiteTimeout;
+  private final List<FileInfo> tests;
 
   public ResolvedConfiguration(Set<FileInfo> filesList,
                                List<Plugin> plugins,
                                String server,
-                               long testSuiteTimeout) {
+                               long testSuiteTimeout,
+                               List<FileInfo> tests) {
     this.filesList = filesList;
     this.plugins = plugins;
     this.server = server;
     this.testSuiteTimeout = testSuiteTimeout;
+    this.tests = tests;
   }
 
   public String createServerAddress(String flagValue, int port) {
@@ -71,5 +74,9 @@ public class ResolvedConfiguration implements Configuration {
 
   public long getTestSuiteTimeout() {
     return testSuiteTimeout > 0 ? testSuiteTimeout : DefaultConfiguration.DEFAULT_TEST_TIMEOUT;
+  }
+
+  public List<FileInfo> getTests() {
+    return tests;
   }
 }

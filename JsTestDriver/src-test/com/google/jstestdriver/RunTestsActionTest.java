@@ -19,6 +19,7 @@ package com.google.jstestdriver;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
+import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.model.RunData;
 
 import junit.framework.TestCase;
@@ -45,7 +46,10 @@ public class RunTestsActionTest extends TestCase {
         new RunTestsAction(new FakeResponseStreamFactory(stream), tests, captureConsole,
             Collections.<TestsPreProcessor> emptySet());
     final FakeJsTestDriverClient client = new FakeJsTestDriverClient(Collections.<BrowserInfo>emptyList());
-    action.run(browserId, client, new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList()));
+    action.run(browserId, client, new RunData(
+        Collections.<FileInfo>emptySet(),
+        Collections.<ResponseStream>emptyList(),
+        Collections.<JstdTestCase>emptyList()));
 
     client.assertTestRun(expected);
   }
@@ -71,7 +75,7 @@ public class RunTestsActionTest extends TestCase {
         new RunTestsAction(new FakeResponseStreamFactory(stream), tests, captureConsole,
             preProcessors);
     final FakeJsTestDriverClient client = new FakeJsTestDriverClient(Collections.<BrowserInfo>emptyList());
-    action.run(browserId, client, new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList()));
+    action.run(browserId, client, new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList(), Collections.<JstdTestCase>emptyList()));
 
     client.assertTestRun(expected);
   }

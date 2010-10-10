@@ -57,17 +57,14 @@ public class BrowserManagedRunnerTest extends TestCase {
 
   private static final class FakeBrowserRunner implements BrowserRunner {
     public void stopBrowser() {
-      // TODO Auto-generated method stub
       
     }
 
     public void startBrowser(String serverAddress) {
-      // TODO Auto-generated method stub
       
     }
 
     public int getTimeout() {
-      // TODO Auto-generated method stub
       return 0;
     }
   }

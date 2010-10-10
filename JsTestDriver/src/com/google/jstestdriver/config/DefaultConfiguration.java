@@ -55,4 +55,8 @@ public class DefaultConfiguration implements Configuration{
   public long getTestSuiteTimeout() {
     return DEFAULT_TEST_TIMEOUT; // two hours. Should be enough to debug.
   }
+
+  public List<FileInfo> getTests() {
+    return Collections.<FileInfo>emptyList();
+  }
 }

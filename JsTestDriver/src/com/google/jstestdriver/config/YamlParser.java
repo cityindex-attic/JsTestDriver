@@ -38,6 +38,7 @@ public class YamlParser {
   public Configuration parse(Reader configReader) {
     Map<Object, Object> data = (Map<Object, Object>) YAML.load(configReader);
     Set<FileInfo> resolvedFilesLoad = new LinkedHashSet<FileInfo>();
+    Set<FileInfo> testFiles = new LinkedHashSet<FileInfo>();
     Set<FileInfo> resolvedFilesExclude = new LinkedHashSet<FileInfo>();
 
     String server = "";
@@ -47,6 +48,10 @@ public class YamlParser {
     if (data.containsKey("load")) {
       resolvedFilesLoad.addAll(createFileInfos((List<String>) data
         .get("load"), false));
+    }
+    if (data.containsKey("test")) {
+      testFiles.addAll(createFileInfos((List<String>) data
+          .get("test"), false));
     }
     if (data.containsKey("exclude")) {
       resolvedFilesExclude.addAll(createFileInfos((List<String>) data
@@ -76,7 +81,8 @@ public class YamlParser {
                                    resolvedFilesExclude,
                                    plugins,
                                    server,
-                                   timeOut);
+                                   timeOut,
+                                   Lists.newArrayList(testFiles));
   }
 
   private List<String> createArgsList(String args) {

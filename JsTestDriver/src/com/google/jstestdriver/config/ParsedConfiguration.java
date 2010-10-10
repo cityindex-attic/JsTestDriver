@@ -15,13 +15,15 @@
  */
 package com.google.jstestdriver.config;
 
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.PathResolver;
-import com.google.jstestdriver.Plugin;
-
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.PathResolver;
+import com.google.jstestdriver.Plugin;
 
 /**
  * Represents a parsed configuration.
@@ -34,14 +36,16 @@ public class ParsedConfiguration implements Configuration {
   private final List<Plugin> plugins;
   private final Set<FileInfo> excludedFiles;
   private final long testTimeout;
+  private final List<FileInfo> tests;
 
   public ParsedConfiguration(Set<FileInfo> filesList, Set<FileInfo> excludedFiles,
-      List<Plugin> plugins, String server, long testTimeout) {
+      List<Plugin> plugins, String server, long testTimeout, List<FileInfo> tests) {
     this.filesList = filesList;
     this.excludedFiles = excludedFiles;
     this.plugins = plugins;
     this.server = server;
     this.testTimeout = testTimeout;
+    this.tests = tests;
   }
 
   public Set<FileInfo> getFilesList() {
@@ -69,13 +73,19 @@ public class ParsedConfiguration implements Configuration {
 
   public Configuration resolvePaths(PathResolver resolver) {
     Set<FileInfo> resolvedFiles = resolver.resolve(filesList);
+    Set<FileInfo> testFiles = resolver.resolve(Sets.newLinkedHashSet(tests));
     Set<FileInfo> resolvedExcluded = resolver.resolve(excludedFiles);
     resolvedFiles.removeAll(resolvedExcluded);
+    testFiles.removeAll(resolvedExcluded);
     return new ResolvedConfiguration(resolvedFiles, resolver.resolve(plugins), server,
-        testTimeout);
+        testTimeout, Lists.newArrayList(testFiles));
   }
 
   public long getTestSuiteTimeout() {
     return testTimeout;
+  }
+
+  public List<FileInfo> getTests() {
+    return tests;
   }
 }

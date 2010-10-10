@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.ResponseStream;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -30,22 +31,26 @@ import java.util.Set;
 final public class RunData {
   private final List<ResponseStream> responses;
   private final Set<FileInfo> fileSet;
+  private final List<JstdTestCase> testCases;
 
-  public RunData(Set<FileInfo> fileSet, List<ResponseStream> responses) {
+  public RunData(Set<FileInfo> fileSet,
+      List<ResponseStream> responses,
+      List<JstdTestCase> testCases) {
     this.fileSet = fileSet;
     this.responses = responses;
+    this.testCases = testCases;
   }
 
   public RunData recordResponse(ResponseStream responseStream) {
     final List<ResponseStream> newResponses = Lists.newLinkedList(responses);
     newResponses.add(responseStream);
-    return new RunData(fileSet, newResponses);
+    return new RunData(fileSet, newResponses, Collections.<JstdTestCase>emptyList());
   }
 
   public RunData aggregateResponses(RunData runData) {
     final List<ResponseStream> newResponses = Lists.newLinkedList(responses);
     newResponses.addAll(runData.responses);
-    return new RunData(fileSet, newResponses);
+    return new RunData(fileSet, newResponses, Collections.<JstdTestCase>emptyList());
   }
 
   public Set<FileInfo> getFileSet() {
@@ -59,7 +64,13 @@ final public class RunData {
   }
   
   public RunData updateFileSet(Set<FileInfo> fileSet) {
-    return new RunData(fileSet, responses);
+    return new RunData(fileSet, responses, Collections.<JstdTestCase>emptyList());
+  }
+
+  @Override
+  public String toString() {
+    return "RunData [fileSet=" + fileSet + ", responses=" + responses
+        + ", testCases=" + testCases + "]";
   }
 
   @Override
@@ -68,27 +79,38 @@ final public class RunData {
     int result = 1;
     result = prime * result + ((fileSet == null) ? 0 : fileSet.hashCode());
     result = prime * result + ((responses == null) ? 0 : responses.hashCode());
+    result = prime * result + ((testCases == null) ? 0 : testCases.hashCode());
     return result;
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
     RunData other = (RunData) obj;
     if (fileSet == null) {
-      if (other.fileSet != null) return false;
-    } else if (!fileSet.equals(other.fileSet)) return false;
+      if (other.fileSet != null)
+        return false;
+    } else if (!fileSet.equals(other.fileSet))
+      return false;
     if (responses == null) {
-      if (other.responses != null) return false;
-    } else if (!responses.equals(other.responses)) return false;
+      if (other.responses != null)
+        return false;
+    } else if (!responses.equals(other.responses))
+      return false;
+    if (testCases == null) {
+      if (other.testCases != null)
+        return false;
+    } else if (!testCases.equals(other.testCases))
+      return false;
     return true;
   }
 
-  @Override
-  public String toString() {
-    return "RunData [responses=" + responses + ", fileSet=" + fileSet + "]";
+  public List<JstdTestCase> getTestCases() {
+    return testCases;
   }
-
 }

@@ -119,13 +119,9 @@ public class IDEPluginActionBuilderTest extends TestCase {
   private final class ResponseStreamFactoryStub implements ResponseStreamFactory {
     private final class NullResponseStream implements ResponseStream {
       public void stream(Response response) {
-        // TODO Auto-generated method stub
-
       }
 
       public void finish() {
-        // TODO Auto-generated method stub
-
       }
     }
 

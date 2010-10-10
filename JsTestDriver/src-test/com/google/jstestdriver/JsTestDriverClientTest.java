@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.inject.Provider;
 import com.google.jstestdriver.browser.BrowserFileSet;
 import com.google.jstestdriver.hooks.FileInfoScheme;
+import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
 
@@ -117,7 +118,9 @@ public class JsTestDriverClientTest extends TestCase {
     FakeResponseStream stream = new FakeResponseStream();
 
     client.eval("1", stream, "cmd",
-        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList()));
+        new RunData(Collections.<FileInfo>emptySet(),
+            Collections.<ResponseStream>emptyList(),
+            Collections.<JstdTestCase>emptyList()));
 
     Response response = stream.getResponse();
 
@@ -127,7 +130,7 @@ public class JsTestDriverClientTest extends TestCase {
     assertEquals(3L, response.getExecutionTime());
 
     client.eval("2", stream, "cmd",
-        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList()));
+        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList(), Collections.<JstdTestCase>emptyList()));
     response = stream.getResponse();
     assertEquals("2", stream.getResponse().getResponse());
     assertEquals("browser2", response.getBrowser().getName());
@@ -193,7 +196,7 @@ public class JsTestDriverClientTest extends TestCase {
     FakeResponseStream stream = new FakeResponseStream();
 
     client.runAllTests("1", stream, false,
-        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList()));
+        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList(), Collections.<JstdTestCase>emptyList()));
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }
@@ -228,7 +231,7 @@ public class JsTestDriverClientTest extends TestCase {
     tests.add("testCase.testFoo");
     tests.add("testCase.testBar");
     client.runTests("1", stream, tests, false,
-        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList()));
+        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList(), Collections.<JstdTestCase>emptyList()));
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }
