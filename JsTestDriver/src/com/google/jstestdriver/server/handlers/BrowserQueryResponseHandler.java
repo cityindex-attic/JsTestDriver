@@ -40,27 +40,10 @@ import com.google.jstestdriver.JsonCommand;
 import com.google.jstestdriver.LoadedFiles;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.SlaveBrowser;
-import com.google.jstestdriver.URLTranslator;
 import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 
-<<<<<<< HEAD
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-=======
->>>>>>> rebase fixing
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */

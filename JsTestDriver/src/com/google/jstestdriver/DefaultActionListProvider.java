@@ -15,16 +15,15 @@
  */
 package com.google.jstestdriver;
 
+import java.util.List;
+import java.util.Set;
+
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import com.google.jstestdriver.browser.BrowserActionExecutorAction;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.output.XmlPrinter;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Provides a sequence of actions from a large number of arguments.
@@ -35,8 +34,6 @@ import java.util.Set;
 @Singleton
 public class DefaultActionListProvider implements ActionListProvider {
 
-  private final ActionFactory actionFactory;
-  private final FileLoader fileLoader;
   private final List<String> tests;
   private final List<String> arguments;
   private final boolean reset;
@@ -45,18 +42,14 @@ public class DefaultActionListProvider implements ActionListProvider {
   private final boolean preloadFiles;
   private final Set<FileInfo> fileSet;
   private final String testOutput;
-  private final ResponseStreamFactory responseStreamFactory;
-  private final FailureAccumulator accumulator;
   private final Set<ActionListProcessor> processors;
   private final XmlPrinter xmlPrinter;
-  private final BrowserActionExecutorAction browserActionsRunner;
+  private final ActionSequenceBuilder builder;
 
   // TODO(corysmith): Refactor this. Currently in a temporary,
   //  make dependencies visible to aid refactoring state.
   @Inject
   public DefaultActionListProvider(
-      ActionFactory actionFactory,
-      FileLoader fileLoader,
       @Named("tests") List<String> tests,
       @Named("arguments") List<String> arguments,
       @Named("reset") boolean reset,
@@ -65,13 +58,9 @@ public class DefaultActionListProvider implements ActionListProvider {
       @Named("port") int port,
       @Named("fileSet") Set<FileInfo> fileSet,
       @Named("testOutput") String testOutput,
-      ResponseStreamFactory responseStreamFactory,
-      BrowserActionExecutorAction browserActionsRunner,
-      FailureAccumulator accumulator,
       Set<ActionListProcessor> processors,
-      XmlPrinter xmlPrinter) {
-    this.actionFactory = actionFactory;
-    this.fileLoader = fileLoader;
+      XmlPrinter xmlPrinter,
+      ActionSequenceBuilder builder) {
     this.tests = tests;
     this.arguments = arguments;
     this.reset = reset;
@@ -80,21 +69,13 @@ public class DefaultActionListProvider implements ActionListProvider {
     this.port = port;
     this.fileSet = fileSet;
     this.testOutput = testOutput;
-    this.responseStreamFactory = responseStreamFactory;
-    this.browserActionsRunner = browserActionsRunner;
-    this.accumulator = accumulator;
     this.processors = processors;
     this.xmlPrinter = xmlPrinter;
+    this.builder = builder;
   }
 
   @Provides
   public List<Action> get() {
-    ActionSequenceBuilder builder =
-        new ActionSequenceBuilder(actionFactory,
-                                  fileLoader,
-                                  responseStreamFactory,
-                                  browserActionsRunner,
-                                  accumulator);
     builder.usingFiles(fileSet, preloadFiles)
            .addTests(tests)
            .addCommands(arguments)

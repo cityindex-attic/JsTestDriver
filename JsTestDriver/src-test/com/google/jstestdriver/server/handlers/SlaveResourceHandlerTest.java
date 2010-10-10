@@ -37,8 +37,10 @@ public class SlaveResourceHandlerTest extends TestCase {
   public void testIdChoppedOffFromThePath() throws Exception {
     String location = getClass().getPackage().getName().replace(".", "/");
     HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
-    HttpServletResponse response = EasyMock.createMock(HttpServletResponse.class);
-    SlaveResourceHandler handler = new SlaveResourceHandler(request, response, new SlaveResourceService(location));
+    HttpServletResponse response =
+        EasyMock.createMock(HttpServletResponse.class);
+    SlaveResourceHandler handler = new SlaveResourceHandler(request, response,
+        new SlaveResourceService(location));
     OutputStream oStream = new ByteArrayOutputStream();
     ServletOutputStream servletOutputStream = buildServletOutputStream(oStream);
 

@@ -42,7 +42,7 @@ public class ActionSequenceBuilderTest extends TestCase {
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(actionFactory, null, null,
             new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
-            new FailureAccumulator());
+            new FailureCheckerAction(null, null));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(BrowserActionExecutorAction.class);
@@ -59,10 +59,13 @@ public class ActionSequenceBuilderTest extends TestCase {
     ActionSequenceBuilder builder = new ActionSequenceBuilder(
         new ActionFactory(
             null,
-            Collections.<TestsPreProcessor> emptySet(), SlaveBrowser.TIMEOUT,
-            Collections.<AuthStrategy>emptySet(), false, null),
+            Collections.<TestsPreProcessor> emptySet(),
+            SlaveBrowser.TIMEOUT,
+            Collections.<AuthStrategy>emptySet(),
+            false,
+            null),
             null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
-        new FailureAccumulator());
+        new FailureCheckerAction(null, null));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -86,7 +89,7 @@ public class ActionSequenceBuilderTest extends TestCase {
                 Collections.<AuthStrategy>emptySet(), false, null),
             null, null, new BrowserActionExecutorAction(
                 null, null, null, null, null, 0, null, null),
-            new FailureAccumulator());
+            new FailureCheckerAction(null, null));
 
     List<Action> actions = builder.addTests(tests).withLocalServerPort(999)
         .usingFiles(files, false).build();
@@ -109,7 +112,7 @@ public class ActionSequenceBuilderTest extends TestCase {
   private <T> void assertSequence(List<Class<? extends T>> expectedActions, List<T> actions) {
     List<Class<?>> actual = new ArrayList<Class<?>>();
     for (T action : actions) {
-      actual.add(action.getClass());
+      actual.add(action != null ? action.getClass() : null);
     }
     assertEquals(expectedActions, actual);
   }

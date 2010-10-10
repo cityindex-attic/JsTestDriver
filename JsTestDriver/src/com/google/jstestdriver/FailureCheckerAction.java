@@ -15,22 +15,47 @@
  */
 package com.google.jstestdriver;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.google.jstestdriver.model.RunData;
+import com.google.jstestdriver.output.TestResultHolder;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class FailureCheckerAction implements Action {
-
   private final FailureAccumulator accumulator;
+  private final TestResultHolder holder;
 
-  public FailureCheckerAction(FailureAccumulator accumulator) {
+  @Inject
+  public FailureCheckerAction(FailureAccumulator accumulator, TestResultHolder holder) {
     this.accumulator = accumulator;
+    this.holder = holder;
   }
 
   public RunData run(RunData runData) {
     if (accumulator.hasFailures()) {
       throw new FailureException("Tests failed. See log for details.");
+    }
+    List<String> failures = Lists.newLinkedList();
+    Map<BrowserInfo, Collection<TestResult>> resultsCollections = holder.getResults().asMap();
+
+    if (holder.getResults().isEmpty()) {
+      throw new FailureException("No tests executed.");
+    }
+    for (Entry<BrowserInfo, Collection<TestResult>> entry : resultsCollections.entrySet()) {
+      if (entry.getValue().isEmpty()) {
+        failures.add(entry.getKey() + " had no tests executed.");
+      }
+    }
+    if (!failures.isEmpty()) {
+      throw new FailureException(Joiner.on("\n").join(failures));
     }
     return runData;
   }

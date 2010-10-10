@@ -55,24 +55,29 @@ public class ActionRunner {
     Iterator<Action> iterator = actions.iterator();
 
     stopWatch.start("runActions");
-    while (iterator.hasNext()) {
-      Action action = iterator.next();
-      stopWatch.start(action.toString());
-      logger.info("Running {}", action);
-      runData = action.run(runData);
-      logger.info("Finished {}", action);
-      stopWatch.stop(action.toString());
-    }
-    stopWatch.stop("runActions");
-    // TODO(corysmith): Finish the runData here?
-
-    Writer writer = new StringWriter();
-    stopWatch.print(writer);
     try {
-      writer.flush();
-    } catch (IOException e) {
-      e.printStackTrace();
+      while (iterator.hasNext()) {
+        Action action = iterator.next();
+        stopWatch.start(action.toString());
+        logger.info("Running {}", action);
+        try {
+          runData = action.run(runData);
+        } finally {
+          logger.info("Finished {}", action);
+          stopWatch.stop(action.toString());
+        }
+      }
+    } finally {
+      try {
+        stopWatch.stop("runActions");
+        Writer writer = new StringWriter();
+        stopWatch.print(writer);
+        writer.flush();
+        stopWatchLogger.info(writer.toString());
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
-    stopWatchLogger.info(writer.toString());
   }
 }

@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import com.google.jstestdriver.browser.BrowserActionExecutorAction;
 import com.google.jstestdriver.output.PrintXmlTestResultsAction;
 import com.google.jstestdriver.output.XmlPrinter;
@@ -35,7 +36,6 @@ public class ActionSequenceBuilder {
 
   private final ActionFactory actionFactory;
   private final FileLoader fileLoader;
-  private final FailureAccumulator accumulator;
   private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
   private HashMap<String, FileInfo> files = new LinkedHashMap<String, FileInfo>();
   private Set<FileInfo> fileSet;
@@ -47,21 +47,22 @@ public class ActionSequenceBuilder {
   private List<String> commands = new LinkedList<String>();
   private XmlPrinter xmlPrinter;
   private final BrowserActionExecutorAction browserActionsRunner;
+  private final FailureCheckerAction failureCheckerAction;
 
   /**
    * Begins the building of an action sequence.
-   *
-   * @param accumulator
+   * @param failureCheckerAction TODO
    */
+  @Inject
   public ActionSequenceBuilder(ActionFactory actionFactory,
                                FileLoader fileLoader,
                                ResponseStreamFactory responseStreamFactory,
                                BrowserActionExecutorAction browserActionsRunner,
-                               FailureAccumulator accumulator) {
+                               FailureCheckerAction failureCheckerAction) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.browserActionsRunner = browserActionsRunner;
-    this.accumulator = accumulator;
+    this.failureCheckerAction = failureCheckerAction;
   }
 
   /**
@@ -113,7 +114,9 @@ public class ActionSequenceBuilder {
     if (needToStartServer()) {
       addServerActions(actions, leaveServerRunning());
     }
-    actions.add(new FailureCheckerAction(accumulator));
+    if (!tests.isEmpty()) {
+      actions.add(failureCheckerAction);
+    }
     return actions;
   }
 

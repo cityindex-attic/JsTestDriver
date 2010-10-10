@@ -27,7 +27,7 @@ public class FailureCheckerActionTest extends TestCase {
     FailureAccumulator accumulator = new FailureAccumulator();
 
     accumulator.add();
-    FailureCheckerAction action = new FailureCheckerAction(accumulator);
+    FailureCheckerAction action = new FailureCheckerAction(accumulator, null);
 
     try {
       action.run(null);

@@ -52,7 +52,6 @@ public class DefaultActionListProviderTest extends TestCase {
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
-    expectedActions.add(FailureCheckerAction.class);
     assertSequence(expectedActions, actions);
   }
 
@@ -66,8 +65,6 @@ public class DefaultActionListProviderTest extends TestCase {
         new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT,
             Collections.<AuthStrategy>emptySet(), false, null);
     return new DefaultActionListProvider(
-        actionFactory,
-        null,
         tests,
         Collections.<String>emptyList(),
         reset,
@@ -76,10 +73,22 @@ public class DefaultActionListProviderTest extends TestCase {
         port,
         Collections.<FileInfo>emptySet(),
         testOutput,
-        null,
-        new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
-        new FailureAccumulator(), processors,
-        xmlPrinter);
+        processors,
+        xmlPrinter,
+        new ActionSequenceBuilder(
+            actionFactory,
+            null,
+            null,
+            new BrowserActionExecutorAction(
+                null,
+                null,
+                null,
+                null,
+                null,
+                -1,
+                null,
+                null),
+            new FailureCheckerAction(null, null)));
   }
 
   public void testParseWithServerAndReset() throws Exception {
@@ -95,7 +104,6 @@ public class DefaultActionListProviderTest extends TestCase {
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(BrowserActionExecutorAction.class);
-    expectedActions.add(FailureCheckerAction.class);
 
     List<Action> actions = parser.get();
     assertSequence(expectedActions, actions);
@@ -137,9 +145,10 @@ public class DefaultActionListProviderTest extends TestCase {
 
   private void assertSequence(List<Class<? extends Action>> expectedActions,
       List<Action> actions) {
+    assertNotNull(actions);
     List<Class<? extends Action>> actual = new ArrayList<Class<? extends Action>>();
     for (Action action : actions) {
-      actual.add(action.getClass());
+      actual.add(action != null ? action.getClass() : null);
     }
     assertEquals(expectedActions, actual);
   }
