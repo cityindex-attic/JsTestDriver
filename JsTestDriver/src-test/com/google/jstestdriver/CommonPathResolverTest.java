@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Lists;
+import java.io.File;
+import java.util.List;
 
 import junit.framework.TestCase;
 
-import java.io.File;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

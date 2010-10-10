@@ -15,9 +15,9 @@
  */
 package com.google.jstestdriver.output;
 
-import com.google.jstestdriver.TestResult;
-
 import java.io.PrintStream;
+
+import com.google.jstestdriver.TestResult;
 
 /**
  * The impl of Problem for TestResults. Used by the default reporting outputstream 

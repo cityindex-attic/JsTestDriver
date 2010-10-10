@@ -15,6 +15,15 @@
  */
 package com.google.jstestdriver;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import junit.framework.TestCase;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -23,18 +32,7 @@ import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.browser.BrowserFileSet;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.JstdTestCase;
-import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
-
-import junit.framework.TestCase;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -58,11 +56,10 @@ public class CommandTaskTest extends TestCase {
     params.put("data", "{mooh}");
     params.put("id", "1");
     FakeResponseStream stream = new FakeResponseStream();
-    LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
     CommandTask task =
-        createCommandTask(server, files, files, params, stream, new MockFileLoader(), true);
+        createCommandTask(server, params, stream, new MockFileLoader(), true);
 
-    task.run(new RunData(files, null, Collections.<JstdTestCase>emptyList()));
+    task.run(new JstdTestCase(Collections.<FileInfo>emptyList(), Collections.<FileInfo>emptyList()));
     Response response = stream.getResponse();
 
     assertEquals("response", response.getResponse());
@@ -91,12 +88,10 @@ public class CommandTaskTest extends TestCase {
     FakeResponseStream stream = new FakeResponseStream();
     MockFileLoader fileReader = new MockFileLoader();
     fileReader.addExpectation(fileInfo, "foobar");
-    final LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>(Arrays
-        .asList(fileInfo));
-    CommandTask task = createCommandTask(server, files, new LinkedHashSet<FileInfo>(), params,
+    CommandTask task = createCommandTask(server, params,
         stream, fileReader, true);
 
-    task.run(new RunData(files, null, Collections.<JstdTestCase>emptyList()));
+    task.run(new JstdTestCase(Collections.<FileInfo>emptyList(), Lists.newArrayList(fileInfo)));
     Response response = stream.getResponse();
 
     assertEquals("response", response.getResponse());
@@ -163,11 +158,9 @@ public class CommandTaskTest extends TestCase {
     MockFileLoader fileReader = new MockFileLoader();
     fileReader.addExpectation(loadInfo, loadInfoContents);
     fileReader.addExpectation(serveInfo, serveInfoContents);
-    final LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>(fileSet);
-    CommandTask task = createCommandTask(server, files,
-        new LinkedHashSet<FileInfo>(Arrays.asList(serveInfo)), params, stream, fileReader, true);
+    CommandTask task = createCommandTask(server, params, stream, fileReader, true);
 
-    task.run(new RunData(files, null, Collections.<JstdTestCase>emptyList()));
+    task.run(new JstdTestCase(Collections.<FileInfo>emptyList(), fileSet));
     Response response = stream.getResponse();
 
     assertEquals("{\"loadedFiles\":[]}", response.getResponse());
@@ -195,8 +188,7 @@ public class CommandTaskTest extends TestCase {
     return loadFileParams.toString();
   }
 
-  private CommandTask createCommandTask(MockServer server, LinkedHashSet<FileInfo> files,
-      LinkedHashSet<FileInfo> serveFiles, Map<String, String> params, FakeResponseStream stream,
+  private CommandTask createCommandTask(MockServer server, Map<String, String> params, FakeResponseStream stream,
       MockFileLoader fileLoader, boolean upload) {
     CommandTask task = new CommandTask(new DefaultFileFilter(), stream, "http://localhost",
         server, params, fileLoader, upload,

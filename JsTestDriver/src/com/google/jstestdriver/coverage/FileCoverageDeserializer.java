@@ -1,10 +1,10 @@
 package com.google.jstestdriver.coverage;
 
-import com.google.common.collect.Lists;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 /**
  * Deserializes a file coverage prototbuffer. Not the prettiest solution

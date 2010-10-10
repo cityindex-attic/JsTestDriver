@@ -15,11 +15,12 @@
  */
 package com.google.jstestdriver;
 
-import com.google.jstestdriver.hooks.TestsPreProcessor;
-import com.google.jstestdriver.model.RunData;
-
 import java.util.List;
 import java.util.Set;
+
+import com.google.jstestdriver.hooks.TestsPreProcessor;
+import com.google.jstestdriver.model.JstdTestCase;
+import com.google.jstestdriver.model.RunData;
 
 /**
  * Run the tests in the browser.
@@ -43,25 +44,25 @@ public class RunTestsAction implements BrowserAction {
   }
 
   /**
-   * @param id The Browser id to execute tests in.
    * @param client The client to run tests in.
+   * @param id The Browser id to execute tests in.
    */
-  public RunData run(String id, JsTestDriverClient client, RunData runData) {
+  public ResponseStream run(String id, JsTestDriverClient client, RunData runData, JstdTestCase testCase) {
     List<String> testsToRun = tests;
     for (TestsPreProcessor preProcessor : preProcessors) {
       // makes sure that the preProcessor doesn't modify the base test list
       // by providing an Iterator
       testsToRun = preProcessor.process(id, testsToRun.iterator());
     }
-    ResponseStream runTestsActionResponseStream =
+    final ResponseStream runTestsActionResponseStream =
           responseStreamFactory.getRunTestsActionResponseStream(id);
 
     if (testsToRun.size() == 1 && testsToRun.get(0).equals("all")) {
-      client.runAllTests(id, runTestsActionResponseStream, captureConsole, runData);
+      client.runAllTests(id, runTestsActionResponseStream, captureConsole, testCase);
     } else if (testsToRun.size() > 0) {
-      client.runTests(id, runTestsActionResponseStream, testsToRun, captureConsole, runData);
+      client.runTests(id, runTestsActionResponseStream, testsToRun, captureConsole, testCase);
     }
-    return runData.recordResponse(runTestsActionResponseStream);
+    return runTestsActionResponseStream;
   }
 
   public List<String> getTests() {

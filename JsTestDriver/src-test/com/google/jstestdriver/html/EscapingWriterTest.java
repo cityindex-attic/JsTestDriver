@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver.html;
 
-import com.google.jstestdriver.token.EscapingWriter;
+import java.io.StringWriter;
 
 import junit.framework.TestCase;
 
-import java.io.StringWriter;
+import com.google.jstestdriver.token.EscapingWriter;
 
 /**
  * @author corysmith@google.com (Cory Smith)

@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

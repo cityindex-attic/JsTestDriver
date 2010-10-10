@@ -1,16 +1,16 @@
 package com.google.jstestdriver.config;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.jstestdriver.Plugin;
-import com.google.jstestdriver.runner.RunnerMode;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.runner.RunnerMode;
 
 /**
  * A collection of CmdLinFlags with convenience methods for the preparsable

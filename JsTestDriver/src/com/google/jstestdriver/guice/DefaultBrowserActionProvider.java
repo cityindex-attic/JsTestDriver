@@ -16,15 +16,15 @@
 
 package com.google.jstestdriver.guice;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.ActionFactory;
+import com.google.jstestdriver.BrowserAction;
 import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.RunTestsAction;
-import com.google.jstestdriver.BrowserAction;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Provides ThreadedActions based constructor arguments. This is the default implementation for 

@@ -15,12 +15,6 @@
  */
 package com.google.jstestdriver.server.handlers;
 
-import com.google.jstestdriver.SlaveResourceService;
-
-import junit.framework.TestCase;
-
-import org.easymock.EasyMock;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,6 +22,12 @@ import java.io.OutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import junit.framework.TestCase;
+
+import org.easymock.EasyMock;
+
+import com.google.jstestdriver.SlaveResourceService;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

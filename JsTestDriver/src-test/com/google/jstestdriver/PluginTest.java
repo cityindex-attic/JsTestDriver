@@ -15,14 +15,14 @@
  */
 package com.google.jstestdriver;
 
-import com.google.jstestdriver.util.ManifestLoader;
-import com.google.jstestdriver.util.ManifestLoader.ManifestNotFound;
-
-import junit.framework.TestCase;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.jar.Manifest;
+
+import junit.framework.TestCase;
+
+import com.google.jstestdriver.util.ManifestLoader;
+import com.google.jstestdriver.util.ManifestLoader.ManifestNotFound;
 
 /**
  * 

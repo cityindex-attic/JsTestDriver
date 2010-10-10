@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.util.Collection;
+
+import com.google.gson.reflect.TypeToken;
 
 
 /**

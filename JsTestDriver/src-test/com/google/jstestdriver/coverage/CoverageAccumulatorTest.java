@@ -16,14 +16,14 @@
 package com.google.jstestdriver.coverage;
 
 
-import com.google.common.collect.Lists;
-
-import junit.framework.TestCase;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import junit.framework.TestCase;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author corysmith@google.com (Cory Smith)

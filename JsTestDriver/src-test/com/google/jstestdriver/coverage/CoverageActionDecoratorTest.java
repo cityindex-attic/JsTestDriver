@@ -15,16 +15,16 @@
  */
 package com.google.jstestdriver.coverage;
 
+import java.util.Collections;
+import java.util.List;
+
+import junit.framework.TestCase;
+
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.Action;
 import com.google.jstestdriver.ServerStartupAction;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.hooks.AuthStrategy;
-
-import junit.framework.TestCase;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author corysmith@google.com (Cory Smith)

@@ -1,9 +1,9 @@
 package com.google.jstestdriver.config;
 
-import com.google.common.collect.Lists;
-
 import java.util.Iterator;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 /**
  * Poorman's flag parser. This will take a String[] and translate it into a

@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver.config;
 
+import java.util.List;
+import java.util.Set;
+
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * A configuration were all the paths have been resolved.

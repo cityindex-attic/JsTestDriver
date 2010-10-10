@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -35,9 +36,10 @@ import com.google.jstestdriver.guice.FlagsModule;
 import com.google.jstestdriver.html.HtmlDocModule;
 
 /**
- * A builder for IDE's to use. Minimizes the surface area of the API which needs to
- * be maintained on the IDE plugin side.
- * TODO(jeremiele) We should rename this for other API uses. Refactor the crap out of this.
+ * A builder for IDE's to use. Minimizes the surface area of the API which needs
+ * to be maintained on the IDE plugin side. TODO(jeremiele) We should rename
+ * this for other API uses. Refactor the crap out of this.
+ * 
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class IDEPluginActionBuilder {
@@ -52,14 +54,14 @@ public class IDEPluginActionBuilder {
   private List<String> dryRunFor = new LinkedList<String>();
   private File basePath;
 
-  public IDEPluginActionBuilder(ConfigurationParser configParser, String serverAddress,
-      ResponseStreamFactory responseStreamFactory, File basePath) {
+  public IDEPluginActionBuilder(ConfigurationParser configParser,
+      String serverAddress, ResponseStreamFactory responseStreamFactory,
+      File basePath) {
     this.configParser = configParser;
     this.serverAddress = serverAddress;
     this.responseStreamFactory = responseStreamFactory;
     this.basePath = basePath;
   }
-
 
   public IDEPluginActionBuilder addAllTests() {
     tests.add("all");
@@ -90,20 +92,15 @@ public class IDEPluginActionBuilder {
     configParser.parse();
     modules.add(new HtmlDocModule());
     Injector injector = Guice.createInjector(new ActionFactoryModule(),
-        new ConfigurationModule(
-      modules,
-      tests,
-      reset,
-      dryRunFor,
-      serverAddress != null ? serverAddress : configParser.getServer(),
-      basePath,
-      configParser.getFilesList(),
-      responseStreamFactory));
+        new ConfigurationModule(modules, tests, reset, dryRunFor,
+            serverAddress != null ? serverAddress : configParser.getServer(),
+            basePath, configParser.getFilesList(), responseStreamFactory));
 
     return injector.getInstance(ActionRunner.class);
   }
+
   // TODO(corysmith): Combine this class with the JsTestDriverModule
-  private static class ConfigurationModule extends AbstractModule{
+  private static class ConfigurationModule extends AbstractModule {
 
     private final List<String> tests;
     private final boolean reset;
@@ -115,8 +112,9 @@ public class IDEPluginActionBuilder {
     private final LinkedList<Module> modules;
 
     public ConfigurationModule(LinkedList<Module> modules, List<String> tests,
-        boolean reset, List<String> dryRunFor, String serverAddress, File basePath,
-        Set<FileInfo> fileSet, ResponseStreamFactory responseStreamFactory) {
+        boolean reset, List<String> dryRunFor, String serverAddress,
+        File basePath, Set<FileInfo> fileSet,
+        ResponseStreamFactory responseStreamFactory) {
       this.modules = modules;
       this.tests = tests;
       this.reset = reset;
@@ -134,27 +132,38 @@ public class IDEPluginActionBuilder {
       flags.setReset(reset);
       flags.setDryRunFor(dryRunFor);
       install(new FlagsModule(flags));
-      bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("originalFileSet"))
-          .toInstance(fileSet);
-      bind(String.class).annotatedWith(Names.named("server")).toInstance(serverAddress);
-      bind(Boolean.class).annotatedWith(Names.named("debug")).toInstance(Boolean.FALSE);
+      bind(new TypeLiteral<Set<FileInfo>>() {
+      }).annotatedWith(Names.named("originalFileSet")).toInstance(fileSet);
+      bind(String.class).annotatedWith(Names.named("server")).toInstance(
+          serverAddress);
+      bind(Boolean.class).annotatedWith(Names.named("debug")).toInstance(
+          Boolean.FALSE);
 
-      bind(new TypeLiteral<List<Action>>(){}).toProvider(ActionListProvider.class);
+      bind(new TypeLiteral<List<Action>>() {
+      }).toProvider(ActionListProvider.class);
 
-      // TODO(corysmith): Change this to an actual class, so that we can JITI it.
+      // TODO(corysmith): Change this to an actual class, so that we can JITI
+      // it.
       bind(ResponseStreamFactory.class).toInstance(responseStreamFactory);
-      bind(File.class).annotatedWith(Names.named("basePath")).toInstance(basePath);
-      bind(new TypeLiteral<List<BrowserAction>>(){}).toProvider(BrowserActionProvider.class);
+      bind(File.class).annotatedWith(Names.named("basePath")).toInstance(
+          basePath);
+      bind(new TypeLiteral<List<BrowserAction>>() {
+      }).toProvider(BrowserActionProvider.class);
       bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool());
 
-      bind(Long.class).annotatedWith(
-          Names.named("testSuiteTimeout")).toInstance(DefaultConfiguration.DEFAULT_TEST_TIMEOUT);
+      bind(Long.class).annotatedWith(Names.named("testSuiteTimeout"))
+          .toInstance(DefaultConfiguration.DEFAULT_TEST_TIMEOUT);
 
       for (Module module : modules) {
         install(module);
       }
-      bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet")).toProvider(
-          FileSetProvider.class).in(Singleton.class);
+      bind(new TypeLiteral<Set<FileInfo>>() {
+      }).annotatedWith(Names.named("fileSet"))
+          .toProvider(FileSetProvider.class).in(Singleton.class);
+      bind(new TypeLiteral<List<FileInfo>>() {
+      }).annotatedWith(Names.named("tests")).toInstance(
+          Collections.<FileInfo> emptyList());
+
     }
   }
 }

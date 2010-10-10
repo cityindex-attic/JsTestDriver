@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver.token;
 
-import com.google.common.collect.Lists;
-
 import java.util.Iterator;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 /**
  * Acts as a buffer for an Iterator<Token>.

@@ -2,6 +2,9 @@
 
 package com.google.jstestdriver.config;
 
+import java.io.File;
+import java.io.PrintStream;
+
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.multibindings.Multibinder;
@@ -11,9 +14,6 @@ import com.google.jstestdriver.PluginLoader;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.hooks.PluginInitializer;
 import com.google.jstestdriver.runner.RunnerMode;
-
-import java.io.File;
-import java.io.PrintStream;
 
 /**
  * The configuration module for initializing jstestdriver. It provides a sane

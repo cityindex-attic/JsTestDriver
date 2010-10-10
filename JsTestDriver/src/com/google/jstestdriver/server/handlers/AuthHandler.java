@@ -2,15 +2,15 @@
 
 package com.google.jstestdriver.server.handlers;
 
-import com.google.inject.Inject;
-import com.google.jstestdriver.hooks.AuthStrategy;
-import com.google.jstestdriver.requesthandlers.RequestHandler;
-
 import java.io.IOException;
 import java.util.Set;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.inject.Inject;
+import com.google.jstestdriver.hooks.AuthStrategy;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 /**
  * A servlet that provides the slaved browsers with cookies.

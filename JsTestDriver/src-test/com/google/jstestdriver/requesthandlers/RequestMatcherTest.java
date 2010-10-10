@@ -3,7 +3,6 @@ package com.google.jstestdriver.requesthandlers;
 
 import static com.google.jstestdriver.requesthandlers.HttpMethod.GET;
 import static com.google.jstestdriver.requesthandlers.HttpMethod.POST;
-
 import junit.framework.TestCase;
 
 /**

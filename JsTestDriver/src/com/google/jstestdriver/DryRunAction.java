@@ -15,11 +15,12 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.jstestdriver.model.RunData;
-
 import java.io.PrintStream;
 import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.jstestdriver.model.JstdTestCase;
+import com.google.jstestdriver.model.RunData;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -55,13 +56,13 @@ public class DryRunAction implements BrowserAction {
     this.expressions = expressions;
   }
 
-  public RunData run(String id, JsTestDriverClient client, RunData runData) {
+  public ResponseStream run(String id, JsTestDriverClient client, RunData runData, JstdTestCase testCase) {
     final ResponseStream responseStream = responseStreamFactory.getDryRunActionResponseStream();
     if (expressions.size() == 1 && expressions.get(0).equals("all")) {
-      client.dryRun(id, responseStream, runData);
+      client.dryRun(id, responseStream, testCase);
     } else {
-      client.dryRunFor(id, responseStream, expressions, runData);
+      client.dryRunFor(id, responseStream, expressions, testCase);
     }
-    return runData.recordResponse(responseStream);
+    return responseStream;
   }
 }

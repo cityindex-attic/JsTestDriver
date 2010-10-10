@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver.coverage;
 
-import com.google.common.collect.Sets;
-import com.google.jstestdriver.FileInfo;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
-import java.util.Collections;
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.FileInfo;
 
 /**
  * @author corysmith@google.com (Cory Smith)

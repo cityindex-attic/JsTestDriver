@@ -73,7 +73,7 @@ public class RunDataFactoryTest extends TestCase {
     FileInfo testTwo = new FileInfo("twoTest.js", 1234, false, false, null);
     FileInfo testThree = new FileInfo("threeTest.js", 1234, false, false, null);
     List<FileInfo> tests = Lists.newArrayList(testOne, testTwo, testThree);
-    RunData runData = new RunDataFactory(fileSet, tests).get();
+    RunData runData = new RunDataFactory(fileSet, Collections.<FileLoadPreProcessor>emptySet()).get();
     
     List<JstdTestCase> testCases = runData.getTestCases();
     assertEquals(1, testCases.size());
@@ -97,7 +97,7 @@ public class RunDataFactoryTest extends TestCase {
     fileSet.add(testTwo);
     fileSet.add(testThree);
 
-    RunData runData = new RunDataFactory(fileSet, Collections.<FileInfo>emptyList()).get();
+    RunData runData = new RunDataFactory(fileSet, Collections.<FileLoadPreProcessor>emptySet()).get();
 
     List<JstdTestCase> testCases = runData.getTestCases();
     assertEquals(1, testCases.size());

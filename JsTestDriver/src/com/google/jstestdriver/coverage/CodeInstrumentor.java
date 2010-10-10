@@ -16,17 +16,17 @@
 
 package com.google.jstestdriver.coverage;
 
-import com.google.inject.Inject;
-import com.google.jstestdriver.coverage.es3.ES3InstrumentLexer;
-import com.google.jstestdriver.coverage.es3.ES3InstrumentParser;
+import java.io.CharArrayReader;
+import java.util.Collections;
+import java.util.List;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.TokenRewriteStream;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
-import java.io.CharArrayReader;
-import java.util.Collections;
-import java.util.List;
+import com.google.inject.Inject;
+import com.google.jstestdriver.coverage.es3.ES3InstrumentLexer;
+import com.google.jstestdriver.coverage.es3.ES3InstrumentParser;
 
 /**
  * Decorates the source code with coverage instrumentation.

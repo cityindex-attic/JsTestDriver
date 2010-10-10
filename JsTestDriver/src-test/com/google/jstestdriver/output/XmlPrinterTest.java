@@ -5,13 +5,13 @@ import static com.google.jstestdriver.TestResult.Result.passed;
 import static java.io.File.createTempFile;
 import static java.util.Arrays.asList;
 
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.TestResult;
+import java.io.File;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import java.io.File;
-import java.util.Arrays;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.TestResult;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)

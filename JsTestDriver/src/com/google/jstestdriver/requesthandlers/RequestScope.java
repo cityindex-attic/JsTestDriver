@@ -1,6 +1,8 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.requesthandlers;
 
+import java.util.Map;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.inject.Guice;
@@ -8,8 +10,6 @@ import com.google.inject.Key;
 import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
 import com.google.inject.Scope;
-
-import java.util.Map;
 
 /**
  * The {@link Guice} {@link Scope} associated with HTTP requests. Maintains a

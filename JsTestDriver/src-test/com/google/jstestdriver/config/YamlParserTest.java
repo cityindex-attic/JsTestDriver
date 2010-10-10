@@ -15,12 +15,6 @@
  */
 package com.google.jstestdriver.config;
 
-import com.google.common.collect.Lists;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.Plugin;
-
-import junit.framework.TestCase;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -28,6 +22,12 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import junit.framework.TestCase;
+
+import com.google.common.collect.Lists;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.Plugin;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

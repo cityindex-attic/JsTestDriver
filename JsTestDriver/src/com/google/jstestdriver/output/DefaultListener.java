@@ -15,18 +15,18 @@
  */
 package com.google.jstestdriver.output;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import com.google.jstestdriver.FileResult;
-import com.google.jstestdriver.TestRunResult;
-import com.google.jstestdriver.TestResult;
-
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.FileResult;
+import com.google.jstestdriver.TestResult;
+import com.google.jstestdriver.TestRunResult;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

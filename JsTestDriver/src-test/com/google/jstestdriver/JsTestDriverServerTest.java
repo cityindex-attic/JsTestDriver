@@ -15,14 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.jstestdriver.hooks.AuthStrategy;
-import com.google.jstestdriver.hooks.FileInfoScheme;
-import com.google.jstestdriver.util.NullStopWatch;
-
-import junit.framework.TestCase;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -31,6 +23,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
+
+import junit.framework.TestCase;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.jstestdriver.hooks.AuthStrategy;
+import com.google.jstestdriver.hooks.FileInfoScheme;
+import com.google.jstestdriver.util.NullStopWatch;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -70,7 +69,6 @@ public class JsTestDriverServerTest extends TestCase {
   }
 
   public void testCapture() throws Exception {
-    final Gson gson = new Gson();
     server.start();
     URL captureUrl = new URL("http://localhost:4224/capture");
     assertTrue(read(captureUrl.openStream()).length() > 0);
@@ -88,10 +86,17 @@ public class JsTestDriverServerTest extends TestCase {
 
   public void testListBrowsers() throws Exception {
     final NullStopWatch stopWatch = new NullStopWatch();
-    JsTestDriverClient client = new JsTestDriverClientImpl(new CommandTaskFactory(
-        new DefaultFileFilter(), null, null, stopWatch,
-        ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme())),
-        "http://localhost:4224", new HttpServer(), false, stopWatch, null);
+    JsTestDriverClient client = new JsTestDriverClientImpl(
+        new CommandTaskFactory(
+            new DefaultFileFilter(),
+            null,
+            null,
+            stopWatch,
+           ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme())),
+        "http://localhost:4224",
+        new HttpServer(),
+        false,
+        null);
 
     server.start();
     Collection<BrowserInfo> browsers = client.listBrowsers();

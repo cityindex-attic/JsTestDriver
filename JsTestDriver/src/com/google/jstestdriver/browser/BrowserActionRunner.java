@@ -13,24 +13,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
+package com.google.jstestdriver.browser;
 
-import com.google.jstestdriver.browser.BrowserSessionManager;
-import com.google.jstestdriver.model.RunData;
-import com.google.jstestdriver.util.StopWatch;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.concurrent.Callable;
+import com.google.common.collect.Lists;
+import com.google.jstestdriver.BrowserAction;
+import com.google.jstestdriver.JsTestDriverClient;
+import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.model.JstdTestCase;
+import com.google.jstestdriver.util.StopWatch;
 
 
 /**
  * Runs all actions on a specific browser.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class BrowserActionRunner implements Callable<RunData> {
+public class BrowserActionRunner implements Callable<Collection<ResponseStream>> {
   private static final Logger logger = LoggerFactory.getLogger(BrowserActionRunner.class);
 
   private final String id;
@@ -39,25 +43,25 @@ public class BrowserActionRunner implements Callable<RunData> {
 
   private final StopWatch stopWatch;
 
-  private final RunData runData;
+  private final JstdTestCase testCase;
 
   public BrowserActionRunner(String id, JsTestDriverClient client, List<BrowserAction> actions,
-      StopWatch stopWatch, RunData runData, BrowserSessionManager sessionManager) {
+      StopWatch stopWatch, JstdTestCase testCase, BrowserSessionManager sessionManager) {
     this.id = id;
     this.client = client;
     this.actions = actions;
     this.stopWatch = stopWatch;
-    this.runData = runData;
+    this.testCase = testCase;
   }
 
-  public RunData call() {
-    RunData currentRunData = runData;
+  public Collection<ResponseStream> call() {
+    Collection<ResponseStream> responses = Lists.newArrayList();
     for (BrowserAction action : actions) {
       stopWatch.start("run %s", action);
       logger.debug("Running BrowserAction {}", action);
-      currentRunData = action.run(id, client, currentRunData);
+      responses.add(action.run(id, client, null, testCase));
       stopWatch.stop("run %s", action);
     }
-    return currentRunData;
+    return responses;
   }
 }

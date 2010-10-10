@@ -7,11 +7,11 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import junit.framework.TestCase;
-
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
+
+import junit.framework.TestCase;
 
 /**
  * @author rdionne@google.com (Robert Dionne)

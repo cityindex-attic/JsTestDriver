@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver.server.handlers;
 
-import com.google.jstestdriver.BrowserHunter;
+import junit.framework.TestCase;
+
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.browser.BrowserHunter;
 import com.google.jstestdriver.runner.RunnerType;
-
-import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

@@ -18,6 +18,8 @@ package com.google.jstestdriver.protocol;
 
 import java.util.List;
 
+import com.google.jstestdriver.SlaveBrowser.CommandResponse;
+
 
 /**
  * The response command to a received {@link CommandResponse} to the server,

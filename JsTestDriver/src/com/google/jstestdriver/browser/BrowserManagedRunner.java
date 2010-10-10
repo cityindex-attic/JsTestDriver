@@ -1,16 +1,16 @@
 package com.google.jstestdriver.browser;
 
-import com.google.jstestdriver.BrowserActionRunner;
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.JsTestDriverClient;
-import com.google.jstestdriver.model.RunData;
-import com.google.jstestdriver.util.StopWatch;
+import java.util.Collection;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.JsTestDriverClient;
+import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.util.StopWatch;
 
 /**
  * Manages a BrowserRunner lifecycle around a BrowserActionRunner.
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author corbinrsmith@gmail.com (Corbin Smith)
  *
  */
-public class BrowserManagedRunner implements Callable<RunData> {
+public class BrowserManagedRunner implements Callable<Collection<ResponseStream>> {
   private static final Logger logger = LoggerFactory.getLogger(BrowserManagedRunner.class);
 
   private final BrowserRunner runner;
@@ -43,11 +43,10 @@ public class BrowserManagedRunner implements Callable<RunData> {
     this.stopWatch = stopWatch;
   }
 
-  public RunData call() throws Exception {
+  public Collection<ResponseStream> call() throws Exception {
     final String url = String.format("%s/capture/id/%s", serverAddress, browserId);
     stopWatch.start("browser start %s", runner);
     runner.startBrowser(url);
-    String sessionId = null;
     try {
       long timeOut = TimeUnit.MILLISECONDS.convert(runner.getTimeout(), TimeUnit.SECONDS);
       long start = System.currentTimeMillis();

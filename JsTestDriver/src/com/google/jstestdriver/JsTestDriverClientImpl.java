@@ -15,24 +15,25 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import com.google.jstestdriver.JsonCommand.CommandType;
-import com.google.jstestdriver.model.RunData;
-import com.google.jstestdriver.util.StopWatch;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.model.JstdTestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -51,8 +52,6 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
   private final Boolean debug;
 
-  private final StopWatch stopWatch;
-
   private final FileUploader uploader;
 
   @Inject
@@ -60,13 +59,11 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
                                 @Named("server") String baseUrl,
                                 Server server,
                                 @Named("debug") Boolean debug,
-                                StopWatch stopWatch,
                                 FileUploader uploader) {
     this.commandTaskFactory = commandTaskFactory;
     this.baseUrl = baseUrl;
     this.server = server;
     this.debug = debug;
-    this.stopWatch = stopWatch;
     this.uploader = uploader;
   }
 
@@ -80,7 +77,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
   }
 
   private void sendCommand(String browserId, ResponseStream stream, String cmd,
-      boolean uploadFiles, RunData runData) {
+      boolean uploadFiles, JstdTestCase testCase) {
     Map<String, String> params = new LinkedHashMap<String, String>();
 
     params.put("data", cmd);
@@ -90,20 +87,20 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
     // TODO(corysmith): Work out the contradiction between ResponseStream and
     // RunData, possibly returning runData here.
-    task.run(runData);
+    task.run(testCase);
   }
 
-  public void eval(String browserId, ResponseStream responseStream, String cmd, RunData runData) {
+  public void eval(String browserId, ResponseStream responseStream, String cmd, JstdTestCase testCase) {
     List<String> parameters = new LinkedList<String>();
 
     parameters.add(cmd);
     JsonCommand jsonCmd = new JsonCommand(CommandType.EXECUTE, parameters);
 
-    sendCommand(browserId, responseStream, gson.toJson(jsonCmd), false, runData);
+    sendCommand(browserId, responseStream, gson.toJson(jsonCmd), false, testCase);
   }
 
   public void runAllTests(String browserId, ResponseStream responseStream, boolean captureConsole,
-      RunData runData) {
+      JstdTestCase testCase) {
     List<String> parameters = new LinkedList<String>();
 
     parameters.add(String.valueOf(captureConsole));
@@ -112,17 +109,17 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     // false as strings evals to true on the js side. so, "" it is.
     JsonCommand cmd = new JsonCommand(CommandType.RUNALLTESTS, parameters);
 
-    sendCommand(browserId, responseStream, gson.toJson(cmd), true, runData);
+    sendCommand(browserId, responseStream, gson.toJson(cmd), true, testCase);
   }
 
-  public void reset(String browserId, ResponseStream responseStream, RunData runData) {
+  public void reset(String browserId, ResponseStream responseStream, JstdTestCase testCase) {
     JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
 
-    sendCommand(browserId, responseStream, gson.toJson(cmd), false, runData);
+    sendCommand(browserId, responseStream, gson.toJson(cmd), false, testCase);
   }
 
   public void runTests(String browserId, ResponseStream responseStream, List<String> tests,
-      boolean captureConsole, RunData runData) {
+      boolean captureConsole, JstdTestCase testCase) {
     List<String> parameters = new LinkedList<String>();
 
     parameters.add(gson.toJson(tests));
@@ -131,26 +128,28 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
     // false as strings evals to true on the js side. so, "" it is.
     JsonCommand cmd = new JsonCommand(CommandType.RUNTESTS, parameters);
 
-    sendCommand(browserId, responseStream, gson.toJson(cmd), true, runData);
+    sendCommand(browserId, responseStream, gson.toJson(cmd), true, testCase);
   }
 
-  public void dryRun(String browserId, ResponseStream responseStream, RunData runData) {
+  public void dryRun(String browserId, ResponseStream responseStream, JstdTestCase testCase) {
     JsonCommand cmd = new JsonCommand(CommandType.DRYRUN, Collections.<String>emptyList());
 
-    sendCommand(browserId, responseStream, gson.toJson(cmd), true, runData);
+    sendCommand(browserId, responseStream, gson.toJson(cmd), true, testCase);
   }
 
   public void dryRunFor(String browserId, ResponseStream responseStream, List<String> expressions,
-      RunData runData) {
+      JstdTestCase testCase) {
     List<String> parameters = new LinkedList<String>();
 
     parameters.add(gson.toJson(expressions));
     JsonCommand cmd = new JsonCommand(CommandType.DRYRUNFOR, parameters);
 
-    sendCommand(browserId, responseStream, gson.toJson(cmd), true, runData);
+    sendCommand(browserId, responseStream, gson.toJson(cmd), true, testCase);
   }
 
-  public void uploadFiles(String browserId, RunData runData) {
-    uploader.uploadFileSet(browserId, runData.getFileSet(), new BrowserPanicResponseStream());
+  public void uploadFiles(String browserId, JstdTestCase testCase) {
+    Set<FileInfo> fileSet = Sets.newLinkedHashSet(testCase.getDependencies());
+    fileSet.addAll(testCase.getTests());
+    uploader.uploadFileSet(browserId, fileSet, new BrowserPanicResponseStream());
   }
 }

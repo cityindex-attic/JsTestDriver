@@ -15,9 +15,10 @@
  */
 package com.google.jstestdriver;
 
-import com.google.jstestdriver.model.RunData;
-
 import java.io.PrintStream;
+
+import com.google.jstestdriver.model.JstdTestCase;
+import com.google.jstestdriver.model.RunData;
 
 
 /**
@@ -53,10 +54,10 @@ public class EvalAction implements BrowserAction {
     }
   }
 
-  public RunData run(String id, JsTestDriverClient client, RunData runData) {
+  public ResponseStream run(String id, JsTestDriverClient client, RunData runData, JstdTestCase testCase) {
     final ResponseStream responseStream = responseStreamFactory.getEvalActionResponseStream();
-    client.eval(id, responseStream, getCmd(), runData);
-    return runData.recordResponse(responseStream);
+    client.eval(id, responseStream, getCmd(), testCase);
+    return responseStream;
   }
 
   public String getCmd() {

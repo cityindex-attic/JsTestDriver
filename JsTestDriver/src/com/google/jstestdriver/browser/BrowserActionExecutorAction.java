@@ -13,19 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
-
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import com.google.jstestdriver.browser.BrowserManagedRunner;
-import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.browser.BrowserSessionManager;
-import com.google.jstestdriver.model.RunData;
-import com.google.jstestdriver.util.StopWatch;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.google.jstestdriver.browser;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +24,23 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.Action;
+import com.google.jstestdriver.BrowserAction;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.JsTestDriverClient;
+import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.RunTestsAction;
+import com.google.jstestdriver.TestErrors;
+import com.google.jstestdriver.model.JstdTestCase;
+import com.google.jstestdriver.model.RunData;
+import com.google.jstestdriver.util.StopWatch;
 
 /**
  * Executes each {@link BrowserAction} on each browser.
@@ -57,8 +62,10 @@ public class BrowserActionExecutorAction implements Action {
   private final BrowserSessionManager sessionManager;
 
   @Inject
-  public BrowserActionExecutorAction(JsTestDriverClient client, List<BrowserAction> actions,
-      ExecutorService executor, Set<BrowserRunner> browserRunners,
+  public BrowserActionExecutorAction(JsTestDriverClient client,
+      List<BrowserAction> actions,
+      ExecutorService executor,
+      Set<BrowserRunner> browserRunners,
       @Named("server") String serverAddress,
       @Named("testSuiteTimeout") long testTimeout,
       StopWatch stopWatch,
@@ -84,31 +91,36 @@ public class BrowserActionExecutorAction implements Action {
     }
     // TODO(corysmith): Change the threaded action runner to
     // return useful information about a run.
-    List<Callable<RunData>> runners = Lists.newLinkedList();
-    for (BrowserInfo browserInfo : browsers) {
-      runners.add(new BrowserActionRunner(browserInfo.getId().toString(),
-          client,
-          actions,
-          stopWatch,
-          runData,
-          sessionManager));
-      logger.debug("Queueing BrowserActionRunner {} for {}.", actions, browserInfo);
-    }
-    for (BrowserRunner runner : browserRunners) {
-      String browserId = client.getNextBrowserId();
-      final BrowserActionRunner actionRunner =
-          new BrowserActionRunner(browserId, client, actions, stopWatch, runData, sessionManager);
-      runners.add(createBrowserManagedRunner(runData, runner, browserId, actionRunner));
-      logger.debug("Queueing BrowserActionRunner {} for {}.", actions, runner);
+    List<Callable<Collection<ResponseStream>>> runners = Lists.newLinkedList();
+    for (JstdTestCase testCase : runData.getTestCases()) {
+      for (BrowserInfo browserInfo : browsers) {
+        runners.add(new BrowserActionRunner(browserInfo.getId().toString(),
+            client,
+            actions,
+            stopWatch,
+            testCase,
+            sessionManager));
+        logger.debug("Queueing BrowserActionRunner {} for {}.", actions, browserInfo);
+      }
+      for (BrowserRunner runner : browserRunners) {
+        String browserId = client.getNextBrowserId();
+        final BrowserActionRunner actionRunner =
+          new BrowserActionRunner(browserId, client, actions, stopWatch, testCase, sessionManager);
+        runners.add(createBrowserManagedRunner(runData, runner, browserId, actionRunner));
+        logger.debug("Queueing BrowserActionRunner {} for {}.", actions, runner);
+      }
     }
     List<Throwable> exceptions = Lists.newLinkedList();
     long currentTimeout = testSuiteTimeout;
     try {
-      final List<Future<RunData>> results =
+      final List<Future<Collection<ResponseStream>>> results =
           executor.invokeAll(runners, currentTimeout, TimeUnit.SECONDS);
-      for (Future<RunData> result : results) {
+
+      for (Future<Collection<ResponseStream>> result : results) {
         try {
-          runData = runData.aggregateResponses(result.get());
+          for (ResponseStream response : result.get()) {
+            runData = runData.recordResponse(response);
+          }
         } catch (CancellationException e) {
           exceptions.add(new RuntimeException(
               "Test run cancelled, exceeded " + currentTimeout + "s", e));

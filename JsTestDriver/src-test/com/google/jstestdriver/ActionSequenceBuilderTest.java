@@ -15,19 +15,20 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Sets;
-import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.browser.CommandLineBrowserRunner;
-import com.google.jstestdriver.hooks.AuthStrategy;
-import com.google.jstestdriver.hooks.TestsPreProcessor;
-
-import junit.framework.TestCase;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import junit.framework.TestCase;
+
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.browser.BrowserActionExecutorAction;
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.browser.CommandLineBrowserRunner;
+import com.google.jstestdriver.hooks.AuthStrategy;
+import com.google.jstestdriver.hooks.TestsPreProcessor;
 
 public class ActionSequenceBuilderTest extends TestCase {
 
@@ -38,8 +39,6 @@ public class ActionSequenceBuilderTest extends TestCase {
 
   public void testAddTestsWithRemoteServerAddress() throws Exception {
     List<String> tests = tests();
-    boolean captureConsole = true;
-    Set<BrowserRunner> browsers = browsers();
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(actionFactory, null, null,
             new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
@@ -57,7 +56,6 @@ public class ActionSequenceBuilderTest extends TestCase {
 
   public void testAddTestsWithLocalServer() throws Exception {
     List<String> tests = tests();
-    boolean captureConsole = true;
     ActionSequenceBuilder builder = new ActionSequenceBuilder(
         new ActionFactory(
             null,
@@ -65,7 +63,6 @@ public class ActionSequenceBuilderTest extends TestCase {
             Collections.<AuthStrategy>emptySet(), false, null),
             null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
         new FailureAccumulator());
-    Set<BrowserRunner> browsers = browsers();
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -107,11 +104,6 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<String> tests = new ArrayList<String>();
     tests.add("test.testFoo");
     return tests;
-  }
-
-  private Set<BrowserRunner> browsers() {
-    return Sets.<BrowserRunner>newHashSet(
-        new CommandLineBrowserRunner("foo", null));
   }
 
   private <T> void assertSequence(List<Class<? extends T>> expectedActions, List<T> actions) {

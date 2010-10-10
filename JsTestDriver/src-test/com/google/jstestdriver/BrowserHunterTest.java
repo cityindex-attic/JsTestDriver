@@ -16,10 +16,10 @@
 package com.google.jstestdriver;
 
 import static com.google.jstestdriver.runner.RunnerType.CLIENT_CONTROLLED;
-
-import com.google.jstestdriver.server.handlers.CaptureHandler;
-
 import junit.framework.TestCase;
+
+import com.google.jstestdriver.browser.BrowserHunter;
+import com.google.jstestdriver.server.handlers.CaptureHandler;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

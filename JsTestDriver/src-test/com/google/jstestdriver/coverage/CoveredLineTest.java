@@ -15,9 +15,9 @@
  */
 package com.google.jstestdriver.coverage;
 
-import com.google.gson.Gson;
-
 import junit.framework.TestCase;
+
+import com.google.gson.Gson;
 
 /**
  * @author corysmith

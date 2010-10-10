@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver;
 
+import java.util.Timer;
+
 import com.google.inject.Inject;
 import com.google.jstestdriver.util.StopWatch;
-
-import java.util.Timer;
 
 
 

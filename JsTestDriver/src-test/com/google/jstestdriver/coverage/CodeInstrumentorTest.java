@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver.coverage;
 
-import com.google.common.collect.Lists;
+import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
-import java.util.Iterator;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 public class CodeInstrumentorTest extends TestCase {
 

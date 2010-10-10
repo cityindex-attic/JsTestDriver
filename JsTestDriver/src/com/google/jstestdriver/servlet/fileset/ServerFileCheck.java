@@ -1,14 +1,14 @@
 package com.google.jstestdriver.servlet.fileset;
 
+import java.util.Collection;
+import java.util.Set;
+
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FileSetCacheStrategy;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.SlaveBrowser;
-
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * @author corbinrsmith@gmail.com (Cory Smith)

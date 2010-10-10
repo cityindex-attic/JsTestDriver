@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver;
 
-import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.guice.GuiceBinding;
-
 import java.util.List;
 import java.util.Set;
+
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.guice.GuiceBinding;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

@@ -15,6 +15,10 @@
  */
 package com.google.jstestdriver;
 
+import java.util.Map;
+
+import junit.framework.TestCase;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -22,10 +26,6 @@ import com.google.jstestdriver.browser.BrowserFileSet;
 import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
-
-import junit.framework.TestCase;
-
-import java.util.Map;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

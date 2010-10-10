@@ -20,15 +20,6 @@ import static com.google.jstestdriver.TestResult.Result.failed;
 import static com.google.jstestdriver.TestResult.Result.passed;
 import static java.util.Arrays.asList;
 
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.TestResult;
-
-import junit.framework.TestCase;
-
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -40,6 +31,15 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import junit.framework.TestCase;
+
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.TestResult;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)

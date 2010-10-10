@@ -20,6 +20,7 @@ import com.google.jstestdriver.Action;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.JsTestDriverClient;
 import com.google.jstestdriver.browser.BrowserSessionManager;
+import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.model.RunData;
 
 /**
@@ -40,10 +41,12 @@ public class UploadAction implements Action {
 
   public RunData run(RunData runData) {
     for (BrowserInfo browser : client.listBrowsers()) {
-      final String browserId = browser.getId().toString();
-      final String sessionId = sessionManager.startSession(browserId);
-      client.uploadFiles(browserId, runData);
-      sessionManager.stopSession(sessionId, browserId);
+      for (JstdTestCase testCase : runData.getTestCases()) {
+        final String browserId = browser.getId().toString();
+        final String sessionId = sessionManager.startSession(browserId);
+        client.uploadFiles(browserId, testCase);
+        sessionManager.stopSession(sessionId, browserId);
+      }
     }
     return runData;
   }

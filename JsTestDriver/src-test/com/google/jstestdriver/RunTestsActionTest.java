@@ -16,18 +16,18 @@
 
 package com.google.jstestdriver;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import junit.framework.TestCase;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.model.RunData;
-
-import junit.framework.TestCase;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author corysmith@google.com (Cory Smith)
@@ -49,7 +49,7 @@ public class RunTestsActionTest extends TestCase {
     action.run(browserId, client, new RunData(
         Collections.<FileInfo>emptySet(),
         Collections.<ResponseStream>emptyList(),
-        Collections.<JstdTestCase>emptyList()));
+        Collections.<JstdTestCase>emptyList()), null);
 
     client.assertTestRun(expected);
   }
@@ -75,7 +75,7 @@ public class RunTestsActionTest extends TestCase {
         new RunTestsAction(new FakeResponseStreamFactory(stream), tests, captureConsole,
             preProcessors);
     final FakeJsTestDriverClient client = new FakeJsTestDriverClient(Collections.<BrowserInfo>emptyList());
-    action.run(browserId, client, new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList(), Collections.<JstdTestCase>emptyList()));
+    action.run(browserId, client, new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList(), Collections.<JstdTestCase>emptyList()), null);
 
     client.assertTestRun(expected);
   }

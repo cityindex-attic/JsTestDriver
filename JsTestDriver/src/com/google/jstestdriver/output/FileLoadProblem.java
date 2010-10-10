@@ -16,9 +16,9 @@
 
 package com.google.jstestdriver.output;
 
-import com.google.jstestdriver.FileResult;
-
 import java.io.PrintStream;
+
+import com.google.jstestdriver.FileResult;
 
 /**
  * An impl of Problem for issues with FileLoading.

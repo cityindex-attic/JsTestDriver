@@ -1,12 +1,12 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.requesthandlers;
 
+import junit.framework.TestCase;
+
 import com.google.inject.Key;
 import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
 import com.google.inject.util.Providers;
-
-import junit.framework.TestCase;
 
 /**
  * @author rdionne@google.com (Robert Dionne)

@@ -15,7 +15,7 @@
  */
 package com.google.jstestdriver.idea.ui;
 
-import com.google.jstestdriver.BrowserCaptureEvent;
+import com.google.jstestdriver.browser.BrowserCaptureEvent;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.idea.PluginResources.BrowserIcon;
 

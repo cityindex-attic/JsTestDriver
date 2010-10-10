@@ -1,19 +1,19 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.handlers;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Inject;
 import com.google.inject.servlet.RequestParameters;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.annotations.ResponseWriter;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Map;
 
 /**
  * Used by the browser to report if it is still alive.

@@ -18,12 +18,12 @@ package com.google.jstestdriver.server.handlers;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
 
-import junit.framework.TestCase;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

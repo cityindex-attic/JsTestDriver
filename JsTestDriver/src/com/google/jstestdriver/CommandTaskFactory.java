@@ -29,7 +29,6 @@ import com.google.jstestdriver.util.StopWatch;
 public class CommandTaskFactory {
 
   private final JsTestDriverFileFilter filter;
-  private final Provider<HeartBeatManager> heartBeatProvider;
   private final FileLoader fileLoader;
   private final StopWatch stopWatch;
   private final Set<FileInfoScheme> schemes;
@@ -42,7 +41,6 @@ public class CommandTaskFactory {
                             Set<FileInfoScheme> schemes) {
     this.filter = filter;
     this.fileLoader = fileLoader;
-    this.heartBeatProvider = heartBeatProvider;
     this.stopWatch = stopWatch;
     this.schemes = schemes;
   }

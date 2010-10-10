@@ -1,16 +1,16 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.handlers;
 
-import com.google.inject.Inject;
-import com.google.jstestdriver.SlaveResourceService;
-import com.google.jstestdriver.requesthandlers.RequestHandler;
-
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.inject.Inject;
+import com.google.jstestdriver.SlaveResourceService;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 /**
  * @author rdionne@google.com (Robert Dionne)

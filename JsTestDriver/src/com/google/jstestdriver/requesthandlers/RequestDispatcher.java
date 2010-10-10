@@ -1,15 +1,15 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.requesthandlers;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * A @RequestScoped object that dispatches the request to the appropriate

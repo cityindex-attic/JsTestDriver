@@ -15,19 +15,19 @@
  */
 package com.google.jstestdriver.server.handlers;
 
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.MockTime;
-import com.google.jstestdriver.SlaveBrowser;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-
-import javax.servlet.http.HttpServletResponse;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.MockTime;
+import com.google.jstestdriver.SlaveBrowser;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

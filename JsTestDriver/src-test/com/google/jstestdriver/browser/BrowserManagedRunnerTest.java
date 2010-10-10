@@ -16,14 +16,15 @@
 
 package com.google.jstestdriver.browser;
 
-import com.google.common.collect.Lists;
-import com.google.jstestdriver.BrowserActionRunner;
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.FakeJsTestDriverClient;
-import com.google.jstestdriver.model.RunData;
-import com.google.jstestdriver.util.NullStopWatch;
+import java.util.Collection;
 
 import junit.framework.TestCase;
+
+import com.google.common.collect.Lists;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.FakeJsTestDriverClient;
+import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.util.NullStopWatch;
 
 /**
  * @author corbinrsmith@gmail.com (Cory Smith)
@@ -50,7 +51,7 @@ public class BrowserManagedRunnerTest extends TestCase {
     }
     
     @Override
-    public RunData call() {
+    public Collection<ResponseStream> call() {
       return null;
     }
   }

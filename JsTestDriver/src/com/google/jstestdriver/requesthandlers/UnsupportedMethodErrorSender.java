@@ -1,13 +1,13 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.requesthandlers;
 
-import com.google.inject.Inject;
-import com.google.jstestdriver.annotations.RequestProtocol;
-
 import java.io.IOException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.inject.Inject;
+import com.google.jstestdriver.annotations.RequestProtocol;
 
 /**
  * An object that sends the appropriate HTTP error response when a client

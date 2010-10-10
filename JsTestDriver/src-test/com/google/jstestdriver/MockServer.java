@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

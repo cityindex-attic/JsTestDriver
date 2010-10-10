@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver.html;
 
-import com.google.common.collect.Lists;
-import com.google.jstestdriver.token.ConcreteToken;
-import com.google.jstestdriver.token.Node;
+import java.io.StringWriter;
 
 import junit.framework.TestCase;
 
-import java.io.StringWriter;
+import com.google.common.collect.Lists;
+import com.google.jstestdriver.token.ConcreteToken;
+import com.google.jstestdriver.token.Node;
 
 /**
  * @author corysmith@google.com (Cory Smith)

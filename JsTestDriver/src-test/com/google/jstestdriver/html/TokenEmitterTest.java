@@ -15,14 +15,14 @@
  */
 package com.google.jstestdriver.html;
 
-import com.google.jstestdriver.token.ConcreteToken;
-import com.google.jstestdriver.token.Token;
-import com.google.jstestdriver.token.TokenEmitter;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 
 import junit.framework.TestCase;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
+import com.google.jstestdriver.token.ConcreteToken;
+import com.google.jstestdriver.token.Token;
+import com.google.jstestdriver.token.TokenEmitter;
 
 /**
  * @author corysmith@google.com (Cory Smith)

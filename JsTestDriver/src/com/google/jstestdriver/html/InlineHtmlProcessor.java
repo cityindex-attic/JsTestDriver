@@ -15,17 +15,17 @@
  */
 package com.google.jstestdriver.html;
 
-import com.google.inject.Inject;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Writer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 
 /**
  * Extract the inline html deocrators.

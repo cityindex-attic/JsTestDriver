@@ -13,14 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
-
-import com.google.inject.Inject;
-import com.google.jstestdriver.annotations.BrowserTimeout;
-import com.google.jstestdriver.runner.RunnerType;
+package com.google.jstestdriver.browser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.TimeImpl;
+import com.google.jstestdriver.annotations.BrowserTimeout;
+import com.google.jstestdriver.runner.RunnerType;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

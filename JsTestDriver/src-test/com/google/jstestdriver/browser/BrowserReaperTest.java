@@ -16,12 +16,12 @@
 
 package com.google.jstestdriver.browser;
 
+import junit.framework.TestCase;
+
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.MockTime;
 import com.google.jstestdriver.SlaveBrowser;
-
-import junit.framework.TestCase;
 
 /**
  * @author corbinrsmith@gmail.com (Cory Smith)

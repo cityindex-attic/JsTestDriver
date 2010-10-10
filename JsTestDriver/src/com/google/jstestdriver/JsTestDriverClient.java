@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.ImplementedBy;
-import com.google.jstestdriver.model.RunData;
-
 import java.util.Collection;
 import java.util.List;
+
+import com.google.inject.ImplementedBy;
+import com.google.jstestdriver.model.JstdTestCase;
 
 
 /**
@@ -32,24 +32,24 @@ public interface JsTestDriverClient {
   public Collection<BrowserInfo> listBrowsers();
 
   public void eval(String id, ResponseStream responseStream, String cmd,
-      RunData runData);
+      JstdTestCase testCase);
 
   public void runAllTests(String id, ResponseStream responseStream, boolean captureConsole,
-      RunData runData);
+      JstdTestCase testCase);
 
-  public void reset(String id, ResponseStream responseStream, RunData runData);
+  public void reset(String id, ResponseStream responseStream, JstdTestCase testCase);
 
   public void runTests(String id, ResponseStream responseStream, List<String> tests,
-      boolean captureConsole, RunData runData);
+      boolean captureConsole, JstdTestCase testCase);
 
-  public void dryRun(String id, ResponseStream responseStream, RunData runData);
+  public void dryRun(String id, ResponseStream responseStream, JstdTestCase testCase);
 
   public void dryRunFor(String id, ResponseStream responseStream, List<String> expressions,
-      RunData runData);
+      JstdTestCase testCase);
 
   /** Asks the server for the next browser id. */
   public String getNextBrowserId();
 
   /** uploads the files to the server and requests the browser to load as well.*/
-  public void uploadFiles(String browserId, RunData runData);
+  public void uploadFiles(String browserId, JstdTestCase testCase);
 }

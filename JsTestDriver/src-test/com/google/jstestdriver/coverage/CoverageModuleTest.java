@@ -15,6 +15,13 @@
  */
 package com.google.jstestdriver.coverage;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import junit.framework.TestCase;
+
 import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -24,16 +31,9 @@ import com.google.jstestdriver.ActionRunner;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.JsTestDriverModule;
+import com.google.jstestdriver.guice.BrowserActionProvider;
 import com.google.jstestdriver.guice.DebugModule;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
-import com.google.jstestdriver.guice.BrowserActionProvider;
-
-import junit.framework.TestCase;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Smoke test. If you see smoke, it failed.

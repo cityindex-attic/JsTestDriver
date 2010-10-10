@@ -3,21 +3,21 @@ package com.google.jstestdriver.server.handlers;
 
 import static com.google.jstestdriver.runner.RunnerType.CLIENT_CONTROLLED;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.inject.Inject;
-import com.google.jstestdriver.BrowserHunter;
-import com.google.jstestdriver.SlaveBrowser;
-import com.google.jstestdriver.UserAgentParser;
-import com.google.jstestdriver.requesthandlers.RequestHandler;
-import com.google.jstestdriver.runner.RunnerType;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.inject.Inject;
+import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.UserAgentParser;
+import com.google.jstestdriver.browser.BrowserHunter;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
+import com.google.jstestdriver.runner.RunnerType;
 
 /**
  * "Captures" a browser by redirecting it to RemoteConsoleRunner url, and adds

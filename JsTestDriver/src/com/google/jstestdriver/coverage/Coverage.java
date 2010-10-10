@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver.coverage;
 
-import com.google.inject.BindingAnnotation;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import com.google.inject.BindingAnnotation;
 
 /**
  * @author corysmith@google.com (Cory Smith)

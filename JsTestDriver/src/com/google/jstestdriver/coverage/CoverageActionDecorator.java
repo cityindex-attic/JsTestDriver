@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver.coverage;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.jstestdriver.Action;
 import com.google.jstestdriver.hooks.ActionListProcessor;
-
-import java.util.List;
 
 /**
  * Adds the coverage reporting action to the default list of actions.

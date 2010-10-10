@@ -5,15 +5,15 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Multimaps.newMultimap;
 import static com.google.common.collect.Multimaps.synchronizedMultimap;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 import com.google.common.base.Supplier;
 import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.FileResult;
 import com.google.jstestdriver.TestResult;
-
-import java.util.Collection;
-import java.util.HashMap;
 
 /**
  * A data storage for test results. It listens on each browser for incoming test results,

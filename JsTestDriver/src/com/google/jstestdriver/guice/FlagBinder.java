@@ -16,6 +16,10 @@
 
 package com.google.jstestdriver.guice;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+
 import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.name.Named;
@@ -23,10 +27,6 @@ import com.google.inject.name.Names;
 import com.google.inject.util.Providers;
 import com.google.inject.util.Types;
 import com.google.jstestdriver.Flags;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
 
 /**
  * Reads and binds the Flags data to a Guice scope.

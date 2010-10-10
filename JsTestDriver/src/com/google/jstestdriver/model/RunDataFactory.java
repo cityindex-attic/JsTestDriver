@@ -46,6 +46,6 @@ public class RunDataFactory {
     }
 
     return new RunData(Sets.newLinkedHashSet(processedFileSet),
-                       Collections.<ResponseStream> emptyList());
+                       Collections.<ResponseStream> emptyList(), null);
   }
 }

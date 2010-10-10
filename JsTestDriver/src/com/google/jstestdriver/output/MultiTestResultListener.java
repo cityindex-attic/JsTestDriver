@@ -1,10 +1,10 @@
 package com.google.jstestdriver.output;
 
+import java.util.Set;
+
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileResult;
 import com.google.jstestdriver.TestResult;
-
-import java.util.Set;
 
 /**
  * Print results to multiple result printers simultaneously.

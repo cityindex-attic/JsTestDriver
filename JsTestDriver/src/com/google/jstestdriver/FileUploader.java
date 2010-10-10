@@ -16,6 +16,18 @@
 
 package com.google.jstestdriver;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
@@ -31,18 +43,6 @@ import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
 import com.google.jstestdriver.util.StopWatch;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Handles the uploading of files.
@@ -129,11 +129,11 @@ public class FileUploader {
     stopWatch.stop("upload to server %s", browserId);
 
     stopWatch.start("determineBrowserFileSet(%s)", browserId);
-    final List<FileInfo> browserFilesToupdate = determineBrowserFileSet(browserId, files, stream);
+    final List<FileInfo> browserFilesToUpdate = determineBrowserFileSet(browserId, files, stream);
     stopWatch.stop("determineBrowserFileSet(%s)", browserId);
 
     stopWatch.start("uploadToTheBrowser(%s)", browserId);
-    uploadToTheBrowser(browserId, stream, browserFilesToupdate);
+    uploadToTheBrowser(browserId, stream, browserFilesToUpdate);
     stopWatch.stop("uploadToTheBrowser(%s)", browserId);
   }
 

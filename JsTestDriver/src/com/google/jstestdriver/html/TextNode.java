@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver.html;
 
+import java.io.Writer;
+
 import com.google.jstestdriver.token.Node;
 import com.google.jstestdriver.token.Token;
-
-import java.io.Writer;
 
 
 public class TextNode implements Node {

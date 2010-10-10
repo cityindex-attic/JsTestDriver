@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver;
 
-import junit.framework.TestCase;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

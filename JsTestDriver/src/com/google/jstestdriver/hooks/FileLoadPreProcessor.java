@@ -17,9 +17,9 @@
 package com.google.jstestdriver.hooks;
 
 
-import com.google.jstestdriver.FileInfo;
-
 import java.util.List;
+
+import com.google.jstestdriver.FileInfo;
 
 /**
  * Processes a list files before they are loaded.

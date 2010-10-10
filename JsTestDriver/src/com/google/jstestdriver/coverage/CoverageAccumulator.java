@@ -15,14 +15,14 @@
  */
 package com.google.jstestdriver.coverage;
 
-import com.google.inject.Singleton;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import com.google.inject.Singleton;
 
 /**
  * Accumulates all the lines recorded during a test run.

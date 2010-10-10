@@ -15,21 +15,20 @@
  */
 package com.google.jstestdriver;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import junit.framework.TestCase;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.inject.Provider;
 import com.google.jstestdriver.browser.BrowserFileSet;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.JstdTestCase;
-import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.util.NullStopWatch;
-
-import junit.framework.TestCase;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -108,19 +107,19 @@ public class JsTestDriverClientTest extends TestCase {
 
     final NullStopWatch stopWatch = new NullStopWatch();
     CommandTaskFactory commandTaskFactory =
-        new CommandTaskFactory(new DefaultFileFilter(), null, new Provider<HeartBeatManager>() {
-          public HeartBeatManager get() {
-            return new HeartBeatManagerStub();
-          }
-        }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
+        new CommandTaskFactory(
+            new DefaultFileFilter(),
+            null,
+            null,
+            stopWatch,
+            ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
-        server, false, stopWatch, null);
+        server, false, null);
     FakeResponseStream stream = new FakeResponseStream();
 
     client.eval("1", stream, "cmd",
-        new RunData(Collections.<FileInfo>emptySet(),
-            Collections.<ResponseStream>emptyList(),
-            Collections.<JstdTestCase>emptyList()));
+        new JstdTestCase(Collections.<FileInfo>emptyList(),
+            Collections.<FileInfo>emptyList()));
 
     Response response = stream.getResponse();
 
@@ -130,7 +129,7 @@ public class JsTestDriverClientTest extends TestCase {
     assertEquals(3L, response.getExecutionTime());
 
     client.eval("2", stream, "cmd",
-        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList(), Collections.<JstdTestCase>emptyList()));
+        new JstdTestCase(Collections.<FileInfo>emptyList(), Collections.<FileInfo>emptyList()));
     response = stream.getResponse();
     assertEquals("2", stream.getResponse().getResponse());
     assertEquals("browser2", response.getBrowser().getName());
@@ -151,7 +150,7 @@ public class JsTestDriverClientTest extends TestCase {
           }
         }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
-        server, false, stopWatch, null);
+        server, false, null);
     Collection<BrowserInfo> browsersCollection = client.listBrowsers();
     List<BrowserInfo> browsers = new ArrayList<BrowserInfo>(browsersCollection);
 
@@ -192,11 +191,11 @@ public class JsTestDriverClientTest extends TestCase {
           }
         }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
-        server, false, stopWatch, null);
+        server, false, null);
     FakeResponseStream stream = new FakeResponseStream();
 
     client.runAllTests("1", stream, false,
-        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList(), Collections.<JstdTestCase>emptyList()));
+        new JstdTestCase(Collections.<FileInfo>emptyList(), Collections.<FileInfo>emptyList()));
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }
@@ -223,7 +222,7 @@ public class JsTestDriverClientTest extends TestCase {
           }
         }, stopWatch, ImmutableSet.<FileInfoScheme>of(new HttpFileInfoScheme()));
     JsTestDriverClient client = new JsTestDriverClientImpl(commandTaskFactory, "http://localhost",
-        server, false, stopWatch, null);
+        server, false, null);
     FakeResponseStream stream = new FakeResponseStream();
 
     ArrayList<String> tests = new ArrayList<String>();
@@ -231,7 +230,7 @@ public class JsTestDriverClientTest extends TestCase {
     tests.add("testCase.testFoo");
     tests.add("testCase.testBar");
     client.runTests("1", stream, tests, false,
-        new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList(), Collections.<JstdTestCase>emptyList()));
+        new JstdTestCase(Collections.<FileInfo>emptyList(), Collections.<FileInfo>emptyList()));
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }

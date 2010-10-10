@@ -17,13 +17,13 @@ package com.google.jstestdriver.model;
 
 import java.util.Collections;
 
+import junit.framework.TestCase;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
-
-import junit.framework.TestCase;
 
 public class RunDataTest extends TestCase {
 

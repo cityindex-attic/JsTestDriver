@@ -15,16 +15,16 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Sets;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import junit.framework.TestCase;
+
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.model.RunDataFactory;
 import com.google.jstestdriver.util.NullStopWatch;
-
-import junit.framework.TestCase;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -51,8 +51,9 @@ public class ActionRunnerTest extends TestCase {
 
     actions.add(action);
     ActionRunner runner = new ActionRunner(actions, new NullStopWatch(),
-        new RunDataFactory(Sets.<FileInfo>newLinkedHashSet(),
-          Sets.<FileLoadPreProcessor>newHashSet()));
+        new RunDataFactory(
+            Collections.<FileInfo>emptySet(),
+            Collections.<FileLoadPreProcessor>emptySet()));
 
     runner.runActions();
     assertTrue(action.actionRan());

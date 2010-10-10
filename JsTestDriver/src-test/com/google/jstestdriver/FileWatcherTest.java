@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver;
 
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

@@ -1,10 +1,6 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.requesthandlers;
 
-import com.google.inject.Inject;
-import com.google.inject.OutOfScopeException;
-import com.google.inject.Provider;
-
 import java.io.IOException;
 
 import javax.servlet.Servlet;
@@ -12,6 +8,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.inject.Inject;
+import com.google.inject.OutOfScopeException;
+import com.google.inject.Provider;
 
 /**
  * The lone {@link Servlet}, a @Singleton. Sets up the {@link RequestScope} and

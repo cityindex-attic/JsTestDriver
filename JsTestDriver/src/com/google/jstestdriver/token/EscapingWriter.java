@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver.token;
 
-import com.google.common.collect.Maps;
-
 import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 /**
  * Automatically escapes \, ', ", \n, \f, \r when writing to the underlying writer.

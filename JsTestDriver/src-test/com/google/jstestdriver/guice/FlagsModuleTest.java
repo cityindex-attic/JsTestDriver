@@ -16,16 +16,16 @@
 
 package com.google.jstestdriver.guice;
 
+import java.util.Arrays;
+
+import junit.framework.TestCase;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.google.inject.util.Types;
 import com.google.jstestdriver.FlagsImpl;
-
-import junit.framework.TestCase;
-
-import java.util.Arrays;
 
 /**
  * @author corysmith

@@ -1,4 +1,7 @@
-package com.google.jstestdriver;
+package com.google.jstestdriver.browser;
+
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.SlaveBrowser;
 
 /**
  * An event when a browser becomes captured or is no longer captured.
@@ -11,7 +14,7 @@ public class BrowserCaptureEvent {
   public final Event event;
   private final SlaveBrowser browser;
 
-  BrowserCaptureEvent(Event event, SlaveBrowser browser) {
+  public BrowserCaptureEvent(Event event, SlaveBrowser browser) {
     this.event = event;
     this.browser = browser;
   }

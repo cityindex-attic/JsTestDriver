@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver.coverage;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.LoadedFileInfo;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Adds the coverage js at the beginning of the FileInfo list.

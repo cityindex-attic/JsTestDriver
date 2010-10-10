@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import java.io.PrintStream;
+
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
@@ -22,8 +24,6 @@ import com.google.jstestdriver.DryRunAction.DryRunActionResponseStream;
 import com.google.jstestdriver.EvalAction.EvalActionResponseStream;
 import com.google.jstestdriver.ResetAction.ResetActionResponseStream;
 import com.google.jstestdriver.output.TestResultListener;
-
-import java.io.PrintStream;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

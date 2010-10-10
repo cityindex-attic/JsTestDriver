@@ -15,10 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Lists;
-
-import junit.framework.TestCase;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +24,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import junit.framework.TestCase;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

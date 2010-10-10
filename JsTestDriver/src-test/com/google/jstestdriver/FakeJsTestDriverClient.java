@@ -2,10 +2,10 @@
 
 package com.google.jstestdriver;
 
-import com.google.jstestdriver.model.RunData;
-
 import java.util.Collection;
 import java.util.List;
+
+import com.google.jstestdriver.model.JstdTestCase;
 
 final public class FakeJsTestDriverClient implements JsTestDriverClient {
 
@@ -17,27 +17,27 @@ final public class FakeJsTestDriverClient implements JsTestDriverClient {
   }
 
   public void runTests(String id, ResponseStream responseStream, List<String> tests,
-      boolean captureConsole, RunData runData) {
+      boolean captureConsole, JstdTestCase testCase) {
     testRun = new TestRun(id, responseStream, tests, captureConsole);
   }
 
-  public void runAllTests(String id, ResponseStream responseStream, boolean captureConsole, RunData runData) {
+  public void runAllTests(String id, ResponseStream responseStream, boolean captureConsole, JstdTestCase testCase) {
   }
 
-  public void reset(String id, ResponseStream responseStream, RunData runData) {
+  public void reset(String id, ResponseStream responseStream, JstdTestCase testCase) {
   }
 
   public Collection<BrowserInfo> listBrowsers() {
     return browsers;
   }
 
-  public void eval(String id, ResponseStream responseStream, String cmd, RunData runData) {
+  public void eval(String id, ResponseStream responseStream, String cmd, JstdTestCase testCase) {
   }
 
-  public void dryRunFor(String id, ResponseStream responseStream, List<String> expressions, RunData runData) {
+  public void dryRunFor(String id, ResponseStream responseStream, List<String> expressions, JstdTestCase testCase) {
   }
 
-  public void dryRun(String id, ResponseStream responseStream, RunData runData) {
+  public void dryRun(String id, ResponseStream responseStream, JstdTestCase testCase) {
   }
 
   public void assertTestRun(FakeJsTestDriverClient.TestRun expected) {
@@ -93,7 +93,7 @@ final public class FakeJsTestDriverClient implements JsTestDriverClient {
   public String getNextBrowserId() {
     return null;
   }
-  public void uploadFiles(String browserId, RunData runData) {
+  public void uploadFiles(String browserId, JstdTestCase testCase) {
     
   }
 }

@@ -6,11 +6,10 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.ProcessFactory;
-
-
-import junit.framework.TestCase;
 
 public class CommandLineBrowserRunnerTest extends TestCase {
   public void testStartAndStop() throws Exception {

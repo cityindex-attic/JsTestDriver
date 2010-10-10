@@ -15,17 +15,16 @@
  */
 package com.google.jstestdriver.output;
 
-import com.google.gson.Gson;
-import com.google.inject.util.Providers;
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.JsException;
-import com.google.jstestdriver.TestResult;
-
-import junit.framework.TestCase;
-
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+
+import junit.framework.TestCase;
+
+import com.google.gson.Gson;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.JsException;
+import com.google.jstestdriver.TestResult;
 
 public class DefaultListenerTest extends TestCase {
 

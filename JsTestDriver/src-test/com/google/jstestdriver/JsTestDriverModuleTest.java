@@ -16,14 +16,14 @@
 
 package com.google.jstestdriver;
 
-import com.google.inject.Guice;
-import com.google.jstestdriver.guice.DebugModule;
-import com.google.jstestdriver.guice.TestResultPrintingModule;
+import java.io.File;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
-import java.io.File;
-import java.util.Collections;
+import com.google.inject.Guice;
+import com.google.jstestdriver.guice.DebugModule;
+import com.google.jstestdriver.guice.TestResultPrintingModule;
 
 /**
  * @author corysmith

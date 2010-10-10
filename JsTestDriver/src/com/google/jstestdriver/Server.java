@@ -15,9 +15,9 @@
  */
 package com.google.jstestdriver;
 
-import com.google.inject.ImplementedBy;
-
 import java.util.Map;
+
+import com.google.inject.ImplementedBy;
 
 
 /**

@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver.server.handlers;
 
+import junit.framework.TestCase;
+
 import com.google.gson.Gson;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.TimeImpl;
-
-import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

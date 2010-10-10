@@ -1,15 +1,15 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.requesthandlers;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-
-import junit.framework.TestCase;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 
 /**
  * @author rdionne@google.com (Robert Dionne)

@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.model.RunData;
 
 /**
@@ -22,5 +23,5 @@ import com.google.jstestdriver.model.RunData;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public interface BrowserAction {
-  public RunData run(String browserId, JsTestDriverClient client, RunData runData);
+  public ResponseStream run(String browserId, JsTestDriverClient client, RunData runData, JstdTestCase testCase);
 }

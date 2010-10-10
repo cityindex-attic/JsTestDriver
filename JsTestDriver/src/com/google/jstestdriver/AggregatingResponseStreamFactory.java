@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 /**
  * Aggregates a set of {@link ResponseStreamFactory}s by providing an AggregatingResponseStream.

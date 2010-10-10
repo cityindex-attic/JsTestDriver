@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver.model;
 
-import com.google.common.collect.Lists;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.ResponseStream;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.ResponseStream;
 
 /**
  * An immutable container, for the necessary data and responses from a JsTestDriver run.

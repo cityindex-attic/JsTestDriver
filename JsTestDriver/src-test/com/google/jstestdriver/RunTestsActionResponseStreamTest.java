@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.Gson;
-import com.google.jstestdriver.Response.ResponseType;
-import com.google.jstestdriver.output.TestResultListener;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
-import java.util.Collections;
+import com.google.gson.Gson;
+import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.output.TestResultListener;
 
 /**
  * @author corysmith@google.com (Cory Smith)

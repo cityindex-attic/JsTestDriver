@@ -2,9 +2,9 @@
 
 package com.google.jstestdriver.hooks;
 
-import javax.servlet.http.Cookie;
-
 import java.util.List;
+
+import javax.servlet.http.Cookie;
 
 /**
  * A strategy for supplying an {@link com.google.jstestdriver.server.handlers.AuthHandler} with {@link Cookie}s.

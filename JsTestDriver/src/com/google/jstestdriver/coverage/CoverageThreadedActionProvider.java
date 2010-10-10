@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.google.jstestdriver.ResetAction;
 import com.google.jstestdriver.BrowserAction;
-import com.google.jstestdriver.guice.DefaultBrowserActionProvider;
+import com.google.jstestdriver.ResetAction;
 import com.google.jstestdriver.guice.BrowserActionProvider;
+import com.google.jstestdriver.guice.DefaultBrowserActionProvider;
 
 /**
  * Temporary class that ensures the browser is reset 

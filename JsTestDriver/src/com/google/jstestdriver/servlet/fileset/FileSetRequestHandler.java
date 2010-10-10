@@ -2,10 +2,10 @@
 
 package com.google.jstestdriver.servlet.fileset;
 
+import java.util.Collection;
+
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.SlaveBrowser;
-
-import java.util.Collection;
 
 
 

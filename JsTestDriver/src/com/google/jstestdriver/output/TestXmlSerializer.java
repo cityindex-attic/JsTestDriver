@@ -15,14 +15,6 @@
  */
 package com.google.jstestdriver.output;
 
-import com.google.gson.Gson;
-import com.google.jstestdriver.JsException;
-import com.google.jstestdriver.TestResult;
-import com.google.jstestdriver.TestResult.Result;
-
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
-
 import java.io.Writer;
 import java.util.Collection;
 
@@ -34,6 +26,14 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+
+import com.google.gson.Gson;
+import com.google.jstestdriver.JsException;
+import com.google.jstestdriver.TestResult;
+import com.google.jstestdriver.TestResult.Result;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
@@ -43,8 +43,8 @@ public class TestXmlSerializer {
   private final Gson gson = new Gson();
 
   private final TransformerHandler transformerHandler;
-  private final Writer fileWriter;
 
+  // TODO(corysmith): remove the work from the constructor.
   public TestXmlSerializer(Writer fileWriter) {
     try {
       transformerHandler =
@@ -60,7 +60,6 @@ public class TestXmlSerializer {
     } catch (TransformerFactoryConfigurationError e) {
       throw new RuntimeException(e);
     }
-    this.fileWriter = fileWriter;
   }
 
   private void startTestSuite(String name, TestXmlSerializer.SuiteAggregator totals) {
