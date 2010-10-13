@@ -48,7 +48,7 @@ public class DefaultConfiguration implements Configuration{
     if (port == -1) {
       throw new RuntimeException("Oh Snap! No server defined!");
     }
-    return handlerPrefix.suffixServer(String.format("http://%s:%d", "127.0.0.1"));
+    return handlerPrefix.suffixServer(String.format("http://%s:%d", "127.0.0.1", port));
   }
 
   public Configuration resolvePaths(PathResolver resolver, Flags flags) {
