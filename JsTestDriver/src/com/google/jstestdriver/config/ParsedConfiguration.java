@@ -30,7 +30,7 @@ import java.util.Set;
 /**
  * Represents a parsed configuration.
  *
- * @author corysmith@google.com (Cory Smith)
+ * @author corbinrsmith@gmail.com
  */
 public class ParsedConfiguration implements Configuration {
   private final Set<FileInfo> filesList;
@@ -62,7 +62,7 @@ public class ParsedConfiguration implements Configuration {
 
   public String getServer(String flagValue, int port, HandlerPathPrefix handlerPrefix) {
     if (flagValue != null && flagValue.length() != 0) {
-      return flagValue;
+      return handlerPrefix.suffixServer(flagValue);
     }
     if (server.length() > 0) {
       return handlerPrefix.suffixServer(server);

@@ -41,8 +41,8 @@ public class DefaultConfiguration implements Configuration{
   }
 
   public String getServer(String flagValue, int port, HandlerPathPrefix handlerPrefix) {
-    if (flagValue != null && flagValue.length() != 0) {
-      return flagValue;
+    if (flagValue != null && !flagValue.isEmpty()) {
+      return handlerPrefix.suffixServer(flagValue);
     }
 
     if (port == -1) {

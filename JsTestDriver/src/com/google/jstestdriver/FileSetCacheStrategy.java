@@ -39,7 +39,8 @@ public class FileSetCacheStrategy {
       for (FileInfo browserFileInfo : currentFileSet) {
         for (FileInfo clientFileInfo : newFileSet) {
           if (clientFileInfo.equals(browserFileInfo) &&
-              clientFileInfo.getTimestamp() != browserFileInfo.getTimestamp()) {
+              (clientFileInfo.getTimestamp() != browserFileInfo.getTimestamp() ||
+               clientFileInfo.getLength() != browserFileInfo.getLength())) {
             expiredFileSet.add(clientFileInfo);
             break;
           }

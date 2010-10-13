@@ -31,7 +31,7 @@ import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
 import com.google.jstestdriver.hooks.ResourceDependencyResolver;
 
 /**
- * @author corysmith@google.com (Your Name Here)
+ * @author corbinrsmith@gmail.com (Cory Smith)
  *
  */
 public class RunDataFactoryTest extends TestCase {

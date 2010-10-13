@@ -72,6 +72,10 @@ public class FileInfo {
     this.patches.add(patch);
   }
 
+  public long getLength() {
+    return length;
+  }
+
   public boolean isServeOnly() {
     return serveOnly;
   }
