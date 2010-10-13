@@ -16,6 +16,7 @@
 
 package com.google.jstestdriver.model;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
 
@@ -56,6 +57,14 @@ public class JstdTestCase {
     fileSet.addAll(dependencies);
     fileSet.addAll(tests);
     return fileSet;
+  }
+  
+  public JstdTestCase updatePlugins(List<FileInfo> plugins) {
+    final List<FileInfo> combined =
+      Lists.newArrayListWithExpectedSize(plugins.size() + this.plugins.size());
+    combined.addAll(this.plugins);
+    combined.addAll(plugins);
+    return new JstdTestCase(dependencies, tests, combined);
   }
 
   @Override
