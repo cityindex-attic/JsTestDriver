@@ -10,7 +10,6 @@ import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
 import com.google.jstestdriver.hooks.ResourceDependencyResolver;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,31 +33,7 @@ public class JstdTestCaseFactory {
       List<FileInfo> plugins,
       List<FileInfo> deps,
       List<FileInfo> tests) {
-    List<JstdTestCase> testCases = Lists.newArrayList();
-    final LinkedHashSet<FileInfo> resolvedPluginDeps = Sets.newLinkedHashSet();
-    final LinkedHashSet<FileInfo> resolvedDeps = Sets.newLinkedHashSet();
-    // TODO(corysmith): refactor and simplify.
-    for (ResourceDependencyResolver resolver : resolvers) {
-      for (FileInfo plugin : plugins) {
-        resolvedPluginDeps.addAll(resolver.resolve(plugin));
-      }
-      for (FileInfo dep : deps) {
-        for (FileInfo resolved : resolver.resolve(dep)) {
-          if (!resolvedPluginDeps.contains(resolved)) {
-            resolvedDeps.add(resolved);
-          }
-        }
-      }
-      for (FileInfo fileInfo : tests) {
-        for (FileInfo resolved : resolver.resolve(fileInfo)) {
-          if (!resolvedPluginDeps.contains(resolved)) {
-            resolvedDeps.add(resolved);
-          }
-        }
-      }
-      deps = Lists.newArrayList(resolvedDeps);
-      plugins = Lists.newArrayList(resolvedPluginDeps);
-    }
+    final List<JstdTestCase> testCases = Lists.newArrayList();
     if (tests.isEmpty()) {
       testCases.add(
           new JstdTestCase(
@@ -71,40 +46,27 @@ public class JstdTestCaseFactory {
               deps,
               tests,
               plugins));
-      for (JstdTestCaseProcessor processor : processors) {
-        testCases = processor.process(testCases.iterator());
-      }
     }
-    return testCases;
+    return  processTestCases(resolveDependencies(testCases));
   }
 
-  public JstdTestCase updateTestCase(List<FileInfo> plugins,
-                                     List<FileInfo> deps,
-                                     List<FileInfo> tests) {
-    final LinkedHashSet<FileInfo> resolvedPluginDeps = Sets.newLinkedHashSet();
-    final LinkedHashSet<FileInfo> resolvedDeps = Sets.newLinkedHashSet();
-    for (ResourceDependencyResolver resolver : resolvers) {
-      for (FileInfo plugin : plugins) {
-        resolvedPluginDeps.addAll(resolver.resolve(plugin));
+  private List<JstdTestCase> resolveDependencies(List<JstdTestCase> testCases) {
+    final List<JstdTestCase> resolved =
+      Lists.newArrayListWithExpectedSize(testCases.size());
+    for (JstdTestCase jstdTestCase : testCases) {
+      for (ResourceDependencyResolver resolver : resolvers) {
+        jstdTestCase = resolver.resolve(jstdTestCase);
       }
-      for (FileInfo dep : deps) {
-        for (FileInfo resolved : resolver.resolve(dep)) {
-          if (!resolvedPluginDeps.contains(resolved)) {
-            resolvedDeps.add(resolved);
-          }
-        }
-      }
-      for (FileInfo fileInfo : tests) {
-        for (FileInfo resolved : resolver.resolve(fileInfo)) {
-          if (!resolvedPluginDeps.contains(resolved)) {
-            resolvedDeps.add(resolved);
-          }
-        }
-      }
-      deps = Lists.newArrayList(resolvedDeps);
-      plugins = Lists.newArrayList(resolvedPluginDeps);
+      resolved.add(jstdTestCase);
     }
-    return new JstdTestCase(deps, tests, plugins);
+    return resolved;
+  }
+
+  private List<JstdTestCase> processTestCases(List<JstdTestCase> testCases) {
+    for (JstdTestCaseProcessor processor : processors) {
+      testCases = processor.process(testCases.iterator());
+    }
+    return testCases;
   }
 
   // TODO(corysmith): Remove when RunData no longer allows access to the FileSet.

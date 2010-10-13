@@ -35,7 +35,9 @@ public class JstdTestCase {
   private final List<FileInfo> tests;
   private final List<FileInfo> plugins;
 
-  public JstdTestCase(List<FileInfo> dependencies, List<FileInfo> tests, List<FileInfo> plugins) {
+  public JstdTestCase(List<FileInfo> dependencies,
+                      List<FileInfo> tests,
+                      List<FileInfo> plugins) {
     this.dependencies = dependencies;
     this.tests = tests;
     this.plugins = plugins;

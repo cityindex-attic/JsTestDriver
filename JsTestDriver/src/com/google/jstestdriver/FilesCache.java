@@ -32,20 +32,20 @@ public class FilesCache {
     this.files = files;
   }
 
-  public String getFileContent(String fileName) {
+  public synchronized String getFileContent(String fileName) {
     FileInfo FileInfo = files.get(fileName);
     return FileInfo != null ? FileInfo.getData() : "";
   }
 
-  public FileInfo getFileInfo(String fileName) {
+  public synchronized FileInfo getFileInfo(String fileName) {
     return files.get(fileName);
   }
 
-  public void clear() {
+  public synchronized void clear() {
     files.clear();
   }
 
-  public void addFile(FileInfo fileInfo) {
+  public synchronized void addFile(FileInfo fileInfo) {
     files.put(fileInfo.getFilePath(), fileInfo);
   }
 
@@ -53,7 +53,7 @@ public class FilesCache {
     return files.size();
   }
 
-  public Set<String> getAllFileNames() {
+  public synchronized Set<String> getAllFileNames() {
     return files.keySet();
   }
   
@@ -61,7 +61,7 @@ public class FilesCache {
    * Returns all files in order.
    * @return
    */
-  public Collection<FileInfo> getAllFileInfos() {
+  public synchronized Collection<FileInfo> getAllFileInfos() {
     return files.values();
   }
 

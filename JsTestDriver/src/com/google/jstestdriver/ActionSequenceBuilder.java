@@ -15,11 +15,13 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.jstestdriver.browser.BrowserActionExecutorAction;
 import com.google.jstestdriver.output.PrintXmlTestResultsAction;
 import com.google.jstestdriver.output.XmlPrinter;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;

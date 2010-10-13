@@ -16,18 +16,14 @@
 
 package com.google.jstestdriver.hooks;
 
-import com.google.jstestdriver.FileInfo;
-
-import java.util.List;
+import com.google.jstestdriver.model.JstdTestCase;
 
 /**
  * This hook allows plugins to provide their own resource dependencies resolvers.
- * 
- * The expectation is that the list of resolved files will include the source file at the end.
  * 
  * @author corbinrsmith@gmail.com (Cory Smith)
  *
  */
 public interface ResourceDependencyResolver {
-  List<FileInfo> resolve(FileInfo resource);
+  JstdTestCase resolve(JstdTestCase jstdTestCase);
 }

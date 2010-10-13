@@ -26,7 +26,7 @@ public class LoadedFileInfo extends FileInfo {
 
   public LoadedFileInfo(String fileName, long timestamp, boolean isPatch,
       boolean serveOnly, String data) {
-    super(fileName, timestamp, data.length(), isPatch, serveOnly, data);
+    super(fileName, timestamp, data == null ? 0 : data.length(), isPatch, serveOnly, data);
   }
   @Override
   public boolean canLoad() {
