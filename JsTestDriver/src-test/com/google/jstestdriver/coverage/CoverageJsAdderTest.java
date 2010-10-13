@@ -32,21 +32,27 @@ public class CoverageJsAdderTest extends TestCase {
   public void testAddJs() throws Exception {
     LinkedList<FileInfo> files = new LinkedList<FileInfo>();
     String lcovSource = "lcov";
-    List<FileInfo> processed = new CoverageJsAdder(new FileLoaderStub(lcovSource)).processDependencies(files);
+    List<FileInfo> processed =
+        new CoverageJsAdder(new FileLoaderStub(lcovSource)).processPlugins(files);
     FileInfo lcov = processed.get(0);
-    assertEquals(new LoadedFileInfo(CoverageJsAdder.LCOV_JS, -1, false, false, lcovSource), lcov);
+    assertEquals(
+        new LoadedFileInfo(CoverageJsAdder.LCOV_JS, -1, false, false, lcovSource),
+        lcov);
     assertEquals(lcovSource, lcov.getData());
     assertFalse(lcov.canLoad());
   }
   
   public void testAddJsWithExistingFiles() throws Exception {
     LinkedList<FileInfo> files = new LinkedList<FileInfo>();
-    FileInfo expected = new FileInfo("foo.js", 1, false, false, null);
+    FileInfo expected = new FileInfo("foo.js", 1, -1, false, false, null);
     files.add(expected);
     String lcovSource = "lcov";
-    List<FileInfo> processed = new CoverageJsAdder(new FileLoaderStub(lcovSource)).processDependencies(files);
+    List<FileInfo> processed =
+        new CoverageJsAdder(new FileLoaderStub(lcovSource)).processPlugins(files);
     FileInfo lcov = processed.get(0);
-    assertEquals(new LoadedFileInfo(CoverageJsAdder.LCOV_JS, -1, false, false, lcovSource), lcov);
+    assertEquals(
+        new LoadedFileInfo(CoverageJsAdder.LCOV_JS, -1, false, false, lcovSource),
+        lcov);
     assertEquals(lcovSource, lcov.getData());
     assertFalse(lcov.canLoad());
     assertSame(expected, processed.get(1));

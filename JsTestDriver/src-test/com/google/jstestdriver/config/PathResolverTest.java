@@ -150,7 +150,7 @@ public class PathResolverTest extends TestCase {
                 Set<FileInfo> processed = Sets.newHashSet();
                 for (FileInfo fileInfo : files) {
                   processed.add(new FileInfo(fileInfo.getFilePath(),
-                      code.lastModified(), false, true, null));
+                      code.lastModified(), -1, false, true, null));
                 }
                 return processed;
               }

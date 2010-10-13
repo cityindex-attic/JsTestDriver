@@ -71,7 +71,7 @@ public class ProcessingFileLoaderTest extends TestCase {
   }
 
   public void testLoadFiles() throws Exception {
-    final FileInfo info = new FileInfo("foo.js", 1234, false, true, null);
+    final FileInfo info = new FileInfo("foo.js", 1234, -1, false, true, null);
     final String infoData = "foobar";
     final boolean shouldReset = false;
     List<FileInfo> actual = new ProcessingFileLoader(new FileReader() {
@@ -91,10 +91,10 @@ public class ProcessingFileLoaderTest extends TestCase {
   }
 
   public void testLoadFilesWithPostProcessor() throws Exception {
-    final FileInfo info = new FileInfo("foo.js", 1234, false, true, null);
+    final FileInfo info = new FileInfo("foo.js", 1234, -1, false, true, null);
     final String infoData = "foobar";
     final boolean shouldReset = false;
-    final FileInfo expected = new FileInfo("other.js", 4321, false, true, null);
+    final FileInfo expected = new FileInfo("other.js", 4321, -1, false, true, null);
 
     FileLoadPostProcessor processor = new FileLoadPostProcessor() {
       public FileInfo process(FileInfo file) {
@@ -115,8 +115,8 @@ public class ProcessingFileLoaderTest extends TestCase {
   }
 
   public void testLoadFileWithPatches() throws Exception {
-    final FileInfo info = new FileInfo("foo.js", 1234, false, true, null);
-    FileInfo patch = new FileInfo("patchfoo.js", 1234, false, true, null);
+    final FileInfo info = new FileInfo("foo.js", 1234, -1, false, true, null);
+    FileInfo patch = new FileInfo("patchfoo.js", 1234, -1, false, true, null);
     info.addPatch(patch);
     final String infoData = "foobar";
     final String patchData = "patchbar";
@@ -138,7 +138,7 @@ public class ProcessingFileLoaderTest extends TestCase {
   }
 
   public void testRemoteLoadFiles() throws Exception {
-    final FileInfo info = new FileInfo("http://local/foo.js", -1, false, false, "");
+    final FileInfo info = new FileInfo("http://local/foo.js", -1, -1, false, false, "");
     final boolean shouldReset = false;
     List<FileInfo> actual = new ProcessingFileLoader(null, Collections
         .<FileLoadPostProcessor> emptySet(), new File("."),

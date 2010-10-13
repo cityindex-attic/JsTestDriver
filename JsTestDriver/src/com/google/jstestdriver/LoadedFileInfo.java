@@ -16,8 +16,9 @@
 package com.google.jstestdriver;
 
 /**
- * A loaded file is never loaded. This useful for plugins to inject source without loading it.
- * The plugin is responsible for any reloading it needs to do.
+ * A loaded file info will not be loaded from disk.
+ * This useful for plugins to inject source without loading it.
+ * The plugin is responsible for any reloading that needs to happen.
  * @author corysmith@google.com (Cory Smith)
  *
  */
@@ -25,7 +26,7 @@ public class LoadedFileInfo extends FileInfo {
 
   public LoadedFileInfo(String fileName, long timestamp, boolean isPatch,
       boolean serveOnly, String data) {
-    super(fileName, timestamp, isPatch, serveOnly, data);
+    super(fileName, timestamp, data.length(), isPatch, serveOnly, data);
   }
   @Override
   public boolean canLoad() {

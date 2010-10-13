@@ -39,10 +39,10 @@ public class StandaloneRunnerHandlerTest extends TestCase {
   public void testCaptureAddFilesToLoadAndRun() throws Exception {
     Map<String, FileInfo> files = new LinkedHashMap<String, FileInfo>();
 
-    files.put("file1.js", new FileInfo("file1.js", 30, false, false, "content1"));
-    files.put("file2.js", new FileInfo("file2.js", 5, false, false, "content2"));
-    files.put("file3.js", new FileInfo("file3.js", 53, false, false, "content3"));
-    files.put("file4.js", new FileInfo("file4.js", 1, false, false, "content4"));
+    files.put("file1.js", new FileInfo("file1.js", 30, -1, false, false, "content1"));
+    files.put("file2.js", new FileInfo("file2.js", 5, -1, false, false, "content2"));
+    files.put("file3.js", new FileInfo("file3.js", 53, -1, false, false, "content3"));
+    files.put("file4.js", new FileInfo("file4.js", 1, -1, false, false, "content4"));
     FilesCache cache = new FilesCache(files);
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     SlaveBrowser slaveBrowser = new SlaveBrowser(new MockTime(10), "1", new BrowserInfo(), 1200);

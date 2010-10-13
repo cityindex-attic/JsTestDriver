@@ -51,9 +51,10 @@ public class RunDataFactory {
     List<FileInfo> processedDependencies = Lists.newLinkedList(fileSet);
     List<FileInfo> processedPlugins = Lists.newLinkedList(plugins);
     List<FileInfo> processedTests = Lists.newLinkedList(tests);
+
     for (ResourcePreProcessor processor : processors) {
-      processedPlugins = processor.processDependencies(processedPlugins);
-      processedTests = processor.processDependencies(processedTests);
+      processedPlugins = processor.processPlugins(processedPlugins);
+      processedTests = processor.processTests(processedTests);
       processedDependencies = processor.processDependencies(processedDependencies);
     }
 

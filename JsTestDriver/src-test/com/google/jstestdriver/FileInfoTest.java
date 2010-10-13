@@ -37,9 +37,9 @@ public class FileInfoTest extends TestCase {
 	}
 
 	public void testIsWebAddress() {
-		FileInfo httpFile = new FileInfo("http://www.google.com", 0, false, false, null);
-		FileInfo httpsFile = new FileInfo("https://www.google.com", 0, false, false, null);
-		FileInfo nonWebFile = new FileInfo("a/b/c/file.js", 0, false, false, null);
+		FileInfo httpFile = new FileInfo("http://www.google.com", 0, -1, false, false, null);
+		FileInfo httpsFile = new FileInfo("https://www.google.com", 0, -1, false, false, null);
+		FileInfo nonWebFile = new FileInfo("a/b/c/file.js", 0, -1, false, false, null);
 
 		assertTrue(httpFile.isWebAddress());
 		assertTrue(httpsFile.isWebAddress());

@@ -26,20 +26,20 @@ import com.google.common.collect.Sets;
  */
 public class FileSetCacheStrategyTest extends TestCase {
   public void testFileInfoExpired() throws Exception {
-    Set<FileInfo> oldSet = Sets.newHashSet(new FileInfo("foo.js", 10, false, false, null));
-    Set<FileInfo> newSet = Sets.newHashSet(new FileInfo("foo.js", 11, false, false, null));
+    Set<FileInfo> oldSet = Sets.newHashSet(new FileInfo("foo.js", 10, -1, false, false, null));
+    Set<FileInfo> newSet = Sets.newHashSet(new FileInfo("foo.js", 11, -1, false, false, null));
     assertEquals(newSet, new FileSetCacheStrategy().createExpiredFileSet(newSet, oldSet));
   }
 
   public void testNoFileInfo() throws Exception {
     Set<FileInfo> oldSet = Sets.newHashSet();
-    Set<FileInfo> newSet = Sets.newHashSet(new FileInfo("foo.js", 11, false, false, null));
+    Set<FileInfo> newSet = Sets.newHashSet(new FileInfo("foo.js", 11, -1, false, false, null));
     assertEquals(newSet, new FileSetCacheStrategy().createExpiredFileSet(newSet, oldSet));
   }
 
   public void testFileInfoUnChanged() throws Exception {
-    Set<FileInfo> oldSet = Sets.newHashSet(new FileInfo("foo.js", 10, false, false, null));
-    Set<FileInfo> newSet = Sets.newHashSet(new FileInfo("foo.js", 10, false, false, null));
+    Set<FileInfo> oldSet = Sets.newHashSet(new FileInfo("foo.js", 10, -1, false, false, null));
+    Set<FileInfo> newSet = Sets.newHashSet(new FileInfo("foo.js", 10, -1, false, false, null));
     assertEquals(Sets.newHashSet(),
       new FileSetCacheStrategy().createExpiredFileSet(newSet, oldSet));
   }

@@ -71,7 +71,7 @@ public class CommandTaskTest extends TestCase {
 
   public void testUploadFiles() throws Exception {
     MockServer server = new MockServer();
-    FileInfo fileInfo = new FileInfo("foo.js", 1232, false, false, null);
+    FileInfo fileInfo = new FileInfo("foo.js", 1232, -1, false, false, null);
 
     server.expect(baseUrl + "heartbeat?id=1", "OK");
     server.expect(baseUrl + "fileSet?POST?{data=" + gson.toJson(Arrays.asList(fileInfo))
@@ -105,10 +105,10 @@ public class CommandTaskTest extends TestCase {
     MockServer server = new MockServer();
 
     // test file data.
-    FileInfo loadInfo = new FileInfo("foo.js", 0, false, false, null);
+    FileInfo loadInfo = new FileInfo("foo.js", 0, -1, false, false, null);
     String loadInfoContents = "foobar";
 
-    FileInfo serveInfo = new FileInfo("foo2.js", 0, false, true, null);
+    FileInfo serveInfo = new FileInfo("foo2.js", 0, -1, false, true, null);
     String serveInfoContents = "foobar2";
     List<FileInfo> fileSet = Arrays.asList(loadInfo, serveInfo);
 
@@ -135,9 +135,9 @@ public class CommandTaskTest extends TestCase {
         + "fileSet?POST?{data="
         + gson.toJson(Arrays.asList(
           new FileInfo(loadInfo.getFilePath(), loadInfo.getTimestamp(),
-            loadInfo.isPatch(), loadInfo.isServeOnly(), loadInfoContents),
-          new FileInfo(serveInfo.getFilePath(), serveInfo.getTimestamp(), serveInfo.isPatch(),
-                serveInfo.isServeOnly(), serveInfoContents))) + ", action=serverFileCheck}", "");
+            -1, loadInfo.isPatch(), loadInfo.isServeOnly(), loadInfoContents),
+          new FileInfo(serveInfo.getFilePath(), serveInfo.getTimestamp(), -1,
+                serveInfo.isPatch(), serveInfo.isServeOnly(), serveInfoContents))) + ", action=serverFileCheck}", "");
 
     String url =
         baseUrl + "cmd?POST?" + createLoadCommandString("1", CommandType.LOADTEST,

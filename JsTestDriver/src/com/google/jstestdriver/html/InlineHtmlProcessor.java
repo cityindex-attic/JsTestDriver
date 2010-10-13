@@ -54,9 +54,9 @@ public class InlineHtmlProcessor implements FileLoadPostProcessor {
       writer.flush();
       return new FileInfo(file.getFilePath(),
                           file.getTimestamp(),
+                          -1,
                           file.isPatch(),
-                          file.isServeOnly(),
-                          writer.toString());
+                          file.isServeOnly(), writer.toString());
     } catch (IOException e) {
       e.printStackTrace();
       throw new RuntimeException(e);

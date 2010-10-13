@@ -90,9 +90,9 @@ public class ProcessingFileLoader implements FileLoader {
     }
     return new FileInfo(file.getFilePath(),
                         timestamp,
+                        -1,
                         false,
-                        file.isServeOnly(),
-                        fileContent.toString());
+                        file.isServeOnly(), fileContent.toString());
   }
 
   private FileInfo postProcessFile(FileInfo processed) {

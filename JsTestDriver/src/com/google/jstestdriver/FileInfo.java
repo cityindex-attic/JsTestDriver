@@ -20,26 +20,31 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Represents a test resource.
+ * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class FileInfo {
 
-	public static final String SEPARATOR_CHAR = "/";
+  public static final String SEPARATOR_CHAR = "/";
 
-	private String filePath;
+  private String filePath;
   private Long timestamp;
   private transient boolean isPatch;
   private boolean serveOnly;
   private List<FileInfo> patches;
   private String data;
 
+  private long length;
+
   public FileInfo() {
   }
 
-  public FileInfo(String fileName, long timestamp, boolean isPatch,
-      boolean serveOnly, String data) {
+  public FileInfo(String fileName, long timestamp, long length,
+      boolean isPatch, boolean serveOnly, String data) {
     this.filePath = fileName;
     this.timestamp = timestamp;
+    this.length = length;
     this.isPatch = isPatch;
     this.serveOnly = serveOnly;
     this.data = data;
@@ -132,8 +137,8 @@ public class FileInfo {
 
   @Override
   public String toString() {
-    return "FileInfo [file=" + getFilePath() + ", isPatch=" + isPatch + ", serveOnly=" + serveOnly
-        + ", timestamp=" + timestamp + "]";
+    return "FileInfo [filePath=" + filePath + ", length=" + length + ", patches=" + patches
+        + ", serveOnly=" + serveOnly + ", timestamp=" + timestamp + "]";
   }
 
   /** Formats the specified path to use {@link #SEPARATOR_CHAR} as the path separator. */

@@ -29,7 +29,7 @@ import com.google.jstestdriver.FileInfo;
 public class CoverageInstrumentingProcessorTest extends TestCase {
 
   public void testInstrument() throws Exception {
-    FileInfo fileInfo = new FileInfo("foo.js", 0, true, false, "var a = 1;");
+    FileInfo fileInfo = new FileInfo("foo.js", 0, -1, true, false, "var a = 1;");
     String expected = "decorated";
     Code code = new Code(fileInfo.getFilePath(),
                          fileInfo.getData());
@@ -45,10 +45,10 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
   }
 
   public void testSkipInstrument() throws Exception {
-    FileInfo lcov = new FileInfo("LCOV.js", 0, true, false, "var a = 1;");
-    FileInfo serveOnly = new FileInfo("someData.dat", 0, true, true, "scally{wag}");
-    FileInfo excluded = new FileInfo("excluded.dat", 0, true, false, "not{me}");
-    FileInfo remote = new FileInfo("https://foobar", 0, true, false, null);
+    FileInfo lcov = new FileInfo("LCOV.js", 0, -1, true, false, "var a = 1;");
+    FileInfo serveOnly = new FileInfo("someData.dat", 0, -1, true, true, "scally{wag}");
+    FileInfo excluded = new FileInfo("excluded.dat", 0, -1, true, false, "not{me}");
+    FileInfo remote = new FileInfo("https://foobar", 0, -1, true, false, null);
     CoverageInstrumentingProcessor processor =
         new CoverageInstrumentingProcessor(null,
             Sets.<String>newHashSet(excluded.getFilePath()), null);

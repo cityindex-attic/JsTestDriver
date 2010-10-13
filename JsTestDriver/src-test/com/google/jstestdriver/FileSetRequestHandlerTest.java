@@ -51,11 +51,11 @@ public class FileSetRequestHandlerTest extends TestCase {
   }
   
   FileInfo createFile(String path, long timestamp) {
-    return new FileInfo(path, timestamp, false, false, null);
+    return new FileInfo(path, timestamp, -1, false, false, null);
   }
 
   FileInfo createFile(FileInfo info, long timestamp) {
-    return new FileInfo(info.getFilePath(), timestamp, false, false, null);
+    return new FileInfo(info.getFilePath(), timestamp, -1, false, false, null);
   }
 
   public void testBrowserCheckAction() throws Exception {

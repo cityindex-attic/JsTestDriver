@@ -30,10 +30,10 @@ public class RelativePathConverterTest extends TestCase {
     String baseDir = "/home/mooh/";
     List<FileInfo> files = Lists.newLinkedList();
 
-    files.add(new FileInfo("/home/mooh/adirectory/afile.js", -1, false, false, null));
-    files.add(new FileInfo("/home/mooh/myfile.js", -1, false, false, null));
-    files.add(new FileInfo("/home/mooh/hehe/hihi/hoho/againafile.js", -1, false, false, null));
-    files.add(new FileInfo("/home/mooh/meuh/coin/quack/woof/notagain.js", -1, false, false, null));
+    files.add(new FileInfo("/home/mooh/adirectory/afile.js", -1, -1, false, false, null));
+    files.add(new FileInfo("/home/mooh/myfile.js", -1, -1, false, false, null));
+    files.add(new FileInfo("/home/mooh/hehe/hihi/hoho/againafile.js", -1, -1, false, false, null));
+    files.add(new FileInfo("/home/mooh/meuh/coin/quack/woof/notagain.js", -1, -1, false, false, null));
     RelativePathConverter relativePathConverter = new RelativePathConverter(baseDir, files);
     List<FileInfo> relativePaths = relativePathConverter.convert();
 

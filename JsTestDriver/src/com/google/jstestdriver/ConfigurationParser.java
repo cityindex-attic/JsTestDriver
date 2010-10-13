@@ -133,7 +133,7 @@ public class ConfigurationParser {
           f = tokens[1].trim();
         }
         if (f.startsWith("http://") || f.startsWith("https://")) {
-          resolvedFiles.add(new FileInfo(f, -1, false, false, null));
+          resolvedFiles.add(new FileInfo(f, -1, -1, false, false, null));
         } else {
           File file = basePath != null ? new File(basePath.getAbsoluteFile(), f) : new File(f);
           File testFile = file.getAbsoluteFile();
@@ -158,8 +158,8 @@ public class ConfigurationParser {
                 		dir.getAbsolutePath() + FileInfo.SEPARATOR_CHAR + filteredFile);
             File resolvedFile = new File(resolvedFilePath);
 
-            resolvedFiles.add(new FileInfo(resolvedFilePath, resolvedFile.lastModified(), isPatch,
-                serveOnly, null));
+            resolvedFiles.add(new FileInfo(resolvedFilePath, resolvedFile.lastModified(), -1,
+                isPatch, serveOnly, null));
           }
         }
       }

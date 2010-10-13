@@ -20,8 +20,8 @@ class MockFileLoader implements FileLoader {
     for (FileInfo info : filesToLoad) {
       CommandTaskTest.assertTrue("File " + info + " was not found in " + expected.keySet(), expected
           .containsKey(info));
-      loaded.add(new FileInfo(info.getFilePath(), info.getTimestamp(), info.isPatch(), info
-          .isServeOnly(), expected.get(info)));
+      loaded.add(new FileInfo(info.getFilePath(), info.getTimestamp(), -1, info.isPatch(), info
+              .isServeOnly(), expected.get(info)));
     }
     return loaded;
   }

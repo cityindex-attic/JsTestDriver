@@ -44,8 +44,8 @@ public class TestResourceHandlerTest extends TestCase {
   public void testServeFile() throws Exception {
     Map<String, FileInfo> files = new HashMap<String, FileInfo>();
 
-    files.put("dummy.js", new FileInfo("dummy.js", -1, false, false, "data"));
-    files.put("dummytoo.js", new FileInfo("dummytoo.js", 20, false, false, "more data"));
+    files.put("dummy.js", new FileInfo("dummy.js", -1, -1, false, false, "data"));
+    files.put("dummytoo.js", new FileInfo("dummytoo.js", 20, -1, false, false, "more data"));
     FilesCache filesCache = new FilesCache(files);
     TestResourceHandler handler = new TestResourceHandler(null, null, filesCache);
 

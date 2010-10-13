@@ -61,8 +61,8 @@ public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
     decorated.writeInitialLines(accumulator);
     return new FileInfo(file.getFilePath(),
                         file.getTimestamp(),
+                        -1,
                         file.isPatch(),
-                        file.isServeOnly(),
-                        decorated.getInstrumentedCode());
+                        file.isServeOnly(), decorated.getInstrumentedCode());
   }
 }

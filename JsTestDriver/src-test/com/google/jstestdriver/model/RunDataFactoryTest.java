@@ -36,8 +36,8 @@ import com.google.jstestdriver.hooks.ResourceDependencyResolver;
  */
 public class RunDataFactoryTest extends TestCase {
   public void testPreProcessFileSet() throws Exception {
-    final FileInfo info = new FileInfo("foo.js", 12434, false, false, null);
-    final FileInfo addedInfo = new FileInfo("addedfoo.js", 12434, false, false, null);
+    final FileInfo info = new FileInfo("foo.js", 12434, -1, false, false, null);
+    final FileInfo addedInfo = new FileInfo("addedfoo.js", 12434, -1, false, false, null);
 
     ResourcePreProcessor preProcessor = new ResourcePreProcessor(){
       public List<FileInfo> processDependencies(List<FileInfo> files) {
@@ -45,25 +45,26 @@ public class RunDataFactoryTest extends TestCase {
         return new LinkedList<FileInfo>(files);
       }
 
-      public List<FileInfo> processPlugins(List<FileInfo> files) {
-        return files;
+      public List<FileInfo> processPlugins(List<FileInfo> plugins) {
+        return plugins;
       }
 
-      public List<FileInfo> processTests(List<FileInfo> files) {
-        return files;
+      public List<FileInfo> processTests(List<FileInfo> tests) {
+        return tests;
       }
     };
 
     final Set<FileInfo> fileSet = Sets.newLinkedHashSet();
     fileSet.add(info);
-    final List<FileInfo> actual = Lists.newArrayList(
-        new RunDataFactory(
-          fileSet,
-          Collections.<FileInfo> emptyList(),
-          Sets.newHashSet(preProcessor),
-          Collections.<FileInfo>emptyList(), new JstdTestCaseFactory(
-              Collections.<JstdTestCaseProcessor> emptySet(),
-              Collections.<ResourceDependencyResolver>emptySet())).get().getFileSet());
+    final RunDataFactory factory = new RunDataFactory(
+      fileSet,
+      Collections.<FileInfo> emptyList(),
+      Sets.newHashSet(preProcessor),
+      Collections.<FileInfo>emptyList(), new JstdTestCaseFactory(
+          Collections.<JstdTestCaseProcessor> emptySet(),
+          Collections.<ResourceDependencyResolver>emptySet()));
+    
+    final List<FileInfo> actual = Lists.newArrayList(factory.get().getFileSet());
 
     assertEquals(info.getFilePath(), actual.get(0).getFilePath());
     assertEquals(info.getTimestamp(), actual.get(0).getTimestamp());

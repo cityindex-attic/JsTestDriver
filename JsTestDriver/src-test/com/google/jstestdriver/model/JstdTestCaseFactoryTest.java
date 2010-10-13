@@ -23,16 +23,16 @@ public class JstdTestCaseFactoryTest extends TestCase {
 
   public void testCreateWithTests() throws Exception {
     List<FileInfo> files = Lists.newArrayList();
-    FileInfo one = new FileInfo("one.js", 1234, false, false, null);
-    FileInfo two = new FileInfo("two.js", 1234, false, false, null);
-    FileInfo three = new FileInfo("three.js", 1234, false, false, null);
+    FileInfo one = new FileInfo("one.js", 1234, -1, false, false, null);
+    FileInfo two = new FileInfo("two.js", 1234, -1, false, false, null);
+    FileInfo three = new FileInfo("three.js", 1234, -1, false, false, null);
     files.add(one);
     files.add(two);
     files.add(three);
 
-    FileInfo testOne = new FileInfo("oneTest.js", 1234, false, false, null);
-    FileInfo testTwo = new FileInfo("twoTest.js", 1234, false, false, null);
-    FileInfo testThree = new FileInfo("threeTest.js", 1234, false, false, null);
+    FileInfo testOne = new FileInfo("oneTest.js", 1234, -1, false, false, null);
+    FileInfo testTwo = new FileInfo("twoTest.js", 1234, -1, false, false, null);
+    FileInfo testThree = new FileInfo("threeTest.js", 1234, -1, false, false, null);
     List<FileInfo> tests = Lists.newArrayList(testOne, testTwo, testThree);
     final JstdTestCaseFactory testCaseFactory = new JstdTestCaseFactory(
         Collections.<JstdTestCaseProcessor> emptySet(),
@@ -48,12 +48,12 @@ public class JstdTestCaseFactoryTest extends TestCase {
 
   public void testCreateWithOutTests() throws Exception {
     List<FileInfo> fileSet = Lists.newArrayList();
-    FileInfo one = new FileInfo("one.js", 1234, false, false, null);
-    FileInfo two = new FileInfo("two.js", 1234, false, false, null);
-    FileInfo three = new FileInfo("three.js", 1234, false, false, null);
-    FileInfo testOne = new FileInfo("oneTest.js", 1234, false, false, null);
-    FileInfo testTwo = new FileInfo("twoTest.js", 1234, false, false, null);
-    FileInfo testThree = new FileInfo("threeTest.js", 1234, false, false, null);
+    FileInfo one = new FileInfo("one.js", 1234, -1, false, false, null);
+    FileInfo two = new FileInfo("two.js", 1234, -1, false, false, null);
+    FileInfo three = new FileInfo("three.js", 1234, -1, false, false, null);
+    FileInfo testOne = new FileInfo("oneTest.js", 1234, -1, false, false, null);
+    FileInfo testTwo = new FileInfo("twoTest.js", 1234, -1, false, false, null);
+    FileInfo testThree = new FileInfo("threeTest.js", 1234, -1, false, false, null);
     fileSet.add(one);
     fileSet.add(two);
     fileSet.add(three);
@@ -78,18 +78,18 @@ public class JstdTestCaseFactoryTest extends TestCase {
   }
   
   public void testUpdateTestCasesFromRunData() throws Exception {
-    FileInfo plugin = new FileInfo("plugin.js", 1234, false, false, null);
+    FileInfo plugin = new FileInfo("plugin.js", 1234, -1, false, false, null);
     List<FileInfo> files = Lists.newArrayList();
-    FileInfo one = new FileInfo("one.js", 1234, false, false, null);
-    FileInfo two = new FileInfo("two.js", 1234, false, false, null);
-    FileInfo three = new FileInfo("three.js", 1234, false, false, null);
+    FileInfo one = new FileInfo("one.js", 1234, -1, false, false, null);
+    FileInfo two = new FileInfo("two.js", 1234, -1, false, false, null);
+    FileInfo three = new FileInfo("three.js", 1234, -1, false, false, null);
     files.add(one);
     files.add(two);
     files.add(three);
 
-    FileInfo testOne = new FileInfo("oneTest.js", 1234, false, false, null);
-    FileInfo testTwo = new FileInfo("twoTest.js", 1234, false, false, null);
-    FileInfo testThree = new FileInfo("threeTest.js", 1234, false, false, null);
+    FileInfo testOne = new FileInfo("oneTest.js", 1234, -1, false, false, null);
+    FileInfo testTwo = new FileInfo("twoTest.js", 1234, -1, false, false, null);
+    FileInfo testThree = new FileInfo("threeTest.js", 1234, -1, false, false, null);
     List<FileInfo> tests = Lists.newArrayList(testOne, testTwo, testThree);
     final JstdTestCaseFactory testCaseFactory = new JstdTestCaseFactory(
         Collections.<JstdTestCaseProcessor> emptySet(),

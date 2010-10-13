@@ -37,7 +37,7 @@ public class RelativePathConverter {
 
     for (FileInfo f : files) {
       convertedPaths.add(new FileInfo(f.getFilePath().replace(baseDir, ""), f.getTimestamp(),
-          f.isPatch(), f.isServeOnly(), f.getData()));
+          -1, f.isPatch(), f.isServeOnly(), f.getData()));
     }
     return convertedPaths;
   }

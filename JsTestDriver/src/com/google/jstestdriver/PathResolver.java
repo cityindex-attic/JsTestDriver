@@ -116,7 +116,7 @@ public class PathResolver {
       String filePath = fileInfo.getFilePath();
 
       if (fileInfo.isWebAddress()) {
-        resolvedFiles.add(new FileInfo(filePath, -1, false, false, null));
+        resolvedFiles.add(new FileInfo(filePath, -1, -1, false, false, null));
       } else {
         File file = basePath != null
             ? new File(basePath.getAbsoluteFile(), filePath)
@@ -134,10 +134,9 @@ public class PathResolver {
 
           File resolvedFile = new File(absoluteResolvedFilePath);
           long timestamp = resolvedFile.lastModified();
-
           FileInfo newFileInfo =
               new FileInfo(relativeResolvedFilePath, timestamp,
-                  fileInfo.isPatch(), fileInfo.isServeOnly(), null);
+                  -1, fileInfo.isPatch(), fileInfo.isServeOnly(), null);
 
           resolvedFiles.add(newFileInfo);
         }

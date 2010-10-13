@@ -109,7 +109,7 @@ public class YamlParser {
           String[] tokens = f.split(" ", 2);
           f = tokens[1].trim();
         }
-        fileInfos.add(new FileInfo(f, -1, isPatch, serveOnly, null));
+        fileInfos.add(new FileInfo(f, -1, -1, isPatch, serveOnly, null));
       }
       return fileInfos;
     }

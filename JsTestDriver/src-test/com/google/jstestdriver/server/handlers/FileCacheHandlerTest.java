@@ -19,6 +19,8 @@ import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FileSetCacheStrategy;
 
 /**
+ * Tests for the file cahcing handler.
+ * 
  * @author rdionne@google.com (Robert Dionne)
  */
 public class FileCacheHandlerTest extends junit.framework.TestCase {
@@ -33,7 +35,7 @@ public class FileCacheHandlerTest extends junit.framework.TestCase {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     PrintWriter writer = new PrintWriter(out);
 
-    FileInfo info = new FileInfo("asdf", 1, false, true, "data");
+    FileInfo info = new FileInfo("asdf", 1, -1, false, true, "data");
 
     EasyMock.expect(request.getParameter("fileSet"))
         .andReturn(gson.toJson(new FileInfo[] {info}));
