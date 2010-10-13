@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -24,12 +25,16 @@ public class JstdTestCaseFactory {
     this.processors = processors;
   }
 
-  public List<JstdTestCase> createCases(List<FileInfo> files, List<FileInfo> tests) {
+  public List<JstdTestCase> createCases(List<FileInfo> plugins, List<FileInfo> files, List<FileInfo> tests) {
     List<JstdTestCase> testCases = Lists.newArrayList();
     if (tests.isEmpty()) {
-      testCases.add(new JstdTestCase(files, Lists.<FileInfo>newArrayList()));
+      testCases.add(
+          new JstdTestCase(
+              files,
+              Lists.<FileInfo>newArrayList(),
+              Collections.<FileInfo> emptyList()));
     } else {
-      testCases.add(new JstdTestCase(files, tests));
+      testCases.add(new JstdTestCase(files, tests, plugins));
       for (JstdTestCaseProcessor processor : processors) {
         testCases = processor.process(testCases.iterator());
       }
@@ -44,6 +49,6 @@ public class JstdTestCaseFactory {
       tests.addAll(testCase.getTests());
     }
     fileSet.removeAll(tests);
-    return createCases(Lists.newArrayList(fileSet), Lists.newArrayList(tests));
+    return createCases(Collections.<FileInfo>emptyList(), Lists.newArrayList(fileSet), Lists.newArrayList(tests));
   }
 }

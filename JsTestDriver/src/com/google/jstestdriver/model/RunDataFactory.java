@@ -51,7 +51,7 @@ public class RunDataFactory {
     }
 
     return new RunData(Collections.<ResponseStream>emptyList(),
-                       testCaseFactory.createCases(processedFileSet, tests),
+                       testCaseFactory.createCases(Collections.<FileInfo>emptyList(), processedFileSet, tests),
                        null);
   }
 }

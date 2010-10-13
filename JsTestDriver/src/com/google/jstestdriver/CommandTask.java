@@ -17,16 +17,14 @@ package com.google.jstestdriver;
 
 import static java.lang.String.format;
 
-import java.util.Map;
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.jstestdriver.model.JstdTestCase;
+import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.jstestdriver.model.JstdTestCase;
-import com.google.jstestdriver.util.StopWatch;
+import java.util.Map;
 
 /**
  * Handles the communication of a command to the JsTestDriverServer from the
@@ -87,10 +85,7 @@ public class CommandTask {
 
       logger.debug("Starting upload for {}", browserId);
       if (upload) {
-        final Set<FileInfo> fileSet = Sets.newLinkedHashSet();
-        fileSet.addAll(testCase.getDependencies());
-        fileSet.addAll(testCase.getTests());
-        fileUploader.uploadFileSet(browserId, fileSet, stream);
+        fileUploader.uploadFileSet(browserId, testCase.toFileSet(), stream);
       }
       logger.debug("Finished upload for {}", browserId);
       server.post(baseUrl + "/cmd", params);

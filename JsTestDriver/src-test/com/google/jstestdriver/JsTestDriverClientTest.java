@@ -121,7 +121,7 @@ public class JsTestDriverClientTest extends TestCase {
 
     client.eval("1", stream, "cmd",
         new JstdTestCase(Collections.<FileInfo>emptyList(),
-            Collections.<FileInfo>emptyList()));
+            Collections.<FileInfo>emptyList(), java.util.Collections.<FileInfo> emptyList()));
 
     Response response = stream.getResponse();
 
@@ -131,7 +131,7 @@ public class JsTestDriverClientTest extends TestCase {
     assertEquals(3L, response.getExecutionTime());
 
     client.eval("2", stream, "cmd",
-        new JstdTestCase(Collections.<FileInfo>emptyList(), Collections.<FileInfo>emptyList()));
+        new JstdTestCase(Collections.<FileInfo>emptyList(), Collections.<FileInfo>emptyList(), java.util.Collections.<FileInfo> emptyList()));
     response = stream.getResponse();
     assertEquals("2", stream.getResponse().getResponse());
     assertEquals("browser2", response.getBrowser().getName());
@@ -200,7 +200,7 @@ public class JsTestDriverClientTest extends TestCase {
     FakeResponseStream stream = new FakeResponseStream();
 
     client.runAllTests("1", stream, false,
-        new JstdTestCase(Collections.<FileInfo>emptyList(), Collections.<FileInfo>emptyList()));
+        new JstdTestCase(Collections.<FileInfo>emptyList(), Collections.<FileInfo>emptyList(), java.util.Collections.<FileInfo> emptyList()));
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }
@@ -242,7 +242,7 @@ public class JsTestDriverClientTest extends TestCase {
     tests.add("testCase.testFoo");
     tests.add("testCase.testBar");
     client.runTests("1", stream, tests, false,
-        new JstdTestCase(Collections.<FileInfo>emptyList(), Collections.<FileInfo>emptyList()));
+        new JstdTestCase(Collections.<FileInfo>emptyList(), Collections.<FileInfo>emptyList(), java.util.Collections.<FileInfo> emptyList()));
 
     assertEquals("PASSED", stream.getResponse().getResponse());
   }

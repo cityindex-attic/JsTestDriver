@@ -15,15 +15,17 @@
  */
 package com.google.jstestdriver.model;
 
-import java.util.Collections;
-
-import junit.framework.TestCase;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
+
+import junit.framework.TestCase;
+
+import java.util.Collections;
+import java.util.List;
 
 public class RunDataTest extends TestCase {
 
@@ -67,18 +69,16 @@ public class RunDataTest extends TestCase {
     ResponseStream streamOne = new NoopStream();
     FileInfo one = new FileInfo("one", -1, false, false, null);
     FileInfo two = new FileInfo("two", -1, false, false, null);
-    final RunData runData = new RunData(Lists
-        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList(), null);
+    
+    final JstdTestCaseFactory testCaseFactory =
+        new JstdTestCaseFactory(Sets.<JstdTestCaseProcessor>newHashSet());
+    final List<JstdTestCase> testCases = testCaseFactory.createCases(
+        Collections.<FileInfo>emptyList(),
+        Lists.newArrayList(one),
+        Lists.newArrayList(two));
+    final RunData runData = new RunData(Lists.newArrayList(streamOne), testCases, testCaseFactory);
     assertEquals(new RunData(Lists
-        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList(), null),
+        .newArrayList(streamOne), testCases, testCaseFactory),
         runData.updateFileSet(Sets.newHashSet(one, two)));
-  }
-
-  public void testGetTestCases() throws Exception {
-
-  }
-
-  public void testUpdateTestCases() throws Exception {
-
   }
 }

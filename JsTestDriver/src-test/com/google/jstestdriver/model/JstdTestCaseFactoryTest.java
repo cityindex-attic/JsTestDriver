@@ -36,7 +36,7 @@ public class JstdTestCaseFactoryTest extends TestCase {
     final JstdTestCaseFactory testCaseFactory = new JstdTestCaseFactory(
         Collections.<JstdTestCaseProcessor> emptySet());
 
-    List<JstdTestCase> testCases = testCaseFactory.createCases(files, tests);
+    List<JstdTestCase> testCases = testCaseFactory.createCases(Collections.<FileInfo>emptyList(), files, tests);
     assertEquals(1, testCases.size());
     JstdTestCase jstdTestCase = testCases.get(0);
     assertEquals(tests, jstdTestCase.getTests());
@@ -62,7 +62,7 @@ public class JstdTestCaseFactoryTest extends TestCase {
         new JstdTestCaseFactory(Collections.<JstdTestCaseProcessor> emptySet());
 
     List<JstdTestCase> testCases =
-        testCaseFactory.createCases(fileSet, Lists.<FileInfo>newArrayList());
+        testCaseFactory.createCases(Collections.<FileInfo>emptyList(), fileSet, Lists.<FileInfo>newArrayList());
     assertEquals(1, testCases.size());
     JstdTestCase jstdTestCase = testCases.get(0);
     assertTrue(jstdTestCase.getTests().isEmpty());
@@ -86,7 +86,7 @@ public class JstdTestCaseFactoryTest extends TestCase {
     final JstdTestCaseFactory testCaseFactory = new JstdTestCaseFactory(
         Collections.<JstdTestCaseProcessor> emptySet());
 
-    final List<JstdTestCase> testCases = testCaseFactory.createCases(files, tests);
+    final List<JstdTestCase> testCases = testCaseFactory.createCases(Collections.<FileInfo>emptyList(), files, tests);
     
     final Set<FileInfo> fileSet = new RunData(null, testCases, null).getFileSet();
     final Set<FileInfo> updatedFileSet = Sets.newLinkedHashSet();
