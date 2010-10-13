@@ -15,12 +15,36 @@
  */
 package com.google.jstestdriver.model;
 
+/**
+ * Defines the interface for a hander path prefix, an arbitrary string prepended 
+ * before all jstd specific server paths.
+ * 
+ * Example:
+ * 
+ * String prefix = 'jstd';
+ * String server = 'http://localhost:8080';
+ * String handlerPath = '/hello';
+ * 
+ * Creates:
+ * String server = 'http://localhost:8080/jstd';
+ * String handlerPath = '/jstd/hello';
+ * 
+ * While no prefix leaves them uinchaged.
+ * 
+ * @author corbinrsmith@gmail.com (Cory Smith)
+
+ */
 public interface HandlerPathPrefix {
 
-  String suffixServer(String prefix);
+  /** Adds the prefix to a server address. */
+  String suffixServer(String server);
 
+  /** Prefixes a path, making it absolute to the server root. */
   String prefixPath(String path);
 
+  /**
+   * Prefixes a path, making it absolute to the server root,
+   * falling back on the supplied prefix.
+   */
   String prefixPath(String path, String defaultPrefix);
-
 }

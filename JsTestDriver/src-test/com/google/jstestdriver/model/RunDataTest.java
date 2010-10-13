@@ -41,13 +41,13 @@ public class RunDataTest extends TestCase {
     FileInfo one = new FileInfo("one", -1, false, false, null);
     ResponseStream streamOne = new NoopStream();
     ResponseStream streamTwo = new NoopStream();
-    final RunData runDataOne = new RunData(Sets.newHashSet(one), Lists
-        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList());
-    final RunData runDataTwo = new RunData(Sets.newHashSet(one), Lists
-        .newArrayList(streamTwo), Collections.<JstdTestCase> emptyList());
+    final RunData runDataOne = new RunData(Lists
+        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList(), null);
+    final RunData runDataTwo = new RunData(Lists
+        .newArrayList(streamTwo), Collections.<JstdTestCase> emptyList(), null);
 
-    assertEquals(new RunData(Sets.newHashSet(one), Lists.newArrayList(
-        streamOne, streamTwo), Collections.<JstdTestCase> emptyList()),
+    assertEquals(new RunData(Lists.newArrayList(
+        streamOne, streamTwo), Collections.<JstdTestCase> emptyList(), null),
         runDataOne.aggregateResponses(runDataTwo));
   }
 
@@ -55,11 +55,11 @@ public class RunDataTest extends TestCase {
     FileInfo one = new FileInfo("one", -1, false, false, null);
     ResponseStream streamOne = new NoopStream();
     ResponseStream streamTwo = new NoopStream();
-    final RunData runDataOne = new RunData(Sets.newHashSet(one), Lists
-        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList());
+    final RunData runDataOne = new RunData(Lists
+        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList(), null);
 
-    assertEquals(new RunData(Sets.newHashSet(one), Lists.newArrayList(
-        streamOne, streamTwo), Collections.<JstdTestCase> emptyList()),
+    assertEquals(new RunData(Lists.newArrayList(
+        streamOne, streamTwo), Collections.<JstdTestCase> emptyList(), null),
         runDataOne.recordResponse(streamTwo));
   }
 
@@ -67,10 +67,10 @@ public class RunDataTest extends TestCase {
     ResponseStream streamOne = new NoopStream();
     FileInfo one = new FileInfo("one", -1, false, false, null);
     FileInfo two = new FileInfo("two", -1, false, false, null);
-    final RunData runData = new RunData(Sets.newHashSet(one), Lists
-        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList());
-    assertEquals(new RunData(Sets.newHashSet(one, two), Lists
-        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList()),
+    final RunData runData = new RunData(Lists
+        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList(), null);
+    assertEquals(new RunData(Lists
+        .newArrayList(streamOne), Collections.<JstdTestCase> emptyList(), null),
         runData.updateFileSet(Sets.newHashSet(one, two)));
   }
 

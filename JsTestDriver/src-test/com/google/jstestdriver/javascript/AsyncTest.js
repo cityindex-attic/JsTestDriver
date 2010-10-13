@@ -98,8 +98,8 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
 
 asyncTest.prototype.testRequest = function(queue) {
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', jstestdriver.createPath(windw.location.toString(),
-      '/hello');
+  xhr.open('GET', jstestdriver.createPath(window.location.toString(),
+      '/hello'));
   queue.defer(function(pool) {
     var headersReceived = pool.add(function(status) {
       assertEquals(200, status);

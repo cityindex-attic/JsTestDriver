@@ -47,10 +47,13 @@ public class RunDataFactoryTest extends TestCase {
 
     final Set<FileInfo> fileSet = Sets.newLinkedHashSet();
     fileSet.add(info);
-    final List<FileInfo> actual = Lists.newArrayList(new RunDataFactory(
-        fileSet, Collections.<FileInfo> emptyList(), Sets
-            .newHashSet(preProcessor), Collections
-            .<JstdTestCaseProcessor> emptySet()).get().getFileSet());
+    final List<FileInfo> actual = Lists.newArrayList(
+        new RunDataFactory(
+          fileSet,
+          Collections.<FileInfo> emptyList(),
+          Sets.newHashSet(preProcessor),
+          new JstdTestCaseFactory(
+              Collections.<JstdTestCaseProcessor> emptySet())).get().getFileSet());
 
     assertEquals(info.getFilePath(), actual.get(0).getFilePath());
     assertEquals(info.getTimestamp(), actual.get(0).getTimestamp());
@@ -59,56 +62,5 @@ public class RunDataFactoryTest extends TestCase {
     assertEquals(addedInfo.getFilePath(), actual.get(1).getFilePath());
     assertEquals(addedInfo.getTimestamp(), actual.get(1).getTimestamp());
     assertEquals(addedInfo.isServeOnly(), actual.get(1).isServeOnly());
-  }
-
-
-  public void testCreateWithTests() throws Exception {
-    Set<FileInfo> fileSet = Sets.newLinkedHashSet();
-    FileInfo one = new FileInfo("one.js", 1234, false, false, null);
-    FileInfo two = new FileInfo("two.js", 1234, false, false, null);
-    FileInfo three = new FileInfo("three.js", 1234, false, false, null);
-    fileSet.add(one);
-    fileSet.add(two);
-    fileSet.add(three);
-
-    FileInfo testOne = new FileInfo("oneTest.js", 1234, false, false, null);
-    FileInfo testTwo = new FileInfo("twoTest.js", 1234, false, false, null);
-    FileInfo testThree = new FileInfo("threeTest.js", 1234, false, false, null);
-    List<FileInfo> tests = Lists.newArrayList(testOne, testTwo, testThree);
-    RunData runData = new RunDataFactory(fileSet, tests, Collections
-        .<FileLoadPreProcessor> emptySet(), Collections
-        .<JstdTestCaseProcessor> emptySet()).get();
-
-    List<JstdTestCase> testCases = runData.getTestCases();
-    assertEquals(1, testCases.size());
-    JstdTestCase jstdTestCase = testCases.get(0);
-    assertEquals(tests, jstdTestCase.getTests());
-    assertEquals(Lists.newArrayList(fileSet), jstdTestCase.getDependencies());
-  }
-
-  public void testCreateWithOutTests() throws Exception {
-    Set<FileInfo> fileSet = Sets.newLinkedHashSet();
-    FileInfo one = new FileInfo("one.js", 1234, false, false, null);
-    FileInfo two = new FileInfo("two.js", 1234, false, false, null);
-    FileInfo three = new FileInfo("three.js", 1234, false, false, null);
-    FileInfo testOne = new FileInfo("oneTest.js", 1234, false, false, null);
-    FileInfo testTwo = new FileInfo("twoTest.js", 1234, false, false, null);
-    FileInfo testThree = new FileInfo("threeTest.js", 1234, false, false, null);
-    fileSet.add(one);
-    fileSet.add(two);
-    fileSet.add(three);
-    fileSet.add(testOne);
-    fileSet.add(testTwo);
-    fileSet.add(testThree);
-
-    RunData runData = new RunDataFactory(fileSet, Collections
-        .<FileInfo> emptyList(), Collections.<FileLoadPreProcessor> emptySet(),
-        Collections.<JstdTestCaseProcessor> emptySet()).get();
-
-    List<JstdTestCase> testCases = runData.getTestCases();
-    assertEquals(1, testCases.size());
-    JstdTestCase jstdTestCase = testCases.get(0);
-    assertTrue(jstdTestCase.getTests().isEmpty());
-    assertEquals(Lists.newArrayList(fileSet), jstdTestCase.getDependencies());
   }
 }

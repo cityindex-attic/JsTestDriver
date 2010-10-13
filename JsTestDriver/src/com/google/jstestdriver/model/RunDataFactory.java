@@ -16,34 +16,32 @@
 
 package com.google.jstestdriver.model;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
-import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class RunDataFactory {
   private final Set<FileInfo> fileSet;
   private final Set<FileLoadPreProcessor> processors;
   private final List<FileInfo> tests;
-  private final Set<JstdTestCaseProcessor> testCaseProcessors;
+  private final JstdTestCaseFactory testCaseFactory;
 
   @Inject
   public RunDataFactory(@Named("fileSet") Set<FileInfo> fileSet,
                         @Named("tests") List<FileInfo> tests,
                         Set<FileLoadPreProcessor> processors,
-                        Set<JstdTestCaseProcessor> testCaseProcessors) {
+                        JstdTestCaseFactory testCaseFactory) {
     this.fileSet = fileSet;
     this.tests = tests;
     this.processors = processors;
-    this.testCaseProcessors = testCaseProcessors;
+    this.testCaseFactory = testCaseFactory;
   }
 
   public RunData get() {
@@ -51,18 +49,9 @@ public class RunDataFactory {
     for (FileLoadPreProcessor processor : processors) {
       processedFileSet = processor.process(processedFileSet);
     }
-    List<JstdTestCase> testCases = Lists.newArrayList();
-    if (tests.isEmpty()) {
-      testCases.add(new JstdTestCase(processedFileSet, Lists.<FileInfo>newArrayList()));
-    } else {
-      testCases.add(new JstdTestCase(processedFileSet, tests));
-      for (JstdTestCaseProcessor processor : testCaseProcessors) {
-        testCases = processor.process(testCases.iterator());
-      }
-    }
 
-    return new RunData(Sets.newLinkedHashSet(processedFileSet),
-                       Collections.<ResponseStream>emptyList(),
-                       testCases);
+    return new RunData(Collections.<ResponseStream>emptyList(),
+                       testCaseFactory.createCases(processedFileSet, tests),
+                       null);
   }
 }

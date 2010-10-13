@@ -47,9 +47,9 @@ public class RunTestsActionTest extends TestCase {
             Collections.<TestsPreProcessor> emptySet());
     final FakeJsTestDriverClient client = new FakeJsTestDriverClient(Collections.<BrowserInfo>emptyList());
     action.run(browserId, client, new RunData(
-        Collections.<FileInfo>emptySet(),
         Collections.<ResponseStream>emptyList(),
-        Collections.<JstdTestCase>emptyList()), null);
+        Collections.<JstdTestCase>emptyList(),
+        null), null);
 
     client.assertTestRun(expected);
   }
@@ -75,7 +75,7 @@ public class RunTestsActionTest extends TestCase {
         new RunTestsAction(new FakeResponseStreamFactory(stream), tests, captureConsole,
             preProcessors);
     final FakeJsTestDriverClient client = new FakeJsTestDriverClient(Collections.<BrowserInfo>emptyList());
-    action.run(browserId, client, new RunData(Collections.<FileInfo>emptySet(), Collections.<ResponseStream>emptyList(), Collections.<JstdTestCase>emptyList()), null);
+    action.run(browserId, client, new RunData(Collections.<ResponseStream>emptyList(), Collections.<JstdTestCase>emptyList(), null), null);
 
     client.assertTestRun(expected);
   }
