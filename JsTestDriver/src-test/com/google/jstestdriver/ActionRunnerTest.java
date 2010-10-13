@@ -15,7 +15,7 @@
  */
 package com.google.jstestdriver;
 
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.jstestdriver.hooks.ResourcePreProcessor;
 import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
 import com.google.jstestdriver.hooks.ResourceDependencyResolver;
 import com.google.jstestdriver.model.JstdTestCaseFactory;
@@ -57,8 +57,8 @@ public class ActionRunnerTest extends TestCase {
         new RunDataFactory(
             Collections.<FileInfo>emptySet(),
             Collections.<FileInfo>emptyList(),
-            Collections.<FileLoadPreProcessor>emptySet(),
-            new JstdTestCaseFactory(Collections.<JstdTestCaseProcessor>emptySet(),
+            Collections.<ResourcePreProcessor>emptySet(),
+            Collections.<FileInfo>emptyList(), new JstdTestCaseFactory(Collections.<JstdTestCaseProcessor>emptySet(),
               Collections.<ResourceDependencyResolver>emptySet())));
 
     runner.runActions();

@@ -37,6 +37,7 @@ public class JstdTestCaseFactory {
     List<JstdTestCase> testCases = Lists.newArrayList();
     final LinkedHashSet<FileInfo> resolvedPluginDeps = Sets.newLinkedHashSet();
     final LinkedHashSet<FileInfo> resolvedDeps = Sets.newLinkedHashSet();
+    // TODO(corysmith): refactor and simplify.
     for (ResourceDependencyResolver resolver : resolvers) {
       for (FileInfo plugin : plugins) {
         resolvedPluginDeps.addAll(resolver.resolve(plugin));
@@ -75,6 +76,35 @@ public class JstdTestCaseFactory {
       }
     }
     return testCases;
+  }
+
+  public JstdTestCase updateTestCase(List<FileInfo> plugins,
+                                     List<FileInfo> deps,
+                                     List<FileInfo> tests) {
+    final LinkedHashSet<FileInfo> resolvedPluginDeps = Sets.newLinkedHashSet();
+    final LinkedHashSet<FileInfo> resolvedDeps = Sets.newLinkedHashSet();
+    for (ResourceDependencyResolver resolver : resolvers) {
+      for (FileInfo plugin : plugins) {
+        resolvedPluginDeps.addAll(resolver.resolve(plugin));
+      }
+      for (FileInfo dep : deps) {
+        for (FileInfo resolved : resolver.resolve(dep)) {
+          if (!resolvedPluginDeps.contains(resolved)) {
+            resolvedDeps.add(resolved);
+          }
+        }
+      }
+      for (FileInfo fileInfo : tests) {
+        for (FileInfo resolved : resolver.resolve(fileInfo)) {
+          if (!resolvedPluginDeps.contains(resolved)) {
+            resolvedDeps.add(resolved);
+          }
+        }
+      }
+      deps = Lists.newArrayList(resolvedDeps);
+      plugins = Lists.newArrayList(resolvedPluginDeps);
+    }
+    return new JstdTestCase(deps, tests, plugins);
   }
 
   // TODO(corysmith): Remove when RunData no longer allows access to the FileSet.

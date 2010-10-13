@@ -86,18 +86,6 @@ final public class RunData {
       testCaseFactory);
   }
 
-  public RunData addPluginResources(List<FileInfo> plugins) {
-    final List<JstdTestCase> updated =
-        Lists.newArrayListWithExpectedSize(testCases.size());
-    for (JstdTestCase testCase : testCases) {
-      updated.add(testCase.updatePlugins(plugins));
-    }
-    return new RunData(
-        responses,
-        updated,
-        testCaseFactory);
-  }
-
   @Override
   public String toString() {
     return "RunData [responses=" + responses + ", testCaseFactory=" + testCaseFactory

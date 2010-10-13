@@ -167,7 +167,9 @@ public class IDEPluginActionBuilder {
       bind(new TypeLiteral<List<FileInfo>>() {
       }).annotatedWith(Names.named("tests")).toInstance(
           Collections.<FileInfo> emptyList());
-
+      bind(new TypeLiteral<List<FileInfo>>() {
+      }).annotatedWith(Names.named("plugins")).toInstance(
+        Collections.<FileInfo> emptyList());
     }
   }
 }

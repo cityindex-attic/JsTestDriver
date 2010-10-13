@@ -55,7 +55,7 @@ public class ProcessingFileLoader implements FileLoader {
     List<FileInfo> loaded = new LinkedList<FileInfo>();
     try {
       stopWatch.start("preProcessFiles");
-      final List<FileInfo> preProcessedFiles = new LinkedList<FileInfo>(filesToLoad);;
+      final List<FileInfo> preProcessedFiles = new LinkedList<FileInfo>(filesToLoad);
       stopWatch.stop("preProcessFiles");
 
       stopWatch.start("loadFile");

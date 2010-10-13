@@ -22,7 +22,7 @@ import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.jstestdriver.hooks.ResourcePreProcessor;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
 import com.google.jstestdriver.hooks.ResourceDependencyResolver;
@@ -38,9 +38,8 @@ public class ActionFactoryModule extends AbstractModule {
     // used by the path resolver, which a plugin calls during runtime. :p
     // TODO(corysmith): Fix the lifecycle.
     Multibinder.newSetBinder(binder(), FileParsePostProcessor.class);
-    
     Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class);
-    Multibinder.newSetBinder(binder(), FileLoadPreProcessor.class);
+    Multibinder.newSetBinder(binder(), ResourcePreProcessor.class);
     Multibinder.newSetBinder(binder(), ResponseStreamFactory.class);
     Multibinder.newSetBinder(binder(), ActionListProcessor.class);
     Multibinder.newSetBinder(binder(), TestsPreProcessor.class);

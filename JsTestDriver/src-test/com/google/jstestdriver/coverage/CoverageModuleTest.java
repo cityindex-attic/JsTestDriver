@@ -55,6 +55,7 @@ public class CoverageModuleTest extends TestCase {
             System.out,
             new File(""),
             2 * 60 * 60,
+            Collections.<FileInfo>emptyList(),
             Collections.<FileInfo>emptyList());
 
     final Injector injector = Guice.createInjector(Lists.newArrayList(coverage, printStream,

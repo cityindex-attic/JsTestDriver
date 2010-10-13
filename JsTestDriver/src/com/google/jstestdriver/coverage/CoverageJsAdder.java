@@ -18,7 +18,7 @@ package com.google.jstestdriver.coverage;
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.LoadedFileInfo;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.jstestdriver.hooks.ResourcePreProcessor;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
  * @author corysmith@google.com (Cory Smith)
  *
  */
-public class CoverageJsAdder implements FileLoadPreProcessor {
+public class CoverageJsAdder implements ResourcePreProcessor {
 
   public static final String LCOV_JS = "/com/google/jstestdriver/coverage/javascript/LCOV.js";
   private final ClassFileLoader fileLoader;
@@ -39,11 +39,19 @@ public class CoverageJsAdder implements FileLoadPreProcessor {
     this.fileLoader = fileLoader;
   }
 
-  public List<FileInfo> process(List<FileInfo> files) {
+  public List<FileInfo> processPlugins(List<FileInfo> files) {
     LinkedList<FileInfo> processed = new LinkedList<FileInfo>();
     processed.add(0, new LoadedFileInfo(LCOV_JS, -1, false, false,
         fileLoader.load(LCOV_JS)));
     processed.addAll(files);
     return processed;
+  }
+
+  public List<FileInfo> processDependencies(List<FileInfo> files) {
+    return files;
+  }
+
+  public List<FileInfo> processTests(List<FileInfo> files) {
+    return files;
   }
 }

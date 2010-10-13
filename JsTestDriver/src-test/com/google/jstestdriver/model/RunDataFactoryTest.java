@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.jstestdriver.hooks.ResourcePreProcessor;
 import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
 import com.google.jstestdriver.hooks.ResourceDependencyResolver;
 
@@ -39,10 +39,18 @@ public class RunDataFactoryTest extends TestCase {
     final FileInfo info = new FileInfo("foo.js", 12434, false, false, null);
     final FileInfo addedInfo = new FileInfo("addedfoo.js", 12434, false, false, null);
 
-    FileLoadPreProcessor preProcessor = new FileLoadPreProcessor(){
-      public List<FileInfo> process(List<FileInfo> files) {
+    ResourcePreProcessor preProcessor = new ResourcePreProcessor(){
+      public List<FileInfo> processDependencies(List<FileInfo> files) {
         files.add(addedInfo);
         return new LinkedList<FileInfo>(files);
+      }
+
+      public List<FileInfo> processPlugins(List<FileInfo> files) {
+        return files;
+      }
+
+      public List<FileInfo> processTests(List<FileInfo> files) {
+        return files;
       }
     };
 
@@ -53,7 +61,7 @@ public class RunDataFactoryTest extends TestCase {
           fileSet,
           Collections.<FileInfo> emptyList(),
           Sets.newHashSet(preProcessor),
-          new JstdTestCaseFactory(
+          Collections.<FileInfo>emptyList(), new JstdTestCaseFactory(
               Collections.<JstdTestCaseProcessor> emptySet(),
               Collections.<ResourceDependencyResolver>emptySet())).get().getFileSet());
 

@@ -19,12 +19,12 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Time;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.jstestdriver.hooks.ResourcePreProcessor;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class DebuggerFileListProcessor implements FileLoadPreProcessor {
+public class DebuggerFileListProcessor implements ResourcePreProcessor {
   private static final String DEBUGGER_SOURCE = "/* Execution has been paused "
       + "using the 'debugger' statement."
       + "Please set the appropriate break points "
@@ -36,10 +36,20 @@ public class DebuggerFileListProcessor implements FileLoadPreProcessor {
     this.time = time;
   }
 
-  public List<FileInfo> process(List<FileInfo> files) {
+  public List<FileInfo> processTests(List<FileInfo> files) {
     LinkedList<FileInfo> processed = Lists.newLinkedList(files);
     processed.add(new FileInfo("debugger.js", time.now().getMillis(), false,
         false, DEBUGGER_SOURCE));
     return processed;
+  }
+
+  public List<FileInfo> processPlugins(List<FileInfo> files) {
+    
+    return files;
+  }
+
+  public List<FileInfo> processDependencies(List<FileInfo> files) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

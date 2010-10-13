@@ -16,14 +16,14 @@
 
 package com.google.jstestdriver;
 
-import java.io.File;
-import java.util.Collections;
-
-import junit.framework.TestCase;
-
 import com.google.inject.Guice;
 import com.google.jstestdriver.guice.DebugModule;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
+
+import junit.framework.TestCase;
+
+import java.io.File;
+import java.util.Collections;
 
 /**
  * @author corysmith
@@ -31,7 +31,7 @@ import com.google.jstestdriver.guice.TestResultPrintingModule;
 public class JsTestDriverModuleTest extends TestCase {
   public void testGetActionRunnerWithoutXmlPrinter() throws Exception {
     FlagsImpl flags = new FlagsImpl();
-    Guice.createInjector(new TestResultPrintingModule(""),
+    Guice.createInjector(new TestResultPrintingModule(),
         new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
@@ -39,12 +39,13 @@ public class JsTestDriverModuleTest extends TestCase {
         System.out,
         new File(""),
         2 * 60 * 60,
+        Collections.<FileInfo>emptyList(),
         Collections.<FileInfo>emptyList())).getInstance(ActionRunner.class);
   }
 
   public void testGetActionRunnerWithXmlWriter() throws Exception {
     FlagsImpl flags = new FlagsImpl();
-    Guice.createInjector(new TestResultPrintingModule("."),
+    Guice.createInjector(new TestResultPrintingModule(),
         new DebugModule(false),
         new JsTestDriverModule(flags,
         Collections.<FileInfo>emptySet(),
@@ -52,6 +53,7 @@ public class JsTestDriverModuleTest extends TestCase {
         System.out,
         new File(""),
         2 * 60 * 60,
+        Collections.<FileInfo>emptyList(),
         Collections.<FileInfo>emptyList())).getInstance(ActionRunner.class);
   }
 }

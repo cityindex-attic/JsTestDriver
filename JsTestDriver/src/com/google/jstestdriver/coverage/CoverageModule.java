@@ -26,7 +26,7 @@ import com.google.jstestdriver.ResponseStreamFactory;
 import com.google.jstestdriver.guice.BrowserActionProvider;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.jstestdriver.hooks.ResourcePreProcessor;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -53,7 +53,7 @@ public class CoverageModule extends AbstractModule {
   protected void configure() {
     Multibinder.newSetBinder(binder(), FileLoadPostProcessor.class)
         .addBinding().to(CoverageInstrumentingProcessor.class);
-    Multibinder.newSetBinder(binder(), FileLoadPreProcessor.class)
+    Multibinder.newSetBinder(binder(), ResourcePreProcessor.class)
         .addBinding().to(CoverageJsAdder.class);
     Multibinder.newSetBinder(binder(), ResponseStreamFactory.class)
         .addBinding().to(CoverageResponseStreamFactory.class);

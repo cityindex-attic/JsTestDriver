@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Google Inc.
+ * Copyright 2010 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,16 +16,18 @@
 
 package com.google.jstestdriver.hooks;
 
-
 import com.google.jstestdriver.FileInfo;
 
 import java.util.List;
 
 /**
- * Processes a list files before they are loaded.
- * @author corysmith
+ * This hook allows plugins to provide their own resource dependencies resolvers.
+ * 
+ * The expectation is that the list of resolved files will include the source file at the end.
+ * 
+ * @author corbinrsmith@gmail.com (Cory Smith)
  *
  */
-public interface FileLoadPreProcessor {
-  List<FileInfo> process(List<FileInfo> files);
+public interface ResourceDependencyResolver {
+  List<FileInfo> resolve(FileInfo resource);
 }

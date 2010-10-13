@@ -49,6 +49,10 @@ public class JstdTestCase {
     return dependencies;
   }
   
+  public List<FileInfo> getPlugins() {
+    return plugins;
+  }
+  
   /**
    * Adaptor to translate to fileset for uploading to the server.
    */

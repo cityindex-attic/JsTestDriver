@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.name.Named;
+import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.FlagsParser;
 import com.google.jstestdriver.JsTestDriverModule;
@@ -34,6 +35,7 @@ import org.kohsuke.args4j.CmdLineException;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -98,7 +100,9 @@ public class Initializer {
             outputStream,
             basePath,
             resolvedConfiguration.getTestSuiteTimeout(),
-            configuration.getTests()));
+            configuration.getTests(),
+            // TODO(corysmith): pull js plugins from the configuration.
+            Collections.<FileInfo>emptyList()));
     return modules;
   }
 }

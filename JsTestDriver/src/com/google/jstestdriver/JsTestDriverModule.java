@@ -51,6 +51,7 @@ public class JsTestDriverModule extends AbstractModule {
   private final File basePath;
   private final long testSuiteTimeout;
   private final List<FileInfo> tests;
+  private final List<FileInfo> plugins;
 
   public JsTestDriverModule(Flags flags,
       Set<FileInfo> fileSet,
@@ -63,6 +64,7 @@ public class JsTestDriverModule extends AbstractModule {
          outputStream,
          basePath,
          DefaultConfiguration.DEFAULT_TEST_TIMEOUT,
+         Collections.<FileInfo>emptyList(),
          Collections.<FileInfo>emptyList());
   }
 
@@ -72,7 +74,8 @@ public class JsTestDriverModule extends AbstractModule {
       PrintStream outputStream,
       File basePath,
       long testSuiteTimeout,
-      List<FileInfo> tests) {
+      List<FileInfo> tests,
+      List<FileInfo> plugins) {
     this.flags = flags;
     this.fileSet = fileSet;
     this.serverAddress = serverAddress;
@@ -80,6 +83,7 @@ public class JsTestDriverModule extends AbstractModule {
     this.basePath = basePath;
     this.testSuiteTimeout = testSuiteTimeout;
     this.tests = tests;
+    this.plugins = plugins;
   }
 
   @Override
@@ -114,6 +118,8 @@ public class JsTestDriverModule extends AbstractModule {
        .toProvider(FileSetProvider.class).in(Singleton.class);
     bind(new TypeLiteral<List<FileInfo>>() {}).annotatedWith(Names.named("tests"))
        .toInstance(tests);
+    bind(new TypeLiteral<List<FileInfo>>() {}).annotatedWith(Names.named("plugins"))
+    .toInstance(plugins);
     bind(Integer.class).annotatedWith(BrowserCount.class).
         toProvider(BrowserCountProvider.class).in(Singleton.class);
   }

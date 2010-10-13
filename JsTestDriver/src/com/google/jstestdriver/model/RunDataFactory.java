@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.ResponseStream;
-import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+import com.google.jstestdriver.hooks.ResourcePreProcessor;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,29 +29,39 @@ import java.util.Set;
 
 public class RunDataFactory {
   private final Set<FileInfo> fileSet;
-  private final Set<FileLoadPreProcessor> processors;
+  private final Set<ResourcePreProcessor> processors;
   private final List<FileInfo> tests;
   private final JstdTestCaseFactory testCaseFactory;
+  private final List<FileInfo> plugins;
 
   @Inject
   public RunDataFactory(@Named("fileSet") Set<FileInfo> fileSet,
                         @Named("tests") List<FileInfo> tests,
-                        Set<FileLoadPreProcessor> processors,
+                        Set<ResourcePreProcessor> processors,
+                        @Named("plugins") List<FileInfo> plugins,
                         JstdTestCaseFactory testCaseFactory) {
     this.fileSet = fileSet;
     this.tests = tests;
     this.processors = processors;
+    this.plugins = plugins;
     this.testCaseFactory = testCaseFactory;
   }
 
   public RunData get() {
-    List<FileInfo> processedFileSet = Lists.newLinkedList(fileSet);
-    for (FileLoadPreProcessor processor : processors) {
-      processedFileSet = processor.process(processedFileSet);
+    List<FileInfo> processedDependencies = Lists.newLinkedList(fileSet);
+    List<FileInfo> processedPlugins = Lists.newLinkedList(plugins);
+    List<FileInfo> processedTests = Lists.newLinkedList(tests);
+    for (ResourcePreProcessor processor : processors) {
+      processedPlugins = processor.processDependencies(processedPlugins);
+      processedTests = processor.processDependencies(processedTests);
+      processedDependencies = processor.processDependencies(processedDependencies);
     }
 
     return new RunData(Collections.<ResponseStream>emptyList(),
-                       testCaseFactory.createCases(Collections.<FileInfo>emptyList(), processedFileSet, tests),
-                       null);
+                       testCaseFactory.createCases(
+                           processedPlugins,
+                           processedDependencies,
+                           processedTests),
+                       testCaseFactory);
   }
 }
