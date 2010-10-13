@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver;
 
-import java.io.PrintStream;
-import java.util.List;
-
 import com.google.gson.Gson;
 import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.model.RunData;
+
+import java.io.PrintStream;
+import java.util.List;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

@@ -15,9 +15,6 @@
  */
 package com.google.jstestdriver.browser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.inject.Inject;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
@@ -26,6 +23,9 @@ import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.runner.RunnerType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

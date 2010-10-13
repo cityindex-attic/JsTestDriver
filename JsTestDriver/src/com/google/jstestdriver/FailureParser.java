@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.Gson;
+
 import java.util.LinkedList;
 import java.util.List;
-
-import com.google.gson.Gson;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

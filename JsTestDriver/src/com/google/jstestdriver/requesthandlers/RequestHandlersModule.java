@@ -1,20 +1,6 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.requesthandlers;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.GenericServlet;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.ImmutableList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -26,6 +12,20 @@ import com.google.inject.servlet.RequestParameters;
 import com.google.inject.servlet.RequestScoped;
 import com.google.jstestdriver.annotations.RequestProtocol;
 import com.google.jstestdriver.annotations.ResponseWriter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.GenericServlet;
+import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * An abstract {@link Guice} module providing an EDSL for binding {@link RequestHandler}s

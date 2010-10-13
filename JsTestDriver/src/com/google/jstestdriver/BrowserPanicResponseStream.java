@@ -1,11 +1,11 @@
 package com.google.jstestdriver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.gson.Gson;
 import com.google.jstestdriver.Response.ResponseType;
 import com.google.jstestdriver.browser.BrowserPanicException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A response stream that throws an exception if the browser panics.

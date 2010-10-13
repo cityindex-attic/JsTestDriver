@@ -1,11 +1,11 @@
 package com.google.jstestdriver.servlet.fileset;
 
-import java.util.Collection;
-
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.SlaveBrowser;
+
+import java.util.Collection;
 
 /**
  * Handles uploads to the server file cache.

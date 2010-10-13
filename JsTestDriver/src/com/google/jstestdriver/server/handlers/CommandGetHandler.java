@@ -1,12 +1,6 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.handlers;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.jstestdriver.BrowserInfo;
@@ -17,6 +11,12 @@ import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.StreamMessage;
 import com.google.jstestdriver.SlaveBrowser.CommandResponse;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

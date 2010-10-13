@@ -15,9 +15,9 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Map;
-
 import com.google.common.collect.Maps;
+
+import java.util.Map;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

@@ -14,18 +14,18 @@
  */
 package com.google.jstestdriver.config;
 
+import com.google.common.collect.Lists;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.Plugin;
+
+import org.jvyaml.YAML;
+
 import java.io.Reader;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.jvyaml.YAML;
-
-import com.google.common.collect.Lists;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.Plugin;
 
 
 /**

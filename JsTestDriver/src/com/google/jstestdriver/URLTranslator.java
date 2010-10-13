@@ -15,9 +15,9 @@
  */
 package com.google.jstestdriver;
 
-import java.net.MalformedURLException;
-
 import com.google.inject.ImplementedBy;
+
+import java.net.MalformedURLException;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

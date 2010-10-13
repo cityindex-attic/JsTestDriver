@@ -15,16 +15,16 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.jstestdriver.model.RunData;
 import com.google.jstestdriver.output.TestResultHolder;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

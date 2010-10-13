@@ -15,14 +15,14 @@
  */
 package com.google.jstestdriver.debugger;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Time;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class DebuggerFileListProcessor implements FileLoadPreProcessor {
   private static final String DEBUGGER_SOURCE = "/* Execution has been paused "

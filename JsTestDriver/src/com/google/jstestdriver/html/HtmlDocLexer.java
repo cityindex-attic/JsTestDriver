@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver.html;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-
 import com.google.jstestdriver.token.BufferedTokenStream;
 import com.google.jstestdriver.token.ConcreteToken;
 import com.google.jstestdriver.token.Token;
 import com.google.jstestdriver.token.TokenEmitter;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 
 /**
  * Acts as a factory for configuring a TokenEmitter and wrapping it in a 

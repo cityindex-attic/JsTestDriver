@@ -15,20 +15,20 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.hooks.AuthStrategy;
+import com.google.jstestdriver.hooks.ProxyDestination;
+import com.google.jstestdriver.model.HandlerPathPrefix;
+import com.google.jstestdriver.model.NullPathPrefix;
+import com.google.jstestdriver.model.RunData;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observer;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.jstestdriver.hooks.AuthStrategy;
-import com.google.jstestdriver.hooks.ProxyDestination;
-import com.google.jstestdriver.model.NullPathPrefix;
-import com.google.jstestdriver.model.HandlerPathPrefix;
-import com.google.jstestdriver.model.RunData;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

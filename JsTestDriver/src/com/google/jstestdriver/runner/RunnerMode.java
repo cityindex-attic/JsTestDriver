@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver.runner;
 
+import com.google.jstestdriver.util.LogConfigBuilder;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
-import com.google.jstestdriver.util.LogConfigBuilder;
 
 public enum RunnerMode {
   DEBUG(new LogConfigBuilder()

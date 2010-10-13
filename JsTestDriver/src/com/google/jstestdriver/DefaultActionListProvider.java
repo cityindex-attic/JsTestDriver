@@ -15,15 +15,15 @@
  */
 package com.google.jstestdriver;
 
-import java.util.List;
-import java.util.Set;
-
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.output.XmlPrinter;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Provides a sequence of actions from a large number of arguments.

@@ -15,19 +15,19 @@
  */
 package com.google.jstestdriver.browser;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.BrowserAction;
 import com.google.jstestdriver.JsTestDriverClient;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.util.StopWatch;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 
 /**

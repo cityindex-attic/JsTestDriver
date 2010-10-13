@@ -2,14 +2,14 @@
 
 package com.google.jstestdriver.browser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.HeartBeatManager;
 import com.google.jstestdriver.Server;
 import com.google.jstestdriver.util.Sleeper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages the client portion of session for a given captured browser.

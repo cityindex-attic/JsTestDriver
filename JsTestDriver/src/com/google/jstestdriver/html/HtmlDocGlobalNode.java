@@ -15,14 +15,14 @@
  */
 package com.google.jstestdriver.html;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-
 import com.google.jstestdriver.html.HtmlDocNodeFactory.CreateNodeStrategy;
 import com.google.jstestdriver.token.EscapingWriter;
 import com.google.jstestdriver.token.Node;
 import com.google.jstestdriver.token.Token;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
 
 
 /**

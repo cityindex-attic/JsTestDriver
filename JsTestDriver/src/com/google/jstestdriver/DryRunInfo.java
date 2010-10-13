@@ -16,10 +16,10 @@
 
 package com.google.jstestdriver;
 
-import java.util.List;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
+
+import java.util.List;
 
 /**
  * Dry run responses may be deserialized into this class.

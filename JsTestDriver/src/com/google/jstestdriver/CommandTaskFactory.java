@@ -15,15 +15,15 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.util.StopWatch;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

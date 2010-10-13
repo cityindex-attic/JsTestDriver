@@ -15,16 +15,16 @@
  */
 package com.google.jstestdriver.coverage;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultGenerator;
 import com.google.jstestdriver.Response.ResponseType;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
 
 /**
  * @author corysmith

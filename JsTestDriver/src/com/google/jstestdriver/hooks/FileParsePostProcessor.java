@@ -16,9 +16,9 @@
 
 package com.google.jstestdriver.hooks;
 
-import java.util.Set;
-
 import com.google.jstestdriver.FileInfo;
+
+import java.util.Set;
 
 /**
  * Allows post processing of parsed files.

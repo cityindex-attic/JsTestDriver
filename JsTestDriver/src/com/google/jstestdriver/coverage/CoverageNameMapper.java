@@ -15,11 +15,11 @@
  */
 package com.google.jstestdriver.coverage;
 
+import com.google.inject.Singleton;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.google.inject.Singleton;
 
 /** Handles the mapping and unmapping of coverage names to ints. */
 @Singleton

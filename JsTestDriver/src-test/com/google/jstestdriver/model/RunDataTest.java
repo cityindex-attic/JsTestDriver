@@ -21,6 +21,7 @@ import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.ResponseStream;
 import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
+import com.google.jstestdriver.hooks.ResourceDependencyResolver;
 
 import junit.framework.TestCase;
 
@@ -71,7 +72,9 @@ public class RunDataTest extends TestCase {
     FileInfo two = new FileInfo("two", -1, false, false, null);
     
     final JstdTestCaseFactory testCaseFactory =
-        new JstdTestCaseFactory(Sets.<JstdTestCaseProcessor>newHashSet());
+        new JstdTestCaseFactory(
+            Sets.<JstdTestCaseProcessor>newHashSet(),
+            Collections.<ResourceDependencyResolver>emptySet());
     final List<JstdTestCase> testCases = testCaseFactory.createCases(
         Collections.<FileInfo>emptyList(),
         Lists.newArrayList(one),

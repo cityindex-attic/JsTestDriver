@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
+import com.google.jstestdriver.hooks.ResourceDependencyResolver;
 
 import junit.framework.TestCase;
 
@@ -34,9 +35,11 @@ public class JstdTestCaseFactoryTest extends TestCase {
     FileInfo testThree = new FileInfo("threeTest.js", 1234, false, false, null);
     List<FileInfo> tests = Lists.newArrayList(testOne, testTwo, testThree);
     final JstdTestCaseFactory testCaseFactory = new JstdTestCaseFactory(
-        Collections.<JstdTestCaseProcessor> emptySet());
+        Collections.<JstdTestCaseProcessor> emptySet(),
+        Collections.<ResourceDependencyResolver>emptySet());
 
-    List<JstdTestCase> testCases = testCaseFactory.createCases(Collections.<FileInfo>emptyList(), files, tests);
+    List<JstdTestCase> testCases = testCaseFactory.createCases(
+        Collections.<FileInfo>emptyList(), files, tests);
     assertEquals(1, testCases.size());
     JstdTestCase jstdTestCase = testCases.get(0);
     assertEquals(tests, jstdTestCase.getTests());
@@ -59,10 +62,15 @@ public class JstdTestCaseFactoryTest extends TestCase {
     fileSet.add(testThree);
 
     final JstdTestCaseFactory testCaseFactory =
-        new JstdTestCaseFactory(Collections.<JstdTestCaseProcessor> emptySet());
+        new JstdTestCaseFactory(
+            Collections.<JstdTestCaseProcessor> emptySet(),
+            Collections.<ResourceDependencyResolver>emptySet());
 
     List<JstdTestCase> testCases =
-        testCaseFactory.createCases(Collections.<FileInfo>emptyList(), fileSet, Lists.<FileInfo>newArrayList());
+        testCaseFactory.createCases(
+            Collections.<FileInfo>emptyList(),
+            fileSet,
+            Lists.<FileInfo>newArrayList());
     assertEquals(1, testCases.size());
     JstdTestCase jstdTestCase = testCases.get(0);
     assertTrue(jstdTestCase.getTests().isEmpty());
@@ -84,10 +92,12 @@ public class JstdTestCaseFactoryTest extends TestCase {
     FileInfo testThree = new FileInfo("threeTest.js", 1234, false, false, null);
     List<FileInfo> tests = Lists.newArrayList(testOne, testTwo, testThree);
     final JstdTestCaseFactory testCaseFactory = new JstdTestCaseFactory(
-        Collections.<JstdTestCaseProcessor> emptySet());
+        Collections.<JstdTestCaseProcessor> emptySet(),
+        Collections.<ResourceDependencyResolver>emptySet());
 
-    final List<JstdTestCase> testCases = testCaseFactory.createCases(Collections.<FileInfo>emptyList(), files, tests);
-    
+    final List<JstdTestCase> testCases =
+        testCaseFactory.createCases(Collections.<FileInfo>emptyList(), files, tests);
+
     final Set<FileInfo> fileSet = new RunData(null, testCases, null).getFileSet();
     final Set<FileInfo> updatedFileSet = Sets.newLinkedHashSet();
     updatedFileSet.add(plugin);

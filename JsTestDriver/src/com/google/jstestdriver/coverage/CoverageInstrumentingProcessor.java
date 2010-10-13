@@ -15,14 +15,14 @@
  */
 package com.google.jstestdriver.coverage;
 
-import java.util.Set;
+import com.google.inject.Inject;
+import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
-import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.hooks.FileLoadPostProcessor;
+import java.util.Set;
 
 /**
  * Instruments the javascript code found in the FileInfo.

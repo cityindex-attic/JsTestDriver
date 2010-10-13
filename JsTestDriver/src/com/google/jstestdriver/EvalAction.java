@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver;
 
-import java.io.PrintStream;
-
 import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.model.RunData;
+
+import java.io.PrintStream;
 
 
 /**

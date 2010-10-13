@@ -15,16 +15,16 @@
  */
 package com.google.jstestdriver.server.handlers;
 
+import com.google.inject.Inject;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
+
+import org.mortbay.servlet.ProxyServlet;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.mortbay.servlet.ProxyServlet;
-
-import com.google.inject.Inject;
-import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 /**
  * A {@link RequestHandler} that forwards all "/jstd/proxy/*" requests to

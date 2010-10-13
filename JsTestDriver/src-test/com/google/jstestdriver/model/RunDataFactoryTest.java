@@ -28,6 +28,7 @@ import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.hooks.FileLoadPreProcessor;
 import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
+import com.google.jstestdriver.hooks.ResourceDependencyResolver;
 
 /**
  * @author corysmith@google.com (Your Name Here)
@@ -53,7 +54,8 @@ public class RunDataFactoryTest extends TestCase {
           Collections.<FileInfo> emptyList(),
           Sets.newHashSet(preProcessor),
           new JstdTestCaseFactory(
-              Collections.<JstdTestCaseProcessor> emptySet())).get().getFileSet());
+              Collections.<JstdTestCaseProcessor> emptySet(),
+              Collections.<ResourceDependencyResolver>emptySet())).get().getFileSet());
 
     assertEquals(info.getFilePath(), actual.get(0).getFilePath());
     assertEquals(info.getTimestamp(), actual.get(0).getTimestamp());

@@ -16,16 +16,16 @@
 
 package com.google.jstestdriver;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.hooks.FileLoadPostProcessor;
+import com.google.jstestdriver.util.StopWatch;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import com.google.jstestdriver.hooks.FileLoadPostProcessor;
-import com.google.jstestdriver.util.StopWatch;
 
 /**
  * A simple loader for files.

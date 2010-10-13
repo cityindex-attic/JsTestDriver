@@ -2,10 +2,10 @@
 
 package com.google.jstestdriver.browser;
 
+import com.google.jstestdriver.FileInfo;
+
 import java.util.Collections;
 import java.util.List;
-
-import com.google.jstestdriver.FileInfo;
 
 /**
  * Represents the state of the files loaded into a browser.

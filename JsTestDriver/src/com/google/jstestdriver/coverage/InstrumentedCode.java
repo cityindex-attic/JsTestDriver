@@ -15,9 +15,9 @@
  */
 package com.google.jstestdriver.coverage;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public class InstrumentedCode {
 

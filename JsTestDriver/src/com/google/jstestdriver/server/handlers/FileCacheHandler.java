@@ -16,19 +16,19 @@
 
 package com.google.jstestdriver.server.handlers;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FileSetCacheStrategy;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Provides a filecache for clients to determine if a file has changed since they last ran.

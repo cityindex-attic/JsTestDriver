@@ -1,10 +1,10 @@
 package com.google.jstestdriver;
 
-import java.util.List;
-import java.util.jar.Manifest;
-
 import com.google.jstestdriver.util.ManifestLoader;
 import com.google.jstestdriver.util.ManifestLoader.ManifestNotFound;
+
+import java.util.List;
+import java.util.jar.Manifest;
 
 /**
  * A representation of a parsed plugin.

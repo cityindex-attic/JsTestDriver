@@ -15,6 +15,14 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.hooks.FileParsePostProcessor;
+
+import org.apache.oro.io.GlobFilenameFilter;
+import org.apache.oro.text.GlobCompiler;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -24,14 +32,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
-
-import org.apache.oro.io.GlobFilenameFilter;
-import org.apache.oro.text.GlobCompiler;
-
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import com.google.jstestdriver.hooks.FileParsePostProcessor;
 
 /**
  * Handles the resolution of glob paths (*.js) and relative paths.

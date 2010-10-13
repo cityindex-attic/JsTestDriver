@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver.browser;
 
-import java.util.TimerTask;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.SlaveBrowser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.SlaveBrowser;
+import java.util.TimerTask;
 
 /**
  * Removes dead browsers from the CapturedBrowsers,

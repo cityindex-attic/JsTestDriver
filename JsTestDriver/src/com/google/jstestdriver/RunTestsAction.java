@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver;
 
-import java.util.List;
-import java.util.Set;
-
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.model.RunData;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Run the tests in the browser.

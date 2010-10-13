@@ -15,10 +15,6 @@
  */
 package com.google.jstestdriver.config;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
@@ -26,6 +22,10 @@ import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
 import com.google.jstestdriver.model.HandlerPathPrefix;
+
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a parsed configuration.

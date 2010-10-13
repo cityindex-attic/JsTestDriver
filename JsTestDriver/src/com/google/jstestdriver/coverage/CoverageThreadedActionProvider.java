@@ -1,13 +1,13 @@
 package com.google.jstestdriver.coverage;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.jstestdriver.BrowserAction;
 import com.google.jstestdriver.ResetAction;
 import com.google.jstestdriver.guice.BrowserActionProvider;
 import com.google.jstestdriver.guice.DefaultBrowserActionProvider;
+
+import java.util.List;
 
 /**
  * Temporary class that ensures the browser is reset 

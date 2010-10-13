@@ -15,21 +15,21 @@
  */
 package com.google.jstestdriver;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.Option;
-
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.browser.CommandLineBrowserRunner;
 import com.google.jstestdriver.model.ConcretePathPrefix;
-import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.model.HandlerPathPrefix;
+import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.runner.RunnerMode;
+
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.Option;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * FlagsParser for the JsTestDriver.

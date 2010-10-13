@@ -7,8 +7,10 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.hooks.JstdTestCaseProcessor;
+import com.google.jstestdriver.hooks.ResourceDependencyResolver;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,22 +21,55 @@ import java.util.Set;
 public class JstdTestCaseFactory {
 
   private final Set<JstdTestCaseProcessor> processors;
+  private final Set<ResourceDependencyResolver> resolvers;
 
   @Inject
-  public JstdTestCaseFactory(Set<JstdTestCaseProcessor> processors) {
+  public JstdTestCaseFactory(Set<JstdTestCaseProcessor> processors,
+                             Set<ResourceDependencyResolver> resolvers) {
     this.processors = processors;
+    this.resolvers = resolvers;
   }
 
-  public List<JstdTestCase> createCases(List<FileInfo> plugins, List<FileInfo> files, List<FileInfo> tests) {
+  public List<JstdTestCase> createCases(
+      List<FileInfo> plugins,
+      List<FileInfo> deps,
+      List<FileInfo> tests) {
     List<JstdTestCase> testCases = Lists.newArrayList();
+    final LinkedHashSet<FileInfo> resolvedPluginDeps = Sets.newLinkedHashSet();
+    final LinkedHashSet<FileInfo> resolvedDeps = Sets.newLinkedHashSet();
+    for (ResourceDependencyResolver resolver : resolvers) {
+      for (FileInfo plugin : plugins) {
+        resolvedPluginDeps.addAll(resolver.resolve(plugin));
+      }
+      for (FileInfo dep : deps) {
+        for (FileInfo resolved : resolver.resolve(dep)) {
+          if (!resolvedPluginDeps.contains(resolved)) {
+            resolvedDeps.add(resolved);
+          }
+        }
+      }
+      for (FileInfo fileInfo : tests) {
+        for (FileInfo resolved : resolver.resolve(fileInfo)) {
+          if (!resolvedPluginDeps.contains(resolved)) {
+            resolvedDeps.add(resolved);
+          }
+        }
+      }
+      deps = Lists.newArrayList(resolvedDeps);
+      plugins = Lists.newArrayList(resolvedPluginDeps);
+    }
     if (tests.isEmpty()) {
       testCases.add(
           new JstdTestCase(
-              files,
-              Lists.<FileInfo>newArrayList(),
-              Collections.<FileInfo> emptyList()));
+              deps,
+              Collections.<FileInfo> emptyList(),
+              plugins));
     } else {
-      testCases.add(new JstdTestCase(files, tests, plugins));
+      testCases.add(
+          new JstdTestCase(
+              deps,
+              tests,
+              plugins));
       for (JstdTestCaseProcessor processor : processors) {
         testCases = processor.process(testCases.iterator());
       }

@@ -1,14 +1,6 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.handlers;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
@@ -17,6 +9,14 @@ import com.google.jstestdriver.FileSource;
 import com.google.jstestdriver.JsonCommand;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

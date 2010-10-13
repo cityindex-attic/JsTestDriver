@@ -15,15 +15,15 @@
  */
 package com.google.jstestdriver.server.handlers;
 
+import com.google.inject.Inject;
+import com.google.jstestdriver.FilesCache;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.inject.Inject;
-import com.google.jstestdriver.FilesCache;
-import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

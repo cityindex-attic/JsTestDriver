@@ -17,15 +17,15 @@ package com.google.jstestdriver;
 
 import static org.mortbay.resource.Resource.newClassPathResource;
 
+import com.google.inject.Inject;
+import com.google.jstestdriver.annotations.BaseResourceLocation;
+
+import org.mortbay.resource.Resource;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.mortbay.resource.Resource;
-
-import com.google.inject.Inject;
-import com.google.jstestdriver.annotations.BaseResourceLocation;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)

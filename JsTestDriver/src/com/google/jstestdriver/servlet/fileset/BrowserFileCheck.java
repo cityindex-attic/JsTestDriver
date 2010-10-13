@@ -1,18 +1,18 @@
 package com.google.jstestdriver.servlet.fileset;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FileSetCacheStrategy;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.browser.BrowserFileSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author corbinrsmith@gmail.com (Cory Smith)

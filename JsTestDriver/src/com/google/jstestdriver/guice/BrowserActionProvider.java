@@ -16,11 +16,11 @@
 
 package com.google.jstestdriver.guice;
 
-import java.util.List;
-
 import com.google.inject.ImplementedBy;
 import com.google.inject.Provider;
 import com.google.jstestdriver.BrowserAction;
+
+import java.util.List;
 
 /**
  * Provides {@link BrowserAction}s for the JsTestDriverClient. Implement this interface and bind

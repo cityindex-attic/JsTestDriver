@@ -15,17 +15,17 @@
  */
 package com.google.jstestdriver;
 
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.model.RunData;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.model.RunData;
 
 /**
  * Starts a list of browsers when run.

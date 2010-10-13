@@ -15,15 +15,15 @@
  */
 package com.google.jstestdriver;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.FailureParser.Failure;
 import com.google.jstestdriver.Response.ResponseType;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Generates the test results given a gson and a response.

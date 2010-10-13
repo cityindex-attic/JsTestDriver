@@ -15,15 +15,15 @@
  */
 package com.google.jstestdriver.config;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
 import com.google.jstestdriver.model.HandlerPathPrefix;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author corysmith@google.com (Cory Smith)

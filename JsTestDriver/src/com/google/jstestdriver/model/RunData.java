@@ -55,14 +55,9 @@ final public class RunData {
 
   public Set<FileInfo> getFileSet() {
     final Set<FileInfo> fileSet = Sets.newLinkedHashSet();
-    final List<FileInfo> dependencies = Lists.newLinkedList();
-    final List<FileInfo> tests = Lists.newLinkedList();
     for (JstdTestCase testCase : testCases) {
-      dependencies.addAll(testCase.getDependencies());
-      tests.addAll(testCase.getTests());
+      fileSet.addAll(testCase.toFileSet());
     }
-    fileSet.addAll(dependencies);
-    fileSet.addAll(tests);
     return fileSet;
   }
 

@@ -16,9 +16,9 @@
 
 package com.google.jstestdriver.hooks;
 
-import java.util.List;
-
 import com.google.jstestdriver.Action;
+
+import java.util.List;
 
 /**
  * A hook for modifying the list JsTestDriver actions before execution.

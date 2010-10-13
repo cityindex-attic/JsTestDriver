@@ -1,8 +1,8 @@
 package com.google.jstestdriver.util;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public class LogConfigBuilder {
   List<String> handlers = Lists.newLinkedList();

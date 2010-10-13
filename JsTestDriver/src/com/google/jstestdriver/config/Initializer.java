@@ -16,13 +16,6 @@
 
 package com.google.jstestdriver.config;
 
-import java.io.File;
-import java.io.PrintStream;
-import java.util.List;
-import java.util.Set;
-
-import org.kohsuke.args4j.CmdLineException;
-
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Module;
@@ -36,6 +29,13 @@ import com.google.jstestdriver.guice.DebugModule;
 import com.google.jstestdriver.hooks.PluginInitializer;
 import com.google.jstestdriver.html.HtmlDocModule;
 import com.google.jstestdriver.runner.RunnerMode;
+
+import org.kohsuke.args4j.CmdLineException;
+
+import java.io.File;
+import java.io.PrintStream;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Handles the creation the list of modules necessary to create an ActionRunner.

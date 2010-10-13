@@ -1,9 +1,9 @@
 package com.google.jstestdriver.config;
 
+import com.google.common.collect.Lists;
+
 import java.util.Collections;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 /**
  * An extremely simple flag object. It only support the name and the value

@@ -2,17 +2,17 @@
 
 package com.google.jstestdriver;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.HandlerWrapper;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.servlet.ProxyServlet;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Divides the URI space of the JsTestDriver server in two: those requests
