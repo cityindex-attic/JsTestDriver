@@ -88,9 +88,10 @@ CommandExecutorTest.prototype.testHandleDisconnectionByServer = function() {
                                                   null,
                                                   jstestdriver.now,
                                                   getBrowserInfo);
+  executor.registerCommand('noop', this.streamingService, this.streamingService.close);
   executor.listen();
   var listenPost = this.posts.pop();
-  listenPost.callback('noop');
+  listenPost.callback('{"command": "noop"}');
   var noopPost = this.posts.pop();
   assertEquals("/Q1", noopPost.url);
   assertEquals({"done":true,"response":null}, noopPost.data);

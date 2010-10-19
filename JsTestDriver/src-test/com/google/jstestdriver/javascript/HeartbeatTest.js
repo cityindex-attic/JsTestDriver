@@ -20,11 +20,15 @@ heartbeatTest.prototype.getView = function(connected) {
   return {
     status : '',
     connected : connected,
+    lastBeat: -1,
     updateStatus : function(status) {
       this.status = status;
     },
     updateConnected : function(connected) {
       this.connected = connected; 
+    },
+    updateLastBeat : function(lastBeat) {
+      this.lastBeat = lastBeat;
     }
   };
 };

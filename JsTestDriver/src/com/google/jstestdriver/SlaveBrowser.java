@@ -17,6 +17,8 @@ package com.google.jstestdriver;
 
 import static java.lang.String.format;
 
+import com.google.jstestdriver.commands.NoopCommand;
+
 import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Reprsents a captured browser, and brokers the interaction between the client and browser.
+ * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class SlaveBrowser {
@@ -111,12 +115,12 @@ public class SlaveBrowser {
       if (command != null) {
         commandRunning = command;
         lastCommandDequeued = command;
+        return command;
       }
-      return command;
     } catch (InterruptedException e) {
       // The server was killed
     }
-    return null;
+    return new NoopCommand();
   }
 
   public Command getLastDequeuedCommand() {

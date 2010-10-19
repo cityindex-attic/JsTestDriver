@@ -86,12 +86,8 @@ jstestdriver.CommandExecutor = function(streamingService,
  * @param jsonCommand {String}
  */
 jstestdriver.CommandExecutor.prototype.executeCommand = function(jsonCommand) {
-  if (jsonCommand == 'noop') {
-    this.streamingService_.close(null, this.__boundExecuteCommand);
-  } else {
-    var command = jsonParse(jsonCommand);
-    this.commandMap_[command.command](command.parameters);
-  }
+  var command = jsonParse(jsonCommand);
+  this.commandMap_[command.command](command.parameters);
 };
 
 

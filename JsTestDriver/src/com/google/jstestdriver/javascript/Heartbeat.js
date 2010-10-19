@@ -60,6 +60,7 @@ jstestdriver.Heartbeat.prototype.stop = function() {
 
 jstestdriver.Heartbeat.prototype.sendHeartbeat = function() {
   this.sent_ = this.getTime_();
+  this.view_.updateLastBeat(this.sent_);
   this.sendRequest_(this.url_, { id: this.id_ },
                     this.boundHeartbeatCallback_,
                     this.boundErrorCallback_);
@@ -107,7 +108,32 @@ jstestdriver.Heartbeat.prototype.heartbeatCallback = function(response) {
 jstestdriver.HeartbeatView = function(getBody, createElement) {
   this.getBody_ = getBody;
   this.createElement_ = createElement;
+  this.root_ = null;
   this.status_ = null;
+  this.lastBeat_ = null;
+};
+
+
+jstestdriver.HeartbeatView.prototype.ensureView = function() {
+  if (!this.root_) {
+    var body = this.getBody_();
+    var document = body.ownerDocument;
+    this.root_ = body.appendChild(document.createElement('p'));
+    this.root_.innerHTML = 'JsTestDriver<br/>';
+    this.status_ = this.root_.appendChild(document.createElement('span'));
+    this.root_.appendChild(document.createTextNode(" | "));
+    this.lastBeat_ = this.root_.appendChild(document.createElement('span'));
+  }
+};
+
+
+/**
+ * Sets the status message for the heartbeat.
+ * @param {String}
+ */
+jstestdriver.HeartbeatView.prototype.updateLastBeat = function(msg) {
+  this.ensureView();
+  this.lastBeat_.innerHTML = ' Last:' + msg;
 };
 
 
@@ -116,14 +142,8 @@ jstestdriver.HeartbeatView = function(getBody, createElement) {
  * @param {String}
  */
 jstestdriver.HeartbeatView.prototype.updateStatus = function(msg) {
-  if (!this.status_) {
-    var body = this.getBody_();
-    var document = body.ownerDocument;
-    var title = body.appendChild(document.createElement('p'));
-    title.innerHTML = 'JsTestDriver:<br/>';
-    this.status_ = title.appendChild(document.createElement('span'));
-  }
-  this.status_.innerHTML = msg;
+  this.ensureView();
+  this.status_.innerHTML = ' Server:' + msg;
 };
 
 

@@ -9,11 +9,11 @@ body, html, iframe {
   padding:0;
   border-style: none;
 }
-body, html, #body {
+body, html, #runner {
   height:100%;
   
 }
-#body, #heartbeat {
+#runner, #heartbeat {
   width:100%;
   position:absolute;
 }
@@ -24,11 +24,16 @@ body, html, #body {
   top:0;
   left:0;
   height:72px;
+  z-index:10;
+}
+
+#runner {
+  z-index:1;
 }
 </style>
 </head>
 <body>
-<iframe id="heartbeat" src="HeartbeatClientstrict.html"></iframe>
-<iframe id="body" src="Runnerstrict.html"></iframe>
+<iframe id="heartbeat" src="HeartbeatClientstrict.html" frameborder="0"></iframe>
+<iframe id="runner" src="Runnerstrict.html" frameborder="0"></iframe>
 </body>
 </html>

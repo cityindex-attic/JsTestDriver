@@ -149,6 +149,7 @@ jstestdriver.config = (function(module) {
                                                            streamStop);
 
     executor.registerCommand('execute', executor, executor.execute);
+    executor.registerCommand('noop', null, streamStop);
     executor.registerCommand('runAllTests', runTestsCommand, runTestsCommand.runAllTests);
     executor.registerCommand('runTests', runTestsCommand, runTestsCommand.runTests);
     executor.registerCommand('loadTest', loadTestsCommand, loadTestsCommand.loadTest);
@@ -231,6 +232,7 @@ jstestdriver.config = (function(module) {
                 streamStop);
 
     executor.registerCommand('execute', executor, executor.execute);
+    executor.registerCommand('noop', null, streamStop);
     executor.registerCommand('runAllTests', runTestsCommand, runTestsCommand.runAllTests);
     executor.registerCommand('runTests', runTestsCommand, runTestsCommand.runTests);
     executor.registerCommand('loadTest', loadTestsCommand, loadTestsCommand.loadTest);

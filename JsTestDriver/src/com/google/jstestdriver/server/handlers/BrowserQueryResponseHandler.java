@@ -29,6 +29,7 @@ import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 
+import org.mortbay.jetty.MimeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,8 @@ class BrowserQueryResponseHandler implements RequestHandler {
       HttpServletRequest request,
       HttpServletResponse response,
       CapturedBrowsers browsers,
-      ConcurrentMap<SlaveBrowser, List<String>> streamedResponses) {
+      ConcurrentMap<SlaveBrowser,
+      List<String>> streamedResponses) {
     this.request = request;
     this.response = response;
     this.browsers = browsers;
@@ -82,6 +84,8 @@ class BrowserQueryResponseHandler implements RequestHandler {
           request.getParameter("done"),
           request.getParameter("responseId")
         });
+
+    response.setContentType(MimeTypes.TEXT_JSON_UTF_8);
     service(request.getPathInfo().substring(1),
             request.getParameter("response"),
             request.getParameter("done"),
@@ -172,7 +176,9 @@ class BrowserQueryResponseHandler implements RequestHandler {
     if (!done) { // we are still streaming, so we respond with the streaming
                  // acknowledge.
       // this is independent of receiving an actual response.
-      writer.print(gson.toJson(new BrowserStreamAcknowledged(streamedResponses.get(browser))));
+      final String jsonResponse = gson.toJson(new BrowserStreamAcknowledged(streamedResponses.get(browser)));
+      logger.info("sending jsonResponse {}", jsonResponse);
+      writer.print(jsonResponse);
       writer.flush();
       return;
     } else {
@@ -180,8 +186,11 @@ class BrowserQueryResponseHandler implements RequestHandler {
     }
     if(command == null) {
      command = browser.dequeueCommand();
+     browser.heartBeat();
     }
-    writer.print(command != null ? command.getCommand() : NOOP);
+    
+    logger.info("sending command {}", command == null ? "null" : command.getCommand());
+    writer.print(command);
   }
 
   private boolean isResponseValid(String response) {

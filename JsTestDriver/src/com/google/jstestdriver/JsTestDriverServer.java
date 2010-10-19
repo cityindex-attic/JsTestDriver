@@ -85,7 +85,7 @@ public class JsTestDriverServer extends Observable {
     try {
       // TODO(corysmith): Move this to the constructor when we are injecting everything.
       timer = new Timer(true);
-      timer.schedule(new BrowserReaper(capturedBrowsers), 3000, 3000);
+      timer.schedule(new BrowserReaper(capturedBrowsers), browserTimeout * 2, browserTimeout * 2);
       server.start();
       setChanged();
       notifyObservers(Event.STARTED);
