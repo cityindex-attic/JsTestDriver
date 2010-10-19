@@ -106,12 +106,12 @@
     <sequential>
       <javac
         srcdir="${src.dir}"
-      	destdir="@{destdir}"
-      	classpathref="classpath"
+        destdir="@{destdir}"
+        classpathref="classpath"
         debug="on"
-      	debuglevel="lines,vars,source"
-      	source="${javac.target}"
-      	target="${javac.target}">
+        debuglevel="lines,vars,source"
+        source="${javac.target}"
+        target="${javac.target}">
         <src path="${src.dir}" />
         <src path="${src-gen.dir}" />
         <exclude name="com/google/jstestdriver/ui/**" />
@@ -183,7 +183,16 @@
                  DefaultPlugin.js,
                  AssertsPlugin.js,
                  TestCaseManagerPlugin.js" />
-
+      </concat>
+      <concat destfile="${obj.dir}/${javascript-resources}/lib/jquery-min.js">
+        <filelist dir="${obj.dir}/${javascript-resources}/lib"
+                  files="jquery-1.4.3.min.js,
+                         jquery-compat.js" />
+      </concat>
+      <concat destfile="${obj.dir}/${javascript-resources}/lib/jquery.js">
+        <filelist dir="${obj.dir}/${javascript-resources}/lib"
+                  files="jquery-1.4.3.js,
+                         jquery-compat.js" />
       </concat>
       <concat destfile="${obj.dir}/${javascript-resources}/standalonerunner.js">
         <filelist dir="${obj.dir}/${javascript-resources}"

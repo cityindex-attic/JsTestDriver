@@ -1,0 +1,1 @@
+jstestdriver.jQuery = jQuery.noConflict(true);
