@@ -108,7 +108,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
     BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
 
     handler.service(id, null, "true", null, writer);
-    assertEquals("noop", out.toString());
+    assertEquals("{\"command\":\"noop\"}", out.toString());
   }
 
   public void testConnectionHeartBeat() throws Exception {

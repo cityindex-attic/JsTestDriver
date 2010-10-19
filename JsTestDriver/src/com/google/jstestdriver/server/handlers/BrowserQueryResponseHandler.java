@@ -105,6 +105,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
       serviceBrowser(response, isLast, responseId, writer, browser);
     } else {
       logger.warn("Unknown browser {}", id);
+      
     }
     writer.flush();
   }
@@ -190,7 +191,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
     }
     
     logger.info("sending command {}", command == null ? "null" : command.getCommand());
-    writer.print(command);
+    writer.print(command.getCommand());
   }
 
   private boolean isResponseValid(String response) {
