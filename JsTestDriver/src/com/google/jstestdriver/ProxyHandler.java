@@ -2,6 +2,9 @@
 
 package com.google.jstestdriver;
 
+import com.google.inject.Inject;
+import com.google.jstestdriver.model.HandlerPathPrefix;
+
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.HandlerWrapper;
 import org.mortbay.jetty.servlet.Context;
@@ -29,7 +32,14 @@ public class ProxyHandler extends HandlerWrapper {
 
   public static final String ROOT = "/";
 
-  public static final String PROXY_PREFIX = "/jstd/proxy";
+  public static final String PROXY_PREFIX = "/proxy";
+
+  private final HandlerPathPrefix prefix;
+
+  @Inject
+  public ProxyHandler(HandlerPathPrefix prefix) {
+    this.prefix = prefix;
+  }
 
   /**
    * Mutates the {@link HttpServletRequest}'s URI path, prefixing it with the
@@ -38,14 +48,15 @@ public class ProxyHandler extends HandlerWrapper {
    * Visible for testing.
    */
   protected void addPrefixToRequestUri(HttpServletRequest request) {
-    ((Request) request).setRequestURI(PROXY_PREFIX + request.getRequestURI());
+    ((Request) request).setRequestURI(
+        prefix.prefixPath(PROXY_PREFIX + request.getRequestURI(), "jstd"));
   }
 
   /**
    * @return the {@code target} URI prefixed with the proxy path.
    */
   private String addPrefixToTarget(String target) {
-    return PROXY_PREFIX + target;
+    return prefix.prefixPath(PROXY_PREFIX + target, "jstd");
   }
 
   /**
@@ -89,6 +100,6 @@ public class ProxyHandler extends HandlerWrapper {
    * Visible for testing.
    */
   boolean isHandledByJsTestDriverServer(String target) {
-    return target.equals(ROOT) || getServletHandler().matchesPath(target);
+    return prefix.prefixPath(target).equals(ROOT) || getServletHandler().matchesPath(target);
   }
 }

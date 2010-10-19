@@ -158,7 +158,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
 
   @Provides @Singleton
   @ProxyConfig Map<String, String> provideProxyConfig(ImmutableMap.Builder<String, String> builder) {
-    builder.put(PREFIX, ProxyHandler.PROXY_PREFIX);
+    builder.put(PREFIX, handlerPrefix.prefixPath(ProxyHandler.PROXY_PREFIX, "jstd"));
     if (destination != null) {
       builder.put(PROXY_TO, destination.getDestinationAddress());
     }
