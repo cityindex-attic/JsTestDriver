@@ -98,6 +98,141 @@
     <mkdir dir="${testability-explorer.reports.dir}" />
     <mkdir dir="${emma.dir}"/>
     <mkdir dir="${emma-bin.dir}"/>
+    
+  </target>
+  
+  <target name="compile-js" unless="dontcompile">
+    <echo message="Compiling Js to ${destdir}/${javascript-resources}"/>
+    <apply executable="java" dest="${destdir}/${javascript-resources}">
+      <arg value="-jar"/>
+      <arg value="${lib.dir}/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar" />
+      <!--arg value="-v" / -->
+      <arg value="--type" />
+      <arg value="js" />
+      <arg value="--disable-optimizations" />
+      <arg value="-o" />
+      <targetfile/>
+      <srcfile/>
+      <fileset dir="${src.dir}/${javascript-resources}">
+        <include name="**/*.js"/>
+      </fileset>
+      <mapper type="glob" from="*.js" to="*.js"></mapper>
+    </apply>
+  </target>
+  
+  <target name="copy-js" if="dontcompile">
+    <echo message="Copying Js to ${destdir}/${javascript-resources}"/>
+    <copy todir="${destdir}/${javascript-resources}">
+      <fileset dir="${src.dir}/${javascript-resources}">
+        <include name="**/*.js"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="build-js" depends="copy-js, compile-js">
+    <concat destfile="${destdir}/${javascript-resources}/jstestdrivernamespace.js">
+      <filelist dir="${destdir}/${javascript-resources}" files="Namespace.js" />
+    </concat>
+    <concat destfile="${destdir}/${javascript-resources}/runner.js">
+      <filelist dir="${destdir}/${javascript-resources}"
+        files="Response.js,
+               Asserts.js,
+               StreamingService.js,
+               FileSource.js,
+               FileResult.js,
+               Utils.js,
+               Console.js,
+               PluginRegistrar.js,
+               LibLoader.js,
+               FileLoader.js,
+               StandAloneTestReporter.js,
+               TestCaseInfo.js,
+               TestResult.js,
+               TestRunConfiguration.js,
+               TestCaseManager.js,
+               TestCaseBuilder.js,
+               TestRunner.js,
+               LoadTestsCommand.js,
+               RunTestsCommand.js,
+               CommandExecutor.js,
+               config.js" />
+      <filelist dir="${destdir}/${javascript-resources}/plugins/async"
+        files="CatchingCallback.js,
+               ExpiringCallback.js,
+               FiniteUseCallback.js,
+               Timeout.js,
+               TestSafeCallbackBuilder.js,
+               CallbackPool.js
+               CallbackPoolArmor.js
+               DeferredQueue.js
+               DeferredQueueArmor.js" />
+      <filelist dir="${destdir}/${javascript-resources}/plugins"
+        files="ScriptLoader.js,
+               StylesheetLoader.js,
+               FileLoaderPlugin.js,
+               TestRunnerPlugin.js,
+               AsyncTestRunnerPlugin.js,
+               DefaultPlugin.js,
+               AssertsPlugin.js,
+               TestCaseManagerPlugin.js" />
+    </concat>
+    <concat destfile="${destdir}/${javascript-resources}/lib/jquery-min.js">
+      <filelist dir="${destdir}/${javascript-resources}/lib"
+                files="jquery-1.4.3.min.js,
+                       jquery-compat.js" />
+    </concat>
+    <concat destfile="${destdir}/${javascript-resources}/lib/jquery.js">
+      <filelist dir="${destdir}/${javascript-resources}/lib"
+                files="jquery-1.4.3.js,
+                       jquery-compat.js" />
+    </concat>
+    <concat destfile="${destdir}/${javascript-resources}/standalonerunner.js">
+      <filelist dir="${destdir}/${javascript-resources}"
+        files="Response.js,
+               Asserts.js,
+               StreamingService.js,
+               FileSource.js,
+               FileResult.js,
+               Utils.js,
+               Console.js,
+               PluginRegistrar.js,
+               LibLoader.js,
+               FileLoader.js,
+               TestCaseInfo.js,
+               TestResult.js,
+               TestRunConfiguration.js,
+               TestCaseManager.js,
+               TestCaseBuilder.js,
+               TestRunner.js,
+               StandAloneLoadTestsCommand.js,
+               StandAloneRunTestsCommand.js,
+               StandAloneTestReporter.js,
+               CommandExecutor.js,
+               config.js" />
+      <filelist dir="${destdir}/${javascript-resources}/plugins/async"
+        files="CatchingCallback.js,
+               ExpiringCallback.js,
+               FiniteUseCallback.js,
+               Timeout.js,
+               TestSafeCallbackBuilder.js,
+               CallbackPool.js
+               CallbackPoolArmor.js
+               DeferredQueue.js
+               DeferredQueueArmor.js" />
+      <filelist dir="${destdir}/${javascript-resources}/plugins"
+        files="ScriptLoader.js,
+               StylesheetLoader.js,
+               FileLoaderPlugin.js,
+               TestRunnerPlugin.js,
+               AsyncTestRunnerPlugin.js,
+               DefaultPlugin.js,
+               AssertsPlugin.js,
+               TestCaseManagerPlugin.js" />
+
+    </concat>
+    <concat destfile="${destdir}/${javascript-resources}/heartbeatclient.js">
+      <filelist dir="${destdir}/${javascript-resources}" files="Utils.js,Heartbeat.js" />
+    </concat>
   </target>
 
   <macrodef name="macro-compile">
@@ -122,125 +257,9 @@
           <exclude name="${javascript-resources}/*.js"/>
         </fileset>
       </copy>
-      <copy todir="@{destdir}/${javascript-resources}">
-        <fileset dir="${src.dir}/${javascript-resources}" includes="*.js" />
-      </copy>
-      <!-- apply executable="java" dest="@{destdir}/${javascript-resources}">
-        <arg value="-jar"/>
-        <arg value="${lib.dir}/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar" />
-        <arg value="-v" />
-        <arg value="- -type" />
-        <arg value="js" />
-        <arg value="- -disable-optimizations" />
-        <arg value="-o" />
-        <targetfile/>
-        <srcfile/>
-        <fileset dir="${src.dir}/${javascript-resources}" includes="*.js" />
-        <mapper type="glob" from="*.js" to="*.js"></mapper>
-      </apply -->
-      <concat destfile="@{destdir}/${javascript-resources}/jstestdrivernamespace.js">
-        <filelist dir="@{destdir}/${javascript-resources}" files="Namespace.js" />
-      </concat>
-      <concat destfile="${obj.dir}/${javascript-resources}/runner.js">
-        <filelist dir="${obj.dir}/${javascript-resources}"
-          files="Response.js,
-                 Asserts.js,
-                 StreamingService.js,
-                 FileSource.js,
-                 FileResult.js,
-                 Utils.js,
-                 Console.js,
-                 PluginRegistrar.js,
-                 LibLoader.js,
-                 FileLoader.js,
-                 StandAloneTestReporter.js,
-                 TestCaseInfo.js,
-                 TestResult.js,
-                 TestRunConfiguration.js,
-                 TestCaseManager.js,
-                 TestCaseBuilder.js,
-                 TestRunner.js,
-                 LoadTestsCommand.js,
-                 RunTestsCommand.js,
-                 CommandExecutor.js,
-                 config.js" />
-        <filelist dir="${obj.dir}/${javascript-resources}/plugins/async"
-          files="CatchingCallback.js,
-                 ExpiringCallback.js,
-                 FiniteUseCallback.js,
-                 Timeout.js,
-                 TestSafeCallbackBuilder.js,
-                 CallbackPool.js
-                 CallbackPoolArmor.js
-                 DeferredQueue.js
-                 DeferredQueueArmor.js" />
-        <filelist dir="${obj.dir}/${javascript-resources}/plugins"
-          files="ScriptLoader.js,
-                 StylesheetLoader.js,
-                 FileLoaderPlugin.js,
-                 TestRunnerPlugin.js,
-                 AsyncTestRunnerPlugin.js,
-                 DefaultPlugin.js,
-                 AssertsPlugin.js,
-                 TestCaseManagerPlugin.js" />
-      </concat>
-      <concat destfile="${obj.dir}/${javascript-resources}/lib/jquery-min.js">
-        <filelist dir="${obj.dir}/${javascript-resources}/lib"
-                  files="jquery-1.4.3.min.js,
-                         jquery-compat.js" />
-      </concat>
-      <concat destfile="${obj.dir}/${javascript-resources}/lib/jquery.js">
-        <filelist dir="${obj.dir}/${javascript-resources}/lib"
-                  files="jquery-1.4.3.js,
-                         jquery-compat.js" />
-      </concat>
-      <concat destfile="${obj.dir}/${javascript-resources}/standalonerunner.js">
-        <filelist dir="${obj.dir}/${javascript-resources}"
-          files="Response.js,
-                 Asserts.js,
-                 StreamingService.js,
-                 FileSource.js,
-                 FileResult.js,
-                 Utils.js,
-                 Console.js,
-                 PluginRegistrar.js,
-                 LibLoader.js,
-                 FileLoader.js,
-                 TestCaseInfo.js,
-                 TestResult.js,
-                 TestRunConfiguration.js,
-                 TestCaseManager.js,
-                 TestCaseBuilder.js,
-                 TestRunner.js,
-                 StandAloneLoadTestsCommand.js,
-                 StandAloneRunTestsCommand.js,
-                 StandAloneTestReporter.js,
-                 CommandExecutor.js,
-                 config.js" />
-        <filelist dir="${obj.dir}/${javascript-resources}/plugins/async"
-          files="CatchingCallback.js,
-                 ExpiringCallback.js,
-                 FiniteUseCallback.js,
-                 Timeout.js,
-                 TestSafeCallbackBuilder.js,
-                 CallbackPool.js
-                 CallbackPoolArmor.js
-                 DeferredQueue.js
-                 DeferredQueueArmor.js" />
-        <filelist dir="${obj.dir}/${javascript-resources}/plugins"
-          files="ScriptLoader.js,
-                 StylesheetLoader.js,
-                 FileLoaderPlugin.js,
-                 TestRunnerPlugin.js,
-                 AsyncTestRunnerPlugin.js,
-                 DefaultPlugin.js,
-                 AssertsPlugin.js,
-                 TestCaseManagerPlugin.js" />
-
-      </concat>
-      <concat destfile="${obj.dir}/${javascript-resources}/heartbeatclient.js">
-        <filelist dir="${obj.dir}/${javascript-resources}" files="Utils.js,Heartbeat.js" />
-      </concat>
+      <antcall target="build-js" inheritrefs="true">
+        <param name="destdir" value="@{destdir}"/>
+      </antcall>
     </sequential>
   </macrodef>
 
@@ -635,7 +654,9 @@
     </copy>
   </target>
 
-  <target name="cbuild" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage, idea-plugin, eclipse-plugin, eclipse-plugin-test" />
+  <target name="cbuild" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage, eclipse-plugin, eclipse-plugin-test" />
+  <!-- restore idea plugin when the right jar is on hudson -->
+  <!-- target name="cbuild" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage, idea-plugin, eclipse-plugin, eclipse-plugin-test" /-->
   <target name="alltests" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage" />
 
   <target name="testability-explorer" depends="jar">
