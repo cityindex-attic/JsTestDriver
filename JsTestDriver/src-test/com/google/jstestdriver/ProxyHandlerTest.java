@@ -2,7 +2,6 @@
 package com.google.jstestdriver;
 
 import com.google.jstestdriver.model.ConcretePathPrefix;
-import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.NullPathPrefix;
 
 import junit.framework.TestCase;
