@@ -38,7 +38,7 @@ import com.google.jstestdriver.util.NullStopWatch;
 public class JsTestDriverServerTest extends TestCase {
 
   private CapturedBrowsers browsers = new CapturedBrowsers();
-  private JsTestDriverServer server = new JsTestDriverServer(4224, browsers,
+  private JsTestDriverServerImpl server = new JsTestDriverServerImpl(4224, browsers,
       new FilesCache(new HashMap<String, FileInfo>()), SlaveBrowser.TIMEOUT,
       null, Collections.<AuthStrategy> emptySet(), new NullPathPrefix());
 

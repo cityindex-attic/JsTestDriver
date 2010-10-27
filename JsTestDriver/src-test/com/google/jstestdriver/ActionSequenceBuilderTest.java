@@ -19,14 +19,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.TestCase;
 
-import com.google.common.collect.Sets;
 import com.google.jstestdriver.browser.BrowserActionExecutorAction;
-import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.browser.CommandLineBrowserRunner;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 import com.google.jstestdriver.model.NullPathPrefix;

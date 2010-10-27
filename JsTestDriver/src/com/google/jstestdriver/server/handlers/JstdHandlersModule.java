@@ -131,6 +131,8 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve( GET, handlerPrefix.prefixPath("/runner/*"), StandaloneRunnerHandler.class);
     serve( GET, handlerPrefix.prefixPath("/slave/*"), SlaveResourceHandler.class);
     serve( GET, handlerPrefix.prefixPath("/test/*"), TestResourceHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/quit"), QuitHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/quit/*"), QuitHandler.class);
 
     // Constant bindings
     bindConstant().annotatedWith(BaseResourceLocation.class)

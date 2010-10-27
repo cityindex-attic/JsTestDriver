@@ -38,7 +38,7 @@ public class ServerStartupAction implements ObservableAction {
   private final int port;
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache preloadedFilesCache;
-  private JsTestDriverServer server;
+  private JsTestDriverServerImpl server;
   private List<Observer> observerList = new LinkedList<Observer>();
   private final long browserTimeout;
   private final ProxyDestination destination;
@@ -93,7 +93,7 @@ public class ServerStartupAction implements ObservableAction {
       }
     }
 
-    server = new JsTestDriverServer(
+    server = new JsTestDriverServerImpl(
         port,
         capturedBrowsers,
         preloadedFilesCache,
