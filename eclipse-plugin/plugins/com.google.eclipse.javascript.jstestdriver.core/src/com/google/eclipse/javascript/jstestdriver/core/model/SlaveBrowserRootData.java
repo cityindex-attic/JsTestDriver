@@ -17,7 +17,7 @@ package com.google.eclipse.javascript.jstestdriver.core.model;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.jstestdriver.BrowserCaptureEvent;
+import com.google.jstestdriver.browser.BrowserCaptureEvent;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.SlaveBrowser;
 

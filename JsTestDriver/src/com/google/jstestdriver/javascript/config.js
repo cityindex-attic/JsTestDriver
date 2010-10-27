@@ -125,6 +125,8 @@ jstestdriver.config = (function(module) {
                                                     now,
                                                     getBrowserInfo);
 
+    var currentActionSignal = new jstestdriver.Signal(null);
+
     var boundExecuteCommand = jstestdriver.bind(executor, executor.executeCommand);
 
     function streamStop(response) {
@@ -140,16 +142,19 @@ jstestdriver.config = (function(module) {
             getBrowserInfo,
             streamStop);
 
-    var runTestsCommand = new jstestdriver.RunTestsCommand(testCaseManager,
-                                                           testRunner,
-                                                           pluginRegistrar,
-                                                           getBrowserInfo,
-                                                           jstestdriver.now,
-                                                           jsonParse,
-                                                           streamContinue,
-                                                           streamStop);
+    var runTestsCommand = new jstestdriver.RunTestsCommand(
+        testCaseManager,
+        testRunner,
+        pluginRegistrar,
+        getBrowserInfo,
+        jstestdriver.now,
+        jsonParse,
+        streamContinue,
+        streamStop);
     var unloadSignal = new jstestdriver.Signal(false);
-    var resetCommand = new jstestdriver.ResetCommand(window.location, unloadSignal);
+    var resetCommand = new jstestdriver.ResetCommand(
+        window.location,
+        unloadSignal);
 
     executor.registerCommand('execute', executor, executor.execute);
     executor.registerCommand('noop', null, streamStop);
@@ -164,7 +169,7 @@ jstestdriver.config = (function(module) {
                              streamingService.streamAcknowledged);
 
     function getCommand() {
-      return executor.lastCommand;
+      return currentActionSignal.get();
     }
 
     var unloadHandler = new jstestdriver.PageUnloadHandler(
@@ -249,14 +254,14 @@ jstestdriver.config = (function(module) {
                 streamContinue,
                 streamStop);
 
-    executor.registerCommand('execute', executor, executor.execute);
-    executor.registerCommand('noop', null, streamStop);
-    executor.registerCommand('runAllTests', runTestsCommand, runTestsCommand.runAllTests);
-    executor.registerCommand('runTests', runTestsCommand, runTestsCommand.runTests);
-    executor.registerCommand('loadTest', loadTestsCommand, loadTestsCommand.loadTest);
-    executor.registerCommand('reset', executor, executor.reset);
-    executor.registerCommand('dryRun', executor, executor.dryRun);
-    executor.registerCommand('dryRunFor', executor, executor.dryRunFor);
+    executor.registerTracedCommand('execute', executor, executor.execute);
+    executor.registerTracedCommand('noop', null, streamStop);
+    executor.registerTracedCommand('runAllTests', runTestsCommand, runTestsCommand.runAllTests);
+    executor.registerTracedCommand('runTests', runTestsCommand, runTestsCommand.runTests);
+    executor.registerTracedCommand('loadTest', loadTestsCommand, loadTestsCommand.loadTest);
+    executor.registerTracedCommand('reset', executor, executor.reset);
+    executor.registerTracedCommand('dryRun', executor, executor.dryRun);
+    executor.registerTracedCommand('dryRunFor', executor, executor.dryRunFor);
     executor.registerCommand('streamAcknowledged',
             streamingService,
             streamingService.streamAcknowledged);

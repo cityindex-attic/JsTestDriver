@@ -15,7 +15,6 @@
  */
 package com.google.eclipse.javascript.jstestdriver.ui;
 
-import junit.framework.TestCase;
 
 /**
  * @author shyamseshadri

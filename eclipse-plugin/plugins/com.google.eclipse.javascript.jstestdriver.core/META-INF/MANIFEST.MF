@@ -24,3 +24,4 @@ Export-Package: com.google.common.base,
  com.google.jstestdriver.runner
 Bundle-ClassPath: lib/JsTestDriver.jar,
  .
+Import-Package: com.google.jstestdriver

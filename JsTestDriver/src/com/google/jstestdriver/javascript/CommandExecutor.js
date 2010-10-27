@@ -56,7 +56,8 @@ jstestdriver.CommandExecutor = function(streamingService,
                                         testRunner,
                                         pluginRegistrar,
                                         now,
-                                        getBrowserInfo) {
+                                        getBrowserInfo,
+                                        currentActionSignal) {
   this.streamingService_ = streamingService;
   this.__testCaseManager = testCaseManager;
   this.__testRunner = testRunner;
@@ -78,7 +79,7 @@ jstestdriver.CommandExecutor = function(streamingService,
   this.now_ = now;
   this.lastTestResultsSent_ = 0;
   this.getBrowserInfo = getBrowserInfo;
-  this.lastCommand = null;
+  this.currentActionSignal_ = currentActionSignal;
 };
 
 
@@ -88,7 +89,6 @@ jstestdriver.CommandExecutor = function(streamingService,
  */
 jstestdriver.CommandExecutor.prototype.executeCommand = function(jsonCommand) {
   var command = jsonParse(jsonCommand);
-  this.lastCommand = command.command;
   this.commandMap_[command.command](command.parameters);
 };
 
@@ -121,9 +121,32 @@ jstestdriver.CommandExecutor.prototype.evaluateCommand = function(cmd) {
 };
 
 
+/**
+ * Registers a command to the executor to handle incoming command requests.
+ * @param {String} name The name of the command
+ * @param {Object} context The context to call the command in.
+ * @param {function(Array):null} func the command.
+ */
 jstestdriver.CommandExecutor.prototype.registerCommand =
     function(name, context, func) {
   this.commandMap_[name] = jstestdriver.bind(context, func);
+};
+
+
+/**
+ * Registers a command to the executor to handle incoming command requests
+ * @param {String} name The name of the command
+ * @param {Object} context The context to call the command in.
+ * @param {function(Array):null} func the command.
+ */
+jstestdriver.CommandExecutor.prototype.registerTracedCommand =
+    function(name, context, func) {
+  var bound = jstestdriver.bind(context, func);
+  var signal = this.currentActionSignal_;
+  this.commandMap_[name] = function() {
+    signal.set(name);
+    return bound.call(arguments);
+  };
 };
 
 

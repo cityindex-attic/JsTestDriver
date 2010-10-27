@@ -14,7 +14,11 @@
  * the License.
  */
 
-jstestdriver.LoadTestsCommand = function(jsonParse, pluginRegistrar, getBrowserInfo, onLoadComplete) {
+jstestdriver.LoadTestsCommand = function(
+    jsonParse,
+    pluginRegistrar,
+    getBrowserInfo,
+    onLoadComplete) {
   this.jsonParse_ = jsonParse;
   this.pluginRegistrar_ = pluginRegistrar;
   this.boundOnFileLoaded_ = jstestdriver.bind(this, this.onFileLoaded);
