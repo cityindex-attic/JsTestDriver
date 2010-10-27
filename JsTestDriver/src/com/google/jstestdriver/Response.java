@@ -47,6 +47,16 @@ public class Response {
     }
   }
 
+  public Response() {}
+
+  public Response(String type, String response, BrowserInfo browser, String error, long executionTime) {
+    this.type = type;
+    this.response = response;
+    this.browser = browser;
+    this.error = error;
+    this.executionTime = executionTime;
+  }
+
   private String type;
   private String response = "";
   private BrowserInfo browser = new BrowserInfo();

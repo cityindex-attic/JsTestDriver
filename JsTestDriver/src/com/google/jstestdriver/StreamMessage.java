@@ -30,6 +30,11 @@ public class StreamMessage {
     this.response = response;
   }
 
+  public StreamMessage(Response response, boolean last) {
+    this.last = last;
+    this.response = response;
+  }
+
   public boolean isLast() {
     return last;
   }

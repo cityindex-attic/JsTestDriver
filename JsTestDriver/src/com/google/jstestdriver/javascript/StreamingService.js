@@ -19,14 +19,23 @@
  * @param {String} url The server url.
  * @param {function():Number} now Returns the current time in ms.
  * @param {function(String, Object, function():null)} post Posts to the server.
+ * @param {function(String, Object)} synchPost Posts synchronously to the server.
  */
 // TODO(corysmith): Separate the state from the service.
-jstestdriver.StreamingService = function(url, now, post) {
+jstestdriver.StreamingService = function(url, now, post, synchPost) {
   this.url_ = url;
   this.now_ = now;
   this.post_ = post;
   this.activeResponses_ = {};
   this.completeFinalResponse = null;
+  this.synchPost_ = synchPost;
+};
+
+
+jstestdriver.StreamingService.prototype.synchClose = function(response) {
+  var data = new jstestdriver.CommandResponse(true, response);
+  console.info("synch call");
+  this.synchPost_(this.url_, data);
 };
 
 

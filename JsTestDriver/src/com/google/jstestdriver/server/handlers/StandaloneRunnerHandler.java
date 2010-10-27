@@ -15,6 +15,21 @@
  */
 package com.google.jstestdriver.server.handlers;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.jstestdriver.CapturedBrowsers;
@@ -28,27 +43,12 @@ import com.google.jstestdriver.Response;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
 import com.google.jstestdriver.StandaloneRunnerFilesFilter;
+import com.google.jstestdriver.StreamMessage;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultGenerator;
 import com.google.jstestdriver.JsonCommand.CommandType;
-import com.google.jstestdriver.SlaveBrowser.CommandResponse;
 import com.google.jstestdriver.TestResult.Result;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -153,9 +153,9 @@ class StandaloneRunnerHandler implements RequestHandler {
           final long testStart = System.currentTimeMillis();
           int loaded = 0;
           while (true) {
-            CommandResponse commandResponse = slaveBrowser.getResponse();
-            if (commandResponse != null) {
-              final Response response = commandResponse.getResponse();
+            StreamMessage message = slaveBrowser.getResponse();
+            if (message != null) {
+              final Response response = message.getResponse();
               response.setBrowser(slaveBrowser.getBrowserInfo());
 
               switch (response.getResponseType()) {

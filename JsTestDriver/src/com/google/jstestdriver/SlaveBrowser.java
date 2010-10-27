@@ -49,8 +49,8 @@ public class SlaveBrowser {
   private TimeUnit timeUnit = TimeUnit.SECONDS;
   private volatile Instant lastHeartBeat;
   private Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
-  private final BlockingQueue<CommandResponse> responses =
-    new LinkedBlockingQueue<CommandResponse>();
+  private final BlockingQueue<StreamMessage> responses =
+    new LinkedBlockingQueue<StreamMessage>();
   private Command commandRunning = null;
   private Command lastCommandDequeued;
   private final long timeout;
@@ -70,34 +70,6 @@ public class SlaveBrowser {
 
   public Lock getLock() {
     return lock;
-  }
-
-  public static class CommandResponse {
-    private Response response;
-    private final boolean last;
-
-    public CommandResponse(Response response, boolean last) {
-      this.response = response;
-      this.last = last;
-    }
-
-    /**
-     * @return the response
-     */
-    public Response getResponse() {
-      return response;
-    }
-
-    /**
-     * @return the isLast
-     */
-    public boolean isLast() {
-      return last;
-    }
-
-    public void setResponse(Response response) {
-      this.response = response;
-    }
   }
 
   public void createCommand(String data) {
@@ -158,9 +130,13 @@ public class SlaveBrowser {
     fileSet.clear();
   }
 
-  public CommandResponse getResponse() {
+  public StreamMessage getResponse() {
     try {
-      return responses.poll(POLL_RESPONSE_TIMEOUT, TimeUnit.SECONDS);
+      StreamMessage message = responses.poll(POLL_RESPONSE_TIMEOUT, TimeUnit.SECONDS);
+      if (message == null) {
+        // TODO(corysmith): See if returning an empty message works here.
+      }
+      return message;
     } catch (InterruptedException e) {
       return null;
     }
@@ -170,14 +146,14 @@ public class SlaveBrowser {
     if (isLast) {
       commandRunning = null;
     }
-    responses.offer(new CommandResponse(response, isLast));
+    responses.offer(new StreamMessage(isLast, response));
   }
 
   public void clearResponseQueue() {
     responses.clear();
   }
 
-  public boolean isCommandRunning() {
+  public synchronized boolean isCommandRunning() {
     return commandRunning != null;
   }
 
@@ -217,7 +193,10 @@ public class SlaveBrowser {
 
   @Override
   public String toString() {
-    return format("SlaveBrowser(browserInfo=%s,\n\tid=%s,\n\tsinceLastCheck=%s,\n\ttimeout=%s)",
-        browserInfo, id, time.now().getMillis() - lastHeartBeat.getMillis(), timeout);
+    return format("SlaveBrowser(browserInfo=%s,\n\tid=%s,\n\tsinceLastCheck=%ss,\n\ttimeout=%s)",
+        browserInfo,
+        id,
+        (time.now().getMillis() - lastHeartBeat.getMillis())/1000.0,
+        timeout);
   }  
 }

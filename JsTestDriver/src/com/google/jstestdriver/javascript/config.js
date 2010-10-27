@@ -111,7 +111,8 @@ jstestdriver.config = (function(module) {
     var streamingService = new jstestdriver.StreamingService(
             url,
             now,
-            jstestdriver.convertToJson(jstestdriver.jQuery.post));
+            jstestdriver.convertToJson(jstestdriver.jQuery.post),
+            jstestdriver.createSynchPost(jstestdriver.jQuery));
     
     function getBrowserInfo() {
       return new jstestdriver.BrowserInfo(id);
@@ -129,7 +130,7 @@ jstestdriver.config = (function(module) {
     function streamStop(response) {
       streamingService.close(response, boundExecuteCommand)
     }
-    
+
     function streamContinue(response) {
       streamingService.stream(response, boundExecuteCommand);
     }
@@ -138,7 +139,7 @@ jstestdriver.config = (function(module) {
             pluginRegistrar,
             getBrowserInfo,
             streamStop);
-    
+
     var runTestsCommand = new jstestdriver.RunTestsCommand(testCaseManager,
                                                            testRunner,
                                                            pluginRegistrar,
@@ -147,18 +148,35 @@ jstestdriver.config = (function(module) {
                                                            jsonParse,
                                                            streamContinue,
                                                            streamStop);
+    var unloadSignal = new jstestdriver.Signal(false);
+    var resetCommand = new jstestdriver.ResetCommand(window.location, unloadSignal);
 
     executor.registerCommand('execute', executor, executor.execute);
     executor.registerCommand('noop', null, streamStop);
     executor.registerCommand('runAllTests', runTestsCommand, runTestsCommand.runAllTests);
     executor.registerCommand('runTests', runTestsCommand, runTestsCommand.runTests);
     executor.registerCommand('loadTest', loadTestsCommand, loadTestsCommand.loadTest);
-    executor.registerCommand('reset', executor, executor.reset);
+    executor.registerCommand('reset', resetCommand, resetCommand.reset);
     executor.registerCommand('dryRun', executor, executor.dryRun);
     executor.registerCommand('dryRunFor', executor, executor.dryRunFor);
     executor.registerCommand('streamAcknowledged',
                              streamingService,
                              streamingService.streamAcknowledged);
+
+    function getCommand() {
+      return executor.lastCommand;
+    }
+
+    var unloadHandler = new jstestdriver.PageUnloadHandler(
+        streamingService,
+        getBrowserInfo,
+        getCommand,
+        unloadSignal);
+    
+    jstestdriver.jQuery(window).bind('unload', jstestdriver.bind(unloadHandler, unloadHandler.onUnload));
+    jstestdriver.jQuery(window).bind('beforeunload', jstestdriver.bind(unloadHandler, unloadHandler.onUnload));
+    window.onbeforeunload = jstestdriver.bind(unloadHandler, unloadHandler.onUnload);
+    console.info("bound on onunload")
 
     return executor;
   }

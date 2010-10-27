@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.jstestdriver.browser.BrowserPanicException;
 import com.google.jstestdriver.output.TestResultListener;
 
 import java.util.Collection;
@@ -60,6 +61,9 @@ public class RunTestsActionResponseStream implements ResponseStream {
           listener.onFileLoad(response.getBrowser().toString(), result);
         }
         break;
+      case BROWSER_PANIC:
+        BrowserPanic panic = gson.fromJson(response.getResponse(), response.getGsonType());
+        throw new BrowserPanicException(panic.getBrowserInfo(), panic.getCause());
     }
   }
 

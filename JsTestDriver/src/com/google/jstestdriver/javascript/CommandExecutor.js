@@ -78,6 +78,7 @@ jstestdriver.CommandExecutor = function(streamingService,
   this.now_ = now;
   this.lastTestResultsSent_ = 0;
   this.getBrowserInfo = getBrowserInfo;
+  this.lastCommand = null;
 };
 
 
@@ -87,6 +88,7 @@ jstestdriver.CommandExecutor = function(streamingService,
  */
 jstestdriver.CommandExecutor.prototype.executeCommand = function(jsonCommand) {
   var command = jsonParse(jsonCommand);
+  this.lastCommand = command.command;
   this.commandMap_[command.command](command.parameters);
 };
 
@@ -116,15 +118,6 @@ jstestdriver.CommandExecutor.prototype.evaluateCommand = function(cmd) {
           '):\n' + e.stack;
   }
   return res;
-};
-
-
-jstestdriver.CommandExecutor.prototype.reset = function() {
-  if (window.location.href.search('\\?refresh') != -1) {
-    window.location.reload();
-  } else {
-    window.location.replace(window.location.href + '?refresh');
-  }
 };
 
 

@@ -135,7 +135,10 @@
     </concat>
     <concat destfile="${destdir}/${javascript-resources}/runner.js">
       <filelist dir="${destdir}/${javascript-resources}"
-        files="Response.js,
+        files="Signal.js,
+               PageUnloadHandler.js,
+               ResetCommand.js,
+               Response.js,
                Asserts.js,
                StreamingService.js,
                FileSource.js,

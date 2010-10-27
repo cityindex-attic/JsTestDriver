@@ -149,3 +149,19 @@ jstestdriver.appendHtml = function(htmlString, owningDocument) {
  */
 jstestdriver.now = function() { return new Date().getTime();}
 
+
+/**
+ * Creates a wrapper for jQuery.ajax that make a synchronous post
+ * @param {jQuery} jQuery
+ * @return {function(url, data):null}
+ */
+jstestdriver.createSynchPost = function(jQuery) {
+  return jstestdriver.convertToJson(function(url, data) {
+    return jQuery.ajax({
+      'async' : false,
+      'data' : data,
+      'type' : 'POST',
+      'url' : url
+    });
+  });
+};

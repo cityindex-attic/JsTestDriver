@@ -18,3 +18,7 @@ jstestdriver.FileResult = function(file, success, message) {
   this.success = success;
   this.message = message;
 };
+
+jstestdriver.FileResult.prototype.toString = function() {
+  return ["FileResult(", this.file.fileSrc, this.success, this.message, ")"].join("");
+}

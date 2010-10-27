@@ -18,6 +18,8 @@ package com.google.jstestdriver;
 import static java.lang.String.format;
 
 import com.google.gson.Gson;
+import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.browser.BrowserPanicException;
 import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.util.StopWatch;
 
@@ -97,6 +99,9 @@ public class CommandTask {
         String response = server.fetch(baseUrl + "/cmd?id=" + browserId);
         streamMessage = gson.fromJson(response, StreamMessage.class);
         Response resObj = streamMessage.getResponse();
+        if (ResponseType.BROWSER_PANIC.equals(resObj.getResponseType())) {
+          throw new BrowserPanicException(resObj.getBrowser(), resObj.getResponse());
+        }
         stream.stream(resObj);
       } while (!streamMessage.isLast());
       stopWatch.stop("execution %s", params.get("data"));

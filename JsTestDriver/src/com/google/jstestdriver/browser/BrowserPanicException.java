@@ -24,6 +24,9 @@ import com.google.jstestdriver.BrowserInfo;
  *
  */
 public class BrowserPanicException extends RuntimeException {
+
+  private static final long serialVersionUID = -342803445456245684L;
+
   public BrowserPanicException(BrowserInfo browserInfo, String during) {
     super(String.format("Browser %s\nDuring %s",browserInfo, during));
   }

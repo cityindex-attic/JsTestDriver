@@ -58,7 +58,7 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTestConfiguration =
           tests[i],
           'error',
           testCaseInfo.getTestCaseName() +
-            ' is not a default test case: ' +
+            ' is an unhandled test case: ' +
             testCaseInfo.getType(),
           '',
           0));

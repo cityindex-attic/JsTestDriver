@@ -1,6 +1,12 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.handlers;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.jstestdriver.BrowserInfo;
@@ -9,14 +15,7 @@ import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.StreamMessage;
-import com.google.jstestdriver.SlaveBrowser.CommandResponse;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -57,17 +56,11 @@ class CommandGetHandler implements RequestHandler {
 
   private void streamResponse(String id, PrintWriter writer) {
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
-    CommandResponse cmdResponse = getResponse(browser);
-
-    substituteBrowserInfo(cmdResponse);
-    StreamMessage response =
-        new StreamMessage(cmdResponse.isLast(), cmdResponse.getResponse());
-
-    writer.write(gson.toJson(response));
+    writer.write(gson.toJson(substituteBrowserInfo(getResponse(browser))));
   }
 
-  private CommandResponse getResponse(SlaveBrowser browser) {
-    CommandResponse cmdResponse = null;
+  private StreamMessage getResponse(SlaveBrowser browser) {
+    StreamMessage cmdResponse = null;
 
     while (cmdResponse == null) {
       if (!browser.isAlive()) {
@@ -75,20 +68,23 @@ class CommandGetHandler implements RequestHandler {
         capturedBrowsers.removeSlave(browser.getId());
         Response response = new Response();
 
-        response.setBrowser(deadBrowser.getBrowserInfo());
+        BrowserInfo browserInfo = deadBrowser.getBrowserInfo();
+        response.setBrowser(browserInfo);
         response.setResponse(
             gson.toJson(
-                new BrowserPanic(deadBrowser.getBrowserInfo())));
+                new BrowserPanic(browserInfo,
+                    String.format("Browser unresponsive since %s during %s",
+                        browser.getLastHeartBeat(),
+                        browser.getCommandRunning()))));
         response.setType(BrowserPanic.TYPE_NAME);
-
-        return new CommandResponse(response, true);
+        return new StreamMessage(true, response);
       }
       cmdResponse = browser.getResponse();
     }
     return cmdResponse;
   }
 
-  private void substituteBrowserInfo(CommandResponse cmdResponse) {
+  private StreamMessage substituteBrowserInfo(StreamMessage cmdResponse) {
     Response response = cmdResponse.getResponse();
 
       SlaveBrowser slaveBrowser =
@@ -103,6 +99,6 @@ class CommandGetHandler implements RequestHandler {
       nullBrowserInfo.setOs("unknown os");
       response.setBrowser(nullBrowserInfo);
     }
-    cmdResponse.setResponse(response);
+    return new StreamMessage(cmdResponse.isLast(), response);
   }
 }

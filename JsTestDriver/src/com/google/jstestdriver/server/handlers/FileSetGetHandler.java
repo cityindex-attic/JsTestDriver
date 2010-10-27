@@ -30,10 +30,15 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 class FileSetGetHandler implements RequestHandler {
+  private static final Logger logger =
+      LoggerFactory.getLogger(FileSetGetHandler.class);
 
   private static final int HEARTBEAT_TIMEOUT = 2000;
 
@@ -94,24 +99,29 @@ class FileSetGetHandler implements RequestHandler {
   }
 
   public void startSession(String id, PrintWriter writer) {
+    logger.debug("trying to start session for {}", id);
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
     Lock lock = browser.getLock();
     String sessionId = UUID.randomUUID().toString();
 
     if (lock.tryLock(sessionId)) {
+      logger.debug("got session lock {} for {}", sessionId, id);
       writer.write(sessionId);
     } else {
+      logger.debug("checking session status for {}", id);
       // session is probably stalled
       if ((!browser.isCommandRunning() && browser.peekCommand() == null) ||
-          ((new Date().getTime() - lock.getLastHeartBeat()) > HEARTBEAT_TIMEOUT)) {
+          ((System.currentTimeMillis() - lock.getLastHeartBeat()) > HEARTBEAT_TIMEOUT)) {
+        logger.debug("forcing unlock for {}", id);
         lock.forceUnlock();
         SlaveBrowser slaveBrowser = capturedBrowsers.getBrowser(id);
 
         slaveBrowser.clearCommandRunning();
         slaveBrowser.clearResponseQueue();
-        filesCache.clear();
+//        filesCache.clear();
         writer.write(lock.tryLock(sessionId) ? sessionId : "FAILED");
       } else {
+        logger.debug("session unvailable for {}", id);
         writer.write("FAILED");
       }
     }

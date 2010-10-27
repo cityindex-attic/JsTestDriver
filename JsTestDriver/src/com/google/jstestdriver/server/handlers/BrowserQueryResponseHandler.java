@@ -52,9 +52,6 @@ class BrowserQueryResponseHandler implements RequestHandler {
   private static final Logger logger =
       LoggerFactory.getLogger(BrowserQueryResponseHandler.class);
 
-  /** for something completely unrelated see: http://noop.googlecode.com/ */
-  private static final String NOOP = "noop";
-
   private final Gson gson = new Gson();
 
   private final HttpServletRequest request;
@@ -68,8 +65,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
       HttpServletRequest request,
       HttpServletResponse response,
       CapturedBrowsers browsers,
-      ConcurrentMap<SlaveBrowser,
-      List<String>> streamedResponses) {
+      ConcurrentMap<SlaveBrowser, List<String>> streamedResponses) {
     this.request = request;
     this.response = response;
     this.browsers = browsers;
@@ -104,8 +100,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
       boolean isLast = Boolean.parseBoolean(done);
       serviceBrowser(response, isLast, responseId, writer, browser);
     } else {
-      logger.warn("Unknown browser {}", id);
-      
+      logger.error("Unknown browser {}", id);
     }
     writer.flush();
   }
@@ -117,6 +112,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
     Command command = null;
     if (isResponseValid(response) && browser.isCommandRunning()) {
       Response res = gson.fromJson(response, Response.class);
+      logger.info("response type: " +  res.getResponseType());
       // TODO (corysmith): Replace this with polymorphism,
       // using the response type to create disposable actions.
       switch (res.getResponseType()) {
@@ -161,7 +157,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
           browser.resetFileSet();
           break;
       }
-      //logger.trace("Received:\n done: {} \n res:\n {}\n", new Object[] {done, res});
+      logger.debug("Received:\n done: {} \n res:\n {}\n", new Object[] {done, res});
       browser.addResponse(res, done);
     }
     if (isResponseIdValid(responseId) && !done && !isResponseValid(response)) {

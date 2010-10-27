@@ -16,8 +16,6 @@
 
 package com.google.jstestdriver.protocol;
 
-import com.google.jstestdriver.SlaveBrowser.CommandResponse;
-
 import java.util.List;
 
 
