@@ -15,25 +15,23 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Maps;
-import com.google.inject.Inject;
-import com.google.jstestdriver.action.UploadAction;
-import com.google.jstestdriver.browser.BrowserActionExecutorAction;
-import com.google.jstestdriver.output.PrintXmlTestResultsAction;
-import com.google.jstestdriver.output.XmlPrinter;
-
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Inject;
+import com.google.jstestdriver.action.UploadAction;
+import com.google.jstestdriver.browser.BrowserActionExecutorAction;
+import com.google.jstestdriver.output.PrintXmlTestResultsAction;
+import com.google.jstestdriver.output.XmlPrinter;
+
 /**
  * A builder for creating a sequence of {@link Action}s to be run by the
  * ActionRunner.
  *
- * @author corysmith
+ * @author corbinrsmith@gmail.com (Cory Smith)
  */
 public class ActionSequenceBuilder {
 
@@ -85,6 +83,7 @@ public class ActionSequenceBuilder {
         actionFactory.getServerStartupAction(localServerPort, capturedBrowsers,
             new FilesCache(files));
     actions.add(0, serverStartupAction);
+    // add browser startup here.
     if (!leaveServerRunning) {
       actions.add(new ServerShutdownAction(serverStartupAction));
     }
@@ -112,7 +111,9 @@ public class ActionSequenceBuilder {
   public List<Action> build() {
     List<Action> actions = new LinkedList<Action>();
     actions.add(uploadAction);
-    actions.add(browserActionsRunner);
+    if (!leaveServerRunning()) {
+      actions.add(browserActionsRunner);
+    }
     if (xmlPrinter != null) {
       actions.add(new PrintXmlTestResultsAction(xmlPrinter));
     }

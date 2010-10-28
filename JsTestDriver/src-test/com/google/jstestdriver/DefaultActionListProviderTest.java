@@ -53,7 +53,7 @@ public class DefaultActionListProviderTest extends TestCase {
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
     expectedActions.add(UploadAction.class);
-    expectedActions.add(BrowserActionExecutorAction.class);
+    //expectedActions.add(BrowserActionExecutorAction.class);
     assertSequence(expectedActions, actions);
   }
 
