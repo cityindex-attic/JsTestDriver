@@ -22,6 +22,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import com.google.jstestdriver.action.UploadAction;
 import com.google.jstestdriver.browser.BrowserActionExecutorAction;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
@@ -39,9 +40,11 @@ public class ActionSequenceBuilderTest extends TestCase {
     ActionSequenceBuilder builder =
         new ActionSequenceBuilder(actionFactory, null, null,
             new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
-            new FailureCheckerAction(null, null));
+            new FailureCheckerAction(null, null),
+            new UploadAction(null));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
+    expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(FailureCheckerAction.class);
     builder.usingFiles(files, false);
@@ -62,10 +65,12 @@ public class ActionSequenceBuilderTest extends TestCase {
             false,
             null, null),
             null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
-        new FailureCheckerAction(null, null));
+        new FailureCheckerAction(null, null),
+        new UploadAction(null));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
+    expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
@@ -90,13 +95,15 @@ public class ActionSequenceBuilderTest extends TestCase {
                 new NullPathPrefix()),
             null, null, new BrowserActionExecutorAction(
                 null, null, null, null, null, 0, null, null),
-            new FailureCheckerAction(null, null));
+            new FailureCheckerAction(null, null),
+            new UploadAction(null));
 
     List<Action> actions = builder.addTests(tests).withLocalServerPort(999)
         .usingFiles(files, false).build();
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
 //    expectedActions.add(BrowserStartupAction.class);
+    expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
 //    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);

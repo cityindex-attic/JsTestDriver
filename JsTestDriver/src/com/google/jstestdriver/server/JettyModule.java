@@ -67,6 +67,7 @@ public class JettyModule extends AbstractModule {
       @MaxFormContentSize Integer maxFormContentSize,
       ServletHolder servletHolder) {
     Server server = new Server();
+    server.setGracefulShutdown(1);
     server.addConnector(connector);
     server.setHandler(proxyHandler);
 

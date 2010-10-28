@@ -24,6 +24,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import com.google.common.collect.Sets;
+import com.google.jstestdriver.action.UploadAction;
 import com.google.jstestdriver.browser.BrowserActionExecutorAction;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.browser.CommandLineBrowserRunner;
@@ -51,6 +52,7 @@ public class DefaultActionListProviderTest extends TestCase {
 
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
+    expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
     assertSequence(expectedActions, actions);
   }
@@ -88,7 +90,8 @@ public class DefaultActionListProviderTest extends TestCase {
                 -1,
                 null,
                 null),
-            new FailureCheckerAction(null, null)));
+            new FailureCheckerAction(null, null),
+            new UploadAction(null)));
   }
 
   public void testParseWithServerAndReset() throws Exception {
@@ -103,6 +106,7 @@ public class DefaultActionListProviderTest extends TestCase {
     flags.setReset(true);
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
+    expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
 
     List<Action> actions = parser.get();
@@ -118,6 +122,7 @@ public class DefaultActionListProviderTest extends TestCase {
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
+    expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(ServerShutdownAction.class);
     expectedActions.add(FailureCheckerAction.class);
@@ -134,6 +139,7 @@ public class DefaultActionListProviderTest extends TestCase {
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
+    expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(PrintXmlTestResultsAction.class);
     expectedActions.add(ServerShutdownAction.class);

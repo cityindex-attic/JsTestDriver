@@ -20,20 +20,42 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.servlet.ServletHolder;
+
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 public class QuitHandler implements RequestHandler {
   private final HttpServletResponse response;
+  private final SocketConnector connector;
+  private final Provider<Server> cyclicalReferenceProvider;
+  private final ServletHolder holder;
+
   @Inject
-  public QuitHandler(HttpServletResponse response) {
+  public QuitHandler(HttpServletResponse response,
+      SocketConnector connector,
+      Provider<Server> cyclicalReferenceProvider,
+      ServletHolder holder) {
     this.response = response;
+    this.connector = connector;
+    this.cyclicalReferenceProvider = cyclicalReferenceProvider;
+    this.holder = holder;
   }
+
   public void handleIt() throws IOException {
     PrintWriter writer = response.getWriter();
     writer.append("exiting");
     writer.flush();
-    // TODO(corysmith): figure out how to stop with using System.exit
-    System.exit(0);
+    // TODO(corysmith): figure out how to stop without a cyclical ref
+    try {
+      cyclicalReferenceProvider.get().stop();
+      holder.doStop();
+      connector.stop();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }
