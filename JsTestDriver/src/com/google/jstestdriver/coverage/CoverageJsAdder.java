@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Adds the coverage js at the beginning of the FileInfo list.
  * 
- * @author corysmith@google.com (Cory Smith)
+ * @author corbinrsmith@gmail.com (Cory Smith)
  *
  */
 public class CoverageJsAdder implements ResourcePreProcessor {

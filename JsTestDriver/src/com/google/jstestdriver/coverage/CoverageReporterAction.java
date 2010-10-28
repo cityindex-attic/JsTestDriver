@@ -39,10 +39,12 @@ public class CoverageReporterAction implements Action {
     this.writer = writer;
   }
 
-  public RunData run(RunData testCase) {
-    logger.debug("Writing coverage to {}", writer);
-    accumulator.write(writer);
-    writer.flush();
-    return testCase;
+  public RunData run(RunData runData) {
+    if (!runData.getTestCases().isEmpty()) {
+      logger.debug("Writing coverage to {}", writer);
+      accumulator.write(writer);
+      writer.flush();
+    }
+    return runData;
   }
 }

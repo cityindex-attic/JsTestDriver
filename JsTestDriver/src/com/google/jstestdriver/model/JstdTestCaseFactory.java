@@ -34,20 +34,14 @@ public class JstdTestCaseFactory {
       List<FileInfo> deps,
       List<FileInfo> tests) {
     final List<JstdTestCase> testCases = Lists.newArrayList();
-    if (tests.isEmpty()) {
-      testCases.add(
-          new JstdTestCase(
-              deps,
-              Collections.<FileInfo> emptyList(),
-              plugins));
-    } else {
+    if (!(deps.isEmpty() && tests.isEmpty())) {
       testCases.add(
           new JstdTestCase(
               deps,
               tests,
               plugins));
     }
-    return  processTestCases(resolveDependencies(testCases));
+    return processTestCases(resolveDependencies(testCases));
   }
 
   private List<JstdTestCase> resolveDependencies(List<JstdTestCase> testCases) {

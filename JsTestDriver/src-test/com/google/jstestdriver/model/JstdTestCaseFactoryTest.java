@@ -76,6 +76,34 @@ public class JstdTestCaseFactoryTest extends TestCase {
     assertTrue(jstdTestCase.getTests().isEmpty());
     assertEquals(Lists.newArrayList(fileSet), jstdTestCase.getDependencies());
   }
+
+  public void testCreateWithOutTestsAndDeps() throws Exception {
+    List<FileInfo> fileSet = Lists.newArrayList();
+    FileInfo one = new FileInfo("one.js", 1234, -1, false, false, null);
+    FileInfo two = new FileInfo("two.js", 1234, -1, false, false, null);
+    FileInfo three = new FileInfo("three.js", 1234, -1, false, false, null);
+    FileInfo testOne = new FileInfo("oneTest.js", 1234, -1, false, false, null);
+    FileInfo testTwo = new FileInfo("twoTest.js", 1234, -1, false, false, null);
+    FileInfo testThree = new FileInfo("threeTest.js", 1234, -1, false, false, null);
+    fileSet.add(one);
+    fileSet.add(two);
+    fileSet.add(three);
+    fileSet.add(testOne);
+    fileSet.add(testTwo);
+    fileSet.add(testThree);
+    
+    final JstdTestCaseFactory testCaseFactory =
+      new JstdTestCaseFactory(
+          Collections.<JstdTestCaseProcessor> emptySet(),
+          Collections.<ResourceDependencyResolver>emptySet());
+    
+    List<JstdTestCase> testCases =
+      testCaseFactory.createCases(
+          fileSet,
+          Collections.<FileInfo>emptyList(),
+          Collections.<FileInfo>emptyList());
+    assertEquals(0, testCases.size());
+  }
   
   public void testUpdateTestCasesFromRunData() throws Exception {
     FileInfo plugin = new FileInfo("plugin.js", 1234, -1, false, false, null);
