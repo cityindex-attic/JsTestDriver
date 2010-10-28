@@ -167,7 +167,7 @@ public class FileUploader {
   /**
    * Creates a loaded list of files that are out of date with the server cache.
    */
-  private List<FileInfo> determineServerFileSet(Set<FileInfo> files) {
+  public List<FileInfo> determineServerFileSet(Set<FileInfo> files) {
     Map<String, String> fileSetParams = new LinkedHashMap<String, String>();
     fileSetParams.put("data", gson.toJson(files));
     fileSetParams.put("action", ServerFileCheck.ACTION);
@@ -235,7 +235,7 @@ public class FileUploader {
     }
   }
 
-  private void uploadToServer(final List<FileInfo> loadedFiles) {
+  public void uploadToServer(final List<FileInfo> loadedFiles) {
     if (loadedFiles.isEmpty()) {
       return;
     }

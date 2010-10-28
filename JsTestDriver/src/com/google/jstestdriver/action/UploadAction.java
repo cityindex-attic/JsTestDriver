@@ -17,10 +17,7 @@ package com.google.jstestdriver.action;
 
 import com.google.inject.Inject;
 import com.google.jstestdriver.Action;
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.JsTestDriverClient;
-import com.google.jstestdriver.browser.BrowserSessionManager;
-import com.google.jstestdriver.model.JstdTestCase;
+import com.google.jstestdriver.FileUploader;
 import com.google.jstestdriver.model.RunData;
 
 /**
@@ -30,24 +27,15 @@ import com.google.jstestdriver.model.RunData;
  */
 public class UploadAction implements Action {
 
-  private final JsTestDriverClient client;
-  private final BrowserSessionManager sessionManager;
+  private final FileUploader uploader;
 
   @Inject
-  public UploadAction(JsTestDriverClient client, BrowserSessionManager sessionManager) {
-    this.client = client;
-    this.sessionManager = sessionManager;
+  public UploadAction(FileUploader uploader) {
+    this.uploader = uploader;
   }
 
   public RunData run(RunData runData) {
-    for (BrowserInfo browser : client.listBrowsers()) {
-      for (JstdTestCase testCase : runData.getTestCases()) {
-        final String browserId = browser.getId().toString();
-        final String sessionId = sessionManager.startSession(browserId);
-        client.uploadFiles(browserId, testCase);
-        sessionManager.stopSession(sessionId, browserId);
-      }
-    }
+    uploader.uploadToServer(uploader.determineServerFileSet(runData.getFileSet()));
     return runData;
   }
 }

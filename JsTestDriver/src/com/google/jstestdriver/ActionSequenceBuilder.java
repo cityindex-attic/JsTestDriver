@@ -17,6 +17,7 @@ package com.google.jstestdriver;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+import com.google.jstestdriver.action.UploadAction;
 import com.google.jstestdriver.browser.BrowserActionExecutorAction;
 import com.google.jstestdriver.output.PrintXmlTestResultsAction;
 import com.google.jstestdriver.output.XmlPrinter;
@@ -50,6 +51,7 @@ public class ActionSequenceBuilder {
   private XmlPrinter xmlPrinter;
   private final BrowserActionExecutorAction browserActionsRunner;
   private final FailureCheckerAction failureCheckerAction;
+  private final UploadAction uploadAction;
 
   /**
    * Begins the building of an action sequence.
@@ -60,11 +62,13 @@ public class ActionSequenceBuilder {
                                FileLoader fileLoader,
                                ResponseStreamFactory responseStreamFactory,
                                BrowserActionExecutorAction browserActionsRunner,
-                               FailureCheckerAction failureCheckerAction) {
+                               FailureCheckerAction failureCheckerAction,
+                               UploadAction uploadAction) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.browserActionsRunner = browserActionsRunner;
     this.failureCheckerAction = failureCheckerAction;
+    this.uploadAction = uploadAction;
   }
 
   /**
@@ -107,6 +111,7 @@ public class ActionSequenceBuilder {
   /** Creates and returns a sequence of actions. */
   public List<Action> build() {
     List<Action> actions = new LinkedList<Action>();
+    actions.add(uploadAction);
     actions.add(browserActionsRunner);
     if (xmlPrinter != null) {
       actions.add(new PrintXmlTestResultsAction(xmlPrinter));

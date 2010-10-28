@@ -84,10 +84,15 @@ public class CommandTask {
     String browserId = params.get("id");
     try {
       checkBrowser();
-
       logger.debug("Starting upload for {}", browserId);
       if (upload) {
-        fileUploader.uploadFileSet(browserId, testCase.toFileSet(), stream);
+        fileUploader.uploadToTheBrowser(
+            browserId,
+            stream,
+            fileUploader.determineBrowserFileSet(
+                browserId,
+                testCase.toFileSet(),
+                stream));
       }
       logger.debug("Finished upload for {}", browserId);
       server.post(baseUrl + "/cmd", params);

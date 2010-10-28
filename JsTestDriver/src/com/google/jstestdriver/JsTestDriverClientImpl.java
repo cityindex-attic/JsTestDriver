@@ -15,6 +15,14 @@
  */
 package com.google.jstestdriver;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,17 +32,6 @@ import com.google.inject.name.Named;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.model.JstdTestCase;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
@@ -42,9 +39,6 @@ import java.util.Set;
 public class JsTestDriverClientImpl implements JsTestDriverClient {
 
   private final Gson gson = new Gson();
-  
-  private static final Logger logger =
-      LoggerFactory.getLogger(JsTestDriverClientImpl.class);
 
   private final CommandTaskFactory commandTaskFactory;
   private final String baseUrl;
