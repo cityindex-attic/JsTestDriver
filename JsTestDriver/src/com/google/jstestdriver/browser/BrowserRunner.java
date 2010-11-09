@@ -28,4 +28,10 @@ public interface BrowserRunner {
   
   /** The seconds needed for this browser to start up. */
   public int getTimeout();
+
+  /**
+   * Number of times to try starting up the browser before giving up due to the
+   * browser not responding.
+   */
+  public int getNumStartupTries();
 }

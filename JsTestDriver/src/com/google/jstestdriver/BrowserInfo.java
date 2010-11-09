@@ -24,61 +24,46 @@ public class BrowserInfo {
   private String name;
   private String version;
   private String os;
+  private boolean serverReceivedHeartbeat;
 
-  /**
-   * @param id the id to set
-   */
   public void setId(Integer id) {
     this.id = id;
   }
 
-  /**
-   * @return the id
-   */
   public Integer getId() {
     return id;
   }
 
-  /**
-   * @param name the name to set
-   */
   public void setName(String name) {
     this.name = name;
   }
 
-  /**
-   * @return the name
-   */
   public String getName() {
     return name;
   }
 
-  /**
-   * @param version the version to set
-   */
   public void setVersion(String version) {
     this.version = version;
   }
 
-  /**
-   * @return the version
-   */
   public String getVersion() {
     return version;
   }
 
-  /**
-   * @param os the os to set
-   */
   public void setOs(String os) {
     this.os = os;
   }
 
-  /**
-   * @return the os
-   */
   public String getOs() {
     return os;
+  }
+
+  public boolean serverReceivedHeartbeat() {
+    return serverReceivedHeartbeat;
+  }
+
+  public void setServerReceivedHeartbeat(boolean serverReceivedHeartbeat) {
+    this.serverReceivedHeartbeat = serverReceivedHeartbeat;
   }
 
   @Override

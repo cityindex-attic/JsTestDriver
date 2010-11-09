@@ -37,11 +37,14 @@ public class BrowserManagedRunnerTest extends TestCase {
     
     final BrowserInfo browserInfo = new BrowserInfo();
     browserInfo.setId(Integer.parseInt(browserId));
-    final FakeJsTestDriverClient client = new FakeJsTestDriverClient(Lists.newArrayList(browserInfo));
+    browserInfo.setServerReceivedHeartbeat(true);
+    final FakeJsTestDriverClient client =
+        new FakeJsTestDriverClient(Lists.newArrayList(browserInfo));
     final FakeBrowserRunner runner = new FakeBrowserRunner();
     final FakeBrowserActionRunner browserActionRunner = new FakeBrowserActionRunner();
     final BrowserManagedRunner browserRunner =
-        new BrowserManagedRunner(runner, browserId, serverAddress, client, browserActionRunner, new NullStopWatch());
+        new BrowserManagedRunner(
+            runner, browserId, serverAddress, client, browserActionRunner, new NullStopWatch());
     browserRunner.call();
   }
 
@@ -67,6 +70,10 @@ public class BrowserManagedRunnerTest extends TestCase {
 
     public int getTimeout() {
       return 0;
+    }
+
+    public int getNumStartupTries() {
+      return 1;
     }
   }
 }

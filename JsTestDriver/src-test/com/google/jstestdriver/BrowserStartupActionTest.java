@@ -15,13 +15,13 @@
  */
 package com.google.jstestdriver;
 
-import com.google.common.collect.Sets;
-import com.google.jstestdriver.browser.BrowserRunner;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import com.google.common.collect.Sets;
+import com.google.jstestdriver.browser.BrowserRunner;
 
 /**
  * @author corysmith@google.com (Cory Smith)
@@ -102,6 +102,10 @@ public class BrowserStartupActionTest extends TestCase {
       public int getTimeout() {
         return 300;
       }
+      
+      public int getNumStartupTries() {
+        return 1;
+      }
     };
     
     final String serverAddress = "http://foo:8080";
@@ -134,6 +138,10 @@ public class BrowserStartupActionTest extends TestCase {
 
     public int getTimeout() {
       return timeout;
+    }
+
+    public int getNumStartupTries() {
+      return 1;
     }
   }
 

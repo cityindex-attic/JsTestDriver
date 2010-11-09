@@ -17,18 +17,18 @@ package com.google.jstestdriver;
 
 import static java.lang.String.format;
 
-import com.google.jstestdriver.commands.NoopCommand;
-
-import org.joda.time.Instant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
+import org.joda.time.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.jstestdriver.commands.NoopCommand;
 
 /**
  * Reprsents a captured browser, and brokers the interaction between the client and browser.
@@ -47,7 +47,7 @@ public class SlaveBrowser {
   private final BlockingQueue<Command> commandsToRun = new LinkedBlockingQueue<Command>();
   private long dequeueTimeout = 10;
   private TimeUnit timeUnit = TimeUnit.SECONDS;
-  private volatile Instant lastHeartBeat;
+  private volatile Instant lastHeartbeat;
   private Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
   private final BlockingQueue<StreamMessage> responses =
     new LinkedBlockingQueue<StreamMessage>();
@@ -59,7 +59,6 @@ public class SlaveBrowser {
   public SlaveBrowser(Time time, String id, BrowserInfo browserInfo, long timeout) {
     this.time = time;
     this.timeout = timeout;
-    lastHeartBeat = time.now();
     this.id = id;
     this.browserInfo = browserInfo;
   }
@@ -109,11 +108,20 @@ public class SlaveBrowser {
   }
 
   public void heartBeat() {
-    lastHeartBeat = time.now();
+    lastHeartbeat = time.now();
+
+    if (!browserInfo.serverReceivedHeartbeat()) {
+      browserInfo.setServerReceivedHeartbeat(true);
+    }
   }
 
-  public Instant getLastHeartBeat() {
-    return lastHeartBeat;
+  public Instant getLastHeartbeat() {
+    return lastHeartbeat;
+  }
+
+  /** @return true if at least one heartbeat was received from the browser. */
+  public boolean receivedHeartbeat() {
+    return lastHeartbeat != null;
   }
 
   public void addFiles(Collection<FileInfo> fileSet) {
@@ -188,7 +196,8 @@ public class SlaveBrowser {
   }
 
   public boolean isAlive() {
-    return time.now().getMillis() - lastHeartBeat.getMillis() < timeout;
+    return receivedHeartbeat()
+        && (time.now().getMillis() - lastHeartbeat.getMillis() < timeout);
   }
 
   @Override
@@ -196,7 +205,7 @@ public class SlaveBrowser {
     return format("SlaveBrowser(browserInfo=%s,\n\tid=%s,\n\tsinceLastCheck=%ss,\n\ttimeout=%s)",
         browserInfo,
         id,
-        (time.now().getMillis() - lastHeartBeat.getMillis())/1000.0,
+        (time.now().getMillis() - lastHeartbeat.getMillis())/1000.0,
         timeout);
   }  
 }

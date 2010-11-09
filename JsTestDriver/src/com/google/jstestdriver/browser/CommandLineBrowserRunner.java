@@ -15,12 +15,12 @@
  */
 package com.google.jstestdriver.browser;
 
-import com.google.jstestdriver.ProcessFactory;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import com.google.jstestdriver.ProcessFactory;
 
 /**
  * Runs a browser from the command line.
@@ -61,6 +61,10 @@ public class CommandLineBrowserRunner implements BrowserRunner {
 
   public int getTimeout() {
     return 30;
+  }
+
+  public int getNumStartupTries() {
+    return 1;
   }
 
   @Override

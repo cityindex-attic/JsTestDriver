@@ -74,7 +74,7 @@ class CommandGetHandler implements RequestHandler {
             gson.toJson(
                 new BrowserPanic(browserInfo,
                     String.format("Browser unresponsive since %s during %s",
-                        browser.getLastHeartBeat(),
+                        browser.getLastHeartbeat(),
                         browser.getCommandRunning()))));
         response.setType(BrowserPanic.TYPE_NAME);
         return new StreamMessage(true, response);

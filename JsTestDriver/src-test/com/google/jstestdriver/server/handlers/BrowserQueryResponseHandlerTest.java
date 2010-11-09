@@ -123,7 +123,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
     BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
 
     handler.service(id, null, null, null, writer);
-    assertEquals(42L, slave.getLastHeartBeat().getMillis());
+    assertEquals(42L, slave.getLastHeartbeat().getMillis());
   }
 
   public void testBrowserIsNotSlave() throws Exception {
