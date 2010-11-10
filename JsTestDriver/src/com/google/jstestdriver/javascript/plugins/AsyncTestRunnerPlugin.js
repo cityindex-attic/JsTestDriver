@@ -90,7 +90,6 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.runTestConfiguration 
  * Runs the next test in the current test case.
  */
 jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.nextTest = function() {
-  //console.log('nextTest');
   this.start_ = new this.dateObj_().getTime();
   if (this.testIndex_ < this.testRunConfiguration_.getTests().length) {
     jstestdriver.expectedAssertCount = -1;
@@ -226,7 +225,13 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.buildResult = functio
   var message = '';
   if (this.errors_.length) {
     result = 'failed';
-    message = JSON.stringify(this.errors_);
+    var stringifiedErrors = [];
+    for (var i = 0; i < this.errors_.length; ++i) {
+      stringifiedErrors.push(
+          jstestdriver.plugins.TestRunnerPlugin.prototype.serializeError.call(
+              this, this.errors_[i]));
+    }
+    message = stringifiedErrors.join('\n');
   } else if (jstestdriver.expectedAssertCount != -1 &&
              jstestdriver.expectedAssertCount != jstestdriver.assertCount) {
     result = 'failed';
