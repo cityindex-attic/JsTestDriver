@@ -112,7 +112,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
     Command command = null;
     if (isResponseValid(response) && browser.isCommandRunning()) {
       Response res = gson.fromJson(response, Response.class);
-      logger.info("response type: " +  res.getResponseType());
+      logger.debug("response type: " +  res.getResponseType());
       // TODO (corysmith): Replace this with polymorphism,
       // using the response type to create disposable actions.
       switch (res.getResponseType()) {
@@ -174,7 +174,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
                  // acknowledge.
       // this is independent of receiving an actual response.
       final String jsonResponse = gson.toJson(new BrowserStreamAcknowledged(streamedResponses.get(browser)));
-      logger.info("sending jsonResponse {}", jsonResponse);
+      logger.trace("sending jsonResponse {}", jsonResponse);
       writer.print(jsonResponse);
       writer.flush();
       return;
@@ -186,7 +186,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
      browser.heartBeat();
     }
     
-    logger.info("sending command {}", command == null ? "null" : command.getCommand());
+    logger.debug("sending command {}", command == null ? "null" : command.getCommand());
     writer.print(command.getCommand());
   }
 

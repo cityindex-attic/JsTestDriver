@@ -80,12 +80,12 @@ jstestdriver.bind = function(context, func) {
 
 
 jstestdriver.extractId = function(url) {
-  return url.match(/\/(slave|runner)\/(\d+)\//)[2];
+  return url.match(/\/id\/(\d+)\//)[1];
 };
 
 
 jstestdriver.createPath = function(basePath, path) {
-  var prefix = basePath.match(/^(.*)\/(slave|runner)\//)[1];
+  var prefix = basePath.match(/^(.*)\/(slave|runner|bcr)\//)[1];
   return prefix + path;
 };
 

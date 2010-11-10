@@ -83,14 +83,19 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest =
     try {
       testCaseInstance = new testCase();
     } catch (e) {
-      return new jstestdriver.TestResult(testCaseName, testName, 'error',
-          testCaseName + ' is not a test case', '', 0);
+      return new jstestdriver.TestResult(
+          testCaseName,
+          testName,
+          jstestdriver.TestResult.RESULT.ERROR,
+          testCaseName + ' is not a test case',
+          '',
+          0);
     }
     var start = new this.dateObj_().getTime();
   
     jstestdriver.expectedAssertCount = -1;
     jstestdriver.assertCount = 0;
-    var res = 'passed';
+    var res = jstestdriver.TestResult.RESULT.PASSED;
     var msg = '';
   
     try {
@@ -117,7 +122,9 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest =
     } catch (e) {
       // We use the global here because of a circular dependency. The isFailure plugin should be
       // refactored.
-      res = jstestdriver.pluginRegistrar.isFailure(e) ? 'failed' : 'error';
+      res = jstestdriver.pluginRegistrar.isFailure(e) ?
+          jstestdriver.TestResult.RESULT.FAILED :
+            jstestdriver.TestResult.RESULT.ERROR;
       msg = this.serializeError(e);
     }
     try {
@@ -126,8 +133,8 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest =
       }
       this.clearBody_();
     } catch (e) {
-      if (res == 'passed' && msg == '') {
-        res = 'error';
+      if (res == jstestdriver.TestResult.RESULT.PASSED && msg == '') {
+        res = jstestdriver.TestResult.RESULT.ERROR;
       }
       msg = this.serializeError(e);
     }

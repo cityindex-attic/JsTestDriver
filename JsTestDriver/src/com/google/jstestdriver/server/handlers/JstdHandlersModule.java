@@ -15,14 +15,38 @@
  */
 package com.google.jstestdriver.server.handlers;
 
+import static com.google.inject.multibindings.MapBinder.newMapBinder;
 import static com.google.jstestdriver.requesthandlers.HttpMethod.GET;
 import static com.google.jstestdriver.requesthandlers.HttpMethod.POST;
+import static com.google.jstestdriver.server.handlers.CaptureHandler.RUNNER_TYPE;
+import static com.google.jstestdriver.server.handlers.pages.PageType.CONSOLE;
+import static com.google.jstestdriver.server.handlers.pages.PageType.HEARTBEAT;
+import static com.google.jstestdriver.server.handlers.pages.PageType.RUNNER;
+import static com.google.jstestdriver.server.handlers.pages.PageType.STANDALONE_RUNNER;
+import static com.google.jstestdriver.server.handlers.pages.PageType.VISUAL_STANDALONE_RUNNER;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
+import org.mortbay.servlet.ProxyServlet;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.multibindings.MapBinder;
+import com.google.inject.servlet.RequestScoped;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
@@ -42,24 +66,19 @@ import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.requesthandlers.HttpMethod;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 import com.google.jstestdriver.requesthandlers.RequestHandlersModule;
+import com.google.jstestdriver.server.handlers.pages.BrowserControlledRunnerPage;
+import com.google.jstestdriver.server.handlers.pages.ConsolePage;
+import com.google.jstestdriver.server.handlers.pages.HeartbeatPage;
+import com.google.jstestdriver.server.handlers.pages.Page;
+import com.google.jstestdriver.server.handlers.pages.PageType;
+import com.google.jstestdriver.server.handlers.pages.RunnerPage;
+import com.google.jstestdriver.server.handlers.pages.SlavePageRequest;
 import com.google.jstestdriver.server.proxy.ProxyServletConfig;
 import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
 import com.google.jstestdriver.servlet.fileset.FileSetRequestHandler;
 import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
-
-import org.mortbay.servlet.ProxyServlet;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import com.google.jstestdriver.util.ParameterParser;
 
 /**
  * Defines {@link RequestHandler} bindings for the JSTD server.
@@ -68,6 +87,15 @@ import javax.servlet.ServletException;
  */
 public class JstdHandlersModule extends RequestHandlersModule {
 
+  private static final String PAGE = "page";
+
+  private static final String MODE = "mode";
+
+  private static final String ID = "id";
+
+  private static final String TIMEOUT = "timeout";
+
+  private static final String JSTD = "jstd";
   private static final String PREFIX = "Prefix";
   private static final String PROXY_TO = "ProxyTo";
   
@@ -114,17 +142,17 @@ public class JstdHandlersModule extends RequestHandlersModule {
     for (HttpMethod method : HttpMethod.values()) {
       serve(method, handlerPrefix.prefixPath("/forward/*"), ForwardingHandler.class);
     }
-    
+
     serve( GET, handlerPrefix.prefixPath("/heartbeat"), HeartbeatGetHandler.class);
     serve(POST, handlerPrefix.prefixPath("/heartbeat"), HeartbeatPostHandler.class);
-    serve( GET, handlerPrefix.prefixPath("/auth", "jstd"), AuthHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/auth", JSTD), AuthHandler.class);
 
     if (destination != null) {
       for (HttpMethod method : HttpMethod.values()) {
-        serve(method, handlerPrefix.prefixPath("/proxy/*", "jstd"), ProxyRequestHandler.class);
+        serve(method, handlerPrefix.prefixPath("/proxy/*", JSTD), ProxyRequestHandler.class);
       }
     }
-    
+
     serve( GET, handlerPrefix.prefixPath("/hello"), HelloHandler.class);
     serve(POST, handlerPrefix.prefixPath("/log"), BrowserLoggingHandler.class);
     serve(POST, handlerPrefix.prefixPath("/query/*"), BrowserQueryResponseHandler.class);
@@ -133,6 +161,9 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve( GET, handlerPrefix.prefixPath("/test/*"), TestResourceHandler.class);
     serve( GET, handlerPrefix.prefixPath("/quit"), QuitHandler.class);
     serve( GET, handlerPrefix.prefixPath("/quit/*"), QuitHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/static/*"), StaticResourceHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/bcr"), BrowserControlledRunnerHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/bcr/*"), BrowserControlledRunnerHandler.class);
 
     // Constant bindings
     bindConstant().annotatedWith(BaseResourceLocation.class)
@@ -151,6 +182,36 @@ public class JstdHandlersModule extends RequestHandlersModule {
     bind(ServletConfig.class).annotatedWith(ProxyConfig.class).to(ProxyServletConfig.class);
     bind(StandaloneRunnerFilesFilter.class).to(StandaloneRunnerFilesFilterImpl.class);
     bind(HandlerPathPrefix.class).toInstance(handlerPrefix);
+
+    MapBinder<PageType, Page> pageBinder = newMapBinder(binder(), PageType.class, Page.class);
+    pageBinder.addBinding(CONSOLE).to(ConsolePage.class).in(RequestScoped.class);
+    pageBinder.addBinding(HEARTBEAT).to(HeartbeatPage.class).in(RequestScoped.class);
+    pageBinder.addBinding(RUNNER).to(RunnerPage.class).in(RequestScoped.class);
+    pageBinder.addBinding(STANDALONE_RUNNER).to(RunnerPage.class).in(RequestScoped.class);
+    pageBinder.addBinding(VISUAL_STANDALONE_RUNNER).to(BrowserControlledRunnerPage.class).in(RequestScoped.class);
+  }
+
+  private static final Map<String, Integer> PARAMETERS = ImmutableMap.<String, Integer>builder()
+    .put(JSTD, 0)
+    .put(RUNNER_TYPE, 1)
+    .put(TIMEOUT, 1)
+    .put(ID, 1)
+    .put(MODE, 1)
+    .put(PAGE, 1)
+    .build();
+
+  private static final Set<String> BLACKLIST = ImmutableSet.<String>builder().build();
+
+  @Provides SlavePageRequest providePageRequest(
+      ParameterParser parser,
+      HttpServletRequest request,
+      HandlerPathPrefix prefix,
+      CapturedBrowsers browsers) {
+    return new SlavePageRequest(
+        parser.getParameterMap(PARAMETERS, BLACKLIST),
+        request,
+        prefix,
+        browsers);
   }
 
   @Provides @Singleton List<FileSetRequestHandler<?>> provideFileSetRequestHandlers(
@@ -160,7 +221,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
 
   @Provides @Singleton
   @ProxyConfig Map<String, String> provideProxyConfig(ImmutableMap.Builder<String, String> builder) {
-    builder.put(PREFIX, handlerPrefix.prefixPath(ProxyHandler.PROXY_PREFIX, "jstd"));
+    builder.put(PREFIX, handlerPrefix.prefixPath(ProxyHandler.PROXY_PREFIX, JSTD));
     if (destination != null) {
       builder.put(PROXY_TO, destination.getDestinationAddress());
     }

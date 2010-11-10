@@ -145,7 +145,7 @@ jstestdriver.CommandExecutor.prototype.registerTracedCommand =
   var signal = this.currentActionSignal_;
   this.commandMap_[name] = function() {
     signal.set(name);
-    return bound.call(arguments);
+    return bound.apply(null, arguments);
   };
 };
 

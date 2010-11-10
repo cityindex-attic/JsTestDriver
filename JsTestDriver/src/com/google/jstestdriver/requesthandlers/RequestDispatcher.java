@@ -11,6 +11,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A @RequestScoped object that dispatches the request to the appropriate
  * {@link RequestHandler} whose {@link RequestMatcher} matches first.
@@ -18,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author rdionne@google.com (Robert Dionne)
  */
 class RequestDispatcher {
+  private static final Logger logger =
+      LoggerFactory.getLogger(RequestDispatcher.class);
 
   private final HttpServletRequest request;
   private final HttpServletResponse response;
@@ -56,6 +61,7 @@ class RequestDispatcher {
         if (matcher.uriMatches(uri)) {
           pathMatched = true;
           if (matcher.methodMatches(method)) {
+            logger.trace("handling {} {}", uri, request);
             handlerProviders.get(matcher).get().handleIt();
             return;
           }

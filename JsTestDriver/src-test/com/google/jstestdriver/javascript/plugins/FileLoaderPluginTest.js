@@ -13,274 +13,280 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-var FileLoaderPluginTest = jstestdriver.testCaseManager.TestCase('FileLoaderPluginTest');
+var FileLoaderPluginCallbackTests = ConditionalTestCase(
+    'FileLoaderPluginCallbackTests',
+    function() {
+  return !jstestdriver.jQuery.browser.opera;
+});
 
-if (!jstestdriver.jQuery.browser.opera) {
-  FileLoaderPluginTest.prototype.testFileOnLoadJs = function() {
-    var mockDOM = new jstestdriver.MockDOM();
-    var head = mockDOM.createElement('head');
-    var write = function() {};
 
-    mockDOM.write = write;
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-      testCaseAdded: function() {
-        return false;
-      },
-      removeTestCaseForFilename: function() {}
-    });
-    var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
-    var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
-        stylesheetLoader);
-    var file = new jstestdriver.FileSource('file.js', 12);
-    var callbackCalled = false;
-    var callbackFileResult = null;
-    var callback = function(fileResult) {
-      callbackCalled = true;
-      callbackFileResult =  fileResult;
-    };
+FileLoaderPluginCallbackTests.prototype.testFileOnLoadJs = function() {
+  var mockDOM = new jstestdriver.MockDOM();
+  var head = mockDOM.createElement('head');
+  var write = function() {};
 
-    fileLoaderPlugin.loadSource(file, callback);
-    assertNotSame(write, mockDOM.write);
-    assertEquals(1, head.childNodes.length);
-    var script = head.childNodes[0];
-
-    script.onload();
-    assertEquals('script', script.nodeName);
-    assertEquals('text/javascript', script.type);
-    assertEquals('file.js', script.src);
-    assertTrue(callbackCalled);
-    assertSame(write, mockDOM.write);
-    assertNotNull(callbackFileResult);
-    assertTrue(callbackFileResult.success);
-    assertEquals('', callbackFileResult.message);
-    assertNotNull(callbackFileResult.file);
-    assertEquals('file.js', callbackFileResult.file.fileSrc);
-    assertEquals(12, callbackFileResult.file.timestamp);
+  mockDOM.write = write;
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
+    testCaseAdded: function() {
+      return false;
+    },
+    removeTestCaseForFilename: function() {}
+  }, jstestdriver.now);
+  var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
+  var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
+      stylesheetLoader,
+      jstestdriver.now);
+  var file = new jstestdriver.FileSource('file.js', 12);
+  var callbackCalled = false;
+  var callbackFileResult = null;
+  var callback = function(fileResult) {
+    callbackCalled = true;
+    callbackFileResult =  fileResult;
   };
 
-  FileLoaderPluginTest.prototype.testFileOnLoadJsError = function() {
-    var mockDOM = new jstestdriver.MockDOM();
-    var head = mockDOM.createElement('head');
-    var write = function() {};
+  fileLoaderPlugin.loadSource(file, callback);
+  assertNotSame(write, mockDOM.write);
+  assertEquals(1, head.childNodes.length);
+  var script = head.childNodes[0];
 
-    mockDOM.write = write;
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-      testCaseAdded: function() {
-        return false;
-      },
-      removeTestCaseForFilename: function() {}
-    });
-    var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
-    var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
-        stylesheetLoader);
-    var file = new jstestdriver.FileSource('file.js', 42);
-    var callbackCalled = false;
-    var callbackFileResult = null;
-    var callback = function(fileResult) {
-      callbackCalled = true;
-      callbackFileResult =  fileResult;
-    };
+  script.onload();
+  assertEquals('script', script.nodeName);
+  assertEquals('text/javascript', script.type);
+  assertEquals('file.js', script.src);
+  assertTrue(callbackCalled);
+  assertSame(write, mockDOM.write);
+  assertNotNull(callbackFileResult);
+  assertTrue(callbackFileResult.success);
+  assertEquals('', callbackFileResult.message);
+  assertNotNull(callbackFileResult.file);
+  assertEquals('file.js', callbackFileResult.file.fileSrc);
+  assertEquals(12, callbackFileResult.file.timestamp);
+};
 
-    fileLoaderPlugin.loadSource(file, callback);
-    assertNotSame(write, mockDOM.write);
-    assertEquals(1, head.childNodes.length);
-    var script = head.childNodes[0];
+FileLoaderPluginCallbackTests.prototype.testFileOnLoadJsError = function() {
+  var mockDOM = new jstestdriver.MockDOM();
+  var head = mockDOM.createElement('head');
+  var write = function() {};
 
-    script.onerror('msg', 'url', 42);
-    script.onload();
-    assertEquals('script', script.nodeName);
-    assertEquals('text/javascript', script.type);
-    assertEquals('file.js', script.src);
-    assertTrue(callbackCalled);
-    assertSame(write, mockDOM.write);
-    assertNotNull(callbackFileResult);
-    assertFalse(callbackFileResult.success);
-    assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);
-    assertNotNull(callbackFileResult.file);
-    assertEquals('file.js', callbackFileResult.file.fileSrc);
-    assertEquals(42, callbackFileResult.file.timestamp);
+  mockDOM.write = write;
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
+    testCaseAdded: function() {
+      return false;
+    },
+    removeTestCaseForFilename: function() {}
+  }, jstestdriver.now);
+  var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
+  var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
+      stylesheetLoader);
+  var file = new jstestdriver.FileSource('file.js', 42);
+  var callbackCalled = false;
+  var callbackFileResult = null;
+  var callback = function(fileResult) {
+    callbackCalled = true;
+    callbackFileResult =  fileResult;
   };
 
-  FileLoaderPluginTest.prototype.testFileOnLoadJsWindowError = function() {
-    var mockDOM = new jstestdriver.MockDOM();
-    var head = mockDOM.createElement('head');
-    var write = function() {};
+  fileLoaderPlugin.loadSource(file, callback);
+  assertNotSame(write, mockDOM.write);
+  assertEquals(1, head.childNodes.length);
+  var script = head.childNodes[0];
 
-    mockDOM.write = write;
-    var win = {};
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
-      testCaseAdded: function() {
-        return false;
-      },
-      removeTestCaseForFilename: function() {}
-    });
-    var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader(win, mockDOM, false);
-    var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
-        stylesheetLoader);
-    var file = new jstestdriver.FileSource('file.js', 42);
-    var callbackCalled = false;
-    var callbackFileResult = null;
-    var callback = function(fileResult) {
-      callbackCalled = true;
-      callbackFileResult =  fileResult;
-    };
+  script.onerror('msg', 'url', 42);
+  script.onload();
+  assertEquals('script', script.nodeName);
+  assertEquals('text/javascript', script.type);
+  assertEquals('file.js', script.src);
+  assertTrue(callbackCalled);
+  assertSame(write, mockDOM.write);
+  assertNotNull(callbackFileResult);
+  assertFalse(callbackFileResult.success);
+  assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);
+  assertNotNull(callbackFileResult.file);
+  assertEquals('file.js', callbackFileResult.file.fileSrc);
+  assertEquals(42, callbackFileResult.file.timestamp);
+};
 
-    fileLoaderPlugin.loadSource(file, callback);
-    assertNotNull(win.onerror);
-    assertNotSame(write, mockDOM.write);
-    assertEquals(1, head.childNodes.length);
-    var script = head.childNodes[0];
+FileLoaderPluginCallbackTests.prototype.testFileOnLoadJsWindowError = function() {
+  var mockDOM = new jstestdriver.MockDOM();
+  var head = mockDOM.createElement('head');
+  var write = function() {};
 
-    win.onerror('msg', 'url', 42);
-    script.onload();
-    assertSame(jstestdriver.EMPTY_FUNC, win.onerror);
-    assertEquals('script', script.nodeName);
-    assertEquals('text/javascript', script.type);
-    assertEquals('file.js', script.src);
-    assertTrue(callbackCalled);
-    assertSame(write, mockDOM.write);
-    assertNotNull(callbackFileResult);
-    assertFalse(callbackFileResult.success);
-    assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);
-    assertNotNull(callbackFileResult.file);
-    assertEquals('file.js', callbackFileResult.file.fileSrc);
-    assertEquals(42, callbackFileResult.file.timestamp);
+  mockDOM.write = write;
+  var win = {};
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
+    testCaseAdded: function() {
+      return false;
+    },
+    removeTestCaseForFilename: function() {}
+  }, jstestdriver.now);
+  var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader(win, mockDOM, false);
+  var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
+      stylesheetLoader);
+  var file = new jstestdriver.FileSource('file.js', 42);
+  var callbackCalled = false;
+  var callbackFileResult = null;
+  var callback = function(fileResult) {
+    callbackCalled = true;
+    callbackFileResult =  fileResult;
   };
 
-  FileLoaderPluginTest.prototype.testFileOnLoadCss = function() {
-    var mockDOM = new jstestdriver.MockDOM();
-    var head = mockDOM.createElement('head');
-    var write = function() {};
+  fileLoaderPlugin.loadSource(file, callback);
+  assertNotNull(win.onerror);
+  assertNotSame(write, mockDOM.write);
+  assertEquals(1, head.childNodes.length);
+  var script = head.childNodes[0];
 
-    mockDOM.write = write;
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-      testCaseAdded: function() {
-        return false;
-      },
-      removeTestCaseForFilename: function() {}
-    });
-    var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
-    var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
-        stylesheetLoader);
-    var file = new jstestdriver.FileSource('file.css', 24);
-    var callbackCalled = false;
-    var callbackFileResult = null;
-    var callback = function(fileResult) {
-      callbackCalled = true;
-      callbackFileResult = fileResult;
-    };
+  win.onerror('msg', 'url', 42);
+  script.onload();
+  assertSame(jstestdriver.EMPTY_FUNC, win.onerror);
+  assertEquals('script', script.nodeName);
+  assertEquals('text/javascript', script.type);
+  assertEquals('file.js', script.src);
+  assertTrue(callbackCalled);
+  assertSame(write, mockDOM.write);
+  assertNotNull(callbackFileResult);
+  assertFalse(callbackFileResult.success);
+  assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);
+  assertNotNull(callbackFileResult.file);
+  assertEquals('file.js', callbackFileResult.file.fileSrc);
+  assertEquals(42, callbackFileResult.file.timestamp);
+};
 
-    fileLoaderPlugin.loadSource(file, callback);
-    assertSame(write, mockDOM.write); // write is not overriden for CSS files
-    assertEquals(1, head.childNodes.length);
-    var link = head.childNodes[0];
+FileLoaderPluginCallbackTests.prototype.testFileOnLoadCss = function() {
+  var mockDOM = new jstestdriver.MockDOM();
+  var head = mockDOM.createElement('head');
+  var write = function() {};
 
-    link.onload();
-    assertEquals('link', link.nodeName);
-    assertEquals('text/css', link.type);
-    assertEquals('stylesheet', link.rel);
-    assertEquals('file.css', link.href);
-    assertTrue(callbackCalled);
-    assertSame(write, mockDOM.write);
-    assertNotNull(callbackFileResult);
-    assertTrue(callbackFileResult.success);
-    assertEquals('', callbackFileResult.message);
-    assertNotNull(callbackFileResult.file);
-    assertEquals('file.css', callbackFileResult.file.fileSrc);
-    assertEquals(24, callbackFileResult.file.timestamp);
+  mockDOM.write = write;
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
+    testCaseAdded: function() {
+      return false;
+    },
+    removeTestCaseForFilename: function() {}
+  }, jstestdriver.now);
+  var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
+  var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
+      stylesheetLoader);
+  var file = new jstestdriver.FileSource('file.css', 24);
+  var callbackCalled = false;
+  var callbackFileResult = null;
+  var callback = function(fileResult) {
+    callbackCalled = true;
+    callbackFileResult = fileResult;
   };
 
-  FileLoaderPluginTest.prototype.testFileOnLoadCssError = function() {
-    var mockDOM = new jstestdriver.MockDOM();
-    var head = mockDOM.createElement('head');
-    var write = function() {};
+  fileLoaderPlugin.loadSource(file, callback);
+  assertSame(write, mockDOM.write); // write is not overriden for CSS files
+  assertEquals(1, head.childNodes.length);
+  var link = head.childNodes[0];
 
-    mockDOM.write = write;
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-      testCaseAdded: function() {
-        return false;
-      },
-      removeTestCaseForFilename: function() {}
-    });
-    var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
-    var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
-        stylesheetLoader);
-    var file = new jstestdriver.FileSource('file.css', 84);
-    var callbackCalled = false;
-    var callbackFileResult = null;
-    var callback = function(fileResult) {
-      callbackCalled = true;
-      callbackFileResult =  fileResult;
-    };
+  link.onload();
+  assertEquals('link', link.nodeName);
+  assertEquals('text/css', link.type);
+  assertEquals('stylesheet', link.rel);
+  assertEquals('file.css', link.href);
+  assertTrue(callbackCalled);
+  assertSame(write, mockDOM.write);
+  assertNotNull(callbackFileResult);
+  assertTrue(callbackFileResult.success);
+  assertEquals('', callbackFileResult.message);
+  assertNotNull(callbackFileResult.file);
+  assertEquals('file.css', callbackFileResult.file.fileSrc);
+  assertEquals(24, callbackFileResult.file.timestamp);
+};
 
-    fileLoaderPlugin.loadSource(file, callback);
-    assertSame(write, mockDOM.write); // write is not overriden for CSS files
-    assertEquals(1, head.childNodes.length);
-    var link = head.childNodes[0];
+FileLoaderPluginCallbackTests.prototype.testFileOnLoadCssError = function() {
+  var mockDOM = new jstestdriver.MockDOM();
+  var head = mockDOM.createElement('head');
+  var write = function() {};
 
-    link.onerror('it sucks', 'url', 90);
-    link.onload();
-    assertEquals('link', link.nodeName);
-    assertEquals('text/css', link.type);
-    assertEquals('stylesheet', link.rel);
-    assertEquals('file.css', link.href);
-    assertTrue(callbackCalled);
-    assertSame(write, mockDOM.write);
-    assertNotNull(callbackFileResult);
-    assertFalse(callbackFileResult.success);
-    assertEquals('error loading file: file.css:90: it sucks', callbackFileResult.message);
-    assertNotNull(callbackFileResult.file);
-    assertEquals('file.css', callbackFileResult.file.fileSrc);
-    assertEquals(84, callbackFileResult.file.timestamp);
+  mockDOM.write = write;
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
+    testCaseAdded: function() {
+      return false;
+    },
+    removeTestCaseForFilename: function() {}
+  }, jstestdriver.now);
+  var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
+  var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
+      stylesheetLoader);
+  var file = new jstestdriver.FileSource('file.css', 84);
+  var callbackCalled = false;
+  var callbackFileResult = null;
+  var callback = function(fileResult) {
+    callbackCalled = true;
+    callbackFileResult =  fileResult;
   };
 
-  FileLoaderPluginTest.prototype.testFileOnLoadCssWindowError = function() {
-    var mockDOM = new jstestdriver.MockDOM();
-    var head = mockDOM.createElement('head');
-    var write = function() {};
+  fileLoaderPlugin.loadSource(file, callback);
+  assertSame(write, mockDOM.write); // write is not overriden for CSS files
+  assertEquals(1, head.childNodes.length);
+  var link = head.childNodes[0];
 
-    mockDOM.write = write;
-    var win = {};
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
-      testCaseAdded: function() {
-        return false;
-      },
-      removeTestCaseForFilename: function() {}
-    });
-    var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader(win, mockDOM, false);
-    var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
-        stylesheetLoader);
-    var file = new jstestdriver.FileSource('file.css', 84);
-    var callbackCalled = false;
-    var callbackFileResult = null;
-    var callback = function(fileResult) {
-      callbackCalled = true;
-      callbackFileResult =  fileResult;
-    };
+  link.onerror('it sucks', 'url', 90);
+  link.onload();
+  assertEquals('link', link.nodeName);
+  assertEquals('text/css', link.type);
+  assertEquals('stylesheet', link.rel);
+  assertEquals('file.css', link.href);
+  assertTrue(callbackCalled);
+  assertSame(write, mockDOM.write);
+  assertNotNull(callbackFileResult);
+  assertFalse(callbackFileResult.success);
+  assertEquals('error loading file: file.css:90: it sucks', callbackFileResult.message);
+  assertNotNull(callbackFileResult.file);
+  assertEquals('file.css', callbackFileResult.file.fileSrc);
+  assertEquals(84, callbackFileResult.file.timestamp);
+};
 
-    fileLoaderPlugin.loadSource(file, callback);
-    assertNotNull(win.onerror);
-    assertSame(write, mockDOM.write); // write is not overriden for CSS files
-    assertEquals(1, head.childNodes.length);
-    var link = head.childNodes[0];
+FileLoaderPluginCallbackTests.prototype.testFileOnLoadCssWindowError = function() {
+  var mockDOM = new jstestdriver.MockDOM();
+  var head = mockDOM.createElement('head');
+  var write = function() {};
 
-    win.onerror('it sucks', 'url', 90);
-    link.onload();
-    assertSame(jstestdriver.EMPTY_FUNC, win.onerror);
-    assertEquals('link', link.nodeName);
-    assertEquals('text/css', link.type);
-    assertEquals('stylesheet', link.rel);
-    assertEquals('file.css', link.href);
-    assertTrue(callbackCalled);
-    assertSame(write, mockDOM.write);
-    assertNotNull(callbackFileResult);
-    assertFalse(callbackFileResult.success);
-    assertEquals('error loading file: file.css:90: it sucks', callbackFileResult.message);
-    assertNotNull(callbackFileResult.file);
-    assertEquals('file.css', callbackFileResult.file.fileSrc);
-    assertEquals(84, callbackFileResult.file.timestamp);
+  mockDOM.write = write;
+  var win = {};
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
+    testCaseAdded: function() {
+      return false;
+    },
+    removeTestCaseForFilename: function() {}
+  }, jstestdriver.now);
+  var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader(win, mockDOM, false);
+  var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
+      stylesheetLoader);
+  var file = new jstestdriver.FileSource('file.css', 84);
+  var callbackCalled = false;
+  var callbackFileResult = null;
+  var callback = function(fileResult) {
+    callbackCalled = true;
+    callbackFileResult =  fileResult;
   };
-}
+
+  fileLoaderPlugin.loadSource(file, callback);
+  assertNotNull(win.onerror);
+  assertSame(write, mockDOM.write); // write is not overriden for CSS files
+  assertEquals(1, head.childNodes.length);
+  var link = head.childNodes[0];
+
+  win.onerror('it sucks', 'url', 90);
+  link.onload();
+  assertSame(jstestdriver.EMPTY_FUNC, win.onerror);
+  assertEquals('link', link.nodeName);
+  assertEquals('text/css', link.type);
+  assertEquals('stylesheet', link.rel);
+  assertEquals('file.css', link.href);
+  assertTrue(callbackCalled);
+  assertSame(write, mockDOM.write);
+  assertNotNull(callbackFileResult);
+  assertFalse(callbackFileResult.success);
+  assertEquals('error loading file: file.css:90: it sucks', callbackFileResult.message);
+  assertNotNull(callbackFileResult.file);
+  assertEquals('file.css', callbackFileResult.file.fileSrc);
+  assertEquals(84, callbackFileResult.file.timestamp);
+};
+
+var FileLoaderPluginTest = TestCase('FileLoaderPluginTest');
 
 
 FileLoaderPluginTest.prototype.testFileOnReadyStateChangeJs = function() {
@@ -294,7 +300,7 @@ FileLoaderPluginTest.prototype.testFileOnReadyStateChangeJs = function() {
       return false;
     },
     removeTestCaseForFilename: function() {}
-  });
+  }, jstestdriver.now);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.js', 12);
@@ -337,7 +343,7 @@ FileLoaderPluginTest.prototype.testFileOnReadyStateChangeJsError = function() {
       return false;
     },
     removeTestCaseForFilename: function() {}
-  });
+  }, jstestdriver.now);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.js', 42);
@@ -382,7 +388,7 @@ FileLoaderPluginTest.prototype.testFileOnReadyStateChangeJsWindowError = functio
       return false;
     },
     removeTestCaseForFilename: function() {}
-  });
+  }, jstestdriver.now);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader(win, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.js', 42);
@@ -428,7 +434,7 @@ FileLoaderPluginTest.prototype.testFileOnReadyStateChangeCss = function() {
       return false;
     },
     removeTestCaseForFilename: function() {}
-  });
+  }, jstestdriver.now);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.css', 24);
@@ -472,7 +478,7 @@ FileLoaderPluginTest.prototype.testFileLoadCssOnLoadHack = function() {
       return false;
     },
     removeTestCaseForFilename: function() {}
-  });
+  }, jstestdriver.now);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, true);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.css', 24);
@@ -513,7 +519,7 @@ FileLoaderPluginTest.prototype.testFileOnReadyStateChangeCssError = function() {
       return false;
     },
     removeTestCaseForFilename: function() {}
-  });
+  }, jstestdriver.now);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.css', 84);
@@ -559,7 +565,7 @@ FileLoaderPluginTest.prototype.testFileOnReadyStateChangeCssWindowError = functi
       return false;
     },
     removeTestCaseForFilename: function() {}
-  });
+  }, jstestdriver.now);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader(win, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.css', 84);

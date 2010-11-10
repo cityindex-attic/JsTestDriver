@@ -13,11 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.plugins.ScriptLoader = function(win, dom, testCaseManager) {
+jstestdriver.plugins.ScriptLoader = function(win, dom, testCaseManager, now) {
   this.win_ = win;
   this.dom_ = dom;
   this.testCaseManager_ = testCaseManager;
   this.originalDocumentWrite_ = this.dom_.write;
+  this.now_ = now;
 };
 
 
@@ -36,17 +37,19 @@ jstestdriver.plugins.ScriptLoader.prototype.load = function(file, callback) {
     }
     this.updateResult_(new jstestdriver.FileResult(file, false, loadMsg));
   });
+  
+  var start = this.now_();
 
   this.win_.onerror = handleError; 
   script.onerror = handleError;
   if (!jstestdriver.jQuery.browser.opera) {
     script.onload = jstestdriver.bind(this, function() {
-      this.onLoad_(file, callback);
+      this.onLoad_(file, callback, start);
     });
   }
   script.onreadystatechange = jstestdriver.bind(this, function() {
     if (script.readyState == 'loaded') {
-      this.onLoad_(file, callback);
+      this.onLoad_(file, callback, start);
     }
   });
   script.type = "text/javascript";
@@ -56,11 +59,13 @@ jstestdriver.plugins.ScriptLoader.prototype.load = function(file, callback) {
 };
 
 
-jstestdriver.plugins.ScriptLoader.prototype.onLoad_ = function(file, callback) {
+jstestdriver.plugins.ScriptLoader.prototype.onLoad_ =
+    function(file, callback, start) {
   if (this.testCaseManager_.testCaseAdded()) {
     this.testCaseManager_.updateLatestTestCase(file.fileSrc);
   }
-  this.updateResult_(new jstestdriver.FileResult(file, true, ''));
+  this.updateResult_(
+      new jstestdriver.FileResult(file, true, '', this.now_() - start));
   this.win_.onerror = jstestdriver.EMPTY_FUNC;
   this.restoreDocumentWrite();
   callback(this.fileResult_);

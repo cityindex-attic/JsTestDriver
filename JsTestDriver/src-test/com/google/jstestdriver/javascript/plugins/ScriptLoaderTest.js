@@ -13,132 +13,145 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-var ScriptLoaderTest = jstestdriver.testCaseManager.TestCase('ScriptLoaderTest');
+var NoOperaScriptLoaderTest = ConditionalTestCase('NoOperaScriptLoaderTest',
+    function(){
+  return !jstestdriver.jQuery.browser.opera;
+});
 
-if (!jstestdriver.jQuery.browser.opera) {
-  ScriptLoaderTest.prototype.testOnLoad = function() {
-    var mockDOM = new jstestdriver.MockDOM();
-    var head = mockDOM.createElement('head');
-    var write = function() {};
 
-    mockDOM.write = write;
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-      testCaseAdded: function() {
-        return false
-      },
-      removeTestCaseForFilename: function() {}
-    });
-    var file = new jstestdriver.FileSource('file.js', 12);
-    var callbackCalled = false;
-    var callbackFileResult = null;
-    var callback = function(fileResult) {
-      callbackCalled = true;
-      callbackFileResult =  fileResult;
-    };
+NoOperaScriptLoaderTest.prototype.now = function() {
+  return 1;
+};
 
-    scriptLoader.load(file, callback);
-    assertNotSame(write, mockDOM.write);
-    assertEquals(1, head.childNodes.length);
-    var script = head.childNodes[0];
 
-    script.onload();
-    assertEquals('script', script.nodeName);
-    assertEquals('text/javascript', script.type);
-    assertEquals('file.js', script.src);
-    assertTrue(callbackCalled);
-    assertSame(write, mockDOM.write);
-    assertNotNull(callbackFileResult);
-    assertTrue(callbackFileResult.success);
-    assertEquals('', callbackFileResult.message);
-    assertNotNull(callbackFileResult.file);
-    assertEquals('file.js', callbackFileResult.file.fileSrc);
-    assertEquals(12, callbackFileResult.file.timestamp);
+NoOperaScriptLoaderTest.prototype.testOnLoad = function() {
+  var mockDOM = new jstestdriver.MockDOM();
+  var head = mockDOM.createElement('head');
+  var write = function() {};
+
+  mockDOM.write = write;
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
+    testCaseAdded: function() {
+      return false
+    },
+    removeTestCaseForFilename: function() {}
+  }, this.now);
+  var file = new jstestdriver.FileSource('file.js', 12);
+  var callbackCalled = false;
+  var callbackFileResult = null;
+  var callback = function(fileResult) {
+    callbackCalled = true;
+    callbackFileResult =  fileResult;
   };
 
-  ScriptLoaderTest.prototype.testOnLoadError = function() {
-    var mockDOM = new jstestdriver.MockDOM();
-    var head = mockDOM.createElement('head');
-    var write = function() {};
+  scriptLoader.load(file, callback);
+  assertNotSame(write, mockDOM.write);
+  assertEquals(1, head.childNodes.length);
+  var script = head.childNodes[0];
 
-    mockDOM.write = write;
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-      testCaseAdded: function() {
-        return false
-      },
-      removeTestCaseForFilename: function() {}
-    });
-    var file = new jstestdriver.FileSource('file.js', 42);
-    var callbackCalled = false;
-    var callbackFileResult = null;
-    var callback = function(fileResult) {
-      callbackCalled = true;
-      callbackFileResult =  fileResult;
-    };
+  script.onload();
+  assertEquals('script', script.nodeName);
+  assertEquals('text/javascript', script.type);
+  assertEquals('file.js', script.src);
+  assertTrue(callbackCalled);
+  assertSame(write, mockDOM.write);
+  assertNotNull(callbackFileResult);
+  assertTrue(callbackFileResult.success);
+  assertEquals('', callbackFileResult.message);
+  assertNotNull(callbackFileResult.file);
+  assertEquals('file.js', callbackFileResult.file.fileSrc);
+  assertEquals(12, callbackFileResult.file.timestamp);
+};
 
-    scriptLoader.load(file, callback);
-    assertNotSame(write, mockDOM.write);
-    assertEquals(1, head.childNodes.length);
-    var script = head.childNodes[0];
+NoOperaScriptLoaderTest.prototype.testOnLoadError = function() {
+  var mockDOM = new jstestdriver.MockDOM();
+  var head = mockDOM.createElement('head');
+  var write = function() {};
 
-    script.onerror('msg', 'url', 42);
-    script.onload();
-    assertEquals('script', script.nodeName);
-    assertEquals('text/javascript', script.type);
-    assertEquals('file.js', script.src);
-    assertTrue(callbackCalled);
-    assertSame(write, mockDOM.write);
-    assertNotNull(callbackFileResult);
-    assertFalse(callbackFileResult.success);
-    assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);
-    assertNotNull(callbackFileResult.file);
-    assertEquals('file.js', callbackFileResult.file.fileSrc);
-    assertEquals(42, callbackFileResult.file.timestamp);
+  mockDOM.write = write;
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
+    testCaseAdded: function() {
+      return false
+    },
+    removeTestCaseForFilename: function() {}
+  }, this.now);
+  var file = new jstestdriver.FileSource('file.js', 42);
+  var callbackCalled = false;
+  var callbackFileResult = null;
+  var callback = function(fileResult) {
+    callbackCalled = true;
+    callbackFileResult =  fileResult;
   };
 
+  scriptLoader.load(file, callback);
+  assertNotSame(write, mockDOM.write);
+  assertEquals(1, head.childNodes.length);
+  var script = head.childNodes[0];
 
-  ScriptLoaderTest.prototype.testOnLoadWindowError = function() {
-    var mockDOM = new jstestdriver.MockDOM();
-    var head = mockDOM.createElement('head');
-    var write = function() {};
+  script.onerror('msg', 'url', 42);
+  script.onload();
+  assertEquals('script', script.nodeName);
+  assertEquals('text/javascript', script.type);
+  assertEquals('file.js', script.src);
+  assertTrue(callbackCalled);
+  assertSame(write, mockDOM.write);
+  assertNotNull(callbackFileResult);
+  assertFalse(callbackFileResult.success);
+  assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);
+  assertNotNull(callbackFileResult.file);
+  assertEquals('file.js', callbackFileResult.file.fileSrc);
+  assertEquals(42, callbackFileResult.file.timestamp);
+};
 
-    mockDOM.write = write;
-    var win = {};
-    var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
-      testCaseAdded: function() {
-        return false
-      },
-      removeTestCaseForFilename: function() {}
-    });
-    var file = new jstestdriver.FileSource('file.js', 42);
-    var callbackCalled = false;
-    var callbackFileResult = null;
-    var callback = function(fileResult) {
-      callbackCalled = true;
-      callbackFileResult =  fileResult;
-    };
 
-    scriptLoader.load(file, callback);
-    assertNotNull(win.onerror);
-    assertNotSame(write, mockDOM.write);
-    assertEquals(1, head.childNodes.length);
-    var script = head.childNodes[0];
+NoOperaScriptLoaderTest.prototype.testOnLoadWindowError = function() {
+  var mockDOM = new jstestdriver.MockDOM();
+  var head = mockDOM.createElement('head');
+  var write = function() {};
 
-    win.onerror('msg', 'url', 42);
-    script.onload();
-    assertSame(jstestdriver.EMPTY_FUNC, win.onerror);
-    assertEquals('script', script.nodeName);
-    assertEquals('text/javascript', script.type);
-    assertEquals('file.js', script.src);
-    assertTrue(callbackCalled);
-    assertSame(write, mockDOM.write);
-    assertNotNull(callbackFileResult);
-    assertFalse(callbackFileResult.success);
-    assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);
-    assertNotNull(callbackFileResult.file);
-    assertEquals('file.js', callbackFileResult.file.fileSrc);
-    assertEquals(42, callbackFileResult.file.timestamp);
+  mockDOM.write = write;
+  var win = {};
+  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
+    testCaseAdded: function() {
+      return false
+    },
+    removeTestCaseForFilename: function() {}
+  }, this.now);
+  var file = new jstestdriver.FileSource('file.js', 42);
+  var callbackCalled = false;
+  var callbackFileResult = null;
+  var callback = function(fileResult) {
+    callbackCalled = true;
+    callbackFileResult =  fileResult;
   };
-}
+
+  scriptLoader.load(file, callback);
+  assertNotNull(win.onerror);
+  assertNotSame(write, mockDOM.write);
+  assertEquals(1, head.childNodes.length);
+  var script = head.childNodes[0];
+
+  win.onerror('msg', 'url', 42);
+  script.onload();
+  assertSame(jstestdriver.EMPTY_FUNC, win.onerror);
+  assertEquals('script', script.nodeName);
+  assertEquals('text/javascript', script.type);
+  assertEquals('file.js', script.src);
+  assertTrue(callbackCalled);
+  assertSame(write, mockDOM.write);
+  assertNotNull(callbackFileResult);
+  assertFalse(callbackFileResult.success);
+  assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);
+  assertNotNull(callbackFileResult.file);
+  assertEquals('file.js', callbackFileResult.file.fileSrc);
+  assertEquals(42, callbackFileResult.file.timestamp);
+};
+
+var ScriptLoaderTest = TestCase('ScriptLoaderTest');
+
+ScriptLoaderTest.prototype.now = function() {
+  return 1;
+};
 
 ScriptLoaderTest.prototype.testOnReadyStateChange = function() {
   var mockDOM = new jstestdriver.MockDOM();
@@ -151,7 +164,7 @@ ScriptLoaderTest.prototype.testOnReadyStateChange = function() {
       return false
     },
     removeTestCaseForFilename: function() {}
-  });
+  }, this.now);
   var file = new jstestdriver.FileSource('file.js', 12);
   var callbackCalled = false;
   var callbackFileResult = null;
@@ -192,7 +205,7 @@ ScriptLoaderTest.prototype.testOnReadyStateChangeError = function() {
       return false
     },
     removeTestCaseForFilename: function() {}
-  });
+  }, this.now);
   var file = new jstestdriver.FileSource('file.js', 42);
   var callbackCalled = false;
   var callbackFileResult = null;
@@ -235,7 +248,7 @@ ScriptLoaderTest.prototype.testOnReadyStateChangeWindowError = function() {
       return false
     },
     removeTestCaseForFilename: function() {}
-  });
+  }, this.now);
   var file = new jstestdriver.FileSource('file.js', 42);
   var callbackCalled = false;
   var callbackFileResult = null;

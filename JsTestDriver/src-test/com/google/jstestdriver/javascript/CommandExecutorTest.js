@@ -16,7 +16,7 @@
 var CommandExecutorTest = jstestdriver.testCaseManager.TestCase('CommandExecutorTest'); 
 
 CommandExecutorTest.prototype.testExtractIdFromUrl =  function() {
-  assertEquals(1, jstestdriver.extractId("http://server:123/slave/1/RemoteConsoleRunner.html"));
+  assertEquals(1, jstestdriver.extractId("http://server:123/slave/id/1/page/RUNNER"));
 };
 
 

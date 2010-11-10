@@ -1,23 +1,27 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.handlers;
 
-import static com.google.jstestdriver.runner.RunnerType.CLIENT_CONTROLLED;
+import static com.google.jstestdriver.runner.RunnerType.CLIENT;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.UserAgentParser;
 import com.google.jstestdriver.browser.BrowserHunter;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 import com.google.jstestdriver.runner.RunnerType;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.google.jstestdriver.server.handlers.pages.SlavePageRequest;
+import com.google.jstestdriver.util.ParameterParser;
 
 /**
  * "Captures" a browser by redirecting it to RemoteConsoleRunner url, and adds
@@ -25,97 +29,72 @@ import javax.servlet.http.HttpServletResponse;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class CaptureHandler implements RequestHandler {
+  
+  private static final Logger logger = LoggerFactory.getLogger(CaptureHandler.class);
 
-  private static final String ID = "id";
-
-  private static final String RUNNER_TYPE = "runnertype";
+  public static final String RUNNER_TYPE = "rt";
   private static final String TIMEOUT = "timeout";
 
   public static final String STRICT = "strict";
   public static final String QUIRKS = "quirks";
 
-  private static final Map<String, Integer> PARAMETERS = Maps.newHashMap();
-  {
-    PARAMETERS.put(STRICT, 0);
-    PARAMETERS.put(QUIRKS, 0);
-    PARAMETERS.put(RUNNER_TYPE, 1);
-    PARAMETERS.put(ID, 1);
-    PARAMETERS.put(TIMEOUT, 1);
-  }
+  private static final Map<String, Integer> PARAMETERS = ImmutableMap.<String, Integer>builder()
+    .put(STRICT, 0)
+    .put(QUIRKS, 0)
+    .put(RUNNER_TYPE, 1)
+    .put(SlavePageRequest.MODE, 1)
+    .put(SlavePageRequest.ID, 1)
+    .put(SlavePageRequest.TIMEOUT, 1)
+    .build();
 
-  private static final Set<String> BLACKLIST = Sets.newHashSet();
-  {
-    BLACKLIST.add("capture");
-  }
+  private static final Set<String> BLACKLIST = ImmutableSet.<String>builder()
+    .add("capture")
+    .build();
 
-  private final HttpServletRequest request;
+  private final SlavePageRequest request;
   private final HttpServletResponse response;
   private final BrowserHunter browserHunter;
 
+  private final ParameterParser restParser;
+
   @Inject
   public CaptureHandler(
-      HttpServletRequest request,
+      SlavePageRequest request,
       HttpServletResponse response,
-      BrowserHunter browserHunter) {
+      BrowserHunter browserHunter,
+      ParameterParser restParser) {
     this.browserHunter = browserHunter;
     this.request = request;
     this.response = response;
+    this.restParser = restParser;
   }
 
   public void handleIt() throws IOException {
-    final Map<String, String> parameterMap = getParameterMap(request);
+    final Map<String, String> parameterMap = restParser.getParameterMap(PARAMETERS, BLACKLIST);
     String mode = parameterMap.get(STRICT) != null ? STRICT : QUIRKS;
-    String id = parameterMap.get(ID);
+    String id = parameterMap.get(SlavePageRequest.ID);
     RunnerType runnerType = parseRunnerType(parameterMap.get(RUNNER_TYPE));
-    Long timeout = parseLong(parameterMap.get(TIMEOUT));
-    response.sendRedirect(service(request.getHeader("User-Agent"), mode, id, runnerType, timeout));
+    long timeout = parseLong(parameterMap.get(TIMEOUT));
+    String redirect = service(request.getUserAgent(), mode, id, runnerType, timeout);
+    logger.debug("Redirecting to {}", redirect);
+    response.sendRedirect(redirect);
   }
 
-  private Long parseLong(final String value) {
-    return value == null ? null : Long.parseLong(value);
+  private long parseLong(final String value) {
+    return value == null ? -1 : Long.parseLong(value);
   }
-
-  @SuppressWarnings("unchecked")
-  private Map<String, String> getParameterMap(HttpServletRequest req) {
-    final Map<String, String> parsedParameterMap = Maps.newHashMap();
-    final Map<String, String[]> requestParameterMap = req.getParameterMap();
-
-    for (String key : Sets.intersection(requestParameterMap.keySet(), PARAMETERS.keySet())) {
-      parsedParameterMap.put(key, safeArrayValue(0, requestParameterMap.get(key)));
-    }
-    final String path = req.getPathInfo();
-    if (path == null) {
-      return parsedParameterMap;
-    }
-
-    final String[] components = path.split("/");
-    for (int i = 0; i < components.length; i++) {
-      final String component = components[i].toLowerCase();
-      if (PARAMETERS.containsKey(component)) {
-        i += PARAMETERS.get(component); // increment that number of arguments
-        parsedParameterMap.put(component, safeArrayValue(i, components));
-      } else if (!BLACKLIST.contains(component) && !component.isEmpty()) {
-        throw new RuntimeException("Unknown argument: " + component);
-      }
-    }
-    return parsedParameterMap;
-  }
-
-  private String safeArrayValue(int index, String[] values) {
-    return index < values.length ? values[index] : null;
-  }
-
+  
   private RunnerType parseRunnerType(String runnerType) {
-    return runnerType == null ? CLIENT_CONTROLLED : RunnerType.valueOf(runnerType.toUpperCase());
+    return runnerType == null ? CLIENT : RunnerType.valueOf(runnerType.toUpperCase());
   }
 
   public String service(String userAgent, String mode, String id, RunnerType runnerType,
-      Long timeout) {
+      long timeout) {
     UserAgentParser parser = new UserAgentParser();
 
     parser.parse(userAgent);
     SlaveBrowser slaveBrowser =
         browserHunter.captureBrowser(id, parser.getName(), parser.getVersion(), parser.getOs(), timeout);
-    return browserHunter.getCaptureUrl(slaveBrowser.getId(), mode, runnerType);
+    return browserHunter.getCaptureUrl(slaveBrowser.getId(), mode, runnerType, timeout);
   }
 }

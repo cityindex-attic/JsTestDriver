@@ -15,16 +15,15 @@
  */
 package com.google.jstestdriver.server.handlers;
 
+import static com.google.jstestdriver.server.handlers.CaptureHandler.RUNNER_TYPE;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
-import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.FileResult;
 import com.google.jstestdriver.FileSource;
 import com.google.jstestdriver.FileUploader;
@@ -42,85 +40,58 @@ import com.google.jstestdriver.LoadedFiles;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
-import com.google.jstestdriver.StandaloneRunnerFilesFilter;
 import com.google.jstestdriver.StreamMessage;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultGenerator;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.TestResult.Result;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
+import com.google.jstestdriver.runner.RunnerType;
+import com.google.jstestdriver.server.handlers.pages.SlavePageRequest;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 class StandaloneRunnerHandler implements RequestHandler {
 
-  public static final String STANDALONE_RUNNER_HTML = "StandaloneRunner.html";
-
   private static final Logger LOGGER =
       LoggerFactory.getLogger(StandaloneRunnerHandler.class);
 
   private final Gson gson = new Gson();
-  private final HttpServletRequest request;
+  private final SlavePageRequest request;
   private final HttpServletResponse response;
-  private final CapturedBrowsers capturedBrowsers;
   private final FilesCache cache;
-  private final StandaloneRunnerFilesFilter filter;
-  private final SlaveResourceService service;
   private final ConcurrentMap<SlaveBrowser, Thread> reportingThreads;
   private final TestResultGenerator testResultGenerator = new TestResultGenerator();
 
   @Inject
   public StandaloneRunnerHandler(
-      HttpServletRequest request,
+      SlavePageRequest request,
       HttpServletResponse response,
-      CapturedBrowsers capturedBrowsers,
       FilesCache cache,
-      StandaloneRunnerFilesFilter filter,
       SlaveResourceService service,
       ConcurrentMap<SlaveBrowser, Thread> reportingThreads) {
     this.request = request;
     this.response = response;
-    this.capturedBrowsers = capturedBrowsers;
     this.cache = cache;
-    this.filter = filter;
-    this.service = service;
     this.reportingThreads = reportingThreads;
   }
 
-  private final static Pattern ID = Pattern.compile("/(\\d+)/.*");
-
   public void handleIt() throws IOException {
-    String path = SlaveResourceHandler.stripId(request.getPathInfo());
-    try {
-      final SlaveBrowser browser = getBrowserFromUrl(request.getPathInfo());
-      // return the resources first.
-      service.serve(path, response.getOutputStream());
-      // start test running
-      if (request.getPathInfo().endsWith(STANDALONE_RUNNER_HTML)) {
-        service(browser, path);
-      }
-    } catch (IllegalArgumentException e) {
-      LOGGER.warn("Invalid ID in: {}", request.getPathInfo());
+    final SlaveBrowser browser = request.getBrowser();
+    if (browser == null) {
+      LOGGER.warn("Invalid ID in: {}", request);
       // re-capture browser as standalone
-      response.sendRedirect("/capture/runnertype/STANDALONE/timeout/3600000");
+      response.sendRedirect("/capture/" + RUNNER_TYPE + "/" + RunnerType.STANDALONE.toString() + "/timeout/3600000");
+    } else {
+      // start test running
+      service(browser);
     }
   }
 
-  public SlaveBrowser getBrowserFromUrl(String pathInfo) {
-    Matcher match = ID.matcher(pathInfo);
-    if (match.find()) {
-      final SlaveBrowser browser = capturedBrowsers.getBrowser(match.group(1));
-      if (browser != null) {
-        return browser;
-      }
-    }
-    throw new IllegalArgumentException(pathInfo);
-  }
+  public void service(final SlaveBrowser slaveBrowser) {
 
-  public void service(final SlaveBrowser slaveBrowser, final String path) {
-
-    Set<String> filesToload = filter.filter(path, cache);
+    Set<String> filesToload = cache.getAllFileNames();
     LinkedList<FileSource> filesSources = new LinkedList<FileSource>();
 
     for (String f : filesToload) {

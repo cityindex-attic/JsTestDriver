@@ -34,9 +34,12 @@ FileLoaderTest.prototype.testFilesToLoad = function() {
       return false
     },
     removeTestCaseForFilename: function() {}
-  });
+  }, jstestdriver.now);
   var stylesheetLoader = new jstestdriver.plugins.StylesheetLoader(win, mockDOM);
-  var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
+  var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(
+      scriptLoader,
+      stylesheetLoader,
+      jstestdriver.now);
   var defaultPlugin = new jstestdriver.plugins.DefaultPlugin(fileLoaderPlugin);
   var pluginRegistrar = new jstestdriver.PluginRegistrar();
   pluginRegistrar.register(defaultPlugin);
@@ -88,7 +91,7 @@ FileLoaderTest.prototype.testFilesToLoad = function() {
     assertEquals(1675, fileResult6.file.timestamp);
     assertTrue(fileResult6.success);
     assertEquals('', fileResult6.message);
-  });
+  }, jstestdriver.now);
   var files = [];
 
   files.push(new jstestdriver.FileSource('file1.js', 42));

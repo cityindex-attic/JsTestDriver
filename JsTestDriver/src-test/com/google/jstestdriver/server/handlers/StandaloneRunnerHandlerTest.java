@@ -29,7 +29,6 @@ import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.MockTime;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
-import com.google.jstestdriver.StandaloneRunnerFilesFilterImpl;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -48,9 +47,9 @@ public class StandaloneRunnerHandlerTest extends TestCase {
     SlaveBrowser slaveBrowser = new SlaveBrowser(new MockTime(10), "1", new BrowserInfo(), 1200);
     capturedBrowsers.addSlave(slaveBrowser);
     StandaloneRunnerHandler handler =
-        new StandaloneRunnerHandler(null, null, capturedBrowsers, cache,
-            new StandaloneRunnerFilesFilterImpl(), new SlaveResourceService(""), new ConcurrentHashMap<SlaveBrowser, Thread>());
-    handler.service(slaveBrowser, "/runner/1/" + StandaloneRunnerHandler.STANDALONE_RUNNER_HTML);
+        new StandaloneRunnerHandler(null, null, cache,
+            new SlaveResourceService(""), new ConcurrentHashMap<SlaveBrowser, Thread>());
+    handler.service(slaveBrowser);
 
     assertNotNull(slaveBrowser.peekCommand());
     Command cmd = slaveBrowser.dequeueCommand();

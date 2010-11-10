@@ -65,7 +65,7 @@ public class JsTestDriverServerTest extends TestCase {
 
   public void testStaticFiles() throws Exception {
     server.start();
-    URL url = new URL("http://localhost:4224/slave/XXX/HeartbeatClientquirks.html");
+    URL url = new URL("http://localhost:4224/static/Namespace.js");
     assertTrue(read(url.openStream()).length() > 0);
   }
 

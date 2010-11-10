@@ -130,9 +130,13 @@ heartbeatTest.prototype.testUnknownOnServer = function() {
   var callbackCalled = false;
   var sendCallback = null;
   var navigatePath = null;
+  var capturePath = "/capture";
   var view = this.getView(true);
-  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "quirks", 
-                                             function(_url, _data, _callback, _errback) {
+  var heartbeat = new jstestdriver.Heartbeat(
+      "1",
+      "/heartbeat",
+      capturePath, 
+      function(_url, _data, _callback, _errback) {
     sendCallback = _callback;
   },
   30,
@@ -142,7 +146,8 @@ heartbeatTest.prototype.testUnknownOnServer = function() {
   },
   function() {
     return 0;
-  }, view,
+  },
+  view,
   function (path){
     navigatePath = path;
   });
@@ -150,16 +155,20 @@ heartbeatTest.prototype.testUnknownOnServer = function() {
   heartbeat.start();
   assertNotNull(sendCallback);
   sendCallback('UNKNOWN');
-  assertEquals(jstestdriver.Heartbeat.CAPTURE_PATH + "?quirks", navigatePath);
+  assertEquals(capturePath, navigatePath);
 };
 
 heartbeatTest.prototype.testUnknownOnServerStrict = function() {
   var callbackCalled = false;
   var sendCallback = null;
   var navigatePath = null;
+  var capturePath = "/capture";
   var view = this.getView();
-  var heartbeat = new jstestdriver.Heartbeat("1", "/heartbeat", "strict", 
-                                             function(_url, _data, _callback, _errback) {
+  var heartbeat = new jstestdriver.Heartbeat(
+      "1",
+      "/heartbeat",
+      capturePath, 
+      function(_url, _data, _callback, _errback) {
     sendCallback = _callback;
   },
   30,
@@ -177,7 +186,7 @@ heartbeatTest.prototype.testUnknownOnServerStrict = function() {
   heartbeat.start();
   assertNotNull(sendCallback);
   sendCallback('UNKNOWN');
-  assertEquals(jstestdriver.Heartbeat.CAPTURE_PATH + "?strict", navigatePath);
+  assertEquals(capturePath, navigatePath);
 };
 
 heartbeatTest.prototype.testHeartbeatCallbackFast = function() {

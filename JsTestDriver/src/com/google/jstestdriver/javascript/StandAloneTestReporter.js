@@ -28,12 +28,32 @@ jstestdriver.StandAloneTestReporter = function() {
 };
 
 
+/** 
+ * @export
+ */
 jstestdriver.StandAloneTestReporter.prototype.isFinished = function() {
   return this.finished_;
 };
 
 
+jstestdriver.StandAloneTestReporter.prototype.startTests = function(when) {
+};
+
+
+jstestdriver.StandAloneTestReporter.prototype.finishTests = function(when) {
+};
+
+
+jstestdriver.VisualTestReporter.prototype.startLoading = function(when) {
+}
+
+
+jstestdriver.VisualTestReporter.prototype.finishLoading = function(when) {
+}
+
+
 /**
+ * @export
  * @return {String} A json representation of the test results.
  */
 jstestdriver.StandAloneTestReporter.prototype.getReport = function() {
@@ -41,6 +61,9 @@ jstestdriver.StandAloneTestReporter.prototype.getReport = function() {
 };
 
 
+/**
+ * @export
+ */
 jstestdriver.StandAloneTestReporter.prototype.getNumFilesLoaded = function() {
   return this.filesLoaded_;
 };
@@ -95,12 +118,13 @@ jstestdriver.StandAloneTestReporter.prototype.setReport = function(report) {
 
 
 jstestdriver.StandAloneTestReporter.prototype.updateNumFilesLoaded = function(filesLoaded) {
-  this.log("files loaded: " + filesLoaded);
+  var numberOfFilesLoaded = fileLoaded.length;
+  this.log("files loaded: " + numberOfFilesLoaded);
   if (this != window.top.G_testRunner) {
     // this is a horrible hack to work around overwrites happening on file importing.
     window.top.G_testRunner = this;
   }
-  this.filesLoaded_ += filesLoaded;
+  this.filesLoaded_ += numberOfFilesLoaded;
 };
 
 

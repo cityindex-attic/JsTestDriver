@@ -16,7 +16,7 @@
 /**
  * @param {String} testCaseName
  * @param {String} testName
- * @param {'passed', 'failed', 'error'} result
+ * @param {jstestdriver.TestResult.RESULT} result
  * @param {String} message
  * @param {Array.<String>} log
  * @param {Number} time
@@ -30,4 +30,11 @@ jstestdriver.TestResult = function(testCaseName, testName, result, message, log,
   this.log = log;
   this.time = time;
   this.data = data || {};
+};
+
+
+jstestdriver.TestResult.RESULT = {
+  PASSED : 'passed',
+  ERROR : 'error',
+  FAILED : 'failed'
 };

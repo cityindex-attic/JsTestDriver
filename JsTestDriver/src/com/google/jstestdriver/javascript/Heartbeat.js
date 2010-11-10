@@ -15,7 +15,7 @@
  */
 jstestdriver.Heartbeat = function(id,
                                   url,
-                                  mode,
+                                  capturePath,
                                   sendRequest,
                                   interval,
                                   setTimeout,
@@ -24,7 +24,7 @@ jstestdriver.Heartbeat = function(id,
                                   navigateToPath) {
   this.id_ = id;
   this.url_ = url;
-  this.mode_ = mode;
+  this.capturePath_ = capturePath;
   this.retries_ = 0;
   this.sendRequest_ = sendRequest;
   this.interval_ = interval;
@@ -37,11 +37,8 @@ jstestdriver.Heartbeat = function(id,
   this.getTime_ = getTime;
   this.view_ = view;
   this.navigateToPath_ = navigateToPath;
-  this.capturePath_ = jstestdriver.Heartbeat.CAPTURE_PATH + "?" + mode;
 };
 
-
-jstestdriver.Heartbeat.CAPTURE_PATH = '/capture';
 
 jstestdriver.Heartbeat.RETRY_LIMIT = 50;
 

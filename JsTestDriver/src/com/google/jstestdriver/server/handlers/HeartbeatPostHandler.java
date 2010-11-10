@@ -55,7 +55,7 @@ class HeartbeatPostHandler implements RequestHandler {
 
       if (browser != null) {
         browser.heartBeat();
-        logger.info("browser heartbeat {}", browser);
+        logger.trace("browser heartbeat {}", browser);
         if (browser.getCommandRunning() == null) {
           writer.write("Waiting...");
         } else {

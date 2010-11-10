@@ -15,14 +15,6 @@
  */
 package com.google.jstestdriver.server.handlers;
 
-import com.google.inject.Inject;
-import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.FilesCache;
-import com.google.jstestdriver.Lock;
-import com.google.jstestdriver.SlaveBrowser;
-import com.google.jstestdriver.annotations.ResponseWriter;
-import com.google.jstestdriver.requesthandlers.RequestHandler;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -32,6 +24,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.Lock;
+import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.annotations.ResponseWriter;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -47,19 +46,14 @@ class FileSetGetHandler implements RequestHandler {
 
   private final CapturedBrowsers capturedBrowsers;
 
-  // Shared with the TestResourceServlet
-  private final FilesCache filesCache;
-
   @Inject
   public FileSetGetHandler(
       HttpServletRequest request,
       @ResponseWriter PrintWriter writer,
-      CapturedBrowsers capturedBrowsers,
-      FilesCache filesCache) {
+      CapturedBrowsers capturedBrowsers) {
     this.request = request;
     this.writer = writer;
     this.capturedBrowsers = capturedBrowsers;
-    this.filesCache = filesCache;
   }
 
   public void handleIt() throws IOException {
@@ -85,14 +79,17 @@ class FileSetGetHandler implements RequestHandler {
       lock.setLastHeartBeat(new Date().getTime());
     } else {
       // who are you??
+      logger.error("unknown client with {}", id);
     }
   }
 
   public void stopSession(String id, String sessionId, PrintWriter writer) {
-    Lock lock = capturedBrowsers.getBrowser(id).getLock();
+    SlaveBrowser browser = capturedBrowsers.getBrowser(id);
+    Lock lock = browser.getLock();
 
     try {
       lock.unlock(sessionId);
+      browser.clearCommandRunning();
     } finally {
       writer.flush();
     }

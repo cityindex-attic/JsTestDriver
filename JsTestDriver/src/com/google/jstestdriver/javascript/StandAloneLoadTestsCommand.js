@@ -25,13 +25,14 @@
  * 
  */
 jstestdriver.StandAloneLoadTestsCommand =
-    function(jsonParse, pluginRegistrar, getBrowserInfo, onLoadComplete, reporter) {
+    function(jsonParse, pluginRegistrar, getBrowserInfo, onLoadComplete, reporter, now) {
   this.jsonParse_ = jsonParse;
   this.pluginRegistrar_ = pluginRegistrar;
   this.boundOnFileLoaded_ = jstestdriver.bind(this, this.onFileLoaded);
   this.getBrowserInfo = getBrowserInfo;
   this.onLoadComplete_ = onLoadComplete;
   this.reporter_ = reporter;
+  this.now_ = now;
 }
 
 
@@ -43,15 +44,17 @@ jstestdriver.StandAloneLoadTestsCommand.prototype.loadTest = function(args) {
   var fileLoader = new jstestdriver.FileLoader(this.pluginRegistrar_,
     this.boundOnFileLoaded_);
 
+  this.reporter_.startLoading(this.now_());
   fileLoader.load(fileSrcs);
 };
 
 jstestdriver.StandAloneLoadTestsCommand.prototype.onFileLoaded = function(status) {
-  this.reporter_.updateNumFilesLoaded(status.loadedFiles.length);
+  this.reporter_.addLoadedFileResults(status.loadedFiles);
   var response = new jstestdriver.Response(
           jstestdriver.RESPONSE_TYPES.FILE_LOAD_RESULT,
           JSON.stringify(status),
           this.getBrowserInfo());
+  this.reporter_.finishLoading(this.now_());
   this.onLoadComplete_(response);
 };
 

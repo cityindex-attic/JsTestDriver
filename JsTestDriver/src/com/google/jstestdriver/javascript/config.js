@@ -45,15 +45,20 @@ jstestdriver.config = (function(module) {
 
     jstestdriver.global.AsyncTestCase = jstestdriver.bind(jstestdriver.testCaseBuilder,
         jstestdriver.testCaseBuilder.AsyncTestCase);
+    
+    jstestdriver.global.ConditionalTestCase = jstestdriver.bind(jstestdriver.testCaseBuilder,
+        jstestdriver.testCaseBuilder.ConditionalTestCase);
 
     // default plugin
     var scriptLoader = new jstestdriver.plugins.ScriptLoader(window, document,
-          jstestdriver.testCaseManager);
+          jstestdriver.testCaseManager, jstestdriver.now);
     var stylesheetLoader =
         new jstestdriver.plugins.StylesheetLoader(window, document,
               jstestdriver.jQuery.browser.mozilla || jstestdriver.jQuery.browser.safari);
-    var fileLoaderPlugin =
-        new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
+    var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(
+            scriptLoader,
+            stylesheetLoader,
+            jstestdriver.now);
     var testRunnerPlugin =
           new jstestdriver.plugins.TestRunnerPlugin(Date, function() {
         jstestdriver.jQuery('body').children().remove();
@@ -181,12 +186,43 @@ jstestdriver.config = (function(module) {
     jstestdriver.jQuery(window).bind('unload', jstestdriver.bind(unloadHandler, unloadHandler.onUnload));
     jstestdriver.jQuery(window).bind('beforeunload', jstestdriver.bind(unloadHandler, unloadHandler.onUnload));
     window.onbeforeunload = jstestdriver.bind(unloadHandler, unloadHandler.onUnload);
-    console.info("bound on onunload")
 
     return executor;
   }
+  
+  /**
+   * Creates a visual stand alone CommandExecutor.
+   * @static
+   * 
+   * @param {jstestdriver.TestCaseManager} testCaseManager
+   * @param {jstestdriver.TestRunner} streamingService
+   * @param {jstestdriver.PluginRegistrar} pluginRegistrar
+   * @param {function():Number} now
+   * @param {String} location The current window location
+   * @param {jstestdriver.TestReporter} reporter Reports test results.
+   * 
+   * @return {jstestdriver.CommandExecutor}
+   */
+  config.createVisualExecutor = function(testCaseManager,
+      testRunner,
+      pluginRegistrar,
+      now,
+      location) {
+    return config.createStandAloneExecutorWithReporter(testCaseManager,
+      testRunner,
+      pluginRegistrar,
+      now,
+      location,
+      new jstestdriver.VisualTestReporter(function(tagName) {
+        return document.createElement(tagName);
+      },
+      function(node) {
+        return document.body.appendChild(node);
+      },
+      jstestdriver.jQuery,
+      JSON.parse));
+  };
 
-  // TODO(corysmith): Factor out the duplicated code.
   /**
    * Creates a stand alone CommandExecutor.
    * @static
@@ -196,14 +232,44 @@ jstestdriver.config = (function(module) {
    * @param {jstestdriver.PluginRegistrar} pluginRegistrar
    * @param {function():Number} now
    * @param {String} location The current window location
+   * @param {jstestdriver.TestReporter} reporter Reports test results.
    * 
    * @return {jstestdriver.CommandExecutor}
    */
-  config.createStandAloneExecutor = function(testCaseManager,
+  config.createStandAloneExecutor =  function(testCaseManager,
+      testRunner,
+      pluginRegistrar,
+      now,
+      location) {
+    return config.createStandAloneExecutorWithReporter(testCaseManager,
+        testRunner,
+        pluginRegistrar,
+        now,
+        location,
+        new jstestdriver.StandAloneTestReporter())
+  };
+
+
+  // TODO(corysmith): Factor out the duplicated code.
+  /**
+   * Creates a stand alone CommandExecutor configured with a reporter.
+   * @static
+   * 
+   * @param {jstestdriver.TestCaseManager} testCaseManager
+   * @param {jstestdriver.TestRunner} streamingService
+   * @param {jstestdriver.PluginRegistrar} pluginRegistrar
+   * @param {function():Number} now
+   * @param {String} location The current window location
+   * @param {jstestdriver.TestReporter} reporter Reports test results.
+   * 
+   * @return {jstestdriver.CommandExecutor}
+   */
+  config.createStandAloneExecutorWithReporter = function(testCaseManager,
           testRunner,
           pluginRegistrar,
           now,
-          location) {
+          location,
+          reporter) {
     var id = parseInt(jstestdriver.extractId(location));
     var url =jstestdriver.createPath(top.location.toString(),
         jstestdriver.SERVER_URL + id);
@@ -212,20 +278,21 @@ jstestdriver.config = (function(module) {
             url,
             now,
             jstestdriver.convertToJson(jstestdriver.jQuery.post));
-    
+
     function getBrowserInfo() {
       return new jstestdriver.BrowserInfo(id);
     }
-
-    var reporter = new jstestdriver.StandAloneTestReporter();
     window.top.G_testRunner = reporter;
 
+    var currentActionSignal = new jstestdriver.Signal(null);
+    
     var executor = new jstestdriver.CommandExecutor(streamingService,
             testCaseManager,
             testRunner,
             pluginRegistrar,
             now,
-            getBrowserInfo);
+            getBrowserInfo,
+            currentActionSignal);
 
     var boundExecuteCommand = jstestdriver.bind(executor, executor.executeCommand);
     
@@ -241,7 +308,8 @@ jstestdriver.config = (function(module) {
             pluginRegistrar,
             getBrowserInfo,
             streamStop,
-            reporter);
+            reporter,
+            jstestdriver.now);
     
     var runTestsCommand =
         new jstestdriver.StandAloneRunTestsCommand(testCaseManager,

@@ -1,23 +1,22 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.handlers;
 
-import com.google.gson.Gson;
-import com.google.inject.Inject;
-import com.google.inject.servlet.RequestParameters;
-import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.SlaveBrowser;
-import com.google.jstestdriver.annotations.ResponseWriter;
-import com.google.jstestdriver.requesthandlers.RequestHandler;
-
-import org.mortbay.jetty.MimeTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
+
+import org.mortbay.jetty.MimeTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.inject.Inject;
+import com.google.inject.servlet.RequestParameters;
+import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 /**
  * Used by the client to know if the browser is alive.

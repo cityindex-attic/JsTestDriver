@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Google Inc.
+ * Copyright 2010 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,13 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-jstestdriver.FileResult = function(file, success, message, elapsed) {
-  this.file = file;
-  this.success = success;
-  this.message = message;
-  this.elapsed = elapsed
-};
+package com.google.jstestdriver.server.handlers.pages;
 
-jstestdriver.FileResult.prototype.toString = function() {
-  return ["FileResult(", this.file.fileSrc, this.success, this.message, ")"].join("");
+/**
+ * The page types.
+ *
+ * @author corbinrsmith@gmail.com (Cory Smith)
+ */
+public enum PageType {
+  RUNNER, CONSOLE, HEARTBEAT, STANDALONE_RUNNER, VISUAL_STANDALONE_RUNNER;
 }

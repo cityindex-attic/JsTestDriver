@@ -15,6 +15,14 @@
  */
 package com.google.jstestdriver.browser;
 
+import static com.google.jstestdriver.runner.RunnerType.BROWSER;
+import static com.google.jstestdriver.runner.RunnerType.CLIENT;
+import static com.google.jstestdriver.runner.RunnerType.STANDALONE;
+import static com.google.jstestdriver.server.handlers.CaptureHandler.RUNNER_TYPE;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Inject;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
@@ -23,11 +31,11 @@ import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.runner.RunnerType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.jstestdriver.server.handlers.pages.PageType;
 
 /**
+ * Creates SlaveBrowsers.
+ * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class BrowserHunter {
@@ -35,11 +43,14 @@ public class BrowserHunter {
   private static final Logger logger =
       LoggerFactory.getLogger(BrowserHunter.class.getName());
 
-  private static final String REMOTE_CONSOLE_RUNNER =
-      "/slave/%s/RemoteConsoleRunner%s.html";
+  private static final String CLIENT_CONSOLE_RUNNER =
+    "/slave/id/%s/page/CONSOLE/mode/%s/" + RUNNER_TYPE + "/" + CLIENT;
   
   private static final String STANDALONE_CONSOLE_RUNNER =
-    "/runner/%s/StandaloneRunner.html";
+    "/runner/id/%s/page/RUNNER/mode/%s/timeout/%s/" + RUNNER_TYPE + "/" + STANDALONE;
+
+  private static final String BROWSER_CONTROLLED_RUNNER =
+    "/bcr/id/%s/page/" + PageType.VISUAL_STANDALONE_RUNNER + "/mode/%s/timeout/%s/" + RUNNER_TYPE + "/" + BROWSER;
 
   private final CapturedBrowsers capturedBrowsers;
 
@@ -60,12 +71,14 @@ public class BrowserHunter {
     return captureBrowser(capturedBrowsers.getUniqueId(), name, version, os);
   }
 
-  public String getCaptureUrl(String id, String mode, RunnerType type) {
+  public String getCaptureUrl(String id, String mode, RunnerType type, long timeout) {
     switch(type) {
-      case CLIENT_CONTROLLED:
-        return String.format(prefix.prefixPath(REMOTE_CONSOLE_RUNNER), id, mode);
+      case CLIENT:
+        return prefix.prefixPath(String.format(CLIENT_CONSOLE_RUNNER, id, mode, timeout));
       case STANDALONE:
-        return String.format(prefix.prefixPath(STANDALONE_CONSOLE_RUNNER), id);
+        return prefix.prefixPath(String.format(STANDALONE_CONSOLE_RUNNER, id, mode, timeout));
+      case BROWSER:
+        return prefix.prefixPath(String.format(BROWSER_CONTROLLED_RUNNER, id, mode, timeout));
     }
     throw new UnsupportedOperationException("Unsupported Runner type: " + type);
   }
@@ -83,7 +96,7 @@ public class BrowserHunter {
   }
 
   public SlaveBrowser captureBrowser(String rawId, String name, String version, String os, Long browserTimeout) {
-
+    
     BrowserInfo browserInfo = new BrowserInfo();
 
     final Integer id = parseBrowserId(rawId);
@@ -92,10 +105,10 @@ public class BrowserHunter {
     browserInfo.setVersion(version);
     browserInfo.setOs(os);
     // TODO(corysmith):move all browser timeout configuration to the capture servlet.
-    long computedBrowserTimeout = browserTimeout == null ? this.browserTimeout : browserTimeout;
+    long computedBrowserTimeout = browserTimeout == -1 ? this.browserTimeout : browserTimeout;
     SlaveBrowser slave =
       new SlaveBrowser(new TimeImpl(), id.toString(), browserInfo, computedBrowserTimeout);
-    
+
     capturedBrowsers.addSlave(slave);
     logger.debug("Browser Captured: {}", slave);
     logger.info("Browser Captured: {} version {} ({})", new Object[] {name, version, id});

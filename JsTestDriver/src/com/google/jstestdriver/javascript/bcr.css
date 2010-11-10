@@ -1,0 +1,50 @@
+#JsTDVisualResults {
+  font-family:"Courier New", monospace;
+  font-size: 12px;
+}
+
+#JsTDVisualResults h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+#JsTDVisualResults .cases {
+  padding-left:1em;
+}
+
+#JsTDVisualResults .passed, #JsTDVisualResults .failed, #JsTDVisualResults .error {
+  padding: 0 0 .25em 1em; 
+}
+
+#JsTDVisualResults .passed {
+  color:green;
+}
+#JsTDVisualResults .failed {
+  color:brown;
+  font-weight:bold;
+}
+#JsTDVisualResults .error {
+  color:red;
+  font-weight:bold;
+}
+
+#JsTDVisualResults .log {}
+#JsTDVisualResults .message {
+  font-weight:bold;
+  font-style:italic;
+  padding-left:1em;
+  color:black;
+}
+#JsTDVisualResults .results {}
+#JsTDVisualResults .load {}
+#JsTDVisualResults .details {
+}
+
+#JsTDVisualResults .stack {
+  white-space:pre;
+  font-weight:normal;
+  padding-left:1em;
+  color:black;
+}
+#JsTDVisualResults .summary {}

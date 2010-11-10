@@ -2,33 +2,7 @@
 <html>
 <head>
 <title>Remote Console Runner</title>
-<style>
-body, html, iframe {
-  margin:0;
-  padding:0;
-  border-style: none;
-}
-body, html, #runner {
-  height:100%;
-}
-#runner, #heartbeat {
-  width:100%;
-  position:absolute;
-}
-
-#heartbeat {
-  position:absolute;
-  border-bottom:1px solid #000;
-  top:0;
-  left:0;
-  height:72px;
-  z-index:10;
-}
-
-#runner {
-  z-index:1;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="console.css"/>
 </head>
 <body>
 <iframe id="heartbeat" src="HeartbeatClientquirks.html" frameborder="0"></iframe>

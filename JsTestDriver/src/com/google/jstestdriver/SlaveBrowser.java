@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.joda.time.Instant;
 import org.slf4j.Logger;
@@ -51,8 +52,8 @@ public class SlaveBrowser {
   private Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
   private final BlockingQueue<StreamMessage> responses =
     new LinkedBlockingQueue<StreamMessage>();
-  private Command commandRunning = null;
-  private Command lastCommandDequeued;
+  private AtomicReference<Command> commandRunning = new AtomicReference<Command>(null);
+  private AtomicReference<Command> lastCommandDequeued = new AtomicReference<Command>(null);
   private final long timeout;
   private final Lock lock = new Lock();
 
@@ -79,14 +80,16 @@ public class SlaveBrowser {
     }
   }
 
-  public synchronized Command dequeueCommand() {
+  public Command dequeueCommand() {
     try {
       Command command = commandsToRun.poll(dequeueTimeout, timeUnit);
 
-      if (command != null) {
-        commandRunning = command;
-        lastCommandDequeued = command;
-        return command;
+      synchronized (this) {
+        if (command != null) {
+          commandRunning.set(command);
+          lastCommandDequeued.set(command);
+          return command;
+        }
       }
     } catch (InterruptedException e) {
       // The server was killed
@@ -95,7 +98,7 @@ public class SlaveBrowser {
   }
 
   public Command getLastDequeuedCommand() {
-    return lastCommandDequeued;
+    return lastCommandDequeued.get();
   }
   
   public BrowserInfo getBrowserInfo() {
@@ -125,17 +128,21 @@ public class SlaveBrowser {
   }
 
   public void addFiles(Collection<FileInfo> fileSet) {
-    this.fileSet.removeAll(fileSet);
-    this.fileSet.addAll(fileSet);
+    synchronized (fileSet) {
+      this.fileSet.removeAll(fileSet);
+      this.fileSet.addAll(fileSet);
+    }
   }
 
   public Set<FileInfo> getFileSet() {
     return fileSet;
   }
 
-  public synchronized void resetFileSet() {
+  public void resetFileSet() {
     LOGGER.debug("Resetting fileSet for {}", this);
-    fileSet.clear();
+    synchronized (fileSet) {
+      fileSet.clear();
+    }
   }
 
   public StreamMessage getResponse() {
@@ -150,9 +157,9 @@ public class SlaveBrowser {
     }
   }
 
-  public synchronized void addResponse(Response response, boolean isLast) {
+  public void addResponse(Response response, boolean isLast) {
     if (isLast) {
-      commandRunning = null;
+      commandRunning.set(null);
     }
     responses.offer(new StreamMessage(isLast, response));
   }
@@ -161,26 +168,28 @@ public class SlaveBrowser {
     responses.clear();
   }
 
-  public synchronized boolean isCommandRunning() {
-    return commandRunning != null;
+  public boolean isCommandRunning() {
+    return commandRunning.get() != null;
   }
 
-  public synchronized Command getCommandRunning() {
-    return commandRunning;
+  public Command getCommandRunning() {
+    return commandRunning.get();
   }
 
-  public synchronized void removeFiles(Collection<FileSource> errorFiles) {
-    Set<FileInfo> filesInfoToRemove = new LinkedHashSet<FileInfo>();
-
-    for (FileSource f : errorFiles) {
-      for (FileInfo info : fileSet) {
-        if (info.getFilePath().equals(f.getBasePath())) {
-          filesInfoToRemove.add(info);
-          break;
+  public void removeFiles(Collection<FileSource> errorFiles) {
+    synchronized (fileSet) {
+      Set<FileInfo> filesInfoToRemove = new LinkedHashSet<FileInfo>();
+  
+      for (FileSource f : errorFiles) {
+        for (FileInfo info : fileSet) {
+          if (info.getFilePath().equals(f.getBasePath())) {
+            filesInfoToRemove.add(info);
+            break;
+          }
         }
       }
+      fileSet.removeAll(filesInfoToRemove);
     }
-    fileSet.removeAll(filesInfoToRemove);
   }
 
   public Command peekCommand() {
@@ -189,7 +198,7 @@ public class SlaveBrowser {
 
   public void clearCommandRunning() {
     if (commandRunning != null) {
-      commandRunning = null;
+      commandRunning.set(null);
       commandsToRun.clear();
       responses.clear();
     }
@@ -197,7 +206,8 @@ public class SlaveBrowser {
 
   public boolean isAlive() {
     return receivedHeartbeat()
-        && (time.now().getMillis() - lastHeartbeat.getMillis() < timeout);
+        && ((time.now().getMillis() - lastHeartbeat.getMillis() < timeout)
+            || timeout == -1);
   }
 
   @Override

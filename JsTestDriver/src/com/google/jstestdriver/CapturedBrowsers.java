@@ -58,7 +58,7 @@ public class CapturedBrowsers extends Observable {
     List<BrowserInfo> browsersList = new ArrayList<BrowserInfo>();
 
     for (SlaveBrowser slave : getSlaveBrowsers()) {
-      browsersList.add(slave.getBrowserInfo());      
+      browsersList.add(slave.getBrowserInfo());
     }
     return browsersList;
   }

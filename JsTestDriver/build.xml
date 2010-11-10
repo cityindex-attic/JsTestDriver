@@ -148,7 +148,6 @@
                PluginRegistrar.js,
                LibLoader.js,
                FileLoader.js,
-               StandAloneTestReporter.js,
                TestCaseInfo.js,
                TestResult.js,
                TestRunConfiguration.js,
@@ -191,7 +190,8 @@
     </concat>
     <concat destfile="${destdir}/${javascript-resources}/standalonerunner.js">
       <filelist dir="${destdir}/${javascript-resources}"
-        files="Response.js,
+        files="Signal.js,
+               Response.js,
                Asserts.js,
                StreamingService.js,
                FileSource.js,
@@ -233,8 +233,56 @@
                TestCaseManagerPlugin.js" />
 
     </concat>
+    <concat destfile="${destdir}/${javascript-resources}/browser_controlled_runner.js">
+      <filelist dir="${destdir}/${javascript-resources}"
+        files="Signal.js,
+               Response.js,
+               Asserts.js,
+               StreamingService.js,
+               FileSource.js,
+               FileResult.js,
+               Utils.js,
+               Console.js,
+               PluginRegistrar.js,
+               LibLoader.js,
+               FileLoader.js,
+               TestCaseInfo.js,
+               TestResult.js,
+               TestRunConfiguration.js,
+               TestCaseManager.js,
+               TestCaseBuilder.js,
+               TestRunner.js,
+               StandAloneLoadTestsCommand.js,
+               StandAloneRunTestsCommand.js,
+               VisualTestReporter.js,
+               CommandExecutor.js,
+               config.js" />
+      <filelist dir="${destdir}/${javascript-resources}/plugins/async"
+        files="CatchingCallback.js,
+               ExpiringCallback.js,
+               FiniteUseCallback.js,
+               Timeout.js,
+               TestSafeCallbackBuilder.js,
+               CallbackPool.js
+               CallbackPoolArmor.js
+               DeferredQueue.js
+               DeferredQueueArmor.js" />
+      <filelist dir="${destdir}/${javascript-resources}/plugins"
+        files="ScriptLoader.js,
+               StylesheetLoader.js,
+               FileLoaderPlugin.js,
+               TestRunnerPlugin.js,
+               AsyncTestRunnerPlugin.js,
+               DefaultPlugin.js,
+               AssertsPlugin.js,
+               TestCaseManagerPlugin.js" />
+
+    </concat>
     <concat destfile="${destdir}/${javascript-resources}/heartbeatclient.js">
-      <filelist dir="${destdir}/${javascript-resources}" files="Utils.js,Heartbeat.js" />
+      <filelist dir="${destdir}/${javascript-resources}"
+          files="Utils.js,
+                 Heartbeat.js,
+                 heartbeatinit.js" />
     </concat>
   </target>
 
@@ -417,6 +465,7 @@
         <include name="${javascript-resources}/jstestdrivernamespace.js" />
         <include name="${javascript-resources}/runner.js" />
         <include name="${javascript-resources}/standalonerunner.js" />
+        <include name="${javascript-resources}/browser_controlled_runner.js" />
         <include name="${javascript-resources}/heartbeatclient.js" />
         <include name="${javascript-resources}/lib/*.js" />
       </fileset>
@@ -435,6 +484,7 @@
         <include name="${javascript-resources}/jstestdrivernamespace.js" />
         <include name="${javascript-resources}/runner.js" />
         <include name="${javascript-resources}/standalonerunner.js" />
+        <include name="${javascript-resources}/browser_controlled_runner.js" />
         <include name="${javascript-resources}/heartbeatclient.js" />
         <include name="${javascript-resources}/lib/*.js" />
       </fileset>
@@ -597,6 +647,7 @@
         <include name="${javascript-resources}/jstestdrivernamespace.js" />
         <include name="${javascript-resources}/runner.js" />
         <include name="${javascript-resources}/standalonerunner.js" />
+        <include name="${javascript-resources}/browser_controlled_runner.js" />
         <include name="${javascript-resources}/heartbeatclient.js" />
         <exclude name="${javascript-resources}/lib/*.js" />
       </fileset>

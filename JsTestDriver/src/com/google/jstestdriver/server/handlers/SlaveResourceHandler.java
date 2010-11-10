@@ -1,56 +1,54 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.handlers;
 
-import com.google.inject.Inject;
-import com.google.jstestdriver.SlaveResourceService;
-import com.google.jstestdriver.requesthandlers.RequestHandler;
+import java.io.IOException;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.google.inject.Inject;
+import com.google.jstestdriver.model.HandlerPathPrefix;
+import com.google.jstestdriver.requesthandlers.RequestHandler;
+import com.google.jstestdriver.server.handlers.pages.Page;
+import com.google.jstestdriver.server.handlers.pages.PageType;
+import com.google.jstestdriver.server.handlers.pages.SlavePageRequest;
+import com.google.jstestdriver.util.HtmlWriter;
 
 /**
  * @author rdionne@google.com (Robert Dionne)
  */
 class SlaveResourceHandler implements RequestHandler {
-  private static final Logger logger = LoggerFactory.getLogger(SlaveResourceHandler.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(SlaveResourceHandler.class);
 
-  private final static Pattern PATHWITHOUTID = Pattern.compile("/.*?(/.*)$");
+  private final Map<PageType, Page> pages;
 
-  private final HttpServletRequest request;
+  private final SlavePageRequest request;
+
+  private final HandlerPathPrefix prefix;
+
   private final HttpServletResponse response;
-  private final SlaveResourceService service;
+
 
   @Inject
   public SlaveResourceHandler(
-      HttpServletRequest request,
       HttpServletResponse response,
-      SlaveResourceService service) {
-    this.request = request;
+      Map<PageType, Page> pages,
+      SlavePageRequest request,
+      HandlerPathPrefix prefix) {
     this.response = response;
-    this.service = service;
+    this.pages = pages;
+    this.request = request;
+    this.prefix = prefix;
   }
 
   public void handleIt() throws IOException {
-    try {
-      service.serve(stripId(request.getPathInfo()), response.getOutputStream());
-    } catch (IllegalArgumentException e) {
-      logger.error("Could not handle request.", e);
-    }
-  }
-
-  public static String stripId(String path) {
-    Matcher match = PATHWITHOUTID.matcher(path);
-
-    if (match.find()) {
-      return match.group(1);
-    }
-    throw new IllegalArgumentException(path);
+    logger.debug("Handling " + request);
+    final HtmlWriter writer = new HtmlWriter(response.getWriter(), prefix);
+    request.writeDTD(writer);
+    pages.get(request.getPageType()).render(writer, request);
   }
 }

@@ -8,5 +8,5 @@ package com.google.jstestdriver.runner;
  *
  */
 public enum RunnerType {
-  STANDALONE, CLIENT_CONTROLLED, BROWSER_CONTROLLED
+  STANDALONE, CLIENT, BROWSER
 }

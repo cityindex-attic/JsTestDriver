@@ -15,51 +15,30 @@
  */
 package com.google.jstestdriver.server.handlers;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
-
-import org.easymock.EasyMock;
-
-import com.google.jstestdriver.SlaveResourceService;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class SlaveResourceHandlerTest extends TestCase {
-
-  public void testIdChoppedOffFromThePath() throws Exception {
-    String location = getClass().getPackage().getName().replace(".", "/");
-    HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
-    HttpServletResponse response =
-        EasyMock.createMock(HttpServletResponse.class);
-    SlaveResourceHandler handler = new SlaveResourceHandler(request, response,
-        new SlaveResourceService(location));
-    OutputStream oStream = new ByteArrayOutputStream();
-    ServletOutputStream servletOutputStream = buildServletOutputStream(oStream);
-
-    EasyMock.expect(request.getPathInfo()).andReturn("/XXX/Test.file");
-    EasyMock.expect(response.getOutputStream()).andReturn(servletOutputStream);
-
-    EasyMock.replay(request, response);
-
-    handler.handleIt();
-    assertTrue(oStream.toString().length() > 0);
-    oStream.close();
-
-    EasyMock.verify(request, response);
+  
+  public void testRenderConsole() throws Exception {
+    
   }
 
-  public void testStripOffId() throws Exception {
-    assertEquals("/B/C", SlaveResourceHandler.stripId("/X/B/C"));
+  public void testRenderRunner() throws Exception {
+    
   }
-
+  
+  public void testRenderHeartbeat() throws Exception {
+    
+  }
+  
   private ServletOutputStream buildServletOutputStream(final OutputStream oStream) {
     return new ServletOutputStream() {
       @Override
