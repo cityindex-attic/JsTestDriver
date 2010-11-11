@@ -129,6 +129,15 @@ public class SlaveBrowser {
     return lastHeartbeat != null;
   }
 
+  /**
+   * @return the number of seconds since the last heartbeat, or -1 if no
+   *         heartbeat has been received.
+   */
+  public double getSecondsSinceLastHeartbeat() {
+    return (lastHeartbeat == null)
+        ? -1 : ((time.now().getMillis() - lastHeartbeat.get().getMillis())/1000.0);
+  }
+  
   public void addFiles(Collection<FileInfo> fileSet) {
     synchronized (fileSet) {
       this.fileSet.removeAll(fileSet);
@@ -214,11 +223,10 @@ public class SlaveBrowser {
 
   @Override
   public String toString() {
-    double sinceLastCheck = (time.now().getMillis() - lastHeartbeat.get().getMillis())/1000.0;
     return format("SlaveBrowser(browserInfo=%s,\n\tid=%s,\n\tsinceLastCheck=%ss,\n\ttimeout=%s)",
         browserInfo,
         id,
-        sinceLastCheck,
+        getSecondsSinceLastHeartbeat(),
         timeout);
   }  
 }

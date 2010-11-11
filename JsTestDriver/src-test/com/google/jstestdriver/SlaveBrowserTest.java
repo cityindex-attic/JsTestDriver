@@ -29,8 +29,14 @@ public class SlaveBrowserTest extends TestCase {
     SlaveBrowser browser = new SlaveBrowser(mockTime, "1", new BrowserInfo(), SlaveBrowser.TIMEOUT);
 
     assertEquals(new Instant(0), browser.getLastHeartbeat());
+    assertEquals(-1.0, browser.getSecondsSinceLastHeartbeat());
+
     mockTime.add(5);
     browser.heartBeat();
     assertEquals(5L, browser.getLastHeartbeat().getMillis());
+    assertEquals(0.0, browser.getSecondsSinceLastHeartbeat());
+ 
+    mockTime.add(5000);
+    assertEquals(5.0, browser.getSecondsSinceLastHeartbeat());
   }
 }
