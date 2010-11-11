@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Google Inc.
+ * Copyright 2010 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,24 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver;
-
-import org.joda.time.Instant;
+package com.google.jstestdriver.coverage;
 
 import junit.framework.TestCase;
 
 /**
- * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
+ * Tests the mapping of names.
+ *
+ * @author corbinrsmith@gmail.com (Cory Smith)
  */
-public class SlaveBrowserTest extends TestCase {
-
-  public void testSlaveBrowserHeartBeat() throws Exception {
-    MockTime mockTime = new MockTime(0);
-    SlaveBrowser browser = new SlaveBrowser(mockTime, "1", new BrowserInfo(), SlaveBrowser.TIMEOUT);
-
-    assertEquals(new Instant(0), browser.getLastHeartbeat());
-    mockTime.add(5);
-    browser.heartBeat();
-    assertEquals(5L, browser.getLastHeartbeat().getMillis());
+public class CoverageNameMapperTest extends TestCase {
+  public void testMapAndUnMap() throws Exception {
+    CoverageNameMapper mapper = new CoverageNameMapper();
+    String name = "foo.js";
+    Integer mapped = mapper.map(name);
+    assertNotNull(mapped);
+    assertEquals(name, mapper.unmap(mapped));
   }
 }

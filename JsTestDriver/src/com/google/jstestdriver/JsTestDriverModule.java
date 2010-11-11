@@ -114,12 +114,14 @@ public class JsTestDriverModule extends AbstractModule {
           BrowserRunner.class).addBinding().toInstance(runner);
     }
 
+    bind(Time.class).to(TimeImpl.class);
+
     bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("fileSet"))
        .toProvider(FileSetProvider.class).in(Singleton.class);
     bind(new TypeLiteral<List<FileInfo>>() {}).annotatedWith(Names.named("tests"))
        .toInstance(tests);
     bind(new TypeLiteral<List<FileInfo>>() {}).annotatedWith(Names.named("plugins"))
-    .toInstance(plugins);
+       .toInstance(plugins);
     bind(Integer.class).annotatedWith(BrowserCount.class).
         toProvider(BrowserCountProvider.class).in(Singleton.class);
   }

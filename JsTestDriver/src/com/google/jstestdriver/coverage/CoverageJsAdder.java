@@ -33,10 +33,13 @@ public class CoverageJsAdder implements ResourcePreProcessor {
 
   public static final String LCOV_JS = "/com/google/jstestdriver/coverage/javascript/LCOV.js";
   private final ClassFileLoader fileLoader;
+  private final CoverageNameMapper mapper;
 
   @Inject
-  public CoverageJsAdder(ClassFileLoader fileLoader) {
+  public CoverageJsAdder(ClassFileLoader fileLoader,
+      CoverageNameMapper mapper) {
     this.fileLoader = fileLoader;
+    this.mapper = mapper;
   }
 
   public List<FileInfo> processPlugins(List<FileInfo> files) {
@@ -48,10 +51,18 @@ public class CoverageJsAdder implements ResourcePreProcessor {
   }
 
   public List<FileInfo> processDependencies(List<FileInfo> files) {
+    // seed the map
+    for (FileInfo fileInfo : files) {
+      mapper.map(fileInfo.getFilePath());
+    }
     return files;
   }
 
   public List<FileInfo> processTests(List<FileInfo> files) {
+    // seed the map
+    for (FileInfo fileInfo : files) {
+      mapper.map(fileInfo.getFilePath());
+    }
     return files;
   }
 }

@@ -27,6 +27,7 @@ import com.google.inject.Inject;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.Time;
 import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.model.HandlerPathPrefix;
@@ -58,13 +59,17 @@ public class BrowserHunter {
 
   private final HandlerPathPrefix prefix;
 
+  private final Time time;
+
   @Inject
   public BrowserHunter(CapturedBrowsers capturedBrowsers,
       @BrowserTimeout long browserTimeout,
-      HandlerPathPrefix prefix) {
+      HandlerPathPrefix prefix,
+      Time time) {
     this.capturedBrowsers = capturedBrowsers;
     this.browserTimeout = browserTimeout;
     this.prefix = prefix;
+    this.time = time;
   }
 
   public SlaveBrowser captureBrowser(String name, String version, String os) {
@@ -107,7 +112,7 @@ public class BrowserHunter {
     // TODO(corysmith):move all browser timeout configuration to the capture servlet.
     long computedBrowserTimeout = computeTimeout(browserTimeout);
     SlaveBrowser slave =
-      new SlaveBrowser(new TimeImpl(), id.toString(), browserInfo, computedBrowserTimeout);
+      new SlaveBrowser(time, id.toString(), browserInfo, computedBrowserTimeout);
 
     capturedBrowsers.addSlave(slave);
     logger.debug("Browser Captured: {}", slave);

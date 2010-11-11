@@ -56,6 +56,8 @@ import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
 import com.google.jstestdriver.StandaloneRunnerFilesFilter;
 import com.google.jstestdriver.StandaloneRunnerFilesFilterImpl;
+import com.google.jstestdriver.Time;
+import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.annotations.BaseResourceLocation;
 import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.annotations.Port;
@@ -182,6 +184,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     bind(ServletConfig.class).annotatedWith(ProxyConfig.class).to(ProxyServletConfig.class);
     bind(StandaloneRunnerFilesFilter.class).to(StandaloneRunnerFilesFilterImpl.class);
     bind(HandlerPathPrefix.class).toInstance(handlerPrefix);
+    bind(Time.class).to(TimeImpl.class);
 
     MapBinder<PageType, Page> pageBinder = newMapBinder(binder(), PageType.class, Page.class);
     pageBinder.addBinding(CONSOLE).to(ConsolePage.class).in(RequestScoped.class);

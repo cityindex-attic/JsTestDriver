@@ -18,6 +18,7 @@ package com.google.jstestdriver.coverage;
 import com.google.inject.Inject;
 import com.google.jstestdriver.Action;
 import com.google.jstestdriver.model.RunData;
+import com.google.jstestdriver.output.TestResultHolder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,15 +33,19 @@ public class CoverageReporterAction implements Action {
   private final CoverageAccumulator accumulator;
   private final CoverageWriter writer;
 
+  private final TestResultHolder holder;
+
   @Inject
   public CoverageReporterAction(CoverageAccumulator accumulator,
-      CoverageWriter writer) {
+      CoverageWriter writer,
+      TestResultHolder holder) {
     this.accumulator = accumulator;
     this.writer = writer;
+    this.holder = holder;
   }
 
   public RunData run(RunData runData) {
-    if (!runData.getTestCases().isEmpty()) {
+    if (!holder.getResults().isEmpty()) {
       logger.debug("Writing coverage to {}", writer);
       accumulator.write(writer);
       writer.flush();

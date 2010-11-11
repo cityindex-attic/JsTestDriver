@@ -48,7 +48,7 @@ public class SlaveBrowser {
   private final BlockingQueue<Command> commandsToRun = new LinkedBlockingQueue<Command>();
   private long dequeueTimeout = 10;
   private TimeUnit timeUnit = TimeUnit.SECONDS;
-  private volatile Instant lastHeartbeat;
+  private AtomicReference<Instant> lastHeartbeat;
   private Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
   private final BlockingQueue<StreamMessage> responses =
     new LinkedBlockingQueue<StreamMessage>();
@@ -62,6 +62,8 @@ public class SlaveBrowser {
     this.timeout = timeout;
     this.id = id;
     this.browserInfo = browserInfo;
+    lastHeartbeat =
+      new AtomicReference<Instant>(new Instant(0));
   }
 
   public String getId() {
@@ -111,7 +113,7 @@ public class SlaveBrowser {
   }
 
   public void heartBeat() {
-    lastHeartbeat = time.now();
+    lastHeartbeat.set(time.now());
 
     if (!browserInfo.serverReceivedHeartbeat()) {
       browserInfo.setServerReceivedHeartbeat(true);
@@ -119,7 +121,7 @@ public class SlaveBrowser {
   }
 
   public Instant getLastHeartbeat() {
-    return lastHeartbeat;
+    return lastHeartbeat.get();
   }
 
   /** @return true if at least one heartbeat was received from the browser. */
@@ -206,16 +208,17 @@ public class SlaveBrowser {
 
   public boolean isAlive() {
     return receivedHeartbeat()
-        && ((time.now().getMillis() - lastHeartbeat.getMillis() < timeout)
+        && ((time.now().getMillis() - lastHeartbeat.get().getMillis() < timeout)
             || timeout == -1);
   }
 
   @Override
   public String toString() {
+    double sinceLastCheck = (time.now().getMillis() - lastHeartbeat.get().getMillis())/1000.0;
     return format("SlaveBrowser(browserInfo=%s,\n\tid=%s,\n\tsinceLastCheck=%ss,\n\ttimeout=%s)",
         browserInfo,
         id,
-        (time.now().getMillis() - lastHeartbeat.getMillis())/1000.0,
+        sinceLastCheck,
         timeout);
   }  
 }

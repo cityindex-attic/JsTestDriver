@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
+import com.google.jstestdriver.MockTime;
 
 /**
  * @author corysmith@google.com (Cory Smith)
@@ -37,7 +38,8 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
     FileInfo decorated =
       new CoverageInstrumentingProcessor(new DecoratorStub(expected, code),
                                          Collections.<String>emptySet(),
-                                         accumulator).process(fileInfo);
+                                         accumulator,
+                                         new MockTime(0)).process(fileInfo);
     assertEquals(expected, decorated.getData());
     assertEquals(fileInfo.getFilePath(), decorated.getFilePath());
     assertEquals(fileInfo.getTimestamp(), decorated.getTimestamp());
@@ -51,7 +53,9 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
     FileInfo remote = new FileInfo("https://foobar", 0, -1, true, false, null);
     CoverageInstrumentingProcessor processor =
         new CoverageInstrumentingProcessor(null,
-            Sets.<String>newHashSet(excluded.getFilePath()), null);
+            Sets.<String>newHashSet(excluded.getFilePath()),
+            null,
+            new MockTime(0));
     assertSame(lcov, processor.process(lcov));
     assertSame(serveOnly, processor.process(serveOnly));
     assertSame(remote, processor.process(remote));

@@ -32,7 +32,7 @@ import com.google.jstestdriver.model.NullPathPrefix;
  */
 public class CoverageActionDecoratorTest extends TestCase {
   public void testDecorate() throws Exception {
-    CoverageReporterAction reporter = new CoverageReporterAction(null, null);
+    CoverageReporterAction reporter = new CoverageReporterAction(null, null, null);
     List<Action> actions =
         Lists.<Action>newArrayList(new ServerStartupAction(0, null, null,
             SlaveBrowser.TIMEOUT, null, Collections.<AuthStrategy>emptySet(), false, null, new NullPathPrefix()));

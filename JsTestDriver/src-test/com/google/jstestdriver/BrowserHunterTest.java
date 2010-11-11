@@ -29,7 +29,7 @@ public class BrowserHunterTest extends TestCase {
 
   public void testCaptureAndGenerateUrlQuirks() throws Exception {
     BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(),
-        SlaveBrowser.TIMEOUT, new NullPathPrefix());
+        SlaveBrowser.TIMEOUT, new NullPathPrefix(), new TimeImpl());
     SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version",
         "os");
     BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
@@ -39,12 +39,12 @@ public class BrowserHunterTest extends TestCase {
     assertEquals("os", browserInfo.getOs());
     assertEquals("/slave/id/1/page/CONSOLE/mode/quirks/rt/CLIENT", browserHunter
         .getCaptureUrl(slaveBrowser.getId(), CaptureHandler.QUIRKS,
-            CLIENT, -1));
+            CLIENT, -1l));
   }
 
   public void testCaptureAndGenerateUrlStrict() throws Exception {
     BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(),
-        SlaveBrowser.TIMEOUT, new NullPathPrefix());
+        SlaveBrowser.TIMEOUT, new NullPathPrefix(), new TimeImpl());
     SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version",
         "os");
     BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
@@ -54,6 +54,6 @@ public class BrowserHunterTest extends TestCase {
     assertEquals("os", browserInfo.getOs());
     assertEquals("/slave/id/1/page/CONSOLE/mode/strict/rt/CLIENT", browserHunter
         .getCaptureUrl(slaveBrowser.getId(), CaptureHandler.STRICT,
-            CLIENT, -1));
+            CLIENT, -1l));
   }
 }
