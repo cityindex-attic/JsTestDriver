@@ -74,14 +74,14 @@ public class CaptureHandler implements RequestHandler {
     String mode = parameterMap.get(STRICT) != null ? STRICT : QUIRKS;
     String id = parameterMap.get(SlavePageRequest.ID);
     RunnerType runnerType = parseRunnerType(parameterMap.get(RUNNER_TYPE));
-    long timeout = parseLong(parameterMap.get(TIMEOUT));
+    Long timeout = parseLong(parameterMap.get(TIMEOUT));
     String redirect = service(request.getUserAgent(), mode, id, runnerType, timeout);
     logger.debug("Redirecting to {}", redirect);
     response.sendRedirect(redirect);
   }
 
-  private long parseLong(final String value) {
-    return value == null ? -1 : Long.parseLong(value);
+  private Long parseLong(final String value) {
+    return value == null ? null : Long.parseLong(value);
   }
   
   private RunnerType parseRunnerType(String runnerType) {
@@ -89,7 +89,7 @@ public class CaptureHandler implements RequestHandler {
   }
 
   public String service(String userAgent, String mode, String id, RunnerType runnerType,
-      long timeout) {
+      Long timeout) {
     UserAgentParser parser = new UserAgentParser();
 
     parser.parse(userAgent);

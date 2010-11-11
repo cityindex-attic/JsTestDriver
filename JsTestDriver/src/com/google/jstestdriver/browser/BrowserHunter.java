@@ -71,14 +71,15 @@ public class BrowserHunter {
     return captureBrowser(capturedBrowsers.getUniqueId(), name, version, os);
   }
 
-  public String getCaptureUrl(String id, String mode, RunnerType type, long timeout) {
+  public String getCaptureUrl(String id, String mode, RunnerType type, Long timeout) {
+    long computedBrowserTimeout = computeTimeout(timeout);
     switch(type) {
       case CLIENT:
-        return prefix.prefixPath(String.format(CLIENT_CONSOLE_RUNNER, id, mode, timeout));
+        return prefix.prefixPath(String.format(CLIENT_CONSOLE_RUNNER, id, mode, computedBrowserTimeout));
       case STANDALONE:
-        return prefix.prefixPath(String.format(STANDALONE_CONSOLE_RUNNER, id, mode, timeout));
+        return prefix.prefixPath(String.format(STANDALONE_CONSOLE_RUNNER, id, mode, computedBrowserTimeout));
       case BROWSER:
-        return prefix.prefixPath(String.format(BROWSER_CONTROLLED_RUNNER, id, mode, timeout));
+        return prefix.prefixPath(String.format(BROWSER_CONTROLLED_RUNNER, id, mode, computedBrowserTimeout));
     }
     throw new UnsupportedOperationException("Unsupported Runner type: " + type);
   }
@@ -96,7 +97,6 @@ public class BrowserHunter {
   }
 
   public SlaveBrowser captureBrowser(String rawId, String name, String version, String os, Long browserTimeout) {
-    
     BrowserInfo browserInfo = new BrowserInfo();
 
     final Integer id = parseBrowserId(rawId);
@@ -105,7 +105,7 @@ public class BrowserHunter {
     browserInfo.setVersion(version);
     browserInfo.setOs(os);
     // TODO(corysmith):move all browser timeout configuration to the capture servlet.
-    long computedBrowserTimeout = browserTimeout == -1 ? this.browserTimeout : browserTimeout;
+    long computedBrowserTimeout = computeTimeout(browserTimeout);
     SlaveBrowser slave =
       new SlaveBrowser(new TimeImpl(), id.toString(), browserInfo, computedBrowserTimeout);
 
@@ -113,6 +113,10 @@ public class BrowserHunter {
     logger.debug("Browser Captured: {}", slave);
     logger.info("Browser Captured: {} version {} ({})", new Object[] {name, version, id});
     return slave;
+  }
+
+  private long computeTimeout(Long browserTimeout) {
+    return browserTimeout == null ? this.browserTimeout : browserTimeout;
   }
 
   private Integer parseBrowserId(String id) {
