@@ -681,6 +681,8 @@
       <arg value="coverage.conf" />
       <arg value="--testOutput" />
       <arg value="${XMLDIRECTORY}"/>
+      <arg value="--runnerMode" />
+      <arg value="DEBUG_NO_TRACE"/>
     </java>
   </target>
 
