@@ -126,7 +126,7 @@ public class SlaveBrowser {
 
   /** @return true if at least one heartbeat was received from the browser. */
   public boolean receivedHeartbeat() {
-    return lastHeartbeat != null;
+    return lastHeartbeat.get().getMillis() != 0;
   }
 
   /**
@@ -134,7 +134,7 @@ public class SlaveBrowser {
    *         heartbeat has been received.
    */
   public double getSecondsSinceLastHeartbeat() {
-    return (lastHeartbeat == null)
+    return !receivedHeartbeat()
         ? -1 : ((time.now().getMillis() - lastHeartbeat.get().getMillis())/1000.0);
   }
   

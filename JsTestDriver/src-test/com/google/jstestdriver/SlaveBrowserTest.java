@@ -15,9 +15,9 @@
  */
 package com.google.jstestdriver;
 
-import org.joda.time.Instant;
-
 import junit.framework.TestCase;
+
+import org.joda.time.Instant;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
