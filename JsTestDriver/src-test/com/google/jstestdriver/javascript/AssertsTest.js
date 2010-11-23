@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -239,7 +239,7 @@ assertsTest.prototype.testAssertSame = function() {
     assertEquals('AssertError', e.name);
   }
   try{
-    var trueObj = { tre: true}; 
+    var trueObj = { tre: true};
   assertSame(trueObj,undefined);
   fail('assertSame did not throw an exception');
   }catch (e){
@@ -261,7 +261,7 @@ assertsTest.prototype.testAssertSameWithMsg = function() {
     assertEquals('AssertError', e.name);
   }
   try{
-    var trueObj = { tre: true}; 
+    var trueObj = { tre: true};
   assertSame("This should fail because object !== undefined",trueObj,undefined);
   fail('assertSame did not throw an exception');
   }catch (e){
@@ -281,7 +281,7 @@ assertsTest.prototype.testAssertNotSame = function() {
     assertEquals('expected not same as {"data":"data"} but was {"data":"data"}', e.message);
     assertEquals('AssertError', e.name);
   }
-  var trueObj = { tre: true}; 
+  var trueObj = { tre: true};
   assertNotSame(trueObj,undefined);
 };
 
@@ -294,11 +294,11 @@ assertsTest.prototype.testAssertNotSameWithMsg = function() {
     assertNotSame('this is a message', obj1, obj1);
     fail('assertNotSame did not throw an exception');
   } catch (e) {
-    assertEquals('this is a message expected not same as {"data":"data"} but was ' + 
+    assertEquals('this is a message expected not same as {"data":"data"} but was ' +
         '{"data":"data"}', e.message);
     assertEquals('AssertError', e.name);
   }
-  var trueObj = { tre: true}; 
+  var trueObj = { tre: true};
   assertNotSame("This is a message",trueObj,undefined);
 };
 
@@ -448,7 +448,7 @@ assertsTest.prototype.testAssertCount = function() {
         fail("assertNotEquals should fail on equal strings");
       } catch (e) {
         this.assertEquals.call(GLOBAL,  "AssertError", e.name);
-        this.assertEquals.call(GLOBAL, 
+        this.assertEquals.call(GLOBAL,
             'expected "string1" not to be equal to "string1"', e.message);
       }
     },
@@ -1063,6 +1063,54 @@ assertsTest.prototype.testAssertCount = function() {
         assertEquals("AssertError", e.name);
         assertEquals("msg expected class name to include \"hola\" but was \"\"", e.message);
       }
+    }
+  });
+
+  TestCase("AssertNoClassNameTest", {
+    setUp: function () {
+      /*:DOC += <div id="el" class="something"></div> */
+      /*:DOC += <div id="el2" class="something other"></div> */
+      /*:DOC += <div id="el3"></div> */
+      this.element = document.getElementById("el");
+      this.elementMultipleClasses = document.getElementById("el2");
+      this.elementNoClass = document.getElementById("el3");
+    },
+
+    "test should pass when class name is not present": function () {
+      assertNoClassName("missing", this.element);
+    },
+
+    "test should pass with message when class name is not present": function () {
+      assertNoClassName("shouldn't have missing", "missing", this.element);
+    },
+
+    "test should pass when class name does not contain specified class name": function () {
+      assertNoClassName("shouldn't have missing", "missing", this.elementMultipleClasses);
+      assertNoClassName("shouldn't have another", "another", this.elementMultipleClasses);
+    },
+
+    "test should fail for finding class name": function () {
+      try {
+        assertNoClassName("something", this.element);
+        fail("assertNoClassName should fail for finding class name");
+      } catch (e) {
+        assertEquals("AssertError", e.name);
+        assertEquals("expected class name to exclude \"something\" but was \"something\"", e.message);
+        }
+    },
+
+    "test should fail with message for finding class name": function () {
+      try {
+        assertNoClassName("msg", "something", this.element);
+        fail("assertNoClassName should fail for finding class name");
+      } catch (e) {
+        assertEquals("AssertError", e.name);
+        assertEquals("msg expected class name to exclude \"something\" but was \"something\"", e.message);
+      }
+    },
+
+    "test should pass when element has no classes": function () {
+        assertNoClassName("something", this.elementNoClass);
     }
   });
 
