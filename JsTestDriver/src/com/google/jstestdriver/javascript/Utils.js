@@ -30,7 +30,8 @@ jstestdriver.FORMAT_MAPPINGS = {
 jstestdriver.formatString = function(str) {
   var formatArgs = arguments;
   var idx = 1;
-  var formatted = str.replace(/%([sdifo])/g, function(fullmatch, groupOne) {
+  var formatted = String(str).replace(/%([sdifo])/g,
+      function(fullmatch, groupOne) {
     var value = formatArgs[idx++];
     if (!jstestdriver.FORMAT_MAPPINGS[groupOne]) {
       throw new Error(groupOne + 'is not a proper format.');
@@ -135,14 +136,41 @@ jstestdriver.trim = function(str) {
 jstestdriver.toHtml = function(htmlString, owningDocument) {
   var fragment = owningDocument.createDocumentFragment();
   var wrapper = owningDocument.createElement('div');
-  htmlString.replace(/<!--.*-->/g,'');
-  wrapper.innerHTML = jstestdriver.trim(htmlString);
+  wrapper.innerHTML = jstestdriver.trim(jstestdriver.stripHtmlComments(htmlString));
   while(wrapper.firstChild) {
     fragment.appendChild(wrapper.firstChild);
   }
   var ret =  fragment.childNodes.length > 1 ? fragment : fragment.firstChild;
   return ret;
 };
+
+
+jstestdriver.stripHtmlComments = function(htmlString) {
+  var stripped = [];
+  function getCommentIndices(offset) {
+    var start = htmlString.indexOf('<!--', offset);
+    var stop = htmlString.indexOf('-->', offset) + '-->'.length;
+    if (start == -1) {
+      return null;
+    }
+    return {
+      'start' : start,
+      'stop' : stop
+    };
+  }
+  var offset = 0;
+  while(true) {
+    var comment = getCommentIndices(offset);
+    if (!comment) {
+      stripped.push(htmlString.slice(offset));
+      break;
+    }
+    var frag = htmlString.slice(offset, comment.start);
+    stripped.push(frag);
+    offset = comment.stop;
+  }
+  return stripped.join('');
+}
 
 
 /**

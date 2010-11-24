@@ -46,6 +46,13 @@ utilsTest.prototype.testToHtmlMultipleNodes = function() {
 };
 
 
+utilsTest.prototype.testStripHtmlComments = function() {
+  var html = "<div><!-- foobar -->\n<p> zib zab</p><!-- bar --></div>";
+  assertEquals("<div>\n<p> zib zab</p></div>",
+      jstestdriver.stripHtmlComments(html));
+};
+
+
 utilsTest.prototype.testAppendHtml = function() {
   jstestdriver.appendHtml('<div id="foo"></div>', window.document);
   var node = document.getElementById('foo');
@@ -56,6 +63,15 @@ utilsTest.prototype.testAppendHtml = function() {
 
 
 utilsTest.prototype.testAppendHtmlMultipleNodes = function() {
+  jstestdriver.appendHtml('<div id="foo"></div><div class="bar"></div>', window.document);
+  var node = document.getElementById('foo');
+  assertNotNull(node);
+  assertEquals('foo', node.id);
+  assertEquals('div', node.tagName.toLowerCase());
+};
+
+
+utilsTest.prototype.testAppendHtmlLotsOfHtml = function() {
   jstestdriver.appendHtml('<div id="foo"></div><div class="bar"></div>', window.document);
   var node = document.getElementById('foo');
   assertNotNull(node);

@@ -48,7 +48,7 @@ public class StandaloneRunnerHandlerTest extends TestCase {
     capturedBrowsers.addSlave(slaveBrowser);
     StandaloneRunnerHandler handler =
         new StandaloneRunnerHandler(null, null, cache,
-            new SlaveResourceService(""), new ConcurrentHashMap<SlaveBrowser, Thread>());
+            new SlaveResourceService(""), new ConcurrentHashMap<SlaveBrowser, Thread>(), null, null);
     handler.service(slaveBrowser);
 
     assertNotNull(slaveBrowser.peekCommand());
