@@ -44,11 +44,11 @@ jstestdriver.StandAloneTestReporter.prototype.finishTests = function(when) {
 };
 
 
-jstestdriver.VisualTestReporter.prototype.startLoading = function(when) {
+jstestdriver.StandAloneTestReporter.prototype.startLoading = function(when) {
 }
 
 
-jstestdriver.VisualTestReporter.prototype.finishLoading = function(when) {
+jstestdriver.StandAloneTestReporter.prototype.finishLoading = function(when) {
 }
 
 
@@ -117,8 +117,8 @@ jstestdriver.StandAloneTestReporter.prototype.setReport = function(report) {
 };
 
 
-jstestdriver.StandAloneTestReporter.prototype.updateNumFilesLoaded = function(filesLoaded) {
-  var numberOfFilesLoaded = fileLoaded.length;
+jstestdriver.StandAloneTestReporter.prototype.addLoadedFileResults = function(filesLoaded) {
+  var numberOfFilesLoaded = filesLoaded.length;
   this.log("files loaded: " + numberOfFilesLoaded);
   if (this != window.top.G_testRunner) {
     // this is a horrible hack to work around overwrites happening on file importing.

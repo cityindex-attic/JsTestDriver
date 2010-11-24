@@ -75,6 +75,7 @@ import com.google.jstestdriver.server.handlers.pages.Page;
 import com.google.jstestdriver.server.handlers.pages.PageType;
 import com.google.jstestdriver.server.handlers.pages.RunnerPage;
 import com.google.jstestdriver.server.handlers.pages.SlavePageRequest;
+import com.google.jstestdriver.server.handlers.pages.StandaloneRunnerPage;
 import com.google.jstestdriver.server.proxy.ProxyServletConfig;
 import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
 import com.google.jstestdriver.servlet.fileset.FileSetRequestHandler;
@@ -190,7 +191,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     pageBinder.addBinding(CONSOLE).to(ConsolePage.class).in(RequestScoped.class);
     pageBinder.addBinding(HEARTBEAT).to(HeartbeatPage.class).in(RequestScoped.class);
     pageBinder.addBinding(RUNNER).to(RunnerPage.class).in(RequestScoped.class);
-    pageBinder.addBinding(STANDALONE_RUNNER).to(RunnerPage.class).in(RequestScoped.class);
+    pageBinder.addBinding(STANDALONE_RUNNER).to(StandaloneRunnerPage.class).in(RequestScoped.class);
     pageBinder.addBinding(VISUAL_STANDALONE_RUNNER).to(BrowserControlledRunnerPage.class).in(RequestScoped.class);
   }
 

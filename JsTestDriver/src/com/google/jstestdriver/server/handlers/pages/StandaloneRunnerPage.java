@@ -33,7 +33,7 @@ public class StandaloneRunnerPage implements Page {
         .writeExternalScript("/static/lib/json2.js")
         .writeExternalScript("/static/lib/json_sans_eval.js")
         .writeExternalScript("/static/lib/jquery-min.js")
-        .writeExternalScript("/static/runner.js")
+        .writeExternalScript("/static/standalonerunner.js")
         .writeScript(
             "jstestdriver.console = new jstestdriver.Console();" +
             "jstestdriver.config.startRunner(jstestdriver.config.createStandAloneExecutor);")

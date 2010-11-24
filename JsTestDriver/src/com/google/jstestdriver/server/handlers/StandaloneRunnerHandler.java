@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.mortbay.jetty.MimeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,9 +47,13 @@ import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestResultGenerator;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.TestResult.Result;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 import com.google.jstestdriver.runner.RunnerType;
+import com.google.jstestdriver.server.handlers.pages.Page;
+import com.google.jstestdriver.server.handlers.pages.PageType;
 import com.google.jstestdriver.server.handlers.pages.SlavePageRequest;
+import com.google.jstestdriver.util.HtmlWriter;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -64,17 +70,25 @@ class StandaloneRunnerHandler implements RequestHandler {
   private final ConcurrentMap<SlaveBrowser, Thread> reportingThreads;
   private final TestResultGenerator testResultGenerator = new TestResultGenerator();
 
+  private final Map<PageType, Page> pages;
+
+  private final HandlerPathPrefix prefix;
+
   @Inject
   public StandaloneRunnerHandler(
       SlavePageRequest request,
       HttpServletResponse response,
       FilesCache cache,
       SlaveResourceService service,
-      ConcurrentMap<SlaveBrowser, Thread> reportingThreads) {
+      ConcurrentMap<SlaveBrowser, Thread> reportingThreads,
+      Map<PageType, Page> pages,
+      HandlerPathPrefix prefix) {
     this.request = request;
     this.response = response;
     this.cache = cache;
     this.reportingThreads = reportingThreads;
+    this.pages = pages;
+    this.prefix = prefix;
   }
 
   public void handleIt() throws IOException {
@@ -84,6 +98,11 @@ class StandaloneRunnerHandler implements RequestHandler {
       // re-capture browser as standalone
       response.sendRedirect("/capture/" + RUNNER_TYPE + "/" + RunnerType.STANDALONE.toString() + "/timeout/3600000");
     } else {
+      browser.heartBeat();
+      response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
+      final HtmlWriter writer = new HtmlWriter(response.getWriter(), prefix);
+      request.writeDTD(writer);
+      pages.get(request.getPageType()).render(writer, request);
       // start test running
       service(browser);
     }

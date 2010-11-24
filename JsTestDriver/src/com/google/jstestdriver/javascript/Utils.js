@@ -122,6 +122,10 @@ jstestdriver.getBrowserFriendlyVersion = function() {
   return jstestdriver.jQuery.browser.version;
 };
 
+jstestdriver.trim = function(str) {
+  return str.replace(/(^\s*)|(\s*$)/g,'');
+};
+
 
 /**
  * Renders an html string as a dom nodes.
@@ -129,7 +133,15 @@ jstestdriver.getBrowserFriendlyVersion = function() {
  * @param {Document} owningDocument The window that should own the html.
  */
 jstestdriver.toHtml = function(htmlString, owningDocument) {
-  return jstestdriver.jQuery(htmlString, owningDocument)[0];
+  var fragment = owningDocument.createDocumentFragment();
+  var wrapper = owningDocument.createElement('div');
+  htmlString.replace(/<!--.*-->/g,'');
+  wrapper.innerHTML = jstestdriver.trim(htmlString);
+  while(wrapper.firstChild) {
+    fragment.appendChild(wrapper.firstChild);
+  }
+  var ret =  fragment.childNodes.length > 1 ? fragment : fragment.firstChild;
+  return ret;
 };
 
 

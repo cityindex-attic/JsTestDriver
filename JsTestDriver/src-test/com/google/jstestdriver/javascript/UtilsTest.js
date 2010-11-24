@@ -38,9 +38,9 @@ utilsTest.prototype.testToHtml = function() {
 
 
 utilsTest.prototype.testToHtmlMultipleNodes = function() {
-  var node = jstestdriver.toHtml('<div id="foo"></div><div id="bar"></div>', window.document);
+  var fragment = jstestdriver.toHtml('<div id="foo"></div><div id="bar"></div>', window.document);
+  var node = fragment.firstChild;
   assertNotNull(node);
-  console.debug(node);
   assertEquals('foo', node.id);
   assertEquals('div', node.tagName.toLowerCase());
 };

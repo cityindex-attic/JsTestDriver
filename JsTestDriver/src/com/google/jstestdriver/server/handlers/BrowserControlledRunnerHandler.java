@@ -83,6 +83,7 @@ public class BrowserControlledRunnerHandler implements RequestHandler {
       response.sendRedirect(
           prefix.prefixPath("/capture/" + CaptureHandler.RUNNER_TYPE + "/" + RunnerType.BROWSER + "/timeout/3600000"));
     } else {
+      browser.heartBeat();
       // start test running
       response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
       final HtmlWriter writer = new HtmlWriter(response.getWriter(), prefix);
