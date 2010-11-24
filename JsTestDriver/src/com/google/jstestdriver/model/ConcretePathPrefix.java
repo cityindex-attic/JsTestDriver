@@ -24,11 +24,14 @@ public class ConcretePathPrefix implements HandlerPathPrefix {
   }
 
   public String prefixPath(String path) {
+    if (path.startsWith("/" + prefix)) {
+      return path;
+    }
     return "/" + prefix + path;
   }
 
   public String prefixPath(String path, String defaultPrefix) {
-    return "/" + prefix + path;
+    return prefixPath(path);
   }
 
   public String suffixServer(String server) {

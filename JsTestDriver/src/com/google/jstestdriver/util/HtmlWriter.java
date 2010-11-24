@@ -64,7 +64,7 @@ public class HtmlWriter {
 
   public HtmlWriter writeStyleSheet(String path) throws IOException {
     writer.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"")
-      .append(path)
+      .append(prefix.prefixPath(path))
       .append("\"/>");
     return this;
   }

@@ -23,8 +23,7 @@ import com.google.common.collect.Sets;
 import com.google.jstestdriver.FileInfo;
 
 /**
- * @author corysmith@google.com (Cory Smith)
- *
+ * @author corbinrsmith@gmail.com (Cory Smith)
  */
 public class CoverageInstrumentingProcessorTest extends TestCase {
 
@@ -40,7 +39,7 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
                                          accumulator).process(fileInfo);
     assertEquals(expected, decorated.getData());
     assertEquals(fileInfo.getFilePath(), decorated.getFilePath());
-    assertEquals(fileInfo.getTimestamp(), decorated.getTimestamp());
+    assertEquals(-1, decorated.getTimestamp());
     assertEquals(fileInfo.isServeOnly(), decorated.isServeOnly());
   }
 
