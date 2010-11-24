@@ -16,6 +16,7 @@
 package com.google.jstestdriver.server.handlers;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.google.inject.Inject;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.Command;
@@ -98,7 +99,11 @@ class BrowserQueryResponseHandler implements RequestHandler {
 
     if (browser != null) {
       boolean isLast = Boolean.parseBoolean(done);
-      serviceBrowser(response, isLast, responseId, writer, browser);
+      try {
+        serviceBrowser(response, isLast, responseId, writer, browser);
+      } catch (JsonParseException e) {
+        throw new RuntimeException("Unable to parse: " + response, e);
+      }
     } else {
       logger.error("Unknown browser {}", id);
     }
@@ -106,7 +111,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
   }
 
   private void serviceBrowser(String response, Boolean done, String responseId, PrintWriter writer,
-      SlaveBrowser browser) {
+      SlaveBrowser browser) throws JsonParseException {
     addResponseId(responseId, browser);
     browser.heartBeat();
     Command command = null;
@@ -191,7 +196,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
   }
 
   private boolean isResponseValid(String response) {
-    return response != null && !"null".equals(response) && response.length() > 0;
+    return response != null && !"null".equals(response) && !"undefined".equals(response) && response.length() > 0;
   }
 
   private void addResponseId(String responseId, SlaveBrowser browser) {
