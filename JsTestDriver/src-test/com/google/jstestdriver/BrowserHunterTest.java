@@ -15,12 +15,10 @@
  */
 package com.google.jstestdriver;
 
-import static com.google.jstestdriver.runner.RunnerType.CLIENT;
 import junit.framework.TestCase;
 
 import com.google.jstestdriver.browser.BrowserHunter;
 import com.google.jstestdriver.model.NullPathPrefix;
-import com.google.jstestdriver.server.handlers.CaptureHandler;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -37,23 +35,7 @@ public class BrowserHunterTest extends TestCase {
     assertEquals("name", browserInfo.getName());
     assertEquals("version", browserInfo.getVersion());
     assertEquals("os", browserInfo.getOs());
-    assertEquals("/slave/id/1/page/CONSOLE/mode/quirks/rt/CLIENT", browserHunter
-        .getCaptureUrl(slaveBrowser.getId(), CaptureHandler.QUIRKS,
-            CLIENT, -1l));
+    assertEquals("/slave/id/1/page/CONSOLE/mode/quirks/rt/CLIENT", slaveBrowser.getCaptureUrl());
   }
 
-  public void testCaptureAndGenerateUrlStrict() throws Exception {
-    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(),
-        SlaveBrowser.TIMEOUT, new NullPathPrefix(), new TimeImpl());
-    SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version",
-        "os");
-    BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
-
-    assertEquals("name", browserInfo.getName());
-    assertEquals("version", browserInfo.getVersion());
-    assertEquals("os", browserInfo.getOs());
-    assertEquals("/slave/id/1/page/CONSOLE/mode/strict/rt/CLIENT", browserHunter
-        .getCaptureUrl(slaveBrowser.getId(), CaptureHandler.STRICT,
-            CLIENT, -1l));
-  }
 }

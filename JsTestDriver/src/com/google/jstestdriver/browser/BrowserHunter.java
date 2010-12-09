@@ -15,11 +15,6 @@
  */
 package com.google.jstestdriver.browser;
 
-import static com.google.jstestdriver.runner.RunnerType.BROWSER;
-import static com.google.jstestdriver.runner.RunnerType.CLIENT;
-import static com.google.jstestdriver.runner.RunnerType.STANDALONE;
-import static com.google.jstestdriver.server.handlers.CaptureHandler.RUNNER_TYPE;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +27,6 @@ import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.runner.RunnerType;
 import com.google.jstestdriver.server.handlers.CaptureHandler;
-import com.google.jstestdriver.server.handlers.pages.PageType;
 
 /**
  * Creates SlaveBrowsers.
@@ -42,15 +36,6 @@ import com.google.jstestdriver.server.handlers.pages.PageType;
 public class BrowserHunter {
 
   private static final Logger logger = LoggerFactory.getLogger(BrowserHunter.class.getName());
-
-  private static final String CLIENT_CONSOLE_RUNNER = "/slave/id/%s/page/CONSOLE/mode/%s/"
-      + RUNNER_TYPE + "/" + CLIENT;
-
-  private static final String STANDALONE_CONSOLE_RUNNER =
-      "/runner/id/%s/page/RUNNER/mode/%s/timeout/%s/" + RUNNER_TYPE + "/" + STANDALONE;
-
-  private static final String BROWSER_CONTROLLED_RUNNER = "/bcr/id/%s/page/"
-      + PageType.VISUAL_STANDALONE_RUNNER + "/mode/%s/timeout/%s/" + RUNNER_TYPE + "/" + BROWSER;
 
   private final CapturedBrowsers capturedBrowsers;
 
@@ -72,22 +57,6 @@ public class BrowserHunter {
   public SlaveBrowser captureBrowser(String name, String version, String os) {
     return captureBrowser(capturedBrowsers.getUniqueId(), name, version, os, browserTimeout,
         CaptureHandler.QUIRKS, RunnerType.CLIENT);
-  }
-
-  public String getCaptureUrl(String id, String mode, RunnerType type, Long timeout) {
-    long computedBrowserTimeout = computeTimeout(timeout);
-    switch (type) {
-      case CLIENT:
-        return prefix.prefixPath(String.format(CLIENT_CONSOLE_RUNNER, id, mode,
-            computedBrowserTimeout));
-      case STANDALONE:
-        return prefix.prefixPath(String.format(STANDALONE_CONSOLE_RUNNER, id, mode,
-            computedBrowserTimeout));
-      case BROWSER:
-        return prefix.prefixPath(String.format(BROWSER_CONTROLLED_RUNNER, id, mode,
-            computedBrowserTimeout));
-    }
-    throw new UnsupportedOperationException("Unsupported Runner type: " + type);
   }
 
   /**
