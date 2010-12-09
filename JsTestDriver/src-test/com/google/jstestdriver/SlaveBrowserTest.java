@@ -19,6 +19,10 @@ import junit.framework.TestCase;
 
 import org.joda.time.Instant;
 
+import com.google.jstestdriver.model.NullPathPrefix;
+import com.google.jstestdriver.runner.RunnerType;
+import com.google.jstestdriver.server.handlers.CaptureHandler;
+
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
@@ -26,7 +30,9 @@ public class SlaveBrowserTest extends TestCase {
 
   public void testSlaveBrowserHeartBeat() throws Exception {
     MockTime mockTime = new MockTime(0);
-    SlaveBrowser browser = new SlaveBrowser(mockTime, "1", new BrowserInfo(), SlaveBrowser.TIMEOUT);
+    SlaveBrowser browser =
+        new SlaveBrowser(mockTime, "1", new BrowserInfo(), SlaveBrowser.TIMEOUT, null,
+            CaptureHandler.QUIRKS, RunnerType.CLIENT);
 
     assertEquals(new Instant(0), browser.getLastHeartbeat());
     assertEquals(-1.0, browser.getSecondsSinceLastHeartbeat());
@@ -35,8 +41,16 @@ public class SlaveBrowserTest extends TestCase {
     browser.heartBeat();
     assertEquals(5L, browser.getLastHeartbeat().getMillis());
     assertEquals(0.0, browser.getSecondsSinceLastHeartbeat());
- 
+
     mockTime.add(5000);
     assertEquals(5.0, browser.getSecondsSinceLastHeartbeat());
+  }
+
+  public void testRedirectQuirksUrl() throws Exception {
+    SlaveBrowser browser =
+        new SlaveBrowser(null, "1", new BrowserInfo(), SlaveBrowser.TIMEOUT, new NullPathPrefix(),
+            CaptureHandler.QUIRKS, RunnerType.CLIENT);
+
+    assertEquals("/slave/id/1/page/CONSOLE/mode/quirks/rt/CLIENT", browser.getCaptureUrl());
   }
 }

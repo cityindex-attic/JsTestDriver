@@ -29,6 +29,7 @@ import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.MockTime;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
+import com.google.jstestdriver.runner.RunnerType;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -44,23 +45,25 @@ public class StandaloneRunnerHandlerTest extends TestCase {
     files.put("file4.js", new FileInfo("file4.js", 1, -1, false, false, "content4"));
     FilesCache cache = new FilesCache(files);
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
-    SlaveBrowser slaveBrowser = new SlaveBrowser(new MockTime(10), "1", new BrowserInfo(), 1200);
+    SlaveBrowser slaveBrowser =
+        new SlaveBrowser(new MockTime(10), "1", new BrowserInfo(), 1200, null,
+            CaptureHandler.QUIRKS, RunnerType.CLIENT);
     capturedBrowsers.addSlave(slaveBrowser);
     StandaloneRunnerHandler handler =
-        new StandaloneRunnerHandler(null, null, cache,
-            new SlaveResourceService(""), new ConcurrentHashMap<SlaveBrowser, Thread>(), null, null);
+        new StandaloneRunnerHandler(null, null, cache, new SlaveResourceService(""),
+            new ConcurrentHashMap<SlaveBrowser, Thread>(), null, null);
     handler.service(slaveBrowser);
 
     assertNotNull(slaveBrowser.peekCommand());
     Command cmd = slaveBrowser.dequeueCommand();
 
     assertNotNull(cmd);
-    assertEquals("{\"command\":\"loadTest\"," +
-    		"\"parameters\":[\"[{\\\"fileSrc\\\":\\\"/test/file1.js\\\",\\\"timestamp\\\":-1}," +
-    		"{\\\"fileSrc\\\":\\\"/test/file2.js\\\",\\\"timestamp\\\":-1}," +
-    		"{\\\"fileSrc\\\":\\\"/test/file3.js\\\",\\\"timestamp\\\":-1}," +
-    		"{\\\"fileSrc\\\":\\\"/test/file4.js\\\",\\\"timestamp\\\":-1}]\",\"true\"]}",
-    		cmd.getCommand());
+    assertEquals("{\"command\":\"loadTest\","
+        + "\"parameters\":[\"[{\\\"fileSrc\\\":\\\"/test/file1.js\\\",\\\"timestamp\\\":-1},"
+        + "{\\\"fileSrc\\\":\\\"/test/file2.js\\\",\\\"timestamp\\\":-1},"
+        + "{\\\"fileSrc\\\":\\\"/test/file3.js\\\",\\\"timestamp\\\":-1},"
+        + "{\\\"fileSrc\\\":\\\"/test/file4.js\\\",\\\"timestamp\\\":-1}]\",\"true\"]}",
+        cmd.getCommand());
 
     assertNotNull(slaveBrowser.peekCommand());
     cmd = slaveBrowser.dequeueCommand();

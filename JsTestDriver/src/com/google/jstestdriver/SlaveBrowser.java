@@ -15,6 +15,10 @@
  */
 package com.google.jstestdriver;
 
+import static com.google.jstestdriver.runner.RunnerType.BROWSER;
+import static com.google.jstestdriver.runner.RunnerType.CLIENT;
+import static com.google.jstestdriver.runner.RunnerType.STANDALONE;
+import static com.google.jstestdriver.server.handlers.CaptureHandler.RUNNER_TYPE;
 import static java.lang.String.format;
 
 import java.util.Collection;
@@ -30,13 +34,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.jstestdriver.commands.NoopCommand;
+import com.google.jstestdriver.model.HandlerPathPrefix;
+import com.google.jstestdriver.runner.RunnerType;
+import com.google.jstestdriver.server.handlers.pages.PageType;
 
 /**
- * Reprsents a captured browser, and brokers the interaction between the client and browser.
+ * Represents a captured browser, and brokers the interaction between the client
+ * and browser.
  * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class SlaveBrowser {
+
+  private static final String CLIENT_CONSOLE_RUNNER = "/slave/id/%s/page/CONSOLE/mode/%s/"
+      + RUNNER_TYPE + "/" + CLIENT;
+
+  private static final String STANDALONE_CONSOLE_RUNNER =
+      "/runner/id/%s/page/RUNNER/mode/%s/timeout/%s/" + RUNNER_TYPE + "/" + STANDALONE;
+
+  private static final String BROWSER_CONTROLLED_RUNNER = "/bcr/id/%s/page/"
+      + PageType.VISUAL_STANDALONE_RUNNER + "/mode/%s/timeout/%s/" + RUNNER_TYPE + "/" + BROWSER;
+
+
   private static final Logger LOGGER = LoggerFactory.getLogger(SlaveBrowser.class);
 
   public static final long TIMEOUT = 15000; // 15 seconds
@@ -50,20 +69,28 @@ public class SlaveBrowser {
   private TimeUnit timeUnit = TimeUnit.SECONDS;
   private AtomicReference<Instant> lastHeartbeat;
   private Set<FileInfo> fileSet = new LinkedHashSet<FileInfo>();
-  private final BlockingQueue<StreamMessage> responses =
-    new LinkedBlockingQueue<StreamMessage>();
+  private final BlockingQueue<StreamMessage> responses = new LinkedBlockingQueue<StreamMessage>();
   private AtomicReference<Command> commandRunning = new AtomicReference<Command>(null);
   private AtomicReference<Command> lastCommandDequeued = new AtomicReference<Command>(null);
   private final long timeout;
   private final Lock lock = new Lock();
 
-  public SlaveBrowser(Time time, String id, BrowserInfo browserInfo, long timeout) {
+  private final HandlerPathPrefix prefix;
+
+  private final String mode;
+
+  private final RunnerType type;
+
+  public SlaveBrowser(Time time, String id, BrowserInfo browserInfo, long timeout,
+      HandlerPathPrefix prefix, String mode, RunnerType type) {
     this.time = time;
     this.timeout = timeout;
     this.id = id;
     this.browserInfo = browserInfo;
-    lastHeartbeat =
-      new AtomicReference<Instant>(new Instant(0));
+    this.prefix = prefix;
+    this.mode = mode;
+    this.type = type;
+    lastHeartbeat = new AtomicReference<Instant>(new Instant(0));
   }
 
   public String getId() {
@@ -102,7 +129,7 @@ public class SlaveBrowser {
   public Command getLastDequeuedCommand() {
     return lastCommandDequeued.get();
   }
-  
+
   public BrowserInfo getBrowserInfo() {
     return browserInfo;
   }
@@ -134,10 +161,10 @@ public class SlaveBrowser {
    *         heartbeat has been received.
    */
   public double getSecondsSinceLastHeartbeat() {
-    return !receivedHeartbeat()
-        ? -1 : ((time.now().getMillis() - lastHeartbeat.get().getMillis())/1000.0);
+    return !receivedHeartbeat() ? -1
+        : ((time.now().getMillis() - lastHeartbeat.get().getMillis()) / 1000.0);
   }
-  
+
   public void addFiles(Collection<FileInfo> fileSet) {
     synchronized (fileSet) {
       this.fileSet.removeAll(fileSet);
@@ -190,7 +217,7 @@ public class SlaveBrowser {
   public void removeFiles(Collection<FileSource> errorFiles) {
     synchronized (fileSet) {
       Set<FileInfo> filesInfoToRemove = new LinkedHashSet<FileInfo>();
-  
+
       for (FileSource f : errorFiles) {
         for (FileInfo info : fileSet) {
           if (info.getFilePath().equals(f.getBasePath())) {
@@ -217,16 +244,24 @@ public class SlaveBrowser {
 
   public boolean isAlive() {
     return receivedHeartbeat()
-        && ((time.now().getMillis() - lastHeartbeat.get().getMillis() < timeout)
-            || timeout == -1);
+        && ((time.now().getMillis() - lastHeartbeat.get().getMillis() < timeout) || timeout == -1);
+  }
+
+  public String getCaptureUrl() {
+    switch (type) {
+      case CLIENT:
+        return prefix.prefixPath(String.format(CLIENT_CONSOLE_RUNNER, id, mode, timeout));
+      case STANDALONE:
+        return prefix.prefixPath(String.format(STANDALONE_CONSOLE_RUNNER, id, mode, timeout));
+      case BROWSER:
+        return prefix.prefixPath(String.format(BROWSER_CONTROLLED_RUNNER, id, mode, timeout));
+    }
+    throw new UnsupportedOperationException("Unsupported Runner type: " + type);
   }
 
   @Override
   public String toString() {
     return format("SlaveBrowser(browserInfo=%s,\n\tid=%s,\n\tsinceLastCheck=%ss,\n\ttimeout=%s)",
-        browserInfo,
-        id,
-        getSecondsSinceLastHeartbeat(),
-        timeout);
-  }  
+        browserInfo, id, getSecondsSinceLastHeartbeat(), timeout);
+  }
 }

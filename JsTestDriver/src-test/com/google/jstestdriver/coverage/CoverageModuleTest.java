@@ -44,7 +44,7 @@ import com.google.jstestdriver.guice.TestResultPrintingModule;
 public class CoverageModuleTest extends TestCase {
   public void testGetActionRunner() throws Exception {
     CoverageModule coverage = new CoverageModule(Collections.<String> emptyList());
-    TestResultPrintingModule printStream = new TestResultPrintingModule("");
+    TestResultPrintingModule printStream = new TestResultPrintingModule();
     FlagsImpl flags = new FlagsImpl();
     flags.setTests(Arrays.asList("test"));
     flags.setBrowser(Arrays.asList("ff"));

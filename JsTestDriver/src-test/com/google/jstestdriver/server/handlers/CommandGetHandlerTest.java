@@ -38,6 +38,7 @@ import com.google.jstestdriver.StreamMessage;
 import com.google.jstestdriver.Time;
 import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.runner.RunnerType;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -48,7 +49,9 @@ public class CommandGetHandlerTest extends TestCase {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     BrowserInfo browserInfo = new BrowserInfo();
     browserInfo.setId(1);
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), "1", browserInfo, SlaveBrowser.TIMEOUT);
+    SlaveBrowser slave =
+        new SlaveBrowser(new TimeImpl(), "1", browserInfo, 20, null, CaptureHandler.QUIRKS,
+            RunnerType.CLIENT);
 
     capturedBrowsers.addSlave(slave);
     CommandGetHandler handler = new CommandGetHandler(null, null, new Gson(), capturedBrowsers);
@@ -60,12 +63,12 @@ public class CommandGetHandlerTest extends TestCase {
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
     BrowserInfo browserInfo = new BrowserInfo();
     browserInfo.setId(1);
-    
+
     CharArrayWriter out = new CharArrayWriter();
     PrintWriter writer = new PrintWriter(out);
-    
+
     IMocksControl control = EasyMock.createControl();
-    
+
     HttpServletResponse response = control.createMock(HttpServletResponse.class);
     expect(response.getWriter()).andReturn(writer).anyTimes();
     HttpServletRequest request = control.createMock(HttpServletRequest.class);
@@ -73,20 +76,21 @@ public class CommandGetHandlerTest extends TestCase {
     expect(request.getParameter("nextBrowserId")).andReturn(null);
     expect(request.getParameter("id")).andReturn(browserInfo.getId().toString());
     control.replay();
-    
+
     SlaveBrowser slave = new SlaveBrowser(new Time() {
       int i = 0;
+
       public Instant now() {
         i += 100;
         return new Instant(i);
       }
-    }, "1", browserInfo, 0);
+    }, "1", browserInfo, 0, null, CaptureHandler.QUIRKS, RunnerType.CLIENT);
     slave.addResponse(new Response(ResponseType.LOG.name(), "", browserInfo, "", -1), true);
     capturedBrowsers.addSlave(slave);
     Gson gson = new Gson();
     CommandGetHandler handler = new CommandGetHandler(request, response, gson, capturedBrowsers);
     handler.handleIt();
-    assertEquals(ResponseType.BROWSER_PANIC,
-        gson.fromJson(out.toString(), StreamMessage.class).getResponse().getResponseType());
+    assertEquals(ResponseType.BROWSER_PANIC, gson.fromJson(out.toString(), StreamMessage.class)
+        .getResponse().getResponseType());
   }
 }

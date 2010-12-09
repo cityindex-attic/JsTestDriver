@@ -1,12 +1,12 @@
 /*
  * Copyright 2009 Google Inc.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -28,6 +28,7 @@ import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.MockTime;
 import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.runner.RunnerType;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -42,7 +43,9 @@ public class HomeHandlerTest extends TestCase {
     browserInfo.setName("browser");
     browserInfo.setOs("OS");
     browserInfo.setVersion("1.0");
-    SlaveBrowser slave = new SlaveBrowser(new MockTime(0), "1", browserInfo, SlaveBrowser.TIMEOUT);
+    SlaveBrowser slave =
+        new SlaveBrowser(new MockTime(0), "1", browserInfo, SlaveBrowser.TIMEOUT, null,
+            CaptureHandler.QUIRKS, RunnerType.CLIENT);
 
     capturedBrowsers.addSlave(slave);
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -50,7 +53,7 @@ public class HomeHandlerTest extends TestCase {
     HttpServletResponse response = EasyMock.createMock(HttpServletResponse.class);
     HomeHandler handler = new HomeHandler(capturedBrowsers, response, writer);
 
-    /*expect*/ response.setContentType("text/html");
+    /* expect */response.setContentType("text/html");
 
     EasyMock.replay(response);
 

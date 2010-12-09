@@ -26,10 +26,11 @@ import com.google.jstestdriver.util.ParameterParser;
 /**
  * "Captures" a browser by redirecting it to RemoteConsoleRunner url, and adds
  * it to the CapturedBrowsers collection.
+ * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class CaptureHandler implements RequestHandler {
-  
+
   private static final Logger logger = LoggerFactory.getLogger(CaptureHandler.class);
 
   public static final String RUNNER_TYPE = "rt";
@@ -39,17 +40,11 @@ public class CaptureHandler implements RequestHandler {
   public static final String QUIRKS = "quirks";
 
   private static final Map<String, Integer> PARAMETERS = ImmutableMap.<String, Integer>builder()
-    .put(STRICT, 0)
-    .put(QUIRKS, 0)
-    .put(RUNNER_TYPE, 1)
-    .put(SlavePageRequest.MODE, 1)
-    .put(SlavePageRequest.ID, 1)
-    .put(SlavePageRequest.TIMEOUT, 1)
-    .build();
+      .put(STRICT, 0).put(QUIRKS, 0).put(RUNNER_TYPE, 1).put(SlavePageRequest.MODE, 1)
+      .put(SlavePageRequest.ID, 1).put(SlavePageRequest.TIMEOUT, 1).build();
 
-  private static final Set<String> BLACKLIST = ImmutableSet.<String>builder()
-    .add("capture")
-    .build();
+  private static final Set<String> BLACKLIST = ImmutableSet.<String>builder().add("capture")
+      .build();
 
   private final SlavePageRequest request;
   private final HttpServletResponse response;
@@ -58,11 +53,8 @@ public class CaptureHandler implements RequestHandler {
   private final ParameterParser restParser;
 
   @Inject
-  public CaptureHandler(
-      SlavePageRequest request,
-      HttpServletResponse response,
-      BrowserHunter browserHunter,
-      ParameterParser restParser) {
+  public CaptureHandler(SlavePageRequest request, HttpServletResponse response,
+      BrowserHunter browserHunter, ParameterParser restParser) {
     this.browserHunter = browserHunter;
     this.request = request;
     this.response = response;
@@ -83,7 +75,7 @@ public class CaptureHandler implements RequestHandler {
   private Long parseLong(final String value) {
     return value == null ? null : Long.parseLong(value);
   }
-  
+
   private RunnerType parseRunnerType(String runnerType) {
     return runnerType == null ? CLIENT : RunnerType.valueOf(runnerType.toUpperCase());
   }
@@ -94,7 +86,8 @@ public class CaptureHandler implements RequestHandler {
 
     parser.parse(userAgent);
     SlaveBrowser slaveBrowser =
-        browserHunter.captureBrowser(id, parser.getName(), parser.getVersion(), parser.getOs(), timeout);
-    return browserHunter.getCaptureUrl(slaveBrowser.getId(), mode, runnerType, timeout);
+        browserHunter.captureBrowser(id, parser.getName(), parser.getVersion(), parser.getOs(),
+            timeout, mode, runnerType);
+    return slaveBrowser.getCaptureUrl();
   }
 }

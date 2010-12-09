@@ -45,6 +45,7 @@ import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.Response.ResponseType;
 import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
+import com.google.jstestdriver.runner.RunnerType;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -61,12 +62,15 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   public void testGetDataFromJsPuppetServer() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
+    SlaveBrowser slave =
+        new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
+            RunnerType.CLIENT);
     String data = "hello";
 
     slave.createCommand(data);
     browsers.addSlave(slave);
-    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
+    BrowserQueryResponseHandler handler =
+        new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
 
     handler.service(id, null, "true", null, writer);
     assertEquals(data, out.toString());
@@ -75,10 +79,13 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   public void testSettingResponseForACommand() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
+    SlaveBrowser slave =
+        new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
+            RunnerType.CLIENT);
 
     browsers.addSlave(slave);
-    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
+    BrowserQueryResponseHandler handler =
+        new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
     slave.createCommand("awaitingResponse");
     slave.dequeueCommand();
     slave.createCommand("BrowserCommand");
@@ -101,11 +108,14 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   public void testSimulatePollTimeoutDequeueNullCommand() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
+    SlaveBrowser slave =
+        new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
+            RunnerType.CLIENT);
 
     slave.setDequeueTimeout(0L, TimeUnit.NANOSECONDS);
     browsers.addSlave(slave);
-    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
+    BrowserQueryResponseHandler handler =
+        new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
 
     handler.service(id, null, "true", null, writer);
     assertEquals("{\"command\":\"noop\"}", out.toString());
@@ -115,12 +125,15 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
     MockTime time = new MockTime(42L);
-    SlaveBrowser slave = new SlaveBrowser(time, id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
+    SlaveBrowser slave =
+        new SlaveBrowser(time, id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
+            RunnerType.CLIENT);
     String data = "hello";
 
     slave.createCommand(data);
     browsers.addSlave(slave);
-    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
+    BrowserQueryResponseHandler handler =
+        new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
 
     handler.service(id, null, null, null, writer);
     assertEquals(42L, slave.getLastHeartbeat().getMillis());
@@ -138,10 +151,13 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   public void testDoNotGetCommandIfNotLastResponse() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
+    SlaveBrowser slave =
+        new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
+            RunnerType.CLIENT);
 
     browsers.addSlave(slave);
-    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
+    BrowserQueryResponseHandler handler =
+        new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
     slave.createCommand("awaitingResponse");
     slave.dequeueCommand();
     slave.createCommand("BrowserCommand");
@@ -164,10 +180,13 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   public void testFilesLoadedAreAddedToTheBrowserFileSet() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
+    SlaveBrowser slave =
+        new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
+            RunnerType.CLIENT);
 
     browsers.addSlave(slave);
-    BrowserQueryResponseHandler handler = new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
+    BrowserQueryResponseHandler handler =
+        new BrowserQueryResponseHandler(null, null, browsers, streamedResponses);
     List<FileResult> fileResults = new LinkedList<FileResult>();
 
     fileResults.add(new FileResult(new FileSource("/test/filename1.js", 123), true, ""));
@@ -206,7 +225,9 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   public void testResetClearsTheBrowserFileSet() throws Exception {
     CapturedBrowsers browsers = new CapturedBrowsers();
     String id = "1";
-    SlaveBrowser slave = new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), SlaveBrowser.TIMEOUT);
+    SlaveBrowser slave =
+        new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
+            RunnerType.CLIENT);
 
     browsers.addSlave(slave);
     BrowserQueryResponseHandler handler =
@@ -218,8 +239,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
     response.setResponse("Runner reset.");
     response.setBrowser(new BrowserInfo());
 
-    JsonCommand resetCommand = new JsonCommand(CommandType.RESET,
-        Collections.<String> emptyList());
+    JsonCommand resetCommand = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
     slave.createCommand(gson.toJson(resetCommand));
     slave.dequeueCommand();
 
