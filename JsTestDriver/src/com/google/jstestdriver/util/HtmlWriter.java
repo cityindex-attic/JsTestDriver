@@ -107,7 +107,7 @@ public class HtmlWriter {
 
   public HtmlWriter writeScript(String script) throws IOException {
     writer.append("<script type=\"text/javascript\">")
-      .append(prefix.prefixPath(script))
+      .append(script)
       .append("</script>");
     return this;
   }
