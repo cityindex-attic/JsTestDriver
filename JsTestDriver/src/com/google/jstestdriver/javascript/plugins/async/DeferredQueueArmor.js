@@ -25,6 +25,7 @@
 
 /**
  * Constructs a DeferredQueueArmor.
+ * @constructor
  */
 jstestdriver.plugins.async.DeferredQueueArmor = function() {
   this.q_ = null;
@@ -32,12 +33,21 @@ jstestdriver.plugins.async.DeferredQueueArmor = function() {
 };
 
 
+/**
+ * Sets the current queue instance.
+ * @param {jstestdriver.plugins.async.DeferredQueue} queue The queue.
+ */
 jstestdriver.plugins.async.DeferredQueueArmor.prototype.setQueue = function(queue) {
   this.q_ = queue;
 };
 
 
-jstestdriver.plugins.async.DeferredQueueArmor.prototype.defer = function(description, operation) {
+/**
+ * Adds a function to the queue to call later.
+ * @param {string|Function} description The description or function.
+ * @param {Function=} operation The function.
+ */
+jstestdriver.plugins.async.DeferredQueueArmor.prototype.call = function(description, operation) {
   if (!this.q_) {
     throw new Error('Queue undefined!');
   }
@@ -54,3 +64,13 @@ jstestdriver.plugins.async.DeferredQueueArmor.prototype.defer = function(descrip
 
   return this;
 };
+
+
+/**
+ * Adds a function to the queue to call later.
+ * @param {string|Function} description The description or function.
+ * @param {Function=} operation The function.
+ * @deprecated
+ */
+jstestdriver.plugins.async.DeferredQueueArmor.prototype.defer =
+    jstestdriver.plugins.async.DeferredQueueArmor.prototype.call;

@@ -25,14 +25,43 @@
 
 /**
  * Constructs a CallbackPoolArmor.
+ * @constructor
  */
 jstestdriver.plugins.async.CallbackPoolArmor = function(pool) {
   this.pool_ = pool;
 };
 
 
-jstestdriver.plugins.async.CallbackPoolArmor.prototype.add = function(wrapped, opt_n) {
-  if (wrapped) {
-    return this.pool_.add(wrapped, opt_n);
+/**
+ * Adds a callback to the pool.
+ * @param {Function} callback The callback to wrap.
+ * @param {Number} opt_n An optional number of times to wait for the callback to
+ *     be called.
+ */
+jstestdriver.plugins.async.CallbackPoolArmor.prototype.addCallback = function(callback, opt_n) {
+  if (callback) {
+    return this.pool_.add(callback, opt_n);
   }
+};
+
+
+/**
+ * Adds a callback to the pool.
+ * @param {Function} callback The callback to wrap.
+ * @param {Number} opt_n An optional number of times to wait for the callback to
+ *     be called.
+ * @deprecated
+ */
+jstestdriver.plugins.async.CallbackPoolArmor.prototype.add =
+    jstestdriver.plugins.async.CallbackPoolArmor.prototype.addCallback;
+
+
+/**
+ * A no-op callback that's useful for waiting until an asynchronous operation
+ * completes without performing any action.
+ * @param {Number} opt_n An optional number of times to wait for the callback to
+ *     be called.
+ */
+jstestdriver.plugins.async.CallbackPoolArmor.prototype.noop = function(opt_n) {
+  return this.pool_.add(jstestdriver.EMPTY_FUNC, opt_n);
 };

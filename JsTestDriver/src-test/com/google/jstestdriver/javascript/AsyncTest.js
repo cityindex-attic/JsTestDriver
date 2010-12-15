@@ -96,6 +96,16 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
 };
 
 
+asyncTest.prototype.testNewNames = function(driver) {
+  driver.call(function(callbacks) {
+    window.setTimeout(callbacks.noop(), 1000);
+  });
+  driver.call(function() {
+    assertTrue(true);
+  });
+};
+
+
 asyncTest.prototype.testRequest = function(queue) {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', jstestdriver.createPath(window.location.toString(),
