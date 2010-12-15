@@ -196,7 +196,6 @@ deferredQueueTest.prototype.testNestedStepsTechnicalStyle = function() {
     step = 3;
   });
   q.startStep();
-  console.log(caughtErrors);
   assertEquals(0, caughtErrors.length);
   assertTrue(queueComplete);
   assertTrue(stepOneCalled);
