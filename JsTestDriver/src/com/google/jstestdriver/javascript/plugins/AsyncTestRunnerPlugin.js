@@ -127,8 +127,9 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.execute_ = function(
     onQueueComplete, invokeMethod) {
 
   // Create a new DeferredQueue that will call invokeMethod() once all steps complete.
-  var q = new (this.queueConstructor_)(this.setTimeout_, this.testCase_, onQueueComplete);
-  var armor = new (this.armorConstructor_)(q);
+  var armor = new (this.armorConstructor_)();
+  var q = new (this.queueConstructor_)(this.setTimeout_, this.testCase_, onQueueComplete, armor);
+  armor.setQueue(q);
 
   // Attempt to invoke the method. The method will add zero or more steps
   // to the queue. If the method throws an error, add that error to the list.

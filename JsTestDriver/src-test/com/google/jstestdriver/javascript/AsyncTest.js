@@ -122,11 +122,11 @@ asyncTest.prototype.testRequest = function(queue) {
 asyncTest.prototype.testWithNestedDeferredQueues = function(queue) {
   var state = 0;
 
-  queue.defer(function(pool, childQueue) {
+  queue.defer(function(pool) {
     assertEquals(0, state);
     window.setTimeout(pool.add(function() {state = 1;}), 250);
 
-    childQueue.defer(function(pool) {
+    queue.defer(function(pool) {
       assertEquals(1, state);
       window.setTimeout(pool.add(function() {state = 2;}), 250);
     });

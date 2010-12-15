@@ -22,8 +22,10 @@ deferredQueueTest.prototype.testEmptyQueue = function() {
   var onQueueComplete = function() {
     queueComplete = true;
   };
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
   var q = new jstestdriver.plugins.async.DeferredQueue(
-      function(callback) {callback();}, {}, onQueueComplete);
+      function(callback) {callback();}, {}, onQueueComplete, armor);
+  armor.setQueue(q);
   q.startStep();
   assertTrue(queueComplete);
 };
@@ -35,8 +37,10 @@ deferredQueueTest.prototype.testScopeIsNotWindow = function() {
     queueComplete = true;
   };
   var testCase = {};
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
   var q = new jstestdriver.plugins.async.DeferredQueue(
-      function(callback) {callback();}, testCase, onQueueComplete);
+      function(callback) {callback();}, testCase, onQueueComplete, armor);
+  armor.setQueue(q);
   var stepOneScope;
   q.defer('Step 1', function() {
     stepOneScope = this;
@@ -53,8 +57,10 @@ deferredQueueTest.prototype.testOneStep = function() {
   var onQueueComplete = function() {
     queueComplete = true;
   };
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
   var q = new jstestdriver.plugins.async.DeferredQueue(
-      function(callback) {callback();}, {}, onQueueComplete);
+      function(callback) {callback();}, {}, onQueueComplete, armor);
+  armor.setQueue(q);
   var stepOneCalled = false;
   q.defer('Step 1', function() {
     stepOneCalled = true;
@@ -70,8 +76,10 @@ deferredQueueTest.prototype.testMultipleSteps = function() {
   var onQueueComplete = function() {
     queueComplete = true;
   };
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
   var q = new jstestdriver.plugins.async.DeferredQueue(
-      function(callback) {callback();}, {}, onQueueComplete);
+      function(callback) {callback();}, {}, onQueueComplete, armor);
+  armor.setQueue(q);
   var stepOneCalled = false;
   q.defer('Step 1', function() {
     stepOneCalled = true;
@@ -94,8 +102,10 @@ deferredQueueTest.prototype.testMultipleStepsWithFailure = function() {
     queueComplete = true;
     caughtErrors = errors;
   };
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
   var q = new jstestdriver.plugins.async.DeferredQueue(
-      function(callback) {callback();}, {}, onQueueComplete);
+      function(callback) {callback();}, {}, onQueueComplete, armor);
+  armor.setQueue(q);
   var stepOneCalled = false;
   q.defer('Step 1', function() {
     stepOneCalled = true;
@@ -121,28 +131,72 @@ deferredQueueTest.prototype.testNestedSteps = function() {
     queueComplete = true;
     caughtErrors = errors;
   };
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
   var q = new jstestdriver.plugins.async.DeferredQueue(
-      function(callback) {callback();}, {}, onQueueComplete);
+      function(callback) {callback();}, {}, onQueueComplete, armor);
+  armor.setQueue(q);
   var stepOneCalled = false;
   var stepTwoCalled = false;
-  q.defer('Step 1', function(unused, childQ) {
+  armor.defer('Step 1', function() {
     stepOneCalled = true;
     assertEquals(0, step);
     step = 1;
 
-    childQ.defer('Step 2', function() {
+    armor.defer('Step 2', function() {
       stepTwoCalled = true;
       assertEquals(1, step);
       step = 2;
     });
   });
   var stepThreeCalled = false;
-  q.defer('Step 3', function() {
+  armor.defer('Step 3', function() {
     stepThreeCalled = true;
     assertEquals(2, step);
     step = 3;
   });
   q.startStep();
+  console.log(caughtErrors);
+  assertEquals(0, caughtErrors.length);
+  assertTrue(queueComplete);
+  assertTrue(stepOneCalled);
+  assertTrue(stepTwoCalled);
+  assertTrue(stepThreeCalled);
+};
+
+
+deferredQueueTest.prototype.testNestedStepsTechnicalStyle = function() {
+  var step = 0;
+  var queueComplete = false;
+  var caughtErrors;
+  var onQueueComplete = function(errors) {
+    queueComplete = true;
+    caughtErrors = errors;
+  };
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
+  var q = new jstestdriver.plugins.async.DeferredQueue(
+      function(callback) {callback();}, {}, onQueueComplete, armor);
+  armor.setQueue(q);
+  var stepOneCalled = false;
+  var stepTwoCalled = false;
+  armor.defer('Step 1', function(unused, child) {
+    stepOneCalled = true;
+    assertEquals(0, step);
+    step = 1;
+
+    child.defer('Step 2', function() {
+      stepTwoCalled = true;
+      assertEquals(1, step);
+      step = 2;
+    });
+  });
+  var stepThreeCalled = false;
+  armor.defer('Step 3', function() {
+    stepThreeCalled = true;
+    assertEquals(2, step);
+    step = 3;
+  });
+  q.startStep();
+  console.log(caughtErrors);
   assertEquals(0, caughtErrors.length);
   assertTrue(queueComplete);
   assertTrue(stepOneCalled);
@@ -159,16 +213,18 @@ deferredQueueTest.prototype.testNestedStepsWithFailure = function() {
     queueComplete = true;
     caughtErrors = errors;
   };
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
   var q = new jstestdriver.plugins.async.DeferredQueue(
-      function(callback) {callback();}, {}, onQueueComplete);
+      function(callback) {callback();}, {}, onQueueComplete, armor);
+  armor.setQueue(q);
   var stepOneCalled = false;
   var stepTwoCalled = false;
-  q.defer('Step 1', function(unused, childQ) {
+  armor.defer('Step 1', function(unused) {
     stepOneCalled = true;
     assertEquals(0, step);
     step = 1;
 
-    childQ.defer('Step 2', function() {
+    armor.defer('Step 2', function() {
       stepTwoCalled = true;
       assertEquals(1, step);
       step = 2;
@@ -176,7 +232,7 @@ deferredQueueTest.prototype.testNestedStepsWithFailure = function() {
     });
   });
   var stepThreeCalled = false;
-  q.defer('Step 3', function() {
+  armor.defer('Step 3', function() {
     stepThreeCalled = true;
     assertEquals(2, step);
     step = 3;
@@ -195,8 +251,10 @@ deferredQueueTest.prototype.testMultipleStepsWithAsynchronousCalls = function() 
   var onQueueComplete = function() {
     queueComplete = true;
   };
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
   var q = new jstestdriver.plugins.async.DeferredQueue(
-      function(callback) {callback();}, {}, onQueueComplete);
+      function(callback) {callback();}, {}, onQueueComplete, armor);
+  armor.setQueue(q);
   var stepOneCalled = false;
   var stepOneCallbackOne;
   var stepOneCallbackTwo;
@@ -235,8 +293,10 @@ deferredQueueTest.prototype.testMultipleStepsWithAsynchronousCallsWithFailure = 
     queueComplete = true;
     caughtErrors = errors;
   };
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
   var q = new jstestdriver.plugins.async.DeferredQueue(
-      function(callback) {callback();}, {}, onQueueComplete);
+      function(callback) {callback();}, {}, onQueueComplete, armor);
+  armor.setQueue(q);
   var stepOneCalled = false;
   var stepOneCallbackOne;
   var stepOneCallbackTwo;
@@ -278,23 +338,25 @@ deferredQueueTest.prototype.testNestedStepsWithAsynchronousCalls = function() {
   var onQueueComplete = function() {
     queueComplete = true;
   };
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
   var q = new jstestdriver.plugins.async.DeferredQueue(
-      function(callback) {callback();}, {}, onQueueComplete);
+      function(callback) {callback();}, {}, onQueueComplete, armor);
+  armor.setQueue(q);
   var stepOneCalled = false;
   var stepOneCallback;
   var stepTwoCalled = false;
   var stepTwoCallback;
-  q.defer('Step 1', function(pool, child) {
+  armor.defer('Step 1', function(pool) {
     stepOneCalled = true;
     stepOneCallback = pool.add(function() {});
 
-    child.defer('Step 2', function(pool) {
+    armor.defer('Step 2', function(pool) {
       stepTwoCalled = true;
       stepTwoCallback = pool.add(function() {});
     });
   });
   var stepThreeCalled = false;
-  q.defer('Step 3', function() {
+  armor.defer('Step 3', function() {
     stepThreeCalled = true;
   });
   q.startStep();
@@ -326,23 +388,25 @@ deferredQueueTest.prototype.testNestedStepsWithAsynchronousCallsWithFailure = fu
     queueComplete = true;
     caughtErrors = errors;
   };
+  var armor = new jstestdriver.plugins.async.DeferredQueueArmor();
   var q = new jstestdriver.plugins.async.DeferredQueue(
-      function(callback) {callback();}, {}, onQueueComplete);
+      function(callback) {callback();}, {}, onQueueComplete, armor);
+  armor.setQueue(q);
   var stepOneCalled = false;
   var stepOneCallback;
   var stepTwoCalled = false;
   var stepTwoCallback;
-  q.defer('Step 1', function(pool, child) {
+  armor.defer('Step 1', function(pool) {
     stepOneCalled = true;
     stepOneCallback = pool.add(function() {});
 
-    child.defer('Step 2', function(pool) {
+    armor.defer('Step 2', function(pool) {
       stepTwoCalled = true;
       stepTwoCallback = pool.add(function() {throw 'error';});
     });
   });
   var stepThreeCalled = false;
-  q.defer('Step 3', function() {
+  armor.defer('Step 3', function() {
     stepThreeCalled = true;
   });
   q.startStep();

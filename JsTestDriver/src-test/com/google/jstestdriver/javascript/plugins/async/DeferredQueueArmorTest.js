@@ -17,13 +17,23 @@
 var deferredQueueArmorTest = TestCase('deferredQueueArmorTest');
 
 
+deferredQueueArmorTest.prototype.testWithNullQueue = function() {
+  var q = new jstestdriver.plugins.async.DeferredQueueArmor();
+  try {
+    q.defer(function() {});
+    fail('should throw exception');
+  } catch(ignored) {}
+};
+
+
 deferredQueueArmorTest.prototype.testDeferWithoutName = function() {
   var delegate = {};
   var capturedDescription;
   delegate.defer = function(description, operation) {
     capturedDescription = description;
   };
-  var q = new jstestdriver.plugins.async.DeferredQueueArmor(delegate);
+  var q = new jstestdriver.plugins.async.DeferredQueueArmor();
+  q.setQueue(delegate);
 
   q.defer(function() {});
 
@@ -45,7 +55,8 @@ deferredQueueArmorTest.prototype.testDeferWithName = function() {
   delegate.defer = function(description, operation) {
     capturedDescription = description;
   };
-  var q = new jstestdriver.plugins.async.DeferredQueueArmor(delegate);
+  var q = new jstestdriver.plugins.async.DeferredQueueArmor();
+  q.setQueue(delegate);
 
   q.defer('A', function() {});
 
@@ -67,7 +78,8 @@ deferredQueueArmorTest.prototype.testDeferWithUndefinedOperation = function() {
   delegate.defer = function(description, operation) {
     capturedDescription = description;
   };
-  var q = new jstestdriver.plugins.async.DeferredQueueArmor(delegate);
+  var q = new jstestdriver.plugins.async.DeferredQueueArmor();
+  q.setQueue(delegate);
 
   q.defer();
 
@@ -85,7 +97,8 @@ deferredQueueArmorTest.prototype.testChainedDeferCalls = function() {
   delegate.defer = function(description, operation) {
     capturedDescriptions.push(description);
   };
-  var q = new jstestdriver.plugins.async.DeferredQueueArmor(delegate);
+  var q = new jstestdriver.plugins.async.DeferredQueueArmor();
+  q.setQueue(delegate);
 
   q.defer(function() {})
    .defer(function() {})

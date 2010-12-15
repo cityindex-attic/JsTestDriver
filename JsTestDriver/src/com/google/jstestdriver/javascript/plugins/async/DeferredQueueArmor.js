@@ -26,13 +26,22 @@
 /**
  * Constructs a DeferredQueueArmor.
  */
-jstestdriver.plugins.async.DeferredQueueArmor = function(q) {
-  this.q_ = q;
+jstestdriver.plugins.async.DeferredQueueArmor = function() {
+  this.q_ = null;
   this.step_ = 1;
 };
 
 
+jstestdriver.plugins.async.DeferredQueueArmor.prototype.setQueue = function(queue) {
+  this.q_ = queue;
+};
+
+
 jstestdriver.plugins.async.DeferredQueueArmor.prototype.defer = function(description, operation) {
+  if (!this.q_) {
+    throw new Error('Queue undefined!');
+  }
+
   if (typeof description == 'function') {
     operation = description;
     description = 'Step ' + this.step_;
