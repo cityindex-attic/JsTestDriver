@@ -17,11 +17,11 @@
 var callbackPoolArmorTest = TestCase('callbackPoolArmorTest');
 
 
-callbackPoolArmorTest.prototype.testAdd = function() {
+callbackPoolArmorTest.prototype.testAddCallback = function() {
   var delegate = {};
   var capturedCallback;
   var capturedOptN;
-  delegate.add = function(wrapped, opt_n) {
+  delegate.addCallback = function(wrapped, opt_n) {
     capturedCallback = wrapped;
     capturedOptN = opt_n;
     return wrapped;
@@ -31,7 +31,7 @@ callbackPoolArmorTest.prototype.testAdd = function() {
   var callback = function() {};
   var result = pool.add(callback);
 
-  assertSame(callback, capturedCallback)
+  assertSame(callback, capturedCallback);
   assertSame(callback, result);
   assertUndefined(capturedOptN);
 
@@ -52,4 +52,43 @@ callbackPoolArmorTest.prototype.testAddUndefinedCallback = function() {
   pool.add();
 
   assertFalse(delegateCalled);
+};
+
+
+callbackPoolArmorTest.prototype.testAddErrback = function() {
+  var delegate = {};
+  delegate.addErrback = function() {
+    return 'errback';
+  };
+  var pool = new jstestdriver.plugins.async.CallbackPoolArmor(delegate);
+
+  var result = pool.addErrback();
+
+  assertEquals('errback', result);
+};
+
+
+callbackPoolArmorTest.prototype.testNoop = function() {
+  var delegate = {};
+  var capturedCallback;
+  var capturedOptN;
+  delegate.addCallback = function(wrapped, opt_n) {
+    capturedCallback = wrapped;
+    capturedOptN = opt_n;
+    return wrapped;
+  };
+  delegate.noop = function() {
+    return jstestdriver.EMPTY_FUNC;
+  };
+  var pool = new jstestdriver.plugins.async.CallbackPoolArmor(delegate);
+
+  var result = pool.noop();
+
+  assertSame(jstestdriver.EMPTY_FUNC, capturedCallback)
+  assertSame(jstestdriver.EMPTY_FUNC, result);
+  assertUndefined(capturedOptN);
+
+  pool.noop(5);
+
+  assertEquals(5, capturedOptN);
 };

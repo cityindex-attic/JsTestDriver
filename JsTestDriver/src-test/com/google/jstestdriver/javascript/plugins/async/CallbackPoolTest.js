@@ -243,3 +243,26 @@ callbackPoolTest.prototype.testAddWithErrors = function() {
   assertEquals(0, pool.count());
   assertTrue(complete);
 };
+
+
+callbackPoolTest.prototype.testAddErrback = function() {
+  var complete = false;
+  var pool = new jstestdriver.plugins.async.CallbackPool(function(callback) {
+    callback();
+  }, {}, function(errors) {
+    assertEquals(1, errors.length);
+    complete = true;
+  });
+
+  assertEquals(0, pool.count());
+
+  var errback = pool.addErrback();
+  assertEquals(0, pool.count());
+  assertFalse(complete);
+
+  errback(new Error('asdf'));
+  pool.activate();
+
+  assertEquals(0, pool.count());
+  assertTrue(complete);
+};

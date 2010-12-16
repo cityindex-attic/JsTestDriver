@@ -392,8 +392,56 @@ asyncTestRunnerPluginTest.prototype.testTestCaseWithSteps = function() {
 };
 
 
+asyncTestRunnerPluginTest.prototype.testTestCaseWithErrback = function() {
+  var timesTestMethodCalled = 0;
+  var timesTestMethodStepCalled = 0;
+
+  var testCase = function() {};
+  testCase.prototype.testMethod = function(driver) {
+    timesTestMethodCalled += 1;
+    driver.call(function(callbacks) {
+      timesTestMethodStepCalled += 1;
+      callbacks.addErrback()(new Error('whoopsie daisy'));
+    });
+  };
+
+  var testCaseInfo = new jstestdriver.TestCaseInfo(
+      'testCase', testCase, jstestdriver.TestCaseInfo.ASYNC_TYPE);
+
+  var asyncTestRunner = new jstestdriver.plugins.async.AsyncTestRunnerPlugin(
+      Date, function() {}, function(callback) {callback();});
+
+  var testDone = false;
+  var testResult;
+  var onTestDone = function(result) {
+    testResult = result;
+    testDone = true;
+  };
+
+  var testRunConfigurationComplete = false;
+  var onTestRunConfigurationComplete = function() {
+    testRunConfigurationComplete = true;
+  };
+
+  var testRunConfiguration = {};
+  testRunConfiguration.getTestCaseInfo = function() {return testCaseInfo;};
+  testRunConfiguration.getTests = function() {return ['testMethod'];};
+
+  var testCaseAccepted = asyncTestRunner.runTestConfiguration(
+      testRunConfiguration, onTestDone, onTestRunConfigurationComplete);
+
+  assertTrue(testCaseAccepted);
+
+  assertEquals(1, timesTestMethodCalled);
+  assertEquals(1, timesTestMethodStepCalled);
+  assertTrue(testDone);
+  assertTrue(testRunConfigurationComplete);
+  assertEquals('failed', testResult.result);
+};
+
+
 asyncTestRunnerPluginTest.prototype.
-    testTestCaseWithCallbacksWithSetupError = function() {
+    testTestCaseWithStepsWithSetupError = function() {
   var timesSetUpCalled = 0;
   var timesSetUpStepCalled = 0;
   var timesTestMethodCalled = 0;

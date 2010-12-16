@@ -92,7 +92,7 @@ jstestdriver.plugins.async.CallbackPool.prototype.onError = function(error) {
  * to the pool.
  * @param opt_n the number of permitted uses of the given callback; defaults to one.
  */
-jstestdriver.plugins.async.CallbackPool.prototype.add = function(wrapped, opt_n) {
+jstestdriver.plugins.async.CallbackPool.prototype.addCallback = function(wrapped, opt_n) {
   this.count_ += opt_n || 1;
   console.log('adding. (' + this.count_ + ' in pool)');
   var callback = new jstestdriver.plugins.async.TestSafeCallbackBuilder()
@@ -104,6 +104,30 @@ jstestdriver.plugins.async.CallbackPool.prototype.add = function(wrapped, opt_n)
   callback.arm(jstestdriver.plugins.async.CallbackPool.TIMEOUT);
   return function() {
     return callback.invoke.apply(callback, arguments);
+  };
+};
+
+
+/**
+ * Adds a callback function to the pool, optionally more than once.
+ *
+ * @param wrapped the callback function to decorate with safeguards and to add
+ * to the pool.
+ * @param opt_n the number of permitted uses of the given callback; defaults to one.
+ * @deprecated
+ */
+jstestdriver.plugins.async.CallbackPool.prototype.add =
+    jstestdriver.plugins.async.CallbackPool.prototype.addCallback;
+
+
+/**
+ * @return {Function} An errback function to attach to an asynchronous system so
+ *     that the test runner can be notified in the event of error.
+ */
+jstestdriver.plugins.async.CallbackPool.prototype.addErrback = function() {
+  var pool = this;
+  return function(error) {
+    pool.onError(new Error(error));
   };
 };
 

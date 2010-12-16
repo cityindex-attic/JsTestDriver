@@ -98,7 +98,7 @@ asyncTest.prototype.testSeriesOfAsyncSteps = function(q) {
 
 asyncTest.prototype.testNewNames = function(driver) {
   driver.call(function(callbacks) {
-    window.setTimeout(callbacks.noop(), 1000);
+    window.setTimeout(callbacks.noop(), 250);
   });
   driver.call(function() {
     assertTrue(true);

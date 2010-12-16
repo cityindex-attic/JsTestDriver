@@ -40,8 +40,17 @@ jstestdriver.plugins.async.CallbackPoolArmor = function(pool) {
  */
 jstestdriver.plugins.async.CallbackPoolArmor.prototype.addCallback = function(callback, opt_n) {
   if (callback) {
-    return this.pool_.add(callback, opt_n);
+    return this.pool_.addCallback(callback, opt_n);
   }
+};
+
+
+/**
+ * @return {Function} An errback function to attach to an asynchronous system so
+ *     that the test runner can be notified in the event of error.
+ */
+jstestdriver.plugins.async.CallbackPoolArmor.prototype.addErrback = function() {
+  return this.pool_.addErrback();
 };
 
 
@@ -63,5 +72,5 @@ jstestdriver.plugins.async.CallbackPoolArmor.prototype.add =
  *     be called.
  */
 jstestdriver.plugins.async.CallbackPoolArmor.prototype.noop = function(opt_n) {
-  return this.pool_.add(jstestdriver.EMPTY_FUNC, opt_n);
+  return this.pool_.addCallback(jstestdriver.EMPTY_FUNC, opt_n);
 };
