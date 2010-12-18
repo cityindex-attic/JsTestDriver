@@ -164,10 +164,11 @@
                FiniteUseCallback.js,
                Timeout.js,
                TestSafeCallbackBuilder.js,
-               CallbackPool.js
-               CallbackPoolArmor.js
-               DeferredQueue.js
-               DeferredQueueArmor.js" />
+               CallbackPool.js,
+               CallbackPoolArmor.js,
+               DeferredQueue.js,
+               DeferredQueueArmor.js,
+               TestStage.js" />
       <filelist dir="${destdir}/${javascript-resources}/plugins"
         files="ScriptLoader.js,
                StylesheetLoader.js,
@@ -218,10 +219,11 @@
                FiniteUseCallback.js,
                Timeout.js,
                TestSafeCallbackBuilder.js,
-               CallbackPool.js
-               CallbackPoolArmor.js
-               DeferredQueue.js
-               DeferredQueueArmor.js" />
+               CallbackPool.js,
+               CallbackPoolArmor.js,
+               DeferredQueue.js,
+               DeferredQueueArmor.js,
+               TestStage.js" />
       <filelist dir="${destdir}/${javascript-resources}/plugins"
         files="ScriptLoader.js,
                StylesheetLoader.js,
@@ -263,10 +265,11 @@
                FiniteUseCallback.js,
                Timeout.js,
                TestSafeCallbackBuilder.js,
-               CallbackPool.js
-               CallbackPoolArmor.js
-               DeferredQueue.js
-               DeferredQueueArmor.js" />
+               CallbackPool.js,
+               CallbackPoolArmor.js,
+               DeferredQueue.js,
+               DeferredQueueArmor.js,
+               TestStage.js" />
       <filelist dir="${destdir}/${javascript-resources}/plugins"
         files="ScriptLoader.js,
                StylesheetLoader.js,

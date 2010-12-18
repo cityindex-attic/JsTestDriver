@@ -124,24 +124,13 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.nextTest = function()
  * call onQueueComplete when it empties.
  */
 jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.execute_ = function(
-    onQueueComplete, invokeMethod) {
-
-  // Create a new DeferredQueue that will call invokeMethod() once all steps complete.
-  var armor = new (this.armorConstructor_)();
-  var q = new (this.queueConstructor_)(this.setTimeout_, this.testCase_, onQueueComplete, armor);
-  armor.setQueue(q);
-
-  // Attempt to invoke the method. The method will add zero or more steps
-  // to the queue. If the method throws an error, add that error to the list.
-  if (invokeMethod) {
-    try {
-      invokeMethod.call(this.testCase_, armor);
-    } catch (e) {
-      this.errors_.push(e);
-    }
-  }
-  
-  q.startStep();
+    onStageComplete, invokeMethod) {
+  var runner = this;
+  var onError = function(error) {runner.errors_.push(error);};
+  var stage = new jstestdriver.plugins.async.TestStage(
+      onError, onStageComplete, this.testCase_, invokeMethod,
+      this.armorConstructor_, this.queueConstructor_, this.setTimeout_);
+  stage.execute();
 };
 
 
