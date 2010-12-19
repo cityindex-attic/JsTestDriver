@@ -27,7 +27,7 @@ public enum RunnerMode {
             .finest("com.google.javascript.jstestdriver")
             .finest("com.google.jstestdriver")
             .severe("org.mortbay"), true),
-  DEBUG_BATCH(new LogConfigBuilder()
+  DEBUG_OBSERVE(new LogConfigBuilder()
             .useFileHandler()
             .useConsoleHandler()
             .fine("com.google.javascript.jstestdriver")

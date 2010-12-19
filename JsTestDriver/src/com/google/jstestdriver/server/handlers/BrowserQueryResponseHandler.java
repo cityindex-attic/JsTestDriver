@@ -145,6 +145,9 @@ class BrowserQueryResponseHandler implements RequestHandler {
             }
           }
           break;
+        case LOG:
+          logger.info("Message from the browser: " + res.toString());
+          break;
         // reset the browsers fileset.
         case RESET_RESULT:
           Command commandRunning = browser.getCommandRunning();

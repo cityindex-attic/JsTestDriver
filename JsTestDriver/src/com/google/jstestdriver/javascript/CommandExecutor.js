@@ -40,7 +40,10 @@ jstestdriver.testBreather = function(setTimeout, interval) {
 
 jstestdriver.TIMEOUT = 500;
 
-
+jstestdriver.NOOP_COMMAND = {
+  command : 'noop',
+  parameters : []
+};
 
 // TODO(corysmith): Extract the network streaming logic from the Executor logic.
 /**
@@ -88,8 +91,22 @@ jstestdriver.CommandExecutor = function(streamingService,
  * @param jsonCommand {String}
  */
 jstestdriver.CommandExecutor.prototype.executeCommand = function(jsonCommand) {
-  var command = jsonParse(jsonCommand);
-  this.commandMap_[command.command](command.parameters);
+  var command;
+  if (jsonCommand && jsonCommand.length) {
+    command = jsonParse(jsonCommand);
+  } else {
+    command = jstestdriver.NOOP_COMMAND;
+  }
+  try {
+    this.commandMap_[command.command](command.parameters);
+  } catch (e) {
+    var response = new jstestdriver.Response(jstestdriver.RESPONSE_TYPES.LOG,
+      'Exception ' + e.name + ': ' + e.message +
+      '\n' + e.fileName + '(' + e.lineNumber +
+      '):\n' + e.stack,
+    this.getBrowserInfo());
+    this.streamingService_.stream(response, this.__boundExecuteCommand);
+  }
 };
 
 
