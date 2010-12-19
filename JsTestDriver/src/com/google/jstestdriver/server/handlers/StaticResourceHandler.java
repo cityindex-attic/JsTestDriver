@@ -32,7 +32,7 @@ import com.google.jstestdriver.requesthandlers.RequestHandler;
  * @author corbinrsmith@gmail.com
  */
 public class StaticResourceHandler implements RequestHandler {
-  private static final Map<String, String> MIME_TYPE_MAP = ImmutableMap.<String, String>builder()
+  public static final Map<String, String> MIME_TYPE_MAP = ImmutableMap.<String, String>builder()
     .put("css", "text/css")
     .put("js", "text/javascript")
     .build();
@@ -56,6 +56,9 @@ public class StaticResourceHandler implements RequestHandler {
     if (mimeType != null) {
       response.setContentType(mimeType);
     }
+    response.setHeader("Pragma", "no-cache");
+    response.setHeader("Cache-Control", "private, no-cache, no-store, max-age=0, must-revalidate");
+    response.setHeader("Expires", "Sat, 22 Sep 1984 00:00:00 GMT");
     service.serve(pathInfo, response.getOutputStream());
   }
 }

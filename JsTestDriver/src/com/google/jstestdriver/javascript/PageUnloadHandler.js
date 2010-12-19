@@ -37,11 +37,17 @@ jstestdriver.PageUnloadHandler =
 
 jstestdriver.PageUnloadHandler.prototype.onUnload = function(e) {
   if (!this.unloadSignal_.get()) {
+    var type;
+    try {
+      type = e.type;
+    } catch (e) {
+      type = '[error while trying to get event type: ' + e + ']';
+    }
     this.streamingService_.synchClose(
         new jstestdriver.Response(
             jstestdriver.RESPONSE_TYPES.BROWSER_PANIC,
             "Page reloaded unexpectedly during or after " + this.getCommand_() +
-            " triggered by " + e.type,
+            " triggered by " + type,
             this.getBrowserInfo_(),
             false));
   }

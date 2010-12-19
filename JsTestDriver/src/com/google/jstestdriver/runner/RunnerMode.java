@@ -31,6 +31,7 @@ public enum RunnerMode {
             .useFileHandler()
             .useConsoleHandler()
             .fine("com.google.javascript.jstestdriver")
+            .fine("com.google.testing.jsunitfarm")
             .fine("com.google.jstestdriver")
             .severe("org.mortbay"), false),
   DEBUG_QUIET(new LogConfigBuilder()

@@ -1,141 +1,141 @@
 <project name="JsTestDriver" default="jar">
 
-  <property name="src.dir" value="src" />
-  <property name="src-test.dir" value="src-test" />
-  <property name="src-gen.dir" value="src-generated" />
-  <property name="lib.dir" value="lib" />
-  <property name="main-class" value="com.google.jstestdriver.JsTestDriver" />
-  <property name="javascript-resources" value="com/google/jstestdriver/javascript" />
-  <property name="test-resources" value="com/google/jstestdriver" />
-  <property name="target.dir" value="target" />
-  <property name="obj.dir" value="${target.dir}/obj" />
-  <property name="obj-debug.dir" value="${target.dir}/obj-debug" />
-  <property name="obj-test.dir" value="${target.dir}/obj-test" />
-  <property name="bin.dir" value="${target.dir}/bin" />
-  <property name="emma.dir" value="${target.dir}/emma" />
-  <property name="emma-bin.dir" value="${target.dir}/bin" />
-  <property name="emma-reports.dir" value="${target.dir}/reports/emma" />
-  <property name="junit.reports.dir" value="${target.dir}/reports/junit" />
-  <property name="jstestdriver.reports.dir" value="${target.dir}/reports/jstestdriver" />
-  <property name="jstests.dir" value="src-test/com/google/jstestdriver/javascript" />
-  <property name="testability-explorer.reports.dir" value="${target.dir}/reports/testability-explorer" />
-  <property name="defaultbrowser" value="/usr/bin/firefox" />
+	<property name="src.dir" value="src" />
+	<property name="src-test.dir" value="src-test" />
+	<property name="src-gen.dir" value="src-generated" />
+	<property name="lib.dir" value="lib" />
+	<property name="main-class" value="com.google.jstestdriver.JsTestDriver" />
+	<property name="javascript-resources" value="com/google/jstestdriver/javascript" />
+	<property name="test-resources" value="com/google/jstestdriver" />
+	<property name="target.dir" value="target" />
+	<property name="obj.dir" value="${target.dir}/obj" />
+	<property name="obj-debug.dir" value="${target.dir}/obj-debug" />
+	<property name="obj-test.dir" value="${target.dir}/obj-test" />
+	<property name="bin.dir" value="${target.dir}/bin" />
+	<property name="emma.dir" value="${target.dir}/emma" />
+	<property name="emma-bin.dir" value="${target.dir}/bin" />
+	<property name="emma-reports.dir" value="${target.dir}/reports/emma" />
+	<property name="junit.reports.dir" value="${target.dir}/reports/junit" />
+	<property name="jstestdriver.reports.dir" value="${target.dir}/reports/jstestdriver" />
+	<property name="jstests.dir" value="src-test/com/google/jstestdriver/javascript" />
+	<property name="testability-explorer.reports.dir" value="${target.dir}/reports/testability-explorer" />
+	<property name="defaultbrowser" value="/usr/bin/firefox" />
 
-  <property name="XMLDIRECTORY" value="${target.dir}/reports/jstestdriver" />
-  <property name="SERVERADDRESS" value="http://localhost:9876" />
-  <property name="BROWSERPATH" value="${defaultbrowser}" />
-  <property name="TESTPATH" value="." />
-  <property name="CONFIGURATIONFILE" value="jsTestDriver.conf" />
+	<property name="XMLDIRECTORY" value="${target.dir}/reports/jstestdriver" />
+	<property name="SERVERADDRESS" value="http://localhost:9876" />
+	<property name="BROWSERPATH" value="${defaultbrowser}" />
+	<property name="TESTPATH" value="." />
+	<property name="CONFIGURATIONFILE" value="jsTestDriver.conf" />
 
-  <property name="svn.trunkUrl" value="https://js-test-driver.googlecode.com/svn/trunk"/>
-  <property name="svn.tagsUrl" value="https://js-test-driver.googlecode.com/svn/tags"/>
+	<property name="svn.trunkUrl" value="https://js-test-driver.googlecode.com/svn/trunk" />
+	<property name="svn.tagsUrl" value="https://js-test-driver.googlecode.com/svn/tags" />
 
-  <property name="javac.target" value="1.5"/>
+	<property name="javac.target" value="1.5" />
 
-  <target name="clean">
-    <delete dir="target" />
-    <ant antfile="../idea-plugin/build.xml" dir="../idea-plugin" target="clean"/>
-    <ant antfile="../eclipse-plugin/build.xml" dir="../eclipse-plugin" target="clean"/>
-  </target>
+	<target name="clean">
+		<delete dir="target" />
+		<ant antfile="../idea-plugin/build.xml" dir="../idea-plugin" target="clean" />
+		<ant antfile="../eclipse-plugin/build.xml" dir="../eclipse-plugin" target="clean" />
+	</target>
 
-  <path id="classpath">
-    <pathelement location="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" />
-    <pathelement location="${lib.dir}/args4j-2.0.12/args4j-2.0.12.jar" />
-    <pathelement location="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
-    <pathelement location="${lib.dir}/guice/aopalliance.jar" />
-    <pathelement location="${lib.dir}/guice/guice-2.0.jar" />
-    <pathelement location="${lib.dir}/guice/guice-multibindings-2.0.jar" />
-    <pathelement location="${lib.dir}/guice/guice-servlet-2.0.jar" />
-    <pathelement location="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
-    <pathelement location="${lib.dir}/jetty/jetty-6.1.19.jar" />
-    <pathelement location="${lib.dir}/jetty/jetty-util-6.1.19.jar" />
-    <pathelement location="${lib.dir}/jetty/servlet-api-2.5-20081211.jar" />
-    <pathelement location="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
-    <pathelement location="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
-    <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
-    <pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
-    <pathelement location="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
-  </path>
+	<path id="classpath">
+		<pathelement location="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" />
+		<pathelement location="${lib.dir}/args4j-2.0.12/args4j-2.0.12.jar" />
+		<pathelement location="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
+		<pathelement location="${lib.dir}/guice/aopalliance.jar" />
+		<pathelement location="${lib.dir}/guice/guice-2.0.jar" />
+		<pathelement location="${lib.dir}/guice/guice-multibindings-2.0.jar" />
+		<pathelement location="${lib.dir}/guice/guice-servlet-2.0.jar" />
+		<pathelement location="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
+		<pathelement location="${lib.dir}/jetty/jetty-6.1.19.jar" />
+		<pathelement location="${lib.dir}/jetty/jetty-util-6.1.19.jar" />
+		<pathelement location="${lib.dir}/jetty/servlet-api-2.5-20081211.jar" />
+		<pathelement location="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
+		<pathelement location="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
+		<pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
+		<pathelement location="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
+		<pathelement location="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
+	</path>
 
-  <path id="emma">
-    <pathelement location="${lib.dir}/emma-2.0.5312-lib/emma.jar" />
-    <pathelement location="${lib.dir}/emma-2.0.5312-lib/emma_ant.jar" />
-  </path>
+	<path id="emma">
+		<pathelement location="${lib.dir}/emma-2.0.5312-lib/emma.jar" />
+		<pathelement location="${lib.dir}/emma-2.0.5312-lib/emma_ant.jar" />
+	</path>
 
-  <path id="all-source">
-    <pathelement location="${src.dir}"/>
-    <pathelement location="${src-test.dir}"/>
-    <pathelement location="${src-gen.dir}"/>
-  </path>
+	<path id="all-source">
+		<pathelement location="${src.dir}" />
+		<pathelement location="${src-test.dir}" />
+		<pathelement location="${src-gen.dir}" />
+	</path>
 
-  <path id="classpath-test">
-    <pathelement location="${lib.dir}/cglib/cglib-nodep-2.2.jar" />
-    <pathelement location="${lib.dir}/easymock/easymock-3.0.jar" />
-    <pathelement location="${lib.dir}/junit/junit.jar" />
-    <pathelement location="${lib.dir}/objenesis/objenesis-1.2.jar" />
-  </path>
+	<path id="classpath-test">
+		<pathelement location="${lib.dir}/cglib/cglib-nodep-2.2.jar" />
+		<pathelement location="${lib.dir}/easymock/easymock-3.0.jar" />
+		<pathelement location="${lib.dir}/junit/junit.jar" />
+		<pathelement location="${lib.dir}/objenesis/objenesis-1.2.jar" />
+	</path>
 
-  <path id="ant-tasks" description="Jars containing ant extensions">
-    <path refid="emma"/>
-    <pathelement location="${lib.dir}/testability-explorer/testability-explorer-1.3.0-r275.jar"/>
-    <pathelement location="${lib.dir}/testability-explorer/ant-testability-explorer-1.3.0-r275.jar"/>
-    <pathelement location="${lib.dir}/svnant-1.2.1/lib/svnant.jar"/>
-    <pathelement location="${lib.dir}/svnant-1.2.1/lib/svnjavahl.jar"/>
-    <pathelement location="${lib.dir}/svnant-1.2.1/lib/svnClientAdapter.jar"/>
-    <pathelement location="${lib.dir}/ant-googlecode-0.0.2/ant-googlecode-0.0.2.jar"/>
-  </path>
+	<path id="ant-tasks" description="Jars containing ant extensions">
+		<path refid="emma" />
+		<pathelement location="${lib.dir}/testability-explorer/testability-explorer-1.3.0-r275.jar" />
+		<pathelement location="${lib.dir}/testability-explorer/ant-testability-explorer-1.3.0-r275.jar" />
+		<pathelement location="${lib.dir}/svnant-1.2.1/lib/svnant.jar" />
+		<pathelement location="${lib.dir}/svnant-1.2.1/lib/svnjavahl.jar" />
+		<pathelement location="${lib.dir}/svnant-1.2.1/lib/svnClientAdapter.jar" />
+		<pathelement location="${lib.dir}/ant-googlecode-0.0.2/ant-googlecode-0.0.2.jar" />
+	</path>
 
-  <taskdef resource="emma_ant.properties" classpathref="ant-tasks" />
-  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="ant-tasks"/>
+	<taskdef resource="emma_ant.properties" classpathref="ant-tasks" />
+	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="ant-tasks" />
 
-  <target name="init">
-    <mkdir dir="${obj.dir}" />
-    <mkdir dir="${obj-test.dir}" />
-    <mkdir dir="${obj-debug.dir}" />
-    <mkdir dir="${bin.dir}" />
-    <mkdir dir="${junit.reports.dir}" />
-    <mkdir dir="${jstestdriver.reports.dir}" />
-    <mkdir dir="${testability-explorer.reports.dir}" />
-    <mkdir dir="${emma.dir}"/>
-    <mkdir dir="${emma-bin.dir}"/>
-    
-  </target>
-  
-  <target name="compile-js" unless="dontcompile">
-    <echo message="Compiling Js to ${destdir}/${javascript-resources}"/>
-    <apply executable="java" dest="${destdir}/${javascript-resources}">
-      <arg value="-jar"/>
-      <arg value="${lib.dir}/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar" />
-      <!--arg value="-v" / -->
-      <arg value="--type" />
-      <arg value="js" />
-      <arg value="--disable-optimizations" />
-      <arg value="-o" />
-      <targetfile/>
-      <srcfile/>
-      <fileset dir="${src.dir}/${javascript-resources}">
-        <include name="**/*.js"/>
-      </fileset>
-      <mapper type="glob" from="*.js" to="*.js"></mapper>
-    </apply>
-  </target>
-  
-  <target name="copy-js" if="dontcompile">
-    <echo message="Copying Js to ${destdir}/${javascript-resources}"/>
-    <copy todir="${destdir}/${javascript-resources}">
-      <fileset dir="${src.dir}/${javascript-resources}">
-        <include name="**/*.js"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="build-js" depends="copy-js, compile-js">
-    <concat destfile="${destdir}/${javascript-resources}/jstestdrivernamespace.js">
-      <filelist dir="${destdir}/${javascript-resources}" files="Namespace.js" />
-    </concat>
-    <concat destfile="${destdir}/${javascript-resources}/runner.js">
-      <filelist dir="${destdir}/${javascript-resources}"
-        files="Signal.js,
+	<target name="init">
+		<mkdir dir="${obj.dir}" />
+		<mkdir dir="${obj-test.dir}" />
+		<mkdir dir="${obj-debug.dir}" />
+		<mkdir dir="${bin.dir}" />
+		<mkdir dir="${junit.reports.dir}" />
+		<mkdir dir="${jstestdriver.reports.dir}" />
+		<mkdir dir="${testability-explorer.reports.dir}" />
+		<mkdir dir="${emma.dir}" />
+		<mkdir dir="${emma-bin.dir}" />
+
+	</target>
+
+	<target name="compile-js" unless="dontcompile">
+		<echo message="Compiling Js to ${destdir}/${javascript-resources}" />
+		<apply executable="java" dest="${destdir}/${javascript-resources}">
+			<arg value="-jar" />
+			<arg value="${lib.dir}/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar" />
+			<!--arg value="-v" / -->
+			<arg value="--type" />
+			<arg value="js" />
+			<arg value="--disable-optimizations" />
+			<arg value="-o" />
+			<targetfile />
+			<srcfile />
+			<fileset dir="${src.dir}/${javascript-resources}">
+				<include name="**/*.js" />
+			</fileset>
+			<mapper type="glob" from="*.js" to="*.js">
+			</mapper>
+		</apply>
+	</target>
+
+	<target name="copy-js" if="dontcompile">
+		<echo message="Copying Js to ${destdir}/${javascript-resources}" />
+		<copy todir="${destdir}/${javascript-resources}">
+			<fileset dir="${src.dir}/${javascript-resources}">
+				<include name="**/*.js" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="build-js" depends="copy-js, compile-js">
+		<concat destfile="${destdir}/${javascript-resources}/jstestdrivernamespace.js">
+			<filelist dir="${destdir}/${javascript-resources}" files="Namespace.js" />
+		</concat>
+		<concat destfile="${destdir}/${javascript-resources}/runner.js">
+			<filelist dir="${destdir}/${javascript-resources}" files="Signal.js,
                PageUnloadHandler.js,
                ResetCommand.js,
                Response.js,
@@ -158,8 +158,7 @@
                RunTestsCommand.js,
                CommandExecutor.js,
                config.js" />
-      <filelist dir="${destdir}/${javascript-resources}/plugins/async"
-        files="CatchingCallback.js,
+			<filelist dir="${destdir}/${javascript-resources}/plugins/async" files="CatchingCallback.js,
                ExpiringCallback.js,
                FiniteUseCallback.js,
                Timeout.js,
@@ -178,20 +177,17 @@
                DefaultPlugin.js,
                AssertsPlugin.js,
                TestCaseManagerPlugin.js" />
-    </concat>
-    <concat destfile="${destdir}/${javascript-resources}/lib/jquery-min.js">
-      <filelist dir="${destdir}/${javascript-resources}/lib"
-                files="jquery-1.4.3.min.js,
+		</concat>
+		<concat destfile="${destdir}/${javascript-resources}/lib/jquery-min.js">
+			<filelist dir="${destdir}/${javascript-resources}/lib" files="jquery-1.4.3.min.js,
                        jquery-compat.js" />
-    </concat>
-    <concat destfile="${destdir}/${javascript-resources}/lib/jquery.js">
-      <filelist dir="${destdir}/${javascript-resources}/lib"
-                files="jquery-1.4.3.js,
+		</concat>
+		<concat destfile="${destdir}/${javascript-resources}/lib/jquery.js">
+			<filelist dir="${destdir}/${javascript-resources}/lib" files="jquery-1.4.3.js,
                        jquery-compat.js" />
-    </concat>
-    <concat destfile="${destdir}/${javascript-resources}/standalonerunner.js">
-      <filelist dir="${destdir}/${javascript-resources}"
-        files="Signal.js,
+		</concat>
+		<concat destfile="${destdir}/${javascript-resources}/standalonerunner.js">
+			<filelist dir="${destdir}/${javascript-resources}" files="Signal.js,
                Response.js,
                Asserts.js,
                StreamingService.js,
@@ -213,8 +209,7 @@
                StandAloneTestReporter.js,
                CommandExecutor.js,
                config.js" />
-      <filelist dir="${destdir}/${javascript-resources}/plugins/async"
-        files="CatchingCallback.js,
+			<filelist dir="${destdir}/${javascript-resources}/plugins/async" files="CatchingCallback.js,
                ExpiringCallback.js,
                FiniteUseCallback.js,
                Timeout.js,
@@ -234,10 +229,9 @@
                AssertsPlugin.js,
                TestCaseManagerPlugin.js" />
 
-    </concat>
-    <concat destfile="${destdir}/${javascript-resources}/browser_controlled_runner.js">
-      <filelist dir="${destdir}/${javascript-resources}"
-        files="Signal.js,
+		</concat>
+		<concat destfile="${destdir}/${javascript-resources}/browser_controlled_runner.js">
+			<filelist dir="${destdir}/${javascript-resources}" files="Signal.js,
                Response.js,
                Asserts.js,
                StreamingService.js,
@@ -259,8 +253,7 @@
                VisualTestReporter.js,
                CommandExecutor.js,
                config.js" />
-      <filelist dir="${destdir}/${javascript-resources}/plugins/async"
-        files="CatchingCallback.js,
+			<filelist dir="${destdir}/${javascript-resources}/plugins/async" files="CatchingCallback.js,
                ExpiringCallback.js,
                FiniteUseCallback.js,
                Timeout.js,
@@ -280,452 +273,414 @@
                AssertsPlugin.js,
                TestCaseManagerPlugin.js" />
 
-    </concat>
-    <concat destfile="${destdir}/${javascript-resources}/heartbeatclient.js">
-      <filelist dir="${destdir}/${javascript-resources}"
-          files="Utils.js,
+		</concat>
+		<concat destfile="${destdir}/${javascript-resources}/heartbeatclient.js">
+			<filelist dir="${destdir}/${javascript-resources}" files="Utils.js,
                  Heartbeat.js,
                  heartbeatinit.js" />
-    </concat>
-  </target>
+		</concat>
+	</target>
 
-  <macrodef name="macro-compile">
-    <attribute name="destdir"/>
-    <attribute name="debug" default="false" />
-    <sequential>
-      <javac
-        srcdir="${src.dir}"
-        destdir="@{destdir}"
-        classpathref="classpath"
-        debug="on"
-        debuglevel="lines,vars,source"
-        source="${javac.target}"
-        target="${javac.target}">
-        <src path="${src.dir}" />
-        <src path="${src-gen.dir}" />
-        <exclude name="com/google/jstestdriver/ui/**" />
-      </javac>
-      <copy todir="@{destdir}">
-        <fileset dir="${src.dir}">
-          <exclude name="**/*.java" />
-          <exclude name="${javascript-resources}/*.js"/>
-        </fileset>
-      </copy>
-      <antcall target="build-js" inheritrefs="true">
-        <param name="destdir" value="@{destdir}"/>
-      </antcall>
-    </sequential>
-  </macrodef>
+	<macrodef name="macro-compile">
+		<attribute name="destdir" />
+		<attribute name="debug" default="false" />
+		<sequential>
+			<javac srcdir="${src.dir}" destdir="@{destdir}" classpathref="classpath" debug="on" debuglevel="lines,vars,source" source="${javac.target}" target="${javac.target}">
+				<src path="${src.dir}" />
+				<src path="${src-gen.dir}" />
+				<exclude name="com/google/jstestdriver/ui/**" />
+			</javac>
+			<copy todir="@{destdir}">
+				<fileset dir="${src.dir}">
+					<exclude name="**/*.java" />
+					<exclude name="${javascript-resources}/*.js" />
+				</fileset>
+			</copy>
+			<antcall target="build-js" inheritrefs="true">
+				<param name="destdir" value="@{destdir}" />
+			</antcall>
+		</sequential>
+	</macrodef>
 
-  <target name="antlr">
-    <mkdir dir="${src-gen.dir}"/>
-    <java jar="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" fork="true" dir="src">
-      <arg value="-make"/>
-      <arg value="-o"/>
-      <arg value="../src-generated"/>
-      <arg value="com/google/jstestdriver/coverage/es3/ES3Instrument.g"/>
-    </java>
-    <java jar="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" fork="true" dir="src">
-      <arg value="-make"/>
-      <arg value="-o"/>
-      <arg value="../src-generated"/>
-      <arg value="com/google/jstestdriver/coverage/es3/ES3.g"/>
-    </java>
-  </target>
+	<target name="antlr">
+		<mkdir dir="${src-gen.dir}" />
+		<java jar="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" fork="true" dir="src">
+			<arg value="-make" />
+			<arg value="-o" />
+			<arg value="../src-generated" />
+			<arg value="com/google/jstestdriver/coverage/es3/ES3Instrument.g" />
+		</java>
+		<java jar="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" fork="true" dir="src">
+			<arg value="-make" />
+			<arg value="-o" />
+			<arg value="../src-generated" />
+			<arg value="com/google/jstestdriver/coverage/es3/ES3.g" />
+		</java>
+	</target>
 
-  <target name="compile" depends="init, antlr">
-    <macro-compile destdir="${obj.dir}" debug="true"/>
-    <javac srcdir="${src.dir}" destdir="${obj.dir}" target="${javac.target}"
-       debuglevel="lines, vars, source">
-      <classpath>
-        <path refid="classpath" />
-      </classpath>
-      <include name="com/google/jstestdriver/ui/**"/>
-    </javac>
-    <copy todir="${obj.dir}">
-      <fileset dir="${src.dir}">
-        <exclude name="**/*.java" />
-        <include name="com/google/jstestdriver/ui/**"/>
-      </fileset>
-    </copy>
-  </target>
+	<target name="compile" depends="init, antlr">
+		<macro-compile destdir="${obj.dir}" debug="true" />
+		<javac srcdir="${src.dir}" destdir="${obj.dir}" target="${javac.target}" debuglevel="lines, vars, source">
+			<classpath>
+				<path refid="classpath" />
+			</classpath>
+			<include name="com/google/jstestdriver/ui/**" />
+		</javac>
+		<copy todir="${obj.dir}">
+			<fileset dir="${src.dir}">
+				<exclude name="**/*.java" />
+				<include name="com/google/jstestdriver/ui/**" />
+			</fileset>
+		</copy>
+	</target>
 
-  <target name="compile-debug" depends="init, antlr">
-    <macro-compile destdir="${obj-debug.dir}" debug="true"/>
-    <javac srcdir="${src.dir}" destdir="${obj-debug.dir}" debug="true"
-        debuglevel="lines, vars, source"
-        target="${javac.target}">
-      <classpath>
-        <path refid="classpath" />
-      </classpath>
-      <include name="com/google/jstestdriver/ui/**"/>
-    </javac>
-    <copy todir="${obj-debug.dir}">
-      <fileset dir="${src.dir}">
-        <exclude name="**/*.java" />
-        <include name="com/google/jstestdriver/ui/**"/>
-      </fileset>
-    </copy>
-  </target>
+	<target name="compile-debug" depends="init, antlr">
+		<macro-compile destdir="${obj-debug.dir}" debug="true" />
+		<javac srcdir="${src.dir}" destdir="${obj-debug.dir}" debug="true" debuglevel="lines, vars, source" target="${javac.target}">
+			<classpath>
+				<path refid="classpath" />
+			</classpath>
+			<include name="com/google/jstestdriver/ui/**" />
+		</javac>
+		<copy todir="${obj-debug.dir}">
+			<fileset dir="${src.dir}">
+				<exclude name="**/*.java" />
+				<include name="com/google/jstestdriver/ui/**" />
+			</fileset>
+		</copy>
+	</target>
 
-  <target name="compile-test" depends="compile-debug">
-    <javac srcdir="${src-test.dir}" destdir="${obj-test.dir}"
-        classpathref="classpath" debug="true" target="${javac.target}">
-      <classpath refid="classpath-test" />
-      <classpath>
-        <pathelement path="${obj-debug.dir}" />
-      </classpath>
-    </javac>
-    <copy todir="${obj-test.dir}">
-      <fileset dir="${src-test.dir}">
-        <exclude name="**/*.java" />
-      </fileset>
-    </copy>
-    <copy todir="${obj-debug.dir}">
-      <fileset dir="${src-test.dir}">
-        <exclude name="**/*.java" />
-      </fileset>
-    </copy>
-  </target>
+	<target name="compile-test" depends="compile-debug">
+		<javac srcdir="${src-test.dir}" destdir="${obj-test.dir}" classpathref="classpath" debug="true" target="${javac.target}">
+			<classpath refid="classpath-test" />
+			<classpath>
+				<pathelement path="${obj-debug.dir}" />
+			</classpath>
+		</javac>
+		<copy todir="${obj-test.dir}">
+			<fileset dir="${src-test.dir}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy todir="${obj-debug.dir}">
+			<fileset dir="${src-test.dir}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
 
-  <target name="instrument" depends="compile-test">
-    <emma>
-      <instr destdir="${emma-bin.dir}"
-        metadatafile="${emma.dir}/metadata.emma"
-        merge="true">
-        <instrpath>
-          <pathelement location="${obj-debug.dir}"/>
-          <pathelement location="${obj-test.dir}"/>
-        </instrpath>
-        <filter excludes="com.google.jstestdriver.coverage.es3.*" />
-        <filter excludes="com.google.jstestdriver.directoryscanner.*" />
-      </instr>
-    </emma>
-  </target>
+	<target name="instrument" depends="compile-test">
+		<emma>
+			<instr destdir="${emma-bin.dir}" metadatafile="${emma.dir}/metadata.emma" merge="true">
+				<instrpath>
+					<pathelement location="${obj-debug.dir}" />
+					<pathelement location="${obj-test.dir}" />
+				</instrpath>
+				<filter excludes="com.google.jstestdriver.coverage.es3.*" />
+				<filter excludes="com.google.jstestdriver.directoryscanner.*" />
+			</instr>
+		</emma>
+	</target>
 
-  <target name="test" depends="compile-test, instrument">
-    <junit printsummary="true" haltonfailure="true" fork="true">
-      <classpath>
-        <pathelement location="${emma-bin.dir}" />
-      </classpath>
-      <classpath refid="emma" />
-      <classpath refid="classpath" />
-      <classpath refid="classpath-test" />
-      <classpath>
-        <pathelement location="${obj-debug.dir}" />
-        <pathelement location="${obj-test.dir}" />
-      </classpath>
-      <jvmarg value="-Demma.coverage.out.file=${emma.dir}/test.emma" />
-      <jvmarg value="-Demma.coverage.out.merge=true" />
-      <formatter type="xml" usefile="true" />
-      <batchtest fork="true" haltonfailure="true" todir="${junit.reports.dir}">
-        <fileset dir="${src-test.dir}">
-          <include name="**/*Test.java" />
-        </fileset>
-      </batchtest>
-    </junit>
-  </target>
+	<target name="test" depends="compile-test, instrument">
+		<junit printsummary="true" haltonfailure="true" fork="true">
+			<classpath>
+				<pathelement location="${emma-bin.dir}" />
+			</classpath>
+			<classpath refid="emma" />
+			<classpath refid="classpath" />
+			<classpath refid="classpath-test" />
+			<classpath>
+				<pathelement location="${obj-debug.dir}" />
+				<pathelement location="${obj-test.dir}" />
+			</classpath>
+			<jvmarg value="-Demma.coverage.out.file=${emma.dir}/test.emma" />
+			<jvmarg value="-Demma.coverage.out.merge=true" />
+			<formatter type="xml" usefile="true" />
+			<batchtest fork="true" haltonfailure="true" todir="${junit.reports.dir}">
+				<fileset dir="${src-test.dir}">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
 
-  <target name="coverage" depends="test">
-    <emma>
-      <report>
-        <sourcepath>
-          <pathelement location="${src.dir}"/>
-          <pathelement location="${src-test.dir}"/>
-        </sourcepath>
-        <fileset dir="${emma.dir}" >
-          <include name="*.emma" />
-        </fileset>
-        <txt outfile="${emma-reports.dir}/coverage.txt" />
-        <html outfile="${emma-reports.dir}/coverage.html" />
-        <xml outfile="${emma-reports.dir}/coverage.xml" />
-      </report>
-    </emma>
-  </target>
+	<target name="coverage" depends="test">
+		<emma>
+			<report>
+				<sourcepath>
+					<pathelement location="${src.dir}" />
+					<pathelement location="${src-test.dir}" />
+				</sourcepath>
+				<fileset dir="${emma.dir}">
+					<include name="*.emma" />
+				</fileset>
+				<txt outfile="${emma-reports.dir}/coverage.txt" />
+				<html outfile="${emma-reports.dir}/coverage.html" />
+				<xml outfile="${emma-reports.dir}/coverage.xml" />
+			</report>
+		</emma>
+	</target>
 
-  <target name="jar" depends="compile">
-    <jar destfile="${bin.dir}/${ant.project.name}.jar" basedir="${obj.dir}" excludes="**/*.js"
-      duplicate="preserve">
-      <manifest>
-        <attribute name="Main-Class" value="${main-class}" />
-      </manifest>
-      <zipfileset src="${lib.dir}/jetty/servlet-api-2.5-20081211.jar" />
-      <zipfileset src="${lib.dir}/jetty/jetty-6.1.19.jar" />
-      <zipfileset src="${lib.dir}/jetty/jetty-util-6.1.19.jar" />
-      <zipfileset src="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
-      <zipfileset src="${lib.dir}/guice/aopalliance.jar" />
-      <zipfileset src="${lib.dir}/guice/guice-2.0.jar" />
-      <zipfileset src="${lib.dir}/guice/guice-multibindings-2.0.jar" />
-      <zipfileset src="${lib.dir}/guice/guice-servlet-2.0.jar" />
-      <zipfileset src="${lib.dir}/args4j-2.0.12/args4j-2.0.12.jar" />
-      <zipfileset src="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
-      <zipfileset src="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
-      <zipfileset src="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
-      <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
-      <zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
-      <zipfileset src="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
-      <fileset dir="${obj.dir}/">
-        <include name="${javascript-resources}/jstestdrivernamespace.js" />
-        <include name="${javascript-resources}/runner.js" />
-        <include name="${javascript-resources}/standalonerunner.js" />
-        <include name="${javascript-resources}/browser_controlled_runner.js" />
-        <include name="${javascript-resources}/heartbeatclient.js" />
-        <include name="${javascript-resources}/lib/*.js" />
-      </fileset>
-      <exclude name="**/coverage/**"/>
-      <!-- not excluding the token library for the jar with deps. -->
-    </jar>
-  </target>
+	<target name="jar" depends="compile">
+		<jar destfile="${bin.dir}/${ant.project.name}.jar" basedir="${obj.dir}" excludes="**/*.js" duplicate="preserve">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+			</manifest>
+			<zipfileset src="${lib.dir}/jetty/servlet-api-2.5-20081211.jar" />
+			<zipfileset src="${lib.dir}/jetty/jetty-6.1.19.jar" />
+			<zipfileset src="${lib.dir}/jetty/jetty-util-6.1.19.jar" />
+			<zipfileset src="${lib.dir}/google-gson-1.2.3/gson-1.2.3.jar" />
+			<zipfileset src="${lib.dir}/guice/aopalliance.jar" />
+			<zipfileset src="${lib.dir}/guice/guice-2.0.jar" />
+			<zipfileset src="${lib.dir}/guice/guice-multibindings-2.0.jar" />
+			<zipfileset src="${lib.dir}/guice/guice-servlet-2.0.jar" />
+			<zipfileset src="${lib.dir}/args4j-2.0.12/args4j-2.0.12.jar" />
+			<zipfileset src="${lib.dir}/joda-time-1.6/joda-time-1.6.jar" />
+			<zipfileset src="${lib.dir}/jvyaml-0.2/lib/jvyaml.jar" />
+			<zipfileset src="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
+			<zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-api-1.5.6.jar" />
+			<zipfileset src="${lib.dir}/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" />
+			<zipfileset src="${lib.dir}/google-collect-1.0-rc2/google-collect-1.0-rc2.jar" />
+			<fileset dir="${obj.dir}/">
+				<include name="${javascript-resources}/jstestdrivernamespace.js" />
+				<include name="${javascript-resources}/runner.js" />
+				<include name="${javascript-resources}/standalonerunner.js" />
+				<include name="${javascript-resources}/browser_controlled_runner.js" />
+				<include name="${javascript-resources}/heartbeatclient.js" />
+				<include name="${javascript-resources}/lib/*.js" />
+			</fileset>
+			<exclude name="**/coverage/**" />
+			<!-- not excluding the token library for the jar with deps. -->
+		</jar>
+	</target>
 
-  <target name="jar-nodeps" depends="compile">
-    <jar destfile="${bin.dir}/${ant.project.name}-nodeps.jar" basedir="${obj.dir}" excludes="**/*.js"
-      duplicate="preserve">
-      <manifest>
-        <attribute name="Main-Class" value="${main-class}" />
-      </manifest>
-      <fileset dir="${obj.dir}/">
-        <include name="${javascript-resources}/jstestdrivernamespace.js" />
-        <include name="${javascript-resources}/runner.js" />
-        <include name="${javascript-resources}/standalonerunner.js" />
-        <include name="${javascript-resources}/browser_controlled_runner.js" />
-        <include name="${javascript-resources}/heartbeatclient.js" />
-        <include name="${javascript-resources}/lib/*.js" />
-      </fileset>
-      <exclude name="**/coverage/**"/>
-      <exclude name="**/token/**"/>
-    </jar>
-  </target>
+	<target name="jar-nodeps" depends="compile">
+		<jar destfile="${bin.dir}/${ant.project.name}-nodeps.jar" basedir="${obj.dir}" excludes="**/*.js" duplicate="preserve">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+			</manifest>
+			<fileset dir="${obj.dir}/">
+				<include name="${javascript-resources}/jstestdrivernamespace.js" />
+				<include name="${javascript-resources}/runner.js" />
+				<include name="${javascript-resources}/standalonerunner.js" />
+				<include name="${javascript-resources}/browser_controlled_runner.js" />
+				<include name="${javascript-resources}/heartbeatclient.js" />
+				<include name="${javascript-resources}/lib/*.js" />
+			</fileset>
+			<exclude name="**/coverage/**" />
+			<exclude name="**/token/**" />
+		</jar>
+	</target>
 
-  <target name="remote-plugin-jar" depends="jar">
-    <mkdir dir="${bin.dir}/plugins/" />
-    <jar destfile="${bin.dir}/plugins/remote.jar"
-      duplicate="preserve">
-      <fileset dir="${obj.dir}">
-        <include name="**/remote/**"/>
-      </fileset>
-      <manifest>
-        <!-- plugins will need to have a reference to the JsTestDriver jar they are working with.-->
-        <attribute name="Class-Path" value="../JsTestDriver.jar" />
-        <section name="jstd">
-          <attribute name="plugin-initializer" value="com.google.jstestdriver.remote.RemoteInitializer" />
-        </section>
-      </manifest>
-    </jar>
-  </target>
+	<target name="remote-plugin-jar" depends="jar">
+		<mkdir dir="${bin.dir}/plugins/" />
+		<jar destfile="${bin.dir}/plugins/remote.jar" duplicate="preserve">
+			<fileset dir="${obj.dir}">
+				<include name="**/remote/**" />
+			</fileset>
+			<manifest>
+				<!-- plugins will need to have a reference to the JsTestDriver jar they are working with.-->
+				<attribute name="Class-Path" value="../JsTestDriver.jar" />
+				<section name="jstd">
+					<attribute name="plugin-initializer" value="com.google.jstestdriver.remote.RemoteInitializer" />
+				</section>
+			</manifest>
+		</jar>
+	</target>
 
-  <target name="coverage-plugin-jar" depends="jar">
-    <mkdir dir="${bin.dir}/plugins/" />
-    <mkdir dir="${obj.dir}/com/google/jstestdriver/coverage/javascript/" />
-    <concat destfile="${obj.dir}/com/google/jstestdriver/coverage/javascript/LCOV.js">
-      <filelist dir="${src.dir}//com/google/jstestdriver/coverage/javascript"
-        files="coverage.js,plugin.js" />
-    </concat>
-    <jar destfile="${bin.dir}/plugins/coverage.jar"
-      duplicate="preserve">
-      <fileset dir="${obj.dir}">
-        <include name="**/coverage/**"/>
-      </fileset>
-      <zipfileset src="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" />
-      <manifest>
-        <!-- plugins will need to have a reference to the JsTestDriver jar they are working with.-->
-        <attribute name="Class-Path" value="../JsTestDriver.jar" />
-        <section name="jstd">
-          <attribute name="plugin-module" value="com.google.jstestdriver.coverage.CoverageModule" />
-        </section>
-      </manifest>
-    </jar>
-  </target>
+	<target name="coverage-plugin-jar" depends="jar">
+		<mkdir dir="${bin.dir}/plugins/" />
+		<mkdir dir="${obj.dir}/com/google/jstestdriver/coverage/javascript/" />
+		<concat destfile="${obj.dir}/com/google/jstestdriver/coverage/javascript/LCOV.js">
+			<filelist dir="${src.dir}//com/google/jstestdriver/coverage/javascript" files="coverage.js,plugin.js" />
+		</concat>
+		<jar destfile="${bin.dir}/plugins/coverage.jar" duplicate="preserve">
+			<fileset dir="${obj.dir}">
+				<include name="**/coverage/**" />
+			</fileset>
+			<zipfileset src="${lib.dir}/antlr-3.1.3/antlr-3.1.3.jar" />
+			<manifest>
+				<!-- plugins will need to have a reference to the JsTestDriver jar they are working with.-->
+				<attribute name="Class-Path" value="../JsTestDriver.jar" />
+				<section name="jstd">
+					<attribute name="plugin-module" value="com.google.jstestdriver.coverage.CoverageModule" />
+				</section>
+			</manifest>
+		</jar>
+	</target>
 
-  <target name="coverage-plugin-jar-nodeps" depends="jar-nodeps">
-    <mkdir dir="${bin.dir}/plugins/" />
-    <mkdir dir="${obj.dir}/com/google/jstestdriver/coverage/javascript/" />
-    <concat destfile="${obj.dir}/com/google/jstestdriver/coverage/javascript/LCOV.js">
-      <filelist dir="${src.dir}//com/google/jstestdriver/coverage/javascript"
-        files="coverage.js,plugin.js" />
-    </concat>
-    <jar destfile="${bin.dir}/plugins/coverage-nodeps.jar"
-      duplicate="preserve">
-      <fileset dir="${obj.dir}">
-        <include name="**/coverage/**"/>
-      </fileset>
-      <manifest>
-      </manifest>
-    </jar>
-    <jar destfile="${bin.dir}/plugins/coverage-src.jar"
-      duplicate="preserve">
-      <fileset dir="${src.dir}">
-        <include name="**/coverage/**"/>
-      </fileset>
-      <fileset dir="${src-gen.dir}">
-        <include name="**/coverage/**"/>
-      </fileset>
-      <manifest>
-      </manifest>
-    </jar>
-  </target>
+	<target name="coverage-plugin-jar-nodeps" depends="jar-nodeps">
+		<mkdir dir="${bin.dir}/plugins/" />
+		<mkdir dir="${obj.dir}/com/google/jstestdriver/coverage/javascript/" />
+		<concat destfile="${obj.dir}/com/google/jstestdriver/coverage/javascript/LCOV.js">
+			<filelist dir="${src.dir}//com/google/jstestdriver/coverage/javascript" files="coverage.js,plugin.js" />
+		</concat>
+		<jar destfile="${bin.dir}/plugins/coverage-nodeps.jar" duplicate="preserve">
+			<fileset dir="${obj.dir}">
+				<include name="**/coverage/**" />
+			</fileset>
+			<manifest>
+			</manifest>
+		</jar>
+		<jar destfile="${bin.dir}/plugins/coverage-src.jar" duplicate="preserve">
+			<fileset dir="${src.dir}">
+				<include name="**/coverage/**" />
+			</fileset>
+			<fileset dir="${src-gen.dir}">
+				<include name="**/coverage/**" />
+			</fileset>
+			<manifest>
+			</manifest>
+		</jar>
+	</target>
 
-  <target name="token-jar-nodeps" depends="jar-nodeps">
-    <mkdir dir="${bin.dir}" />
-    <jar destfile="${bin.dir}/token-nodeps.jar"
-      duplicate="preserve">
-      <fileset dir="${obj.dir}">
-        <include name="**/token/**"/>
-      </fileset>
-      <manifest>
-      </manifest>
-    </jar>
-    <jar destfile="${bin.dir}/token-src.jar"
-      duplicate="preserve">
-      <fileset dir="${src.dir}">
-        <include name="**/token/**"/>
-      </fileset>
-      <fileset dir="${src-gen.dir}">
-        <include name="**/token/**"/>
-      </fileset>
-      <manifest>
-      </manifest>
-    </jar>
-  </target>
+	<target name="token-jar-nodeps" depends="jar-nodeps">
+		<mkdir dir="${bin.dir}" />
+		<jar destfile="${bin.dir}/token-nodeps.jar" duplicate="preserve">
+			<fileset dir="${obj.dir}">
+				<include name="**/token/**" />
+			</fileset>
+			<manifest>
+			</manifest>
+		</jar>
+		<jar destfile="${bin.dir}/token-src.jar" duplicate="preserve">
+			<fileset dir="${src.dir}">
+				<include name="**/token/**" />
+			</fileset>
+			<fileset dir="${src-gen.dir}">
+				<include name="**/token/**" />
+			</fileset>
+			<manifest>
+			</manifest>
+		</jar>
+	</target>
 
-  <target name="jar-all-src-nodeps" depends="coverage-plugin-jar-nodeps, token-jar-nodeps, jar-nodeps, src-jar">
-  </target>
+	<target name="jar-all-src-nodeps" depends="coverage-plugin-jar-nodeps, token-jar-nodeps, jar-nodeps, src-jar">
+	</target>
 
-  <target name="checkNoLocalChanges">
-    <input message="Releases must be cut from a clean checkout. OK to revert all local changes?? "
-        addproperty="revertok" validargs="Y,n" defaultvalue="n"/>
-    <fail message="Release aborted by user.">
-      <condition><not><equals arg1="Y" arg2="${revertok}"/></not></condition>
-    </fail>
-    <svn>
-      <revert dir="." recurse="true"/>
-    </svn>
-  </target>
+	<target name="checkNoLocalChanges">
+		<input message="Releases must be cut from a clean checkout. OK to revert all local changes?? " addproperty="revertok" validargs="Y,n" defaultvalue="n" />
+		<fail message="Release aborted by user.">
+			<condition>
+				<not>
+					<equals arg1="Y" arg2="${revertok}" />
+				</not>
+			</condition>
+		</fail>
+		<svn>
+			<revert dir="." recurse="true" />
+		</svn>
+	</target>
 
-  <target name="getReleaseInfo">
-    <input addproperty="release.id" message="Enter the release number (ie. 1.0.0-rc1):"/>
-    <input addproperty="googlecode.username" message="Your google account (don't include @gmail.com):"/>
-    <input addproperty="googlecode.password" message="Your googlecode password (http://code.google.com/hosting/settings):">
-      <handler classname="org.apache.tools.ant.input.SecureInputHandler" />
-    </input>
-  </target>
+	<target name="getReleaseInfo">
+		<input addproperty="release.id" message="Enter the release number (ie. 1.0.0-rc1):" />
+		<input addproperty="googlecode.username" message="Your google account (don't include @gmail.com):" />
+		<input addproperty="googlecode.password" message="Your googlecode password (http://code.google.com/hosting/settings):">
+			<handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+		</input>
+	</target>
 
-  <target name="release" depends="checkNoLocalChanges, getReleaseInfo, test,
+	<target name="release" depends="checkNoLocalChanges, getReleaseInfo, test,
       jar, coverage-plugin-jar, jar-all-src-nodeps">
-    <echo message="Tagging the release in Subversion..."/>
-    <svn username="${googlecode.username}" password="${googlecode.password}">
-      <copy srcurl="${svn.trunkUrl}" desturl="${svn.tagsUrl}/${release.id}"
-            message="Performing release ${release.id}"  />
-    </svn>
+		<echo message="Tagging the release in Subversion..." />
+		<svn username="${googlecode.username}" password="${googlecode.password}">
+			<copy srcurl="${svn.trunkUrl}" desturl="${svn.tagsUrl}/${release.id}" message="Performing release ${release.id}" />
+		</svn>
 
-    <echo message="Uploading release to the GoogleCode site..."/>
+		<echo message="Uploading release to the GoogleCode site..." />
 
-    <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask"
-             classpathref="ant-tasks" name="gcupload"/>
-    <gcupload labels="Featured, Type-Executable" filename="${bin.dir}/${ant.project.name}.jar"
-              targetfilename="${ant.project.name}-${release.id}.jar"
-              username="${googlecode.username}" password="${googlecode.password}"
-              projectname="js-test-driver" summary="Self-contained executable jar"/>
-    <gcupload labels="Featured, Type-Archive" filename="${bin.dir}/${ant.project.name}-nodeps.jar"
-              targetfilename="${ant.project.name}-nodeps-${release.id}.jar"
-              username="${googlecode.username}" password="${googlecode.password}"
-              projectname="js-test-driver" summary="Jar without bundled dependencies"/>
-    <gcupload labels="Featured, Type-Source" filename="${bin.dir}/${ant.project.name}-src.jar"
-              targetfilename="${ant.project.name}-${release.id}-src.jar"
-              username="${googlecode.username}" password="${googlecode.password}"
-              projectname="js-test-driver" summary="Source code"/>
-    <gcupload labels="Featured, Type-Executable" filename="${bin.dir}/plugins/coverage.jar"
-              targetfilename="coverage-${release.id}.jar"
-              username="${googlecode.username}" password="${googlecode.password}"
-              projectname="js-test-driver" summary="Coverage Plugin"/>
-    <gcupload labels="Featured, Type-Archive" filename="${bin.dir}/plugins/coverage-nodeps.jar"
-              targetfilename="coverage-nodeps-${release.id}.jar"
-              username="${googlecode.username}" password="${googlecode.password}"
-              projectname="js-test-driver" summary="Coverage Plugin without bundled dependencies"/>
-    <echo message="Release has been deployed. You should now remove the 'featured' label from the previous release on the googlecode site."/>
-  </target>
+		<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpathref="ant-tasks" name="gcupload" />
+		<gcupload labels="Featured, Type-Executable" filename="${bin.dir}/${ant.project.name}.jar" targetfilename="${ant.project.name}-${release.id}.jar" username="${googlecode.username}" password="${googlecode.password}" projectname="js-test-driver" summary="Self-contained executable jar" />
+		<gcupload labels="Featured, Type-Archive" filename="${bin.dir}/${ant.project.name}-nodeps.jar" targetfilename="${ant.project.name}-nodeps-${release.id}.jar" username="${googlecode.username}" password="${googlecode.password}" projectname="js-test-driver" summary="Jar without bundled dependencies" />
+		<gcupload labels="Featured, Type-Source" filename="${bin.dir}/${ant.project.name}-src.jar" targetfilename="${ant.project.name}-${release.id}-src.jar" username="${googlecode.username}" password="${googlecode.password}" projectname="js-test-driver" summary="Source code" />
+		<gcupload labels="Featured, Type-Executable" filename="${bin.dir}/plugins/coverage.jar" targetfilename="coverage-${release.id}.jar" username="${googlecode.username}" password="${googlecode.password}" projectname="js-test-driver" summary="Coverage Plugin" />
+		<gcupload labels="Featured, Type-Archive" filename="${bin.dir}/plugins/coverage-nodeps.jar" targetfilename="coverage-nodeps-${release.id}.jar" username="${googlecode.username}" password="${googlecode.password}" projectname="js-test-driver" summary="Coverage Plugin without bundled dependencies" />
+		<echo message="Release has been deployed. You should now remove the 'featured' label from the previous release on the googlecode site." />
+	</target>
 
-  <target name="src-jar" depends="init">
-    <jar destfile="${bin.dir}/${ant.project.name}-src.jar" basedir="${src.dir}">
-      <fileset dir="${obj.dir}/">
-        <include name="${javascript-resources}/jstestdrivernamespace.js" />
-        <include name="${javascript-resources}/runner.js" />
-        <include name="${javascript-resources}/standalonerunner.js" />
-        <include name="${javascript-resources}/browser_controlled_runner.js" />
-        <include name="${javascript-resources}/heartbeatclient.js" />
-        <exclude name="${javascript-resources}/lib/*.js" />
-      </fileset>
-      <exclude name="**/coverage/**"/>
-      <exclude name="**/token/**"/>
-    </jar>
-  </target>
+	<target name="src-jar" depends="init">
+		<jar destfile="${bin.dir}/${ant.project.name}-src.jar" basedir="${src.dir}">
+			<fileset dir="${obj.dir}/">
+				<include name="${javascript-resources}/jstestdrivernamespace.js" />
+				<include name="${javascript-resources}/runner.js" />
+				<include name="${javascript-resources}/standalonerunner.js" />
+				<include name="${javascript-resources}/browser_controlled_runner.js" />
+				<include name="${javascript-resources}/heartbeatclient.js" />
+				<exclude name="${javascript-resources}/lib/*.js" />
+			</fileset>
+			<exclude name="**/coverage/**" />
+			<exclude name="**/token/**" />
+		</jar>
+	</target>
 
-  <target name="jstestdriver" depends="jar">
-    <java jar="${bin.dir}/${ant.project.name}.jar" fork="true" timeout="60000">
-      <arg value="--port" />
-      <arg value="4424" />
-      <arg value="--browser" />
-      <arg value="${BROWSERPATH}" />
-      <arg value="--tests" />
-      <arg value="all" />
-      <arg value="--testOutput" />
-      <arg value="${XMLDIRECTORY}"/>
-    </java>
-  </target>
+	<target name="jstestdriver" depends="jar">
+		<java jar="${bin.dir}/${ant.project.name}.jar" fork="true" timeout="60000">
+			<arg value="--port" />
+			<arg value="4424" />
+			<arg value="--browser" />
+			<arg value="${BROWSERPATH}" />
+			<arg value="--tests" />
+			<arg value="all" />
+			<arg value="--testOutput" />
+			<arg value="${XMLDIRECTORY}" />
+		</java>
+	</target>
 
-  <target name="jstestdriver-coverage" depends="jar, coverage-plugin-jar">
-    <java jar="${bin.dir}/${ant.project.name}.jar" fork="true" timeout="60000">
-      <arg value="--port" />
-      <arg value="4424" />
-      <arg value="--browser" />
-      <arg value="${BROWSERPATH}" />
-      <arg value="--tests" />
-      <arg value="all" />
-      <arg value="--config" />
-      <arg value="coverage.conf" />
-      <arg value="--testOutput" />
-      <arg value="${XMLDIRECTORY}"/>
-      <arg value="--runnerMode" />
-      <arg value="DEBUG_NO_TRACE"/>
-    </java>
-  </target>
+	<target name="jstestdriver-coverage" depends="jar, coverage-plugin-jar">
+		<java jar="${bin.dir}/${ant.project.name}.jar" fork="true" timeout="60000">
+			<arg value="--port" />
+			<arg value="4424" />
+			<arg value="--browser" />
+			<arg value="${BROWSERPATH}" />
+			<arg value="--tests" />
+			<arg value="all" />
+			<arg value="--config" />
+			<arg value="coverage.conf" />
+			<arg value="--testOutput" />
+			<arg value="${XMLDIRECTORY}" />
+			<arg value="--runnerMode" />
+			<arg value="DEBUG_NO_TRACE" />
+		</java>
+	</target>
 
-  <target name="js-test-server" depends="jar">
-    <java jar="${bin.dir}/${ant.project.name}.jar" fork="true" dir=".">
-      <arg value="--port"/>
-      <arg value="4224"/>
-    </java>
-  </target>
+	<target name="js-test-server" depends="jar">
+		<java jar="${bin.dir}/${ant.project.name}.jar" fork="true" dir=".">
+			<arg value="--port" />
+			<arg value="4224" />
+		</java>
+	</target>
 
-  <target name="idea-plugin" depends="jar">
-    <ant antfile="../idea-plugin/build.xml" dir="../idea-plugin"/>
-  </target>
+	<target name="idea-plugin" depends="jar">
+		<ant antfile="../idea-plugin/build.xml" dir="../idea-plugin" />
+	</target>
 
-  <target name="eclipse-plugin" depends="jar">
-    <ant antfile="../eclipse-plugin/build.xml" dir="../eclipse-plugin"/>
-  </target>
+	<target name="eclipse-plugin" depends="jar">
+		<ant antfile="../eclipse-plugin/build.xml" dir="../eclipse-plugin" />
+	</target>
 
-  <target name="eclipse-plugin-test" depends="eclipse-plugin">
-    <ant antfile="../eclipse-plugin/build.xml" dir="../eclipse-plugin" target="test"/>
-    <copy todir="${junit.reports.dir}">
-      <fileset dir="../eclipse-plugin/">
-        <include name="TEST*.xml"/>
-      </fileset>
-    </copy>
-  </target>
+	<target name="eclipse-plugin-test" depends="eclipse-plugin">
+		<ant antfile="../eclipse-plugin/build.xml" dir="../eclipse-plugin" target="test" />
+		<copy todir="${junit.reports.dir}">
+			<fileset dir="../eclipse-plugin/">
+				<include name="TEST*.xml" />
+			</fileset>
+		</copy>
+	</target>
 
-  <target name="cbuild" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage, eclipse-plugin, eclipse-plugin-test" />
-  <!-- restore idea plugin when the right jar is on hudson -->
-  <!-- target name="cbuild" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage, idea-plugin, eclipse-plugin, eclipse-plugin-test" /-->
-  <target name="alltests" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage" />
+	<target name="cbuild" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage, eclipse-plugin, eclipse-plugin-test" />
+	<!-- restore idea plugin when the right jar is on hudson -->
+	<!-- target name="cbuild" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage, idea-plugin, eclipse-plugin, eclipse-plugin-test" /-->
+	<target name="alltests" depends="clean, testability-explorer, jstestdriver, jstestdriver-coverage, test, coverage" />
 
-  <target name="testability-explorer" depends="jar">
-    <taskdef name="testability" classname="com.google.ant.TestabilityTask" classpathref="ant-tasks"/>
-    <testability print="xml" resultFile="${testability-explorer.reports.dir}/te.xml" whitelist="!com.google.jstestdriver">
-      <classpath>
-        <pathelement location="${bin.dir}/${ant.project.name}.jar"/>
-        <pathelement location="src" />
-      </classpath>
-    </testability>
-  </target>
+	<target name="testability-explorer" depends="jar">
+		<taskdef name="testability" classname="com.google.ant.TestabilityTask" classpathref="ant-tasks" />
+		<testability print="xml" resultFile="${testability-explorer.reports.dir}/te.xml" whitelist="!com.google.jstestdriver">
+			<classpath>
+				<pathelement location="${bin.dir}/${ant.project.name}.jar" />
+				<pathelement location="src" />
+			</classpath>
+		</testability>
+	</target>
 
 </project>
