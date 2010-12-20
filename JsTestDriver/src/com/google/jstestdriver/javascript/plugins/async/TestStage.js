@@ -38,12 +38,13 @@
  * @constructor
  */
 jstestdriver.plugins.async.TestStage = function(
-    onError, onStageComplete, testCase, testMethod,
+    onError, onStageComplete, testCase, testMethod, opt_argument,
     opt_armorConstructor, opt_queueConstructor, opt_setTimeout) {
   this.onError_ = onError;
   this.onStageComplete_ = onStageComplete;
   this.testCase_ = testCase;
   this.testMethod_ = testMethod;
+  this.argument_ = opt_argument;
   this.armorConstructor_ = opt_armorConstructor ||
       jstestdriver.plugins.async.DeferredQueueArmor;
   this.queueConstructor_ = opt_queueConstructor ||
@@ -63,7 +64,7 @@ jstestdriver.plugins.async.TestStage.prototype.execute = function() {
 
   if (this.testMethod_) {
     try {
-      this.testMethod_.call(this.testCase_, armor);
+      this.testMethod_.call(this.testCase_, armor, this.argument_);
     } catch (e) {
       this.onError_(e);
     }

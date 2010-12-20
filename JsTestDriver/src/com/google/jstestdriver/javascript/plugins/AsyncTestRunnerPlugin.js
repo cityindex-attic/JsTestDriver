@@ -128,7 +128,7 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.execute_ = function(
   var runner = this;
   var onError = function(error) {runner.errors_.push(error);};
   var stage = new jstestdriver.plugins.async.TestStage(
-      onError, onStageComplete, this.testCase_, invokeMethod,
+      onError, onStageComplete, this.testCase_, invokeMethod, null,
       this.armorConstructor_, this.queueConstructor_, this.setTimeout_);
   stage.execute();
 };
