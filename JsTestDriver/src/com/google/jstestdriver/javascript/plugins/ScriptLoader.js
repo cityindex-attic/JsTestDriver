@@ -34,7 +34,7 @@ jstestdriver.plugins.ScriptLoader.prototype.load = function(file, callback) {
     if (msg != undefined && msg != null) {
       loadMsg += ': ' + msg;
     }
-    this.updateResult_(new jstestdriver.FileResult(file, false, loadMsg));
+    callback(new jstestdriver.FileResult(file, false, loadMsg));
   });
   
   var start = this.now_();
@@ -47,7 +47,7 @@ jstestdriver.plugins.ScriptLoader.prototype.load = function(file, callback) {
     });
   }
   script.onreadystatechange = jstestdriver.bind(this, function() {
-    if (script.readyState == 'loaded') {
+    if (script.readyState === "loaded" || script.readyState === "complete") {
       this.onLoad_(file, callback, start);
     }
   });
@@ -60,11 +60,7 @@ jstestdriver.plugins.ScriptLoader.prototype.load = function(file, callback) {
 
 jstestdriver.plugins.ScriptLoader.prototype.onLoad_ =
     function(file, callback, start) {
-  /*if (this.testCaseManager_.testCaseAdded()) {
-    this.testCaseManager_.updateLatestTestCase(file.fileSrc);
-  }*/
-  this.updateResult_(
-      new jstestdriver.FileResult(file, true, '', this.now_() - start));
+  var result = new jstestdriver.FileResult(file, true, '', this.now_() - start));
   this.win_.onerror = jstestdriver.EMPTY_FUNC;
   callback(this.fileResult_);
 };
@@ -73,7 +69,5 @@ jstestdriver.plugins.ScriptLoader.prototype.onLoad_ =
 jstestdriver.plugins.ScriptLoader.prototype.updateResult_ = function(fileResult) {
   if (this.fileResult_ == null) {
     this.fileResult_ = fileResult;
-  } else {
-    //this.testCaseManager_.removeTestCaseForFilename(fileResult.file.fileSrc);
   }
 };

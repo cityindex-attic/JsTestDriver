@@ -17,6 +17,7 @@ jstestdriver.FileLoader = function(pluginRegistrar, onAllFilesLoaded) {
   this.pluginRegistrar_ = pluginRegistrar;
   this.onAllFilesLoaded_ = onAllFilesLoaded;
   this.boundOnFileLoaded = jstestdriver.bind(this, this.onFileLoaded_);
+  this.boundLoadFile_ = jstestdriver.bind(this, this.onLoadFile_);
   this.loadedFiles_ = [];
 };
 
