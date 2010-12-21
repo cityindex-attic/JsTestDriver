@@ -51,7 +51,7 @@ import java.util.Set;
  * @author corysmith@google.com (Cory Smith)
  */
 public class FileUploader {
-  public static final int CHUNK_SIZE = 50;
+  public static final int CHUNK_SIZE = 1;
 
   private final StopWatch stopWatch;
   private final Gson gson = new Gson();
@@ -160,7 +160,7 @@ public class FileUploader {
     stopWatch.stop("determineBrowserFileSet(%s)", browserId);
 
     stopWatch.start("uploadToTheBrowser(%s)", browserId);
-    uploadToTheBrowser(browserId, stream, browserFilesToUpdate);
+    uploadToTheBrowser(browserId, stream, browserFilesToUpdate, CHUNK_SIZE);
     stopWatch.stop("uploadToTheBrowser(%s)", browserId);
   }
 
@@ -196,7 +196,7 @@ public class FileUploader {
 
   /** Uploads files to the browser. */
   public void uploadToTheBrowser(String browserId, ResponseStream stream,
-      List<FileInfo> loadedFiles) {
+      List<FileInfo> loadedFiles, int chunkSize) {
     List<FileSource> filesSrc = Lists.newLinkedList(filterFilesToLoad(loadedFiles));
     int numberOfFilesToLoad = filesSrc.size();
     logger.debug("Files toupload {}",
@@ -205,8 +205,8 @@ public class FileUploader {
             return "\n" + in.toString();
           }
         }));
-    for (int i = 0; i < numberOfFilesToLoad; i += CHUNK_SIZE) {
-      int chunkEndIndex = Math.min(i + CHUNK_SIZE, numberOfFilesToLoad);
+    for (int i = 0; i < numberOfFilesToLoad; i += chunkSize) {
+      int chunkEndIndex = Math.min(i + chunkSize, numberOfFilesToLoad);
       List<String> loadParameters = new LinkedList<String>();
       List<FileSource> filesToLoad = filesSrc.subList(i, chunkEndIndex);
 

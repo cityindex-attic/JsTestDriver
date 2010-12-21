@@ -17,10 +17,12 @@ package com.google.jstestdriver.server;
 
 import javax.servlet.Servlet;
 
+import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
+import org.mortbay.servlet.GzipFilter;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -70,10 +72,12 @@ public class JettyModule extends AbstractModule {
     server.setGracefulShutdown(1);
     server.addConnector(connector);
     server.setHandler(proxyHandler);
+   
 
     Context context = new Context(proxyHandler, "/", Context.SESSIONS);
     context.setMaxFormContentSize(maxFormContentSize);
 
+    context.addFilter(GzipFilter.class, handlerPrefix.prefixPath("/test/*"), Handler.DEFAULT);
     // TODO(rdionne): Fix HttpServletRequest#getPathInfo() provided by RequestHandlerServlet.
     context.addServlet(servletHolder, handlerPrefix.prefixPath("/"));
     context.addServlet(servletHolder, handlerPrefix.prefixPath("/cache"));

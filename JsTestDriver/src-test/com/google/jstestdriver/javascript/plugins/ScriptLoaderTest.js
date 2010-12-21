@@ -27,9 +27,7 @@ NoOperaScriptLoaderTest.prototype.now = function() {
 NoOperaScriptLoaderTest.prototype.testOnLoad = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
-  var write = function() {};
 
-  mockDOM.write = write;
   var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
     testCaseAdded: function() {
       return false
@@ -45,7 +43,6 @@ NoOperaScriptLoaderTest.prototype.testOnLoad = function() {
   };
 
   scriptLoader.load(file, callback);
-  assertNotSame(write, mockDOM.write);
   assertEquals(1, head.childNodes.length);
   var script = head.childNodes[0];
 
@@ -54,7 +51,6 @@ NoOperaScriptLoaderTest.prototype.testOnLoad = function() {
   assertEquals('text/javascript', script.type);
   assertEquals('file.js', script.src);
   assertTrue(callbackCalled);
-  assertSame(write, mockDOM.write);
   assertNotNull(callbackFileResult);
   assertTrue(callbackFileResult.success);
   assertEquals('', callbackFileResult.message);
@@ -66,9 +62,7 @@ NoOperaScriptLoaderTest.prototype.testOnLoad = function() {
 NoOperaScriptLoaderTest.prototype.testOnLoadError = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
-  var write = function() {};
 
-  mockDOM.write = write;
   var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
     testCaseAdded: function() {
       return false
@@ -84,7 +78,6 @@ NoOperaScriptLoaderTest.prototype.testOnLoadError = function() {
   };
 
   scriptLoader.load(file, callback);
-  assertNotSame(write, mockDOM.write);
   assertEquals(1, head.childNodes.length);
   var script = head.childNodes[0];
 
@@ -94,7 +87,6 @@ NoOperaScriptLoaderTest.prototype.testOnLoadError = function() {
   assertEquals('text/javascript', script.type);
   assertEquals('file.js', script.src);
   assertTrue(callbackCalled);
-  assertSame(write, mockDOM.write);
   assertNotNull(callbackFileResult);
   assertFalse(callbackFileResult.success);
   assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);
@@ -107,9 +99,7 @@ NoOperaScriptLoaderTest.prototype.testOnLoadError = function() {
 NoOperaScriptLoaderTest.prototype.testOnLoadWindowError = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
-  var write = function() {};
 
-  mockDOM.write = write;
   var win = {};
   var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
     testCaseAdded: function() {
@@ -127,7 +117,6 @@ NoOperaScriptLoaderTest.prototype.testOnLoadWindowError = function() {
 
   scriptLoader.load(file, callback);
   assertNotNull(win.onerror);
-  assertNotSame(write, mockDOM.write);
   assertEquals(1, head.childNodes.length);
   var script = head.childNodes[0];
 
@@ -138,7 +127,6 @@ NoOperaScriptLoaderTest.prototype.testOnLoadWindowError = function() {
   assertEquals('text/javascript', script.type);
   assertEquals('file.js', script.src);
   assertTrue(callbackCalled);
-  assertSame(write, mockDOM.write);
   assertNotNull(callbackFileResult);
   assertFalse(callbackFileResult.success);
   assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);
@@ -156,9 +144,7 @@ ScriptLoaderTest.prototype.now = function() {
 ScriptLoaderTest.prototype.testOnReadyStateChange = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
-  var write = function() {};
 
-  mockDOM.write = write;
   var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
     testCaseAdded: function() {
       return false
@@ -174,7 +160,6 @@ ScriptLoaderTest.prototype.testOnReadyStateChange = function() {
   };
 
   scriptLoader.load(file, callback);
-  assertNotSame(write, mockDOM.write);
   assertEquals(1, head.childNodes.length);
   var script = head.childNodes[0];
 
@@ -184,7 +169,6 @@ ScriptLoaderTest.prototype.testOnReadyStateChange = function() {
   assertEquals('text/javascript', script.type);
   assertEquals('file.js', script.src);
   assertTrue(callbackCalled);
-  assertSame(write, mockDOM.write);
   assertNotNull(callbackFileResult);
   assertTrue(callbackFileResult.success);
   assertEquals('', callbackFileResult.message);
@@ -197,9 +181,7 @@ ScriptLoaderTest.prototype.testOnReadyStateChange = function() {
 ScriptLoaderTest.prototype.testOnReadyStateChangeError = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
-  var write = function() {};
 
-  mockDOM.write = write;
   var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
     testCaseAdded: function() {
       return false
@@ -215,7 +197,6 @@ ScriptLoaderTest.prototype.testOnReadyStateChangeError = function() {
   };
 
   scriptLoader.load(file, callback);
-  assertNotSame(write, mockDOM.write);
   assertEquals(1, head.childNodes.length);
   var script = head.childNodes[0];
 
@@ -226,7 +207,6 @@ ScriptLoaderTest.prototype.testOnReadyStateChangeError = function() {
   assertEquals('text/javascript', script.type);
   assertEquals('file.js', script.src);
   assertTrue(callbackCalled);
-  assertSame(write, mockDOM.write);
   assertNotNull(callbackFileResult);
   assertFalse(callbackFileResult.success);
   assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);
@@ -239,9 +219,7 @@ ScriptLoaderTest.prototype.testOnReadyStateChangeError = function() {
 ScriptLoaderTest.prototype.testOnReadyStateChangeWindowError = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
-  var write = function() {};
 
-  mockDOM.write = write;
   var win = {};
   var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
     testCaseAdded: function() {
@@ -259,7 +237,6 @@ ScriptLoaderTest.prototype.testOnReadyStateChangeWindowError = function() {
 
   scriptLoader.load(file, callback);
   assertNotNull(win.onerror);
-  assertNotSame(write, mockDOM.write);
   assertEquals(1, head.childNodes.length);
   var script = head.childNodes[0];
 
@@ -271,7 +248,6 @@ ScriptLoaderTest.prototype.testOnReadyStateChangeWindowError = function() {
   assertEquals('text/javascript', script.type);
   assertEquals('file.js', script.src);
   assertTrue(callbackCalled);
-  assertSame(write, mockDOM.write);
   assertNotNull(callbackFileResult);
   assertFalse(callbackFileResult.success);
   assertEquals('error loading file: file.js:42: msg', callbackFileResult.message);

@@ -17,7 +17,6 @@ jstestdriver.plugins.ScriptLoader = function(win, dom, testCaseManager, now) {
   this.win_ = win;
   this.dom_ = dom;
   this.testCaseManager_ = testCaseManager;
-  this.originalDocumentWrite_ = this.dom_.write;
   this.now_ = now;
 };
 
@@ -54,20 +53,19 @@ jstestdriver.plugins.ScriptLoader.prototype.load = function(file, callback) {
   });
   script.type = "text/javascript";
   script.src = file.fileSrc;
-  this.disableDocumentWrite();
   head.appendChild(script);
+
 };
 
 
 jstestdriver.plugins.ScriptLoader.prototype.onLoad_ =
     function(file, callback, start) {
-  if (this.testCaseManager_.testCaseAdded()) {
+  /*if (this.testCaseManager_.testCaseAdded()) {
     this.testCaseManager_.updateLatestTestCase(file.fileSrc);
-  }
+  }*/
   this.updateResult_(
       new jstestdriver.FileResult(file, true, '', this.now_() - start));
   this.win_.onerror = jstestdriver.EMPTY_FUNC;
-  this.restoreDocumentWrite();
   callback(this.fileResult_);
 };
 
@@ -76,16 +74,6 @@ jstestdriver.plugins.ScriptLoader.prototype.updateResult_ = function(fileResult)
   if (this.fileResult_ == null) {
     this.fileResult_ = fileResult;
   } else {
-    this.testCaseManager_.removeTestCaseForFilename(fileResult.file.fileSrc);
+    //this.testCaseManager_.removeTestCaseForFilename(fileResult.file.fileSrc);
   }
-};
-
-
-jstestdriver.plugins.ScriptLoader.prototype.disableDocumentWrite = function() {
-  this.dom_.write = jstestdriver.EMPTY_FUNC;
-};
-
-
-jstestdriver.plugins.ScriptLoader.prototype.restoreDocumentWrite = function() {
-  this.dom_.write = this.originalDocumentWrite_;
 };

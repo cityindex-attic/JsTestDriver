@@ -23,6 +23,7 @@ public class FileResult {
   private FileSource file;
   private boolean success;
   private String message;
+  private long elapsed = 0;
 
   public FileResult() {
   }
@@ -47,7 +48,7 @@ public class FileResult {
 
   @Override
   public String toString() {
-    return "FileResult [file=" + file + ", message=" + message + ", success=" + success + "]";
+    return "FileResult [file=" + file + ", success=" + success + ", message=" + message
+        + ", elapsed=" + elapsed + "]";
   }
-  
 }

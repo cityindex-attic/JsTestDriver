@@ -19,8 +19,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.FileResult;
+import com.google.jstestdriver.FileUploader;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.TestRunResult;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
 import java.util.Map;
@@ -35,6 +39,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DefaultListener implements TestResultListener {
 
   static final String NEW_LINE = System.getProperty("line.separator");
+
+  private static final Logger logger = LoggerFactory.getLogger(DefaultListener.class);
 
   private final PrintStream out;
 
@@ -180,6 +186,7 @@ public class DefaultListener implements TestResultListener {
   }
 
   public void onFileLoad(String browser, FileResult fileResult) {
+    logger.debug("loaded {}", fileResult.toString());
     if (fileResult.isSuccess()) {
       if (verbose) {
         out.println(browser + " loaded " + fileResult.getFileSource().getFileSrc());

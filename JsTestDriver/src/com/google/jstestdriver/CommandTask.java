@@ -92,7 +92,8 @@ public class CommandTask {
             fileUploader.determineBrowserFileSet(
                 browserId,
                 testCase.toFileSet(),
-                stream));
+                stream),
+        FileUploader.CHUNK_SIZE); // TODO(corysmith): make this injectable.
       }
       logger.debug("Finished upload for {}", browserId);
       server.post(baseUrl + "/cmd", params);

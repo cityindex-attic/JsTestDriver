@@ -117,10 +117,17 @@ asyncTest.prototype.testRequest = function(queue) {
     var bodyReceived = pool.add(function(body) {
       assertEquals('hello', body);
     });
+    var status = null;
     xhr.onreadystatechange = function() {
-      if (xhr.readyState == 2) {
-        headersReceived(xhr.status);
-      } else if (xhr.readyState == 4) {
+      if (xhr.readyState >= 2 && !status) {
+        try {
+          status = xhr.status;
+          headersReceived(xhr.status);
+        } catch (e) {
+          jstestdriver.console.error('Error on read status ' + e);
+        }
+      }
+      if (xhr.readyState == 4) {
         bodyReceived(xhr.responseText);
       }
     };
