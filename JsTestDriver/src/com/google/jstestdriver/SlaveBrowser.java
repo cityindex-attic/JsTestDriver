@@ -37,6 +37,7 @@ import com.google.jstestdriver.commands.NoopCommand;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.runner.RunnerType;
 import com.google.jstestdriver.server.handlers.pages.PageType;
+import com.google.jstestdriver.server.handlers.pages.SlavePageRequest;
 
 /**
  * Represents a captured browser, and brokers the interaction between the client
@@ -47,13 +48,19 @@ import com.google.jstestdriver.server.handlers.pages.PageType;
 public class SlaveBrowser {
 
   private static final String CLIENT_CONSOLE_RUNNER = "/slave/id/%s/page/CONSOLE/mode/%s/"
+      + SlavePageRequest.TIMEOUT + "/%s/"
+      + SlavePageRequest.UPLOAD_SIZE + "/%s/"
       + RUNNER_TYPE + "/" + CLIENT;
 
-  private static final String STANDALONE_CONSOLE_RUNNER =
-      "/runner/id/%s/page/RUNNER/mode/%s/timeout/%s/" + RUNNER_TYPE + "/" + STANDALONE;
+  private static final String STANDALONE_CONSOLE_RUNNER = "/runner/id/%s/page/RUNNER/mode/%s/"
+      + SlavePageRequest.TIMEOUT + "/%s/"
+      + SlavePageRequest.UPLOAD_SIZE + "/%s/"
+      + RUNNER_TYPE + "/" + STANDALONE;
 
-  private static final String BROWSER_CONTROLLED_RUNNER = "/bcr/id/%s/page/"
-      + PageType.VISUAL_STANDALONE_RUNNER + "/mode/%s/timeout/%s/" + RUNNER_TYPE + "/" + BROWSER;
+  private static final String BROWSER_CONTROLLED_RUNNER = "/bcr/id/%s/page/" + PageType.VISUAL_STANDALONE_RUNNER + "/mode/%s/"
+      + SlavePageRequest.TIMEOUT + "/%s/"
+      + SlavePageRequest.UPLOAD_SIZE + "/%s/"
+      + RUNNER_TYPE + "/" + BROWSER;
 
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SlaveBrowser.class);
@@ -248,13 +255,14 @@ public class SlaveBrowser {
   }
 
   public String getCaptureUrl() {
+    // TODO(corysmith): refactor the capture path building to a proper builder. Doing it to many places.
     switch (type) {
       case CLIENT:
-        return prefix.prefixPath(String.format(CLIENT_CONSOLE_RUNNER, id, mode, timeout));
+        return prefix.prefixPath(String.format(CLIENT_CONSOLE_RUNNER, id, mode, timeout, browserInfo.getUploadSize()));
       case STANDALONE:
-        return prefix.prefixPath(String.format(STANDALONE_CONSOLE_RUNNER, id, mode, timeout));
+        return prefix.prefixPath(String.format(STANDALONE_CONSOLE_RUNNER, id, mode, timeout, browserInfo.getUploadSize()));
       case BROWSER:
-        return prefix.prefixPath(String.format(BROWSER_CONTROLLED_RUNNER, id, mode, timeout));
+        return prefix.prefixPath(String.format(BROWSER_CONTROLLED_RUNNER, id, mode, timeout, browserInfo.getUploadSize()));
     }
     throw new UnsupportedOperationException("Unsupported Runner type: " + type);
   }

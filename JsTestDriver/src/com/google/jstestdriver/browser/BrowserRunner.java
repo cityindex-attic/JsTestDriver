@@ -34,4 +34,14 @@ public interface BrowserRunner {
    * browser not responding.
    */
   public int getNumStartupTries();
+
+  /**
+   * The number of ms before the browser is dead.
+   */
+  public long getHeartbeatTimeout();
+
+  /**
+   * The number of files to upload at one time.
+   */
+  public int getUploadSize();
 }

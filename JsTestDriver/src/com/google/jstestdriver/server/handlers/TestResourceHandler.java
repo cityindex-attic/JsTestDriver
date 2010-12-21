@@ -55,14 +55,25 @@ class TestResourceHandler implements RequestHandler {
   }
 
   public void service(String fileName, PrintWriter writer) {
-    String mimeType = 
-      StaticResourceHandler.MIME_TYPE_MAP.get(
-          fileName.substring(fileName.lastIndexOf(".")));
+    String mimeType = parseMimeType(fileName);
     if (mimeType != null) {
       response.setContentType(mimeType);
     }
     String data = filesCache.getFileContent(fileName);
     writer.write(data);
     writer.flush();
+  }
+
+  /**
+   * @param fileName
+   * @return
+   */
+  private String parseMimeType(String fileName) {
+    int extension = fileName.lastIndexOf(".");
+    if (extension == -1) {
+      return null;
+    }
+    return StaticResourceHandler.MIME_TYPE_MAP.get(
+        fileName.substring(extension));
   }
 }

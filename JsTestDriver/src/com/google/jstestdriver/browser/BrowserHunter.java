@@ -15,18 +15,19 @@
  */
 package com.google.jstestdriver.browser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.inject.Inject;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.FileUploader;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.Time;
 import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.runner.RunnerType;
 import com.google.jstestdriver.server.handlers.CaptureHandler;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates SlaveBrowsers.
@@ -56,26 +57,19 @@ public class BrowserHunter {
 
   public SlaveBrowser captureBrowser(String name, String version, String os) {
     return captureBrowser(capturedBrowsers.getUniqueId(), name, version, os, browserTimeout,
-        CaptureHandler.QUIRKS, RunnerType.CLIENT);
+        CaptureHandler.QUIRKS, RunnerType.CLIENT, FileUploader.CHUNK_SIZE);
   }
 
   /**
    * Begins tracking a browser in the CapturedBrowsers collection.
-   * 
-   * @param rawId
-   * @param name
-   * @param version
-   * @param os
-   * @param mode
-   * @return A slave browser
    */
   public SlaveBrowser captureBrowser(String rawId, String name, String version, String os) {
     return captureBrowser(rawId, name, version, os, browserTimeout, CaptureHandler.QUIRKS,
-        RunnerType.CLIENT);
+        RunnerType.CLIENT, FileUploader.CHUNK_SIZE);
   }
 
   public SlaveBrowser captureBrowser(String rawId, String name, String version, String os,
-      Long browserTimeout, String mode, RunnerType type) {
+      Long browserTimeout, String mode, RunnerType type, Integer uploadSize) {
     BrowserInfo browserInfo = new BrowserInfo();
 
     final Integer id = parseBrowserId(rawId);
@@ -83,8 +77,9 @@ public class BrowserHunter {
     browserInfo.setName(name);
     browserInfo.setVersion(version);
     browserInfo.setOs(os);
-    // TODO(corysmith):move all browser timeout configuration to the capture
-    // servlet.
+    browserInfo.setUploadSize(uploadSize != null ? uploadSize : FileUploader.CHUNK_SIZE);
+    // TODO(corysmith):move all browser timeout configuration to the proper place.
+    // TODO(corysmith):figure out where that is.
     long computedBrowserTimeout = computeTimeout(browserTimeout);
     SlaveBrowser slave =
         new SlaveBrowser(time, id.toString(), browserInfo, computedBrowserTimeout, prefix, mode,

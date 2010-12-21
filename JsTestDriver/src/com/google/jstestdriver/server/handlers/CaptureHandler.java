@@ -29,6 +29,7 @@ import com.google.jstestdriver.util.ParameterParser;
  * 
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
+// TODO(corysmith): refactor the concerns in the handler. It's doing to much again.
 public class CaptureHandler implements RequestHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(CaptureHandler.class);
@@ -40,8 +41,14 @@ public class CaptureHandler implements RequestHandler {
   public static final String QUIRKS = "quirks";
 
   private static final Map<String, Integer> PARAMETERS = ImmutableMap.<String, Integer>builder()
-      .put(STRICT, 0).put(QUIRKS, 0).put(RUNNER_TYPE, 1).put(SlavePageRequest.MODE, 1)
-      .put(SlavePageRequest.ID, 1).put(SlavePageRequest.TIMEOUT, 1).build();
+      .put(STRICT, 0)
+      .put(QUIRKS, 0)
+      .put(RUNNER_TYPE, 1)
+      .put(SlavePageRequest.UPLOAD_SIZE, 1)
+      .put(SlavePageRequest.MODE, 1)
+      .put(SlavePageRequest.ID, 1)
+      .put(SlavePageRequest.TIMEOUT, 1)
+      .build();
 
   private static final Set<String> BLACKLIST = ImmutableSet.<String>builder().add("capture")
       .build();
@@ -67,9 +74,14 @@ public class CaptureHandler implements RequestHandler {
     String id = parameterMap.get(SlavePageRequest.ID);
     RunnerType runnerType = parseRunnerType(parameterMap.get(RUNNER_TYPE));
     Long timeout = parseLong(parameterMap.get(TIMEOUT));
-    String redirect = service(request.getUserAgent(), mode, id, runnerType, timeout);
+    Integer uploadSize = parseInteger(parameterMap.get(SlavePageRequest.UPLOAD_SIZE));
+    String redirect = service(request.getUserAgent(), mode, id, runnerType, timeout, uploadSize);
     logger.debug("Redirecting to {}", redirect);
     response.sendRedirect(redirect);
+  }
+
+  private Integer parseInteger(String value) {
+    return value == null ? null : Integer.parseInt(value);
   }
 
   private Long parseLong(final String value) {
@@ -81,13 +93,13 @@ public class CaptureHandler implements RequestHandler {
   }
 
   public String service(String userAgent, String mode, String id, RunnerType runnerType,
-      Long timeout) {
+      Long timeout, Integer uploadSize) {
     UserAgentParser parser = new UserAgentParser();
 
     parser.parse(userAgent);
     SlaveBrowser slaveBrowser =
         browserHunter.captureBrowser(id, parser.getName(), parser.getVersion(), parser.getOs(),
-            timeout, mode, runnerType);
+            timeout, mode, runnerType, uploadSize);
     return slaveBrowser.getCaptureUrl();
   }
 }

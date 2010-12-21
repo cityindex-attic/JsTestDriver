@@ -24,6 +24,7 @@ import static com.google.jstestdriver.server.handlers.pages.PageType.HEARTBEAT;
 import static com.google.jstestdriver.server.handlers.pages.PageType.RUNNER;
 import static com.google.jstestdriver.server.handlers.pages.PageType.STANDALONE_RUNNER;
 import static com.google.jstestdriver.server.handlers.pages.PageType.VISUAL_STANDALONE_RUNNER;
+import static com.google.jstestdriver.server.handlers.pages.SlavePageRequest.UPLOAD_SIZE;
 
 import java.util.HashSet;
 import java.util.List;
@@ -202,6 +203,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     .put(ID, 1)
     .put(MODE, 1)
     .put(PAGE, 1)
+    .put(UPLOAD_SIZE, 1)
     .build();
 
   private static final Set<String> BLACKLIST = ImmutableSet.<String>builder().build();

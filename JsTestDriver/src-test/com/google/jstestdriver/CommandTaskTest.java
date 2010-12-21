@@ -44,18 +44,24 @@ public class CommandTaskTest extends TestCase {
 
   public void testConvertJsonResponseToObject() throws Exception {
     MockServer server = new MockServer();
+    String id = "1";
 
     server.expect(baseUrl + "heartbeat?id=1", "OK");
     server.expect(baseUrl + "fileSet?POST?{data=[], action=serverFileCheck}", "[]");
     server.expect(baseUrl + "fileSet?POST?{id=1, data=[], action=browserFileCheck}", gson.toJson(new BrowserFileSet()));
     server.expect(baseUrl + "cmd?POST?{data={mooh}, id=1}", "");
+    BrowserInfo browserInfo = new BrowserInfo();
+    browserInfo.setId(Integer.parseInt(id));
+    browserInfo.setUploadSize(10);
+    server.expect(baseUrl + "cmd?listBrowsers", gson.toJson(Lists.newArrayList(browserInfo)));
     server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
         + "\"last\":true}");
+    
     Map<String, String> params = new LinkedHashMap<String, String>();
 
     params.put("data", "{mooh}");
-    params.put("id", "1");
+    params.put("id", id);
     FakeResponseStream stream = new FakeResponseStream();
     CommandTask task =
         createCommandTask(server, params, stream, new MockFileLoader(), true);
@@ -70,6 +76,7 @@ public class CommandTaskTest extends TestCase {
   }
 
   public void testUploadFiles() throws Exception {
+    String id = "1";
     MockServer server = new MockServer();
     FileInfo fileInfo = new FileInfo("foo.js", 1232, -1, false, false, null);
 
@@ -82,6 +89,10 @@ public class CommandTaskTest extends TestCase {
     server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
         + "\"last\":true}");
+    BrowserInfo browserInfo = new BrowserInfo();
+    browserInfo.setId(Integer.parseInt(id));
+    browserInfo.setUploadSize(10);
+    server.expect(baseUrl + "cmd?listBrowsers", gson.toJson(Lists.newArrayList(browserInfo)));
     Map<String, String> params = new LinkedHashMap<String, String>();
 
     params.put("data", "{mooh}");
@@ -102,6 +113,7 @@ public class CommandTaskTest extends TestCase {
   }
 
   public void testUploadServeOnlyFiles() throws Exception {
+    String id = "1";
     MockServer server = new MockServer();
 
     // test file data.
@@ -121,6 +133,10 @@ public class CommandTaskTest extends TestCase {
         gson.toJson(browserFileSet));
     server.expect(baseUrl + "fileSet?POST?{data=" + gson.toJson(fileSet) + ", action=serverFileCheck}",
       "[]");
+    BrowserInfo browserInfo = new BrowserInfo();
+    browserInfo.setId(Integer.parseInt(id));
+    browserInfo.setUploadSize(10);
+    server.expect(baseUrl + "cmd?listBrowsers", gson.toJson(Lists.newArrayList(browserInfo)));
 
     JsonCommand cmd = new JsonCommand(CommandType.RESET, Collections.<String>emptyList());
     Map<String, String> resetParams = new LinkedHashMap<String, String>();

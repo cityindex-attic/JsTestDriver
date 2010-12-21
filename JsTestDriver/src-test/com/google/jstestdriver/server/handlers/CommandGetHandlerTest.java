@@ -56,7 +56,7 @@ public class CommandGetHandlerTest extends TestCase {
     capturedBrowsers.addSlave(slave);
     CommandGetHandler handler = new CommandGetHandler(null, null, new Gson(), capturedBrowsers);
 
-    assertEquals("[{\"id\":1,\"serverReceivedHeartbeat\":false}]", handler.listBrowsers());
+    assertEquals("[{\"id\":1,\"uploadSize\":1,\"serverReceivedHeartbeat\":false}]", handler.listBrowsers());
   }
 
   public void testBrowserPanic() throws Exception {

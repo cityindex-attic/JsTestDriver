@@ -45,6 +45,9 @@ public class BrowserActionRunner implements Callable<Collection<ResponseStream>>
 
   private final JstdTestCase testCase;
 
+  // TODO(corysmith): enable session manager.
+  private final BrowserSessionManager sessionManager;
+
   public BrowserActionRunner(String id, JsTestDriverClient client, List<BrowserAction> actions,
       StopWatch stopWatch, JstdTestCase testCase, BrowserSessionManager sessionManager) {
     this.id = id;
@@ -52,16 +55,19 @@ public class BrowserActionRunner implements Callable<Collection<ResponseStream>>
     this.actions = actions;
     this.stopWatch = stopWatch;
     this.testCase = testCase;
+    this.sessionManager = sessionManager;
   }
 
   public Collection<ResponseStream> call() {
     Collection<ResponseStream> responses = Lists.newArrayList();
+    //String sessionId = sessionManager.startSession(id);
     for (BrowserAction action : actions) {
       stopWatch.start("run %s", action);
       logger.debug("Running BrowserAction {}", action);
       responses.add(action.run(id, client, null, testCase));
       stopWatch.stop("run %s", action);
     }
+    //sessionManager.stopSession(sessionId, id);
     return responses;
   }
 }

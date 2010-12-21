@@ -23,7 +23,9 @@ import junit.framework.TestCase;
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.FakeJsTestDriverClient;
+import com.google.jstestdriver.FileUploader;
 import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.util.NullStopWatch;
 
 /**
@@ -74,6 +76,14 @@ public class BrowserManagedRunnerTest extends TestCase {
 
     public int getNumStartupTries() {
       return 1;
+    }
+
+    public long getHeartbeatTimeout() {
+      return SlaveBrowser.TIMEOUT;
+    }
+
+    public int getUploadSize() {
+      return FileUploader.CHUNK_SIZE;
     }
   }
 }

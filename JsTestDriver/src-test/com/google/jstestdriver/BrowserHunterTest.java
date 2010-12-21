@@ -35,7 +35,7 @@ public class BrowserHunterTest extends TestCase {
     assertEquals("name", browserInfo.getName());
     assertEquals("version", browserInfo.getVersion());
     assertEquals("os", browserInfo.getOs());
-    assertEquals("/slave/id/1/page/CONSOLE/mode/quirks/rt/CLIENT", slaveBrowser.getCaptureUrl());
+    assertEquals("/slave/id/1/page/CONSOLE/mode/quirks/timeout/15000/upload_size/1/rt/CLIENT", slaveBrowser.getCaptureUrl());
   }
 
 }

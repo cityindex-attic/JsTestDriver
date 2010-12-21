@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 import static java.lang.String.format;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.jstestdriver.Response.ResponseType;
 import com.google.jstestdriver.browser.BrowserPanicException;
 import com.google.jstestdriver.model.JstdTestCase;
@@ -26,6 +27,7 @@ import com.google.jstestdriver.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -79,6 +81,18 @@ public class CommandTask {
           format("Browser is not available\n {} \nfor\n {}", alive, params));
     }
   }
+  
+  private BrowserInfo getBrowser(String id) {
+    Collection<BrowserInfo> browsers = gson.fromJson(server.fetch(baseUrl + "/cmd?listBrowsers"),
+        new TypeToken<Collection<BrowserInfo>>() {}.getType());
+    
+    for (BrowserInfo browser : browsers) {
+      if (id.equals(String.valueOf(browser.getId()))) {
+        return browser;
+      }
+    }
+    return null;
+  }
 
   public void run(JstdTestCase testCase) {
     String browserId = params.get("id");
@@ -93,7 +107,7 @@ public class CommandTask {
                 browserId,
                 testCase.toFileSet(),
                 stream),
-        FileUploader.CHUNK_SIZE); // TODO(corysmith): make this injectable.
+        getBrowser(browserId).getUploadSize());
       }
       logger.debug("Finished upload for {}", browserId);
       server.post(baseUrl + "/cmd", params);

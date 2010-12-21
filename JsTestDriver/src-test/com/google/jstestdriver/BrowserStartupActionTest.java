@@ -106,6 +106,14 @@ public class BrowserStartupActionTest extends TestCase {
       public int getNumStartupTries() {
         return 1;
       }
+
+      public long getHeartbeatTimeout() {
+        return SlaveBrowser.TIMEOUT;
+      }
+
+      public int getUploadSize() {
+        return FileUploader.CHUNK_SIZE;
+      }
     };
     
     final String serverAddress = "http://foo:8080";
@@ -142,6 +150,14 @@ public class BrowserStartupActionTest extends TestCase {
 
     public int getNumStartupTries() {
       return 1;
+    }
+    
+    public long getHeartbeatTimeout() {
+      return SlaveBrowser.TIMEOUT;
+    }
+
+    public int getUploadSize() {
+      return FileUploader.CHUNK_SIZE;
     }
   }
 

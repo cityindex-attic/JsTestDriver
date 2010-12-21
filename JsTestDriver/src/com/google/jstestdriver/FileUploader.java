@@ -51,7 +51,7 @@ import java.util.Set;
  * @author corysmith@google.com (Cory Smith)
  */
 public class FileUploader {
-  public static final int CHUNK_SIZE = 1;
+  public static final int CHUNK_SIZE = 50;
 
   private final StopWatch stopWatch;
   private final Gson gson = new Gson();

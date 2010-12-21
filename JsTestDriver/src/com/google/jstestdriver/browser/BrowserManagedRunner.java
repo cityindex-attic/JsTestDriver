@@ -1,17 +1,18 @@
 package com.google.jstestdriver.browser;
 
-import java.util.Collection;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
+import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.JsTestDriverClient;
+import com.google.jstestdriver.ResponseStream;
+import com.google.jstestdriver.server.handlers.pages.SlavePageRequest;
+import com.google.jstestdriver.util.Retry;
+import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.JsTestDriverClient;
-import com.google.jstestdriver.ResponseStream;
-import com.google.jstestdriver.util.Retry;
-import com.google.jstestdriver.util.StopWatch;
+import java.util.Collection;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Manages a BrowserRunner lifecycle around a BrowserActionRunner.
@@ -20,6 +21,11 @@ import com.google.jstestdriver.util.StopWatch;
  *
  */
 public class BrowserManagedRunner implements Callable<Collection<ResponseStream>> {
+  
+  private static final String CAPTURE_URL =
+      String.format("%%s/capture/%s/%%s/%s/%%s/%s/%%s/",
+          SlavePageRequest.ID, SlavePageRequest.UPLOAD_SIZE, SlavePageRequest.TIMEOUT);
+  
   private static final Logger logger = LoggerFactory.getLogger(BrowserManagedRunner.class);
 
   private final BrowserRunner runner;
@@ -55,7 +61,7 @@ public class BrowserManagedRunner implements Callable<Collection<ResponseStream>
   }
 
   private Collection<ResponseStream> startBrowserAndWaitForResponse() throws Exception {
-     final String url = String.format("%s/capture/id/%s", serverAddress, browserId);
+     final String url = String.format(CAPTURE_URL, serverAddress, browserId, runner.getHeartbeatTimeout(), runner.getUploadSize());
      stopWatch.start("browser start %s", runner);
      runner.startBrowser(url);
      try {

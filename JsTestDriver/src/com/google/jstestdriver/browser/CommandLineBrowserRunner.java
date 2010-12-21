@@ -20,7 +20,9 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.jstestdriver.FileUploader;
 import com.google.jstestdriver.ProcessFactory;
+import com.google.jstestdriver.SlaveBrowser;
 
 /**
  * Runs a browser from the command line.
@@ -65,6 +67,14 @@ public class CommandLineBrowserRunner implements BrowserRunner {
 
   public int getNumStartupTries() {
     return 1;
+  }
+
+  public long getHeartbeatTimeout() {
+    return SlaveBrowser.TIMEOUT;
+  }
+
+  public int getUploadSize() {
+    return FileUploader.CHUNK_SIZE;
   }
 
   @Override

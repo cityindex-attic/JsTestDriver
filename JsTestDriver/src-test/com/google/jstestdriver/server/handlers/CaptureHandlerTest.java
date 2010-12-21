@@ -40,8 +40,8 @@ public class CaptureHandlerTest extends TestCase {
             null),
         null);
 
-    assertEquals("/slave/id/1/page/CONSOLE/mode/quirks/rt/CLIENT", handler.service("Chrome/2.0",
-        CaptureHandler.QUIRKS, null, RunnerType.CLIENT, -1l));
+    assertEquals("/slave/id/1/page/CONSOLE/mode/quirks/timeout/-1/upload_size/10/rt/CLIENT", handler.service("Chrome/2.0",
+        CaptureHandler.QUIRKS, null, RunnerType.CLIENT, -1l, 10));
   }
 
   public void testRedirectStrictUrl() throws Exception {
@@ -56,8 +56,8 @@ public class CaptureHandlerTest extends TestCase {
             null),
         null);
 
-    assertEquals("/slave/id/1/page/CONSOLE/mode/strict/rt/CLIENT", handler.service("Chrome/2.0",
-        CaptureHandler.STRICT, null, RunnerType.CLIENT, -1l));
+    assertEquals("/slave/id/1/page/CONSOLE/mode/strict/timeout/-1/upload_size/10/rt/CLIENT", handler.service("Chrome/2.0",
+        CaptureHandler.STRICT, null, RunnerType.CLIENT, -1l, 10));
   }
 
   public void testRedirectStrictUrlWithId() throws Exception {
@@ -73,7 +73,7 @@ public class CaptureHandlerTest extends TestCase {
             null),
         null);
 
-    assertEquals("/slave/id/" + id + "/page/CONSOLE/mode/strict/rt/CLIENT", handler.service("Chrome/2.0",
-        CaptureHandler.STRICT, id, RunnerType.CLIENT, -1l));
+    assertEquals("/slave/id/" + id + "/page/CONSOLE/mode/strict/timeout/-1/upload_size/10/rt/CLIENT", handler.service("Chrome/2.0",
+        CaptureHandler.STRICT, id, RunnerType.CLIENT, -1l, 10));
   }
 }

@@ -117,11 +117,14 @@ class StandaloneRunnerHandler implements RequestHandler {
       filesSources.add(new FileSource("/test/" + f, -1));
     }
     final int size = filesSources.size();
+    
+    // TODO(corysmith): respect demeter.
+    int chunkSize = slaveBrowser.getBrowserInfo().getUploadSize();
 
-    for (int i = 0; i < size; i += FileUploader.CHUNK_SIZE) {
+    for (int i = 0; i < size; i += chunkSize) {
       LinkedList<String> loadFilesParameters = new LinkedList<String>();
       List<FileSource> chunkedFileSources =
-          filesSources.subList(i, Math.min(i + FileUploader.CHUNK_SIZE, size));
+          filesSources.subList(i, Math.min(i + chunkSize, size));
 
       loadFilesParameters.add(gson.toJson(chunkedFileSources));
       loadFilesParameters.add("true");

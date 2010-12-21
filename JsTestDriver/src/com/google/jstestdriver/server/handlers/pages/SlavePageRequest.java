@@ -41,6 +41,7 @@ public class SlavePageRequest {
   public static final String ID = "id";
   public static final String MODE = "mode";
   public static final String TIMEOUT = "timeout";
+  public static final String UPLOAD_SIZE = "upload_size";
 
   private static final Logger logger =
       LoggerFactory.getLogger(SlavePageRequest.class);
@@ -70,11 +71,13 @@ public class SlavePageRequest {
   }
   
   public String createCaptureUrl(RunnerType type) {
-    return prefix.prefixPath(String.format("/capture/%s/%s/%s/%s",
+    return prefix.prefixPath(String.format("/capture/%s/%s/%s/%s/%s/%s",
         CaptureHandler.RUNNER_TYPE,
         type,
         MODE,
-        parameters.get(MODE)));
+        parameters.get(MODE),
+        UPLOAD_SIZE,
+        parameters.get(UPLOAD_SIZE)));
   }
 
   public String createCaptureUrl() {
@@ -84,7 +87,7 @@ public class SlavePageRequest {
   }
 
   public String createPageUrl(PageType page) {
-    String url = prefix.prefixPath(String.format("/%s/%s/%s/%s/%s/%s/%s/%s/%s",
+    String url = prefix.prefixPath(String.format("/%s/%s/%s/%s/%s/%s/%s/%s/%s/%s/%s",
         "slave",
         ID,
         parameters.get(ID),
@@ -93,7 +96,9 @@ public class SlavePageRequest {
         MODE,
         parameters.get(MODE),
         PAGE,
-        page));
+        page,
+        UPLOAD_SIZE,
+        parameters.get(UPLOAD_SIZE)));
     logger.trace("creating new url: {} for {}", url, page);
     return url;
   }

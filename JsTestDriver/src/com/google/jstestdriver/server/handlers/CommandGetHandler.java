@@ -40,6 +40,7 @@ class CommandGetHandler implements RequestHandler {
   }
 
   public void handleIt() throws IOException {
+    // TODO(corysmith): move these command to their own handler.
     if (request.getParameter("listBrowsers") != null) {
       response.getWriter().write(listBrowsers());
     } else if (request.getParameter("nextBrowserId") != null) {

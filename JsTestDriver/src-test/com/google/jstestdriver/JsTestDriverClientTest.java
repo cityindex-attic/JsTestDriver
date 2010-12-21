@@ -23,6 +23,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.inject.Provider;
 import com.google.jstestdriver.browser.BrowserFileSet;
@@ -177,14 +178,22 @@ public class JsTestDriverClientTest extends TestCase {
 
   public void testRunATest() throws Exception {
     MockServer server = new MockServer();
+    String id = "1";
 
-    server.expect("http://localhost/heartbeat?id=1", "OK");
-    server.expect("http://localhost/fileSet?POST?{id=1, data=[], action=browserFileCheck}", gson.toJson(new BrowserFileSet()));
-    
+    server.expect("http://localhost/heartbeat?id=" + id, "OK");
+    server.expect(
+        "http://localhost/fileSet?POST?{id=" + id + ", data=[], action=browserFileCheck}",
+        gson.toJson(new BrowserFileSet()));
+
     server.expect("http://localhost/fileSet?POST?{data=[], action=serverFileCheck}", "[]");
     
+    BrowserInfo browserInfo = new BrowserInfo();
+    browserInfo.setId(Integer.parseInt(id));
+    browserInfo.setUploadSize(10);
+    server.expect("http://localhost/cmd?listBrowsers", gson.toJson(Lists.newArrayList(browserInfo)));
+
     server.expect("http://localhost/cmd?POST?{data={\"command\":\"runAllTests\","
-        + "\"parameters\":[\"false\",\"false\",\"\"]}, id=1}", "");
+        + "\"parameters\":[\"false\",\"false\",\"\"]}, id=" + id + "}", "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");
@@ -206,16 +215,20 @@ public class JsTestDriverClientTest extends TestCase {
   }
 
   public void testRunOneTest() throws Exception {
+    String id = "1";
     MockServer server = new MockServer();
 
     server.expect("http://localhost/heartbeat?id=1", "OK");
     server.expect("http://localhost/fileSet?POST?{id=1, data=[], action=browserFileCheck}",
         gson.toJson(new BrowserFileSet()));
     server.expect("http://localhost/fileSet?POST?{data=[], action=serverFileCheck}", "[]");
-    server
-        .expect(
+    server.expect(
             "http://localhost/cmd?POST?{data={\"command\":\"runTests\","
                 + "\"parameters\":[\"[\\\"testCase.testFoo\\\",\\\"testCase.testBar\\\"]\",\"false\",\"\"]}, id=1}", "");
+    BrowserInfo browserInfo = new BrowserInfo();
+    browserInfo.setId(Integer.parseInt(id));
+    browserInfo.setUploadSize(10);
+    server.expect("http://localhost/cmd?listBrowsers", gson.toJson(Lists.newArrayList(browserInfo)));
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");

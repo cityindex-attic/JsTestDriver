@@ -45,8 +45,10 @@ public class StandaloneRunnerHandlerTest extends TestCase {
     files.put("file4.js", new FileInfo("file4.js", 1, -1, false, false, "content4"));
     FilesCache cache = new FilesCache(files);
     CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
+    BrowserInfo browserInfo = new BrowserInfo();
+    browserInfo.setUploadSize(50);
     SlaveBrowser slaveBrowser =
-        new SlaveBrowser(new MockTime(10), "1", new BrowserInfo(), 1200, null,
+        new SlaveBrowser(new MockTime(10), "1", browserInfo, 1200, null,
             CaptureHandler.QUIRKS, RunnerType.CLIENT);
     capturedBrowsers.addSlave(slaveBrowser);
     StandaloneRunnerHandler handler =
