@@ -24,7 +24,7 @@ public class BrowserManagedRunner implements Callable<Collection<ResponseStream>
   
   private static final String CAPTURE_URL =
       String.format("%%s/capture/%s/%%s/%s/%%s/%s/%%s/",
-          SlavePageRequest.ID, SlavePageRequest.UPLOAD_SIZE, SlavePageRequest.TIMEOUT);
+          SlavePageRequest.ID, SlavePageRequest.TIMEOUT, SlavePageRequest.UPLOAD_SIZE);
   
   private static final Logger logger = LoggerFactory.getLogger(BrowserManagedRunner.class);
 
