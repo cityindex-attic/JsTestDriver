@@ -32,6 +32,7 @@ import org.joda.time.Instant;
 import com.google.gson.Gson;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.FileUploader;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.StreamMessage;
@@ -56,7 +57,8 @@ public class CommandGetHandlerTest extends TestCase {
     capturedBrowsers.addSlave(slave);
     CommandGetHandler handler = new CommandGetHandler(null, null, new Gson(), capturedBrowsers);
 
-    assertEquals("[{\"id\":1,\"uploadSize\":1,\"serverReceivedHeartbeat\":false}]", handler.listBrowsers());
+    assertEquals("[{\"id\":1,\"uploadSize\":" + FileUploader.CHUNK_SIZE
+        + ",\"serverReceivedHeartbeat\":false}]", handler.listBrowsers());
   }
 
   public void testBrowserPanic() throws Exception {
