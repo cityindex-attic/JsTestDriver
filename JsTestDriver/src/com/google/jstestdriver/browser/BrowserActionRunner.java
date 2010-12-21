@@ -60,14 +60,14 @@ public class BrowserActionRunner implements Callable<Collection<ResponseStream>>
 
   public Collection<ResponseStream> call() {
     Collection<ResponseStream> responses = Lists.newArrayList();
-    //String sessionId = sessionManager.startSession(id);
+    String sessionId = sessionManager.startSession(id);
     for (BrowserAction action : actions) {
       stopWatch.start("run %s", action);
       logger.debug("Running BrowserAction {}", action);
       responses.add(action.run(id, client, null, testCase));
       stopWatch.stop("run %s", action);
     }
-    //sessionManager.stopSession(sessionId, id);
+    sessionManager.stopSession(sessionId, id);
     return responses;
   }
 }
