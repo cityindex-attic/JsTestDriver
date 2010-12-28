@@ -25,6 +25,21 @@ jstestdriver.plugins.ScriptLoader.prototype.load = function(file, callback) {
   this.fileResult_ = null;
   var head = this.dom_.getElementsByTagName('head')[0];
   var script = this.dom_.createElement('script');
+  var start = this.now_();
+
+  if (!jstestdriver.jQuery.browser.opera) {
+    script.onload = jstestdriver.bind(this, function() {
+      this.cleanCallBacks(script)
+      this.onLoad_(file, callback, start);
+    });
+  }
+  script.onreadystatechange = jstestdriver.bind(this, function() {
+    if (script.readyState === "loaded" || script.readyState === "complete") {
+      this.cleanCallBacks(script)
+      this.onLoad_(file, callback, start);
+    }
+  });
+
   var handleError = jstestdriver.bind(this, function(msg, url, line) {
     var loadMsg = 'error loading file: ' + file.fileSrc;
 
@@ -34,35 +49,31 @@ jstestdriver.plugins.ScriptLoader.prototype.load = function(file, callback) {
     if (msg != undefined && msg != null) {
       loadMsg += ': ' + msg;
     }
+    this.cleanCallBacks(script)
     callback(new jstestdriver.FileResult(file, false, loadMsg));
   });
-  
-  var start = this.now_();
-
   this.win_.onerror = handleError; 
   script.onerror = handleError;
-  if (!jstestdriver.jQuery.browser.opera) {
-    script.onload = jstestdriver.bind(this, function() {
-      this.onLoad_(file, callback, start);
-    });
-  }
-  script.onreadystatechange = jstestdriver.bind(this, function() {
-    if (script.readyState === "loaded" || script.readyState === "complete") {
-      this.onLoad_(file, callback, start);
-    }
-  });
+
   script.type = "text/javascript";
   script.src = file.fileSrc;
   head.appendChild(script);
 
 };
 
+jstestdriver.plugins.ScriptLoader.prototype.cleanCallBacks = function(script) {
+  script.onerror = jstestdriver.EMPTY_FUNC;
+  script.onload = jstestdriver.EMPTY_FUNC;
+  script.onreadystatechange = jstestdriver.EMPTY_FUNC;
+  this.win_.onerror = jstestdriver.EMPTY_FUNC;
+};
+
 
 jstestdriver.plugins.ScriptLoader.prototype.onLoad_ =
     function(file, callback, start) {
-  var result = new jstestdriver.FileResult(file, true, '', this.now_() - start));
+  var result = new jstestdriver.FileResult(file, true, '', this.now_() - start);
   this.win_.onerror = jstestdriver.EMPTY_FUNC;
-  callback(this.fileResult_);
+  callback(result);
 };
 
 

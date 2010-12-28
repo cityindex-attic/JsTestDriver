@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 class CommandPostHandler implements RequestHandler {
 
-  private static final Logger LOGGER = LoggerFactory
+  private static final Logger logger = LoggerFactory
       .getLogger(CommandPostHandler.class);
 
   private final HttpServletRequest request;
@@ -46,9 +46,11 @@ class CommandPostHandler implements RequestHandler {
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
 
     data = translateUrls(data);
+    logger.debug("Adding command to browser queue.");
     browser.createCommand(data);
   }
 
+  // TODO(corysmith): figure out what this does.
   private String translateUrls(String data) {
     JsonCommand command = gson.fromJson(data, JsonCommand.class);
 

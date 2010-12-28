@@ -45,6 +45,7 @@ FileLoaderTest.prototype.testFilesToLoad = function() {
   pluginRegistrar.register(defaultPlugin);
   var fileLoader = new jstestdriver.FileLoader(pluginRegistrar, function(res) {
     var loadedFiles = res.loadedFiles;
+    jstestdriver.console.debug(loadedFiles);
 
     assertNotNull(loadedFiles);
     assertEquals(6, loadedFiles.length);
@@ -126,6 +127,6 @@ FileLoaderTest.prototype.testFilesToLoad = function() {
   } else {
     head.childNodes[4].onload();
   }
-  head.childNodes[5].readyState = 'loaded';
+  head.childNodes[5].readyState = 'completed';
   head.childNodes[5].onreadystatechange();
 };

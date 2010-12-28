@@ -7,6 +7,9 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.jstestdriver.BrowserInfo;
@@ -21,6 +24,7 @@ import com.google.jstestdriver.requesthandlers.RequestHandler;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 class CommandGetHandler implements RequestHandler {
+  private static Logger logger = LoggerFactory.getLogger(CommandGetHandler.class);
 
   private final HttpServletRequest request;
   private final HttpServletResponse response;
@@ -57,7 +61,7 @@ class CommandGetHandler implements RequestHandler {
 
   private void streamResponse(String id, PrintWriter writer) {
     SlaveBrowser browser = capturedBrowsers.getBrowser(id);
-    writer.write(gson.toJson(substituteBrowserInfo(getResponse(browser))));
+    writer.write(gson.toJson(getResponse(browser)));
   }
 
   private StreamMessage getResponse(SlaveBrowser browser) {
@@ -80,7 +84,7 @@ class CommandGetHandler implements RequestHandler {
         response.setType(BrowserPanic.TYPE_NAME);
         return new StreamMessage(true, response);
       }
-      cmdResponse = browser.getResponse();
+      cmdResponse = substituteBrowserInfo(browser.getResponse());
     }
     return cmdResponse;
   }

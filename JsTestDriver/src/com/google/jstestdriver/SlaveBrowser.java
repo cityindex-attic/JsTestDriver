@@ -33,6 +33,7 @@ import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.jstestdriver.Response.ResponseType;
 import com.google.jstestdriver.commands.NoopCommand;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.runner.RunnerType;
@@ -194,7 +195,7 @@ public class SlaveBrowser {
     try {
       StreamMessage message = responses.poll(POLL_RESPONSE_TIMEOUT, TimeUnit.SECONDS);
       if (message == null) {
-        // TODO(corysmith): See if returning an empty message works here.
+        message = new StreamMessage(false, new Response(ResponseType.UNKNOWN.name(), "{}", browserInfo, "", 0l));
       }
       return message;
     } catch (InterruptedException e) {
