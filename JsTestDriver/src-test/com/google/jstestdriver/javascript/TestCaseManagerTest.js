@@ -41,17 +41,13 @@ TestCaseManagerTest.prototype.testAddAndReplace = function() {
   testCaseManager.add(testCaseInfo1);
   testCaseManager.add(testCaseInfo2);
   testCaseManager.add(testCaseInfo3);
-  testCaseManager.add(testCaseInfo2Replacement);
-  var testCasesInfo = testCaseManager.getTestCasesInfo();
-
-  assertEquals(3, testCasesInfo.length);
-  var testCaseInfoFromTestCaseManager = testCasesInfo[1];
-
-  assertNotNull(testCaseInfoFromTestCaseManager);
-  assertNotSame(testCaseInfo1, testCaseInfoFromTestCaseManager);
-  assertNotSame(testCaseInfo3, testCaseInfoFromTestCaseManager);
-  assertNotSame(testCaseInfo2, testCaseInfoFromTestCaseManager);
-  assertSame(testCaseInfo2Replacement, testCaseInfoFromTestCaseManager);
+  var exception = null;
+  try {
+    testCaseManager.add(testCaseInfo2Replacement);
+  } catch (e) {
+    exception = e;
+  }
+  assertNotNull('Expected are error to be thrown on duplicate test name.', exception);
 };
 
 
@@ -139,6 +135,7 @@ TestCaseManagerTest.prototype.testSameFilenameTestCaseIsReplaced = function() {
   var testCase2 = testCaseBuilder.TestCase('testCase2');
 
   testCase2.prototype.testFu = function() {};
+  testCaseManager.removeTestCaseForFilename("/test//home/foo/file.js");
   testCaseManager.updateLatestTestCase("/test//home/foo/file.js");
   var testCaseInfos = testCaseManager.getTestCasesInfo();
   var testCaseInfo = testCaseInfos[0];
@@ -160,6 +157,7 @@ TestCaseManagerTest.prototype.testTestCaseDifferentFilenameIsReplaced = function
   testCase1.prototype.testFoo = function() {};
   testCase1.prototype.testBar = function() {};
   assertEquals(1, testCaseManager.getTestCasesInfo().length);
+  testCaseManager.removeTestCaseForFilename("/test//home/foo/file1.js");
   testCaseManager.updateLatestTestCase("/test//home/foo/file1.js");
   var testCase2 = testCaseBuilder.TestCase('testCase1');
 
