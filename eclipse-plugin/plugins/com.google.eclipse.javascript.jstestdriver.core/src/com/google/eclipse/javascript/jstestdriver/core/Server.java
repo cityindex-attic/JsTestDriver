@@ -25,6 +25,7 @@ import com.google.jstestdriver.DefaultURLTranslator;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ServerStartupAction;
+import com.google.jstestdriver.TimeImpl;
 
 /**
  * TODO: This should not use CaptureBrowsers and ServerStartupAction directly but go through the
@@ -76,7 +77,7 @@ public class Server {
 
   private Server(int port) {
     this.port = port;
-    capturedBrowsers = new CapturedBrowsers();
+    capturedBrowsers = new CapturedBrowsers(new TimeImpl());
     this.startupAction =
       new ServerStartupAction(port, capturedBrowsers, new FilesCache(
           Maps.<String, FileInfo>newHashMap()),
