@@ -60,7 +60,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
       new ConcurrentHashMap<SlaveBrowser, List<String>>();
 
   public void testGetDataFromJsPuppetServer() throws Exception {
-    CapturedBrowsers browsers = new CapturedBrowsers();
+    CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(0));
     String id = "1";
     SlaveBrowser slave =
         new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
@@ -77,7 +77,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   }
 
   public void testSettingResponseForACommand() throws Exception {
-    CapturedBrowsers browsers = new CapturedBrowsers();
+    CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(0));
     String id = "1";
     SlaveBrowser slave =
         new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
@@ -95,7 +95,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
     response.setResponse("response");
     BrowserInfo browserInfo = new BrowserInfo();
 
-    browserInfo.setId(1);
+    browserInfo.setId(1L);
     browserInfo.setName("browser");
     browserInfo.setOs("OS");
     browserInfo.setVersion("version");
@@ -106,7 +106,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   }
 
   public void testSimulatePollTimeoutDequeueNullCommand() throws Exception {
-    CapturedBrowsers browsers = new CapturedBrowsers();
+    CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(0));
     String id = "1";
     SlaveBrowser slave =
         new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
@@ -122,7 +122,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   }
 
   public void testConnectionHeartBeat() throws Exception {
-    CapturedBrowsers browsers = new CapturedBrowsers();
+    CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(0));
     String id = "1";
     MockTime time = new MockTime(42L);
     SlaveBrowser slave =
@@ -140,7 +140,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   }
 
   public void testBrowserIsNotSlave() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
+    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new MockTime(0));
     BrowserQueryResponseHandler handler =
         new BrowserQueryResponseHandler(null, null, capturedBrowsers, streamedResponses);
 
@@ -149,7 +149,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   }
 
   public void testDoNotGetCommandIfNotLastResponse() throws Exception {
-    CapturedBrowsers browsers = new CapturedBrowsers();
+    CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(0));
     String id = "1";
     SlaveBrowser slave =
         new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
@@ -167,7 +167,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
     response.setResponse("response");
     BrowserInfo browserInfo = new BrowserInfo();
 
-    browserInfo.setId(1);
+    browserInfo.setId(1l);
     browserInfo.setName("browser");
     browserInfo.setOs("OS");
     browserInfo.setVersion("version");
@@ -178,7 +178,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   }
 
   public void testFilesLoadedAreAddedToTheBrowserFileSet() throws Exception {
-    CapturedBrowsers browsers = new CapturedBrowsers();
+    CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(0));
     String id = "1";
     SlaveBrowser slave =
         new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
@@ -223,7 +223,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   }
 
   public void testResetClearsTheBrowserFileSet() throws Exception {
-    CapturedBrowsers browsers = new CapturedBrowsers();
+    CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(0));
     String id = "1";
     SlaveBrowser slave =
         new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,

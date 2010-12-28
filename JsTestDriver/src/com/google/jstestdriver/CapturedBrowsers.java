@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.jstestdriver.browser.BrowserCaptureEvent;
 import com.google.jstestdriver.browser.BrowserCaptureEvent.Event;
@@ -35,13 +36,19 @@ public class CapturedBrowsers extends Observable {
 
   private final AtomicLong nextId = new AtomicLong(0);
   private final Map<String, SlaveBrowser> slaves = new ConcurrentHashMap<String, SlaveBrowser>();
+  private final Time time;
+  
+  @Inject
+  public CapturedBrowsers(Time time) {
+    this.time = time;
+  }
 
   public SlaveBrowser getBrowser(String id) {
     return slaves.get(id);
   }
 
   public String getUniqueId() {
-    return Long.toString(nextId.incrementAndGet());
+    return Long.toString(time.now().getMillis());
   }
 
   public void addSlave(SlaveBrowser slave) {

@@ -36,10 +36,10 @@ import com.google.jstestdriver.runner.RunnerType;
 public class HomeHandlerTest extends TestCase {
 
   public void testDisplayInfo() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
+    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new MockTime(0));
     BrowserInfo browserInfo = new BrowserInfo();
 
-    browserInfo.setId(1);
+    browserInfo.setId(1L);
     browserInfo.setName("browser");
     browserInfo.setOs("OS");
     browserInfo.setVersion("1.0");

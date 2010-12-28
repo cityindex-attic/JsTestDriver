@@ -79,7 +79,7 @@ public class XmlPrinterTest extends TestCase {
     assertEquals("TEST-Safari_3_MacIntel.testCase2.xml", files[3]);
   }
 
-  private BrowserInfo makeBrowser(String name, String os, String version, int id) {
+  private BrowserInfo makeBrowser(String name, String os, String version, long id) {
     BrowserInfo info = new BrowserInfo();
     info.setName(name);
     info.setOs(os);

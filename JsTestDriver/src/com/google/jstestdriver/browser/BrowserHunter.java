@@ -72,7 +72,7 @@ public class BrowserHunter {
       Long browserTimeout, String mode, RunnerType type, Integer uploadSize) {
     BrowserInfo browserInfo = new BrowserInfo();
 
-    final Integer id = parseBrowserId(rawId);
+    final Long id = parseBrowserId(rawId);
     browserInfo.setId(id);
     browserInfo.setName(name);
     browserInfo.setVersion(version);
@@ -95,11 +95,11 @@ public class BrowserHunter {
     return browserTimeout == null ? this.browserTimeout : browserTimeout;
   }
 
-  private Integer parseBrowserId(String id) {
+  private Long parseBrowserId(String id) {
     if (id == null) {
-      return Integer.parseInt(capturedBrowsers.getUniqueId());
+      return Long.parseLong(capturedBrowsers.getUniqueId());
     }
-    return Integer.valueOf(id);
+    return Long.parseLong(id);
   }
 
   public boolean isBrowserCaptured(String id) {

@@ -149,7 +149,7 @@ public class TestXmlSerializerTest extends TestCase {
     assertEquals(0, stderrTagCount);
   }
 
-  private BrowserInfo makeBrowser(String name, String os, String version, int id) {
+  private BrowserInfo makeBrowser(String name, String os, String version, long id) {
     BrowserInfo info = new BrowserInfo();
     info.setName(name);
     info.setOs(os);

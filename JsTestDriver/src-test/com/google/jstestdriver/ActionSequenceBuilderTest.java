@@ -41,7 +41,8 @@ public class ActionSequenceBuilderTest extends TestCase {
         new ActionSequenceBuilder(actionFactory, null, null,
             new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
             new FailureCheckerAction(null, null),
-            new UploadAction(null));
+            new UploadAction(null),
+            new CapturedBrowsers(new MockTime(0)));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(UploadAction.class);
@@ -66,7 +67,8 @@ public class ActionSequenceBuilderTest extends TestCase {
             null, null),
             null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
         new FailureCheckerAction(null, null),
-        new UploadAction(null));
+        new UploadAction(null),
+        new CapturedBrowsers(new MockTime(0)));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -96,7 +98,8 @@ public class ActionSequenceBuilderTest extends TestCase {
             null, null, new BrowserActionExecutorAction(
                 null, null, null, null, null, 0, null, null),
             new FailureCheckerAction(null, null),
-            new UploadAction(null));
+            new UploadAction(null),
+            new CapturedBrowsers(new MockTime(0)));
 
     List<Action> actions = builder.addTests(tests).withLocalServerPort(999)
         .usingFiles(files, false).build();

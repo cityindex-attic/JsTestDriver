@@ -37,7 +37,7 @@ public class ActionSequenceBuilder {
 
   private final ActionFactory actionFactory;
   private final FileLoader fileLoader;
-  private CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
+  private final CapturedBrowsers capturedBrowsers;
   private HashMap<String, FileInfo> files = new LinkedHashMap<String, FileInfo>();
   private Set<FileInfo> fileSet;
   private int localServerPort = -1;
@@ -61,12 +61,14 @@ public class ActionSequenceBuilder {
                                ResponseStreamFactory responseStreamFactory,
                                BrowserActionExecutorAction browserActionsRunner,
                                FailureCheckerAction failureCheckerAction,
-                               UploadAction uploadAction) {
+                               UploadAction uploadAction,
+                               CapturedBrowsers capturedBrowsers) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.browserActionsRunner = browserActionsRunner;
     this.failureCheckerAction = failureCheckerAction;
     this.uploadAction = uploadAction;
+    this.capturedBrowsers = capturedBrowsers;
   }
 
   /**

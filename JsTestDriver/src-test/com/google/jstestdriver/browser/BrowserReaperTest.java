@@ -31,7 +31,7 @@ import com.google.jstestdriver.server.handlers.CaptureHandler;
 public class BrowserReaperTest extends TestCase {
 
   public void testReapDeadBrowser() throws Exception {
-    final CapturedBrowsers browsers = new CapturedBrowsers();
+    final CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(0));
     final MockTime time = new MockTime(1);
     final SlaveBrowser browserOne =
         new SlaveBrowser(time, "1", new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
@@ -50,7 +50,7 @@ public class BrowserReaperTest extends TestCase {
   }
 
   public void testDontReapDeadBrowserWithCommandRunning() throws Exception {
-    final CapturedBrowsers browsers = new CapturedBrowsers();
+    final CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(0));
     final MockTime time = new MockTime(1);
     final SlaveBrowser browserOne =
         new SlaveBrowser(time, "1", new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,

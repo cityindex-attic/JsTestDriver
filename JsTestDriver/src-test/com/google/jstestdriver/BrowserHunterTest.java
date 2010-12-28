@@ -26,7 +26,8 @@ import com.google.jstestdriver.model.NullPathPrefix;
 public class BrowserHunterTest extends TestCase {
 
   public void testCaptureAndGenerateUrlQuirks() throws Exception {
-    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(),
+    Time time = new MockTime(444);
+    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(time),
         SlaveBrowser.TIMEOUT, new NullPathPrefix(), new TimeImpl());
     SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version",
         "os");
@@ -36,7 +37,7 @@ public class BrowserHunterTest extends TestCase {
     assertEquals("version", browserInfo.getVersion());
     assertEquals("os", browserInfo.getOs());
     assertEquals(
-        "/slave/id/1/page/CONSOLE/mode/quirks/timeout/15000/upload_size/" + FileUploader.CHUNK_SIZE
+        "/slave/id/444/page/CONSOLE/mode/quirks/timeout/15000/upload_size/" + FileUploader.CHUNK_SIZE
             + "/rt/CLIENT", slaveBrowser.getCaptureUrl());
   }
 }

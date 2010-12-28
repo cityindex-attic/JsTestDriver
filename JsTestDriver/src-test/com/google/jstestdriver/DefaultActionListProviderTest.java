@@ -91,7 +91,8 @@ public class DefaultActionListProviderTest extends TestCase {
                 null,
                 null),
             new FailureCheckerAction(null, null),
-            new UploadAction(null)));
+            new UploadAction(null),
+            new CapturedBrowsers(new MockTime(0))));
   }
 
   public void testParseWithServerAndReset() throws Exception {

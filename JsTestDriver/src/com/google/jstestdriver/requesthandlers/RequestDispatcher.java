@@ -73,7 +73,10 @@ class RequestDispatcher {
         response.sendError(HttpServletResponse.SC_NOT_FOUND, "Not found.");
       }
     } catch (IllegalArgumentException e) {
+      logger.error("Error in request {}", e);
       errorSender.methodNotAllowed();
+    } catch (Exception e) {
+      logger.error("Error in request {}", e);
     }
   }
 }

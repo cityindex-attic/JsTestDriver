@@ -51,7 +51,7 @@ public class CommandTaskTest extends TestCase {
     server.expect(baseUrl + "fileSet?POST?{id=1, data=[], action=browserFileCheck}", gson.toJson(new BrowserFileSet()));
     server.expect(baseUrl + "cmd?POST?{data={mooh}, id=1}", "");
     BrowserInfo browserInfo = new BrowserInfo();
-    browserInfo.setId(Integer.parseInt(id));
+    browserInfo.setId(Long.parseLong(id));
     browserInfo.setUploadSize(10);
     server.expect(baseUrl + "cmd?listBrowsers", gson.toJson(Lists.newArrayList(browserInfo)));
     server.expect(baseUrl + "cmd?id=1", "{\"response\":{\"response\":\"response\","
@@ -90,7 +90,7 @@ public class CommandTaskTest extends TestCase {
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error\",\"executionTime\":123},"
         + "\"last\":true}");
     BrowserInfo browserInfo = new BrowserInfo();
-    browserInfo.setId(Integer.parseInt(id));
+    browserInfo.setId(Long.parseLong(id));
     browserInfo.setUploadSize(10);
     server.expect(baseUrl + "cmd?listBrowsers", gson.toJson(Lists.newArrayList(browserInfo)));
     Map<String, String> params = new LinkedHashMap<String, String>();
@@ -134,7 +134,7 @@ public class CommandTaskTest extends TestCase {
     server.expect(baseUrl + "fileSet?POST?{data=" + gson.toJson(fileSet) + ", action=serverFileCheck}",
       "[]");
     BrowserInfo browserInfo = new BrowserInfo();
-    browserInfo.setId(Integer.parseInt(id));
+    browserInfo.setId(Long.parseLong(id));
     browserInfo.setUploadSize(10);
     server.expect(baseUrl + "cmd?listBrowsers", gson.toJson(Lists.newArrayList(browserInfo)));
 

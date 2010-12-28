@@ -163,14 +163,14 @@ public class JsTestDriverClientTest extends TestCase {
     assertEquals(2, browsers.size());
     BrowserInfo browser0 = browsers.get(0);
 
-    assertTrue(browser0.getId().equals(0));
+    assertEquals(new Long(0), browser0.getId());
     assertEquals("name0", browser0.getName());
     assertEquals("ver0", browser0.getVersion());
     assertEquals("os0", browser0.getOs());
 
     BrowserInfo browser1 = browsers.get(1);
 
-    assertTrue(browser1.getId().equals(1));
+    assertEquals(new Long(1), browser1.getId());
     assertEquals("name1", browser1.getName());
     assertEquals("ver1", browser1.getVersion());
     assertEquals("os1", browser1.getOs());
@@ -188,7 +188,7 @@ public class JsTestDriverClientTest extends TestCase {
     server.expect("http://localhost/fileSet?POST?{data=[], action=serverFileCheck}", "[]");
     
     BrowserInfo browserInfo = new BrowserInfo();
-    browserInfo.setId(Integer.parseInt(id));
+    browserInfo.setId(Long.parseLong(id));
     browserInfo.setUploadSize(10);
     server.expect("http://localhost/cmd?listBrowsers", gson.toJson(Lists.newArrayList(browserInfo)));
 
@@ -226,7 +226,7 @@ public class JsTestDriverClientTest extends TestCase {
             "http://localhost/cmd?POST?{data={\"command\":\"runTests\","
                 + "\"parameters\":[\"[\\\"testCase.testFoo\\\",\\\"testCase.testBar\\\"]\",\"false\",\"\"]}, id=1}", "");
     BrowserInfo browserInfo = new BrowserInfo();
-    browserInfo.setId(Integer.parseInt(id));
+    browserInfo.setId(Long.parseLong(id));
     browserInfo.setUploadSize(10);
     server.expect("http://localhost/cmd?listBrowsers", gson.toJson(Lists.newArrayList(browserInfo)));
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","

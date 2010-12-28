@@ -38,7 +38,7 @@ public class BrowserManagedRunnerTest extends TestCase {
     String serverAddress = "http://foo";
     
     final BrowserInfo browserInfo = new BrowserInfo();
-    browserInfo.setId(Integer.parseInt(browserId));
+    browserInfo.setId(Long.parseLong(browserId));
     browserInfo.setServerReceivedHeartbeat(true);
     final FakeJsTestDriverClient client =
         new FakeJsTestDriverClient(Lists.newArrayList(browserInfo));

@@ -42,6 +42,7 @@ public class BaseBrowserSessionManager implements BrowserSessionManager {
     if ("FAILED".equals(sessionId)) {
       while ("FAILED".equals(sessionId)) {
         try {
+          logger.error("Waiting for browser: " + browserId);
           sleeper.sleep(WAIT_INTERVAL);
         } catch (InterruptedException e) {
           logger.error("Could not create session for browser: " + browserId);

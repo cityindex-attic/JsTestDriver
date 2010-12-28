@@ -63,7 +63,7 @@ public class FileSetRequestHandlerTest extends TestCase {
     final String fileThree = "three.js";
 
 
-    final CapturedBrowsers browsers = new CapturedBrowsers();
+    final CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(0));
     final BrowserInfo browserInfo = new BrowserInfo();
     browserInfo.setName("firefox");
     final SlaveBrowser browser =

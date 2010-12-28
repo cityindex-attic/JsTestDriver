@@ -33,6 +33,7 @@ import com.google.gson.Gson;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.FileUploader;
+import com.google.jstestdriver.MockTime;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.StreamMessage;
@@ -47,9 +48,9 @@ import com.google.jstestdriver.runner.RunnerType;
 public class CommandGetHandlerTest extends TestCase {
 
   public void testListBrowsers() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
+    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new MockTime(0));
     BrowserInfo browserInfo = new BrowserInfo();
-    browserInfo.setId(1);
+    browserInfo.setId(1L);
     SlaveBrowser slave =
         new SlaveBrowser(new TimeImpl(), "1", browserInfo, 20, null, CaptureHandler.QUIRKS,
             RunnerType.CLIENT);
@@ -62,9 +63,9 @@ public class CommandGetHandlerTest extends TestCase {
   }
 
   public void testBrowserPanic() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
+    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new MockTime(0));
     BrowserInfo browserInfo = new BrowserInfo();
-    browserInfo.setId(1);
+    browserInfo.setId(1L);
 
     CharArrayWriter out = new CharArrayWriter();
     PrintWriter writer = new PrintWriter(out);

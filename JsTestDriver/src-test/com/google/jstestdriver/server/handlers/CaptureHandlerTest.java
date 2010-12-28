@@ -18,6 +18,7 @@ package com.google.jstestdriver.server.handlers;
 import junit.framework.TestCase;
 
 import com.google.jstestdriver.CapturedBrowsers;
+import com.google.jstestdriver.MockTime;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.browser.BrowserHunter;
 import com.google.jstestdriver.model.NullPathPrefix;
@@ -28,8 +29,15 @@ import com.google.jstestdriver.runner.RunnerType;
  */
 public class CaptureHandlerTest extends TestCase {
 
+  /**
+   * @return
+   */
+  private CapturedBrowsers createBrowsers() {
+    return new CapturedBrowsers(new MockTime(1));
+  }
+
   public void testRedirectQuirksUrl() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
+    CapturedBrowsers capturedBrowsers =  createBrowsers();
     CaptureHandler handler = new CaptureHandler(
         null,
         null,
@@ -45,7 +53,7 @@ public class CaptureHandlerTest extends TestCase {
   }
 
   public void testRedirectStrictUrl() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
+    CapturedBrowsers capturedBrowsers = createBrowsers();
     CaptureHandler handler = new CaptureHandler(
         null,
         null,
@@ -62,7 +70,7 @@ public class CaptureHandlerTest extends TestCase {
 
   public void testRedirectStrictUrlWithId() throws Exception {
     String id = "5";
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers();
+    CapturedBrowsers capturedBrowsers = createBrowsers();
     CaptureHandler handler = new CaptureHandler(
         null,
         null,

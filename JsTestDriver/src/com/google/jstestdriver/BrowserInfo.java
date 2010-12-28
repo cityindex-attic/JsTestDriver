@@ -20,18 +20,18 @@ package com.google.jstestdriver;
  */
 public class BrowserInfo {
 
-  private Integer id;
+  private Long id;
   private String name;
   private String version;
   private String os;
   private Integer uploadSize = FileUploader.CHUNK_SIZE;
   private boolean serverReceivedHeartbeat;
 
-  public void setId(Integer id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
-  public Integer getId() {
+  public Long getId() {
     return id;
   }
 

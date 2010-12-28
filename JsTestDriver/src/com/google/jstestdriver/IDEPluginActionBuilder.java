@@ -158,6 +158,8 @@ public class IDEPluginActionBuilder {
       bind(Long.class).annotatedWith(Names.named("testSuiteTimeout"))
           .toInstance(DefaultConfiguration.DEFAULT_TEST_TIMEOUT);
 
+      bind(Time.class).to(TimeImpl.class);
+
       for (Module module : modules) {
         install(module);
       }

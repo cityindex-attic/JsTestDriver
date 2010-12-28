@@ -157,7 +157,7 @@ public class IDEPluginActionBuilderTest extends TestCase {
     public String fetch(String url) {
       BrowserInfo browserInfo = new BrowserInfo();
 
-      browserInfo.setId(1);
+      browserInfo.setId(1l);
       browserInfo.setName("name");
       browserInfo.setOs("os");
       browserInfo.setVersion("version");
