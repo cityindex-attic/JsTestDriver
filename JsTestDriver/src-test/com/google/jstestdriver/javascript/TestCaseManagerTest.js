@@ -149,6 +149,22 @@ TestCaseManagerTest.prototype.testSameFilenameTestCaseIsReplaced = function() {
 };
 
 
+TestCaseManagerTest.prototype.testMultipleCasesToAFileName = function() {
+  var testCaseManager = new jstestdriver.TestCaseManager(null);
+  var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
+  var testCase1 = testCaseBuilder.TestCase('testCase1');
+  testCase1.prototype.testFoo = function() {};
+  testCase1.prototype.testBar = function() {};
+  var testCase2 = testCaseBuilder.TestCase('testCase2');
+  testCase1.prototype.testFoo = function() {};
+  testCase1.prototype.testBar = function() {};
+  assertEquals(2, testCaseManager.getTestCasesInfo().length);
+  testCaseManager.updateLatestTestCase("/test//home/foo/file.js");
+  testCaseManager.removeTestCaseForFilename("/test//home/foo/file.js");
+  assertEquals(0, testCaseManager.getTestCasesInfo().length);
+};
+
+
 TestCaseManagerTest.prototype.testTestCaseDifferentFilenameIsReplaced = function() {
   var testCaseManager = new jstestdriver.TestCaseManager(null);
   var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
@@ -157,8 +173,8 @@ TestCaseManagerTest.prototype.testTestCaseDifferentFilenameIsReplaced = function
   testCase1.prototype.testFoo = function() {};
   testCase1.prototype.testBar = function() {};
   assertEquals(1, testCaseManager.getTestCasesInfo().length);
-  testCaseManager.removeTestCaseForFilename("/test//home/foo/file1.js");
   testCaseManager.updateLatestTestCase("/test//home/foo/file1.js");
+  testCaseManager.removeTestCaseForFilename("/test//home/foo/file1.js");
   var testCase2 = testCaseBuilder.TestCase('testCase1');
 
   testCase2.prototype.testFu = function() {};

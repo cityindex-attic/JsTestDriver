@@ -74,6 +74,6 @@ class TestResourceHandler implements RequestHandler {
       return null;
     }
     return StaticResourceHandler.MIME_TYPE_MAP.get(
-        fileName.substring(extension));
+        fileName.substring(extension - 1));
   }
 }

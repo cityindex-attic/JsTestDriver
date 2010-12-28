@@ -52,7 +52,7 @@ public class StaticResourceHandler implements RequestHandler {
 
   public void handleIt() throws IOException {
     String pathInfo = request.getPathInfo();
-    String mimeType = MIME_TYPE_MAP.get(pathInfo.substring(pathInfo.lastIndexOf(".")));
+    String mimeType = MIME_TYPE_MAP.get(pathInfo.substring(pathInfo.lastIndexOf(".") + 1));
     if (mimeType != null) {
       response.setContentType(mimeType);
     }

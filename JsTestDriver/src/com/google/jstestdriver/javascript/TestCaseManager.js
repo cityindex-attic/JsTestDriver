@@ -22,6 +22,7 @@ jstestdriver.TestCaseManager = function(pluginRegistrar) {
   this.fileToTestCaseMap_ = {};
   this.latestTestCaseInfo_ = null;
   this.pluginRegistrar_ = pluginRegistrar;
+  this.recentCases_ = [];
 };
 
 
@@ -29,41 +30,28 @@ jstestdriver.TestCaseManager.prototype.add = function(testCaseInfo) {
   var index = this.indexOf_(testCaseInfo);
 
   if (index != -1) {
-    this.testCasesInfo_.splice(index, 1, testCaseInfo);
+    throw new Error('duplicate test case names! On ' +
+        testCaseInfo + ' and ' + this.testCasesInfo_[index] );
   } else {
-    this.testCasesInfo_.push(testCaseInfo);
+    this.recentCases_.push(this.testCasesInfo_.push(testCaseInfo) - 1);
   }
-  this.latestTestCaseInfo_ = testCaseInfo;
-};
-
-
-jstestdriver.TestCaseManager.prototype.testCaseAdded = function() {
-  return this.latestTestCaseInfo_ != null;
 };
 
 
 jstestdriver.TestCaseManager.prototype.updateLatestTestCase = function(filename) {
-  if (this.latestTestCaseInfo_ != null) {
-    var indexOfLatestTestCaseInfo = this.indexOf_(this.latestTestCaseInfo_);
-
-    if (indexOfLatestTestCaseInfo == this.testCasesInfo_.length - 1) {
-      var index = this.fileToTestCaseMap_[filename];
-
-      if (index != undefined && index != indexOfLatestTestCaseInfo) {
-        this.removeTestCase_(index);
-      }
-    }
-    this.fileToTestCaseMap_[filename] = indexOfLatestTestCaseInfo;
-    this.latestTestCaseInfo_ = null;
+  if (this.recentCases_.length) {
+    this.fileToTestCaseMap_[filename] = this.recentCases_;
+    this.recentCases_ = [];
   }
 };
 
 
 jstestdriver.TestCaseManager.prototype.removeTestCaseForFilename = function(filename) {
-  var index = this.fileToTestCaseMap_[filename];
-
-  if (index != undefined) {
-    this.removeTestCase_(index);
+  var cases = this.fileToTestCaseMap_[filename] || [];
+  this.fileToTestCaseMap_[filename] = null;
+  delete this.fileToTestCaseMap_[filename];
+  while (cases.length) {
+    this.removeTestCase_(cases.pop());
   }
 };
 
