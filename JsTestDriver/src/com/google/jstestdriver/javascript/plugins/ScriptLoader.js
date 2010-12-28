@@ -22,6 +22,7 @@ jstestdriver.plugins.ScriptLoader = function(win, dom, testCaseManager, now) {
 
 
 jstestdriver.plugins.ScriptLoader.prototype.load = function(file, callback) {
+  this.testCaseManager_.removeTestCaseForFilename(file.fileSrc);
   this.fileResult_ = null;
   var head = this.dom_.getElementsByTagName('head')[0];
   var script = this.dom_.createElement('script');
@@ -71,6 +72,7 @@ jstestdriver.plugins.ScriptLoader.prototype.cleanCallBacks = function(script) {
 
 jstestdriver.plugins.ScriptLoader.prototype.onLoad_ =
     function(file, callback, start) {
+  this.testCaseManager_.updateLatestTestCase(file.fileSrc);
   var result = new jstestdriver.FileResult(file, true, '', this.now_() - start);
   this.win_.onerror = jstestdriver.EMPTY_FUNC;
   callback(result);

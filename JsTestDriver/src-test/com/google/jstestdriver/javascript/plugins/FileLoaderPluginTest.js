@@ -19,17 +19,19 @@ var FileLoaderPluginCallbackTests = ConditionalTestCase(
   return !jstestdriver.jQuery.browser.opera;
 });
 
+FileLoaderPluginCallbackTests.prototype.createScriptLoader = function(win, dom) {
+  return new jstestdriver.plugins.ScriptLoader(win, dom, {
+    updateLatestTestCase: function() {},
+    removeTestCaseForFilename: function() {}
+  }, jstestdriver.now);
+};
+
 
 FileLoaderPluginCallbackTests.prototype.testFileOnLoadJs = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
 
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader({}, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
       stylesheetLoader,
@@ -63,12 +65,7 @@ FileLoaderPluginCallbackTests.prototype.testFileOnLoadJsError = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
 
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader({}, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
       stylesheetLoader);
@@ -98,17 +95,13 @@ FileLoaderPluginCallbackTests.prototype.testFileOnLoadJsError = function() {
   assertEquals(42, callbackFileResult.file.timestamp);
 };
 
+
 FileLoaderPluginCallbackTests.prototype.testFileOnLoadJsWindowError = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
 
   var win = {};
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader(win, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader(win, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
       stylesheetLoader);
@@ -144,12 +137,7 @@ FileLoaderPluginCallbackTests.prototype.testFileOnLoadCss = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
 
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader({}, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
       stylesheetLoader);
@@ -183,12 +171,7 @@ FileLoaderPluginCallbackTests.prototype.testFileOnLoadCssError = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
 
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader({}, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
       stylesheetLoader);
@@ -224,12 +207,7 @@ FileLoaderPluginCallbackTests.prototype.testFileOnLoadCssWindowError = function(
   var head = mockDOM.createElement('head');
 
   var win = {};
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader(win, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader(win, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader,
       stylesheetLoader);
@@ -265,16 +243,19 @@ FileLoaderPluginCallbackTests.prototype.testFileOnLoadCssWindowError = function(
 var FileLoaderPluginTest = TestCase('FileLoaderPluginTest');
 
 
+FileLoaderPluginTest.prototype.createScriptLoader = function(win, dom) {
+  return new jstestdriver.plugins.ScriptLoader(win, dom, {
+    updateLatestTestCase: function() {},
+    removeTestCaseForFilename: function() {}
+  }, jstestdriver.now);
+};
+
+
 FileLoaderPluginTest.prototype.testFileOnReadyStateChangeJs = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
 
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader({}, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.js', 12);
@@ -307,12 +288,7 @@ FileLoaderPluginTest.prototype.testFileOnReadyStateChangeJs = function() {
 FileLoaderPluginTest.prototype.testFileOnReadyStateChangeJsError = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader({}, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.js', 42);
@@ -347,12 +323,7 @@ FileLoaderPluginTest.prototype.testFileOnReadyStateChangeJsWindowError = functio
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
   var win = {};
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader(win, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader(win, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.js', 42);
@@ -389,12 +360,7 @@ FileLoaderPluginTest.prototype.testFileOnReadyStateChangeCss = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
 
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader({}, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.css', 24);
@@ -429,12 +395,7 @@ FileLoaderPluginTest.prototype.testFileLoadCssOnLoadHack = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
 
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader({}, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, true);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.css', 24);
@@ -467,12 +428,7 @@ FileLoaderPluginTest.prototype.testFileOnReadyStateChangeCssError = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
 
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader({}, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader({}, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.css', 84);
@@ -509,12 +465,7 @@ FileLoaderPluginTest.prototype.testFileOnReadyStateChangeCssWindowError = functi
   var head = mockDOM.createElement('head');
 
   var win = {};
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
-    testCaseAdded: function() {
-      return false;
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader(win, mockDOM);
   var stylesheetLoader =  new jstestdriver.plugins.StylesheetLoader(win, mockDOM, false);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(scriptLoader, stylesheetLoader);
   var file = new jstestdriver.FileSource('file.css', 84);

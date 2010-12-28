@@ -29,9 +29,7 @@ NoOperaScriptLoaderTest.prototype.testOnLoad = function() {
   var head = mockDOM.createElement('head');
 
   var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-    testCaseAdded: function() {
-      return false
-    },
+    updateLatestTestCase: function() {},
     removeTestCaseForFilename: function() {}
   }, this.now);
   var file = new jstestdriver.FileSource('file.js', 12);
@@ -146,9 +144,7 @@ ScriptLoaderTest.prototype.testOnReadyStateChange = function() {
   var head = mockDOM.createElement('head');
 
   var scriptLoader = new jstestdriver.plugins.ScriptLoader({}, mockDOM, {
-    testCaseAdded: function() {
-      return false
-    },
+    updateLatestTestCase: function() {},
     removeTestCaseForFilename: function() {}
   }, this.now);
   var file = new jstestdriver.FileSource('file.js', 12);

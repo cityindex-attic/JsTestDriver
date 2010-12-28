@@ -25,16 +25,19 @@ FileLoaderTest.prototype.testNoFilesToLoad = function() {
 };
 
 
+FileLoaderTest.prototype.createScriptLoader = function(win, dom) {
+  return new jstestdriver.plugins.ScriptLoader(win, dom, {
+    updateLatestTestCase: function() {},
+    removeTestCaseForFilename: function() {}
+  }, jstestdriver.now);
+};
+
+
 FileLoaderTest.prototype.testFilesToLoad = function() {
   var mockDOM = new jstestdriver.MockDOM();
   var head = mockDOM.createElement('head');
   var win = {};
-  var scriptLoader = new jstestdriver.plugins.ScriptLoader(win, mockDOM, {
-    testCaseAdded: function() {
-      return false
-    },
-    removeTestCaseForFilename: function() {}
-  }, jstestdriver.now);
+  var scriptLoader = this.createScriptLoader(win, mockDOM);
   var stylesheetLoader = new jstestdriver.plugins.StylesheetLoader(win, mockDOM);
   var fileLoaderPlugin = new jstestdriver.plugins.FileLoaderPlugin(
       scriptLoader,
