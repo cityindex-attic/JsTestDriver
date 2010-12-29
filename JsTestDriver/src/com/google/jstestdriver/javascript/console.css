@@ -14,7 +14,7 @@
  * the License.
  */
  
-body, html, iframe {
+body, html, iframe, framset, frame {
   margin:0;
   padding:0;
   border-style: none;

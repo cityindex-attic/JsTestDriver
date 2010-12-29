@@ -25,10 +25,10 @@ public class ConsolePage implements Page {
       .writeTitle("Remote Console Runner")
       .writeStyleSheet("/static/console.css")
       .finishHead()
-      .startBody()
-      .writeIframe("heartbeat", request.createPageUrl(PageType.HEARTBEAT))
-      .writeIframe("runner", request.createPageUrl(PageType.RUNNER))
-      .finishBody()
+      .startFrameSet()
+      .writeFrame("heartbeat", request.createPageUrl(PageType.HEARTBEAT))
+      .writeFrame("runner", request.createPageUrl(PageType.RUNNER))
+      .finishFrameSet()
       .flush();
   }
 }
