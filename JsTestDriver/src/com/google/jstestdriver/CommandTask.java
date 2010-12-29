@@ -78,7 +78,7 @@ public class CommandTask {
 
     if (!alive.equals("OK")) {
       throw new FailureException(
-          format("Browser is not available\n {} \nfor\n {}", alive, params));
+          format("Browser is not available\n %s \nfor\n %s", alive, params));
     }
   }
   
