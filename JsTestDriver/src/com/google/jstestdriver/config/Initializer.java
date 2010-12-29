@@ -100,7 +100,7 @@ public class Initializer {
             outputStream,
             basePath,
             resolvedConfiguration.getTestSuiteTimeout(),
-            configuration.getTests(),
+            resolvedConfiguration.getTests(),
             // TODO(corysmith): pull js plugins from the configuration.
             Collections.<FileInfo>emptyList()));
     return modules;
