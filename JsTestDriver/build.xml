@@ -624,7 +624,6 @@
 			<arg value="all" />
 			<arg value="--testOutput" />
 			<arg value="${XMLDIRECTORY}" />
-			<arg value="--verbose" />
 		</java>
 	</target>
 
