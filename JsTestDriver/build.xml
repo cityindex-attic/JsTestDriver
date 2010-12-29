@@ -615,7 +615,7 @@
 	</target>
 
 	<target name="jstestdriver" depends="jar">
-		<java jar="${bin.dir}/${ant.project.name}.jar" fork="true" timeout="60000" failonerror="1">
+		<java jar="${bin.dir}/${ant.project.name}.jar" fork="true" timeout="60000" failonerror="true">
 			<arg value="--port" />
 			<arg value="4424" />
 			<arg value="--browser" />
