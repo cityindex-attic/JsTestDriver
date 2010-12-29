@@ -615,7 +615,7 @@
 	</target>
 
 	<target name="jstestdriver" depends="jar">
-		<java jar="${bin.dir}/${ant.project.name}.jar" fork="true" timeout="60000">
+		<java jar="${bin.dir}/${ant.project.name}.jar" fork="true" timeout="60000" failonerror="1">
 			<arg value="--port" />
 			<arg value="4424" />
 			<arg value="--browser" />
@@ -624,6 +624,7 @@
 			<arg value="all" />
 			<arg value="--testOutput" />
 			<arg value="${XMLDIRECTORY}" />
+			<arg value="--verbose" />
 		</java>
 	</target>
 
@@ -639,8 +640,6 @@
 			<arg value="coverage.conf" />
 			<arg value="--testOutput" />
 			<arg value="${XMLDIRECTORY}" />
-			<arg value="--runnerMode" />
-			<arg value="DEBUG_NO_TRACE" />
 		</java>
 	</target>
 

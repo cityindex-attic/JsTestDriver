@@ -85,7 +85,6 @@ public class CommandTask {
   private BrowserInfo getBrowser(String id) {
     Collection<BrowserInfo> browsers = gson.fromJson(server.fetch(baseUrl + "/cmd?listBrowsers"),
         new TypeToken<Collection<BrowserInfo>>() {}.getType());
-    
     for (BrowserInfo browser : browsers) {
       if (id.equals(String.valueOf(browser.getId()))) {
         return browser;
@@ -117,7 +116,11 @@ public class CommandTask {
       logger.debug("Starting {} for {}", params.get("data"), browserId);
       do {
         String response = server.fetch(baseUrl + "/cmd?id=" + browserId);
-        streamMessage = gson.fromJson(response, StreamMessage.class);
+        try {
+          streamMessage = gson.fromJson(response, StreamMessage.class);
+        } catch (Exception e) {
+          throw new RuntimeException("Error deserializing: " + response, e);
+        }
         Response resObj = streamMessage.getResponse();
         if (ResponseType.BROWSER_PANIC.equals(resObj.getResponseType())) {
           throw new BrowserPanicException(resObj.getBrowser(), resObj.getResponse());
