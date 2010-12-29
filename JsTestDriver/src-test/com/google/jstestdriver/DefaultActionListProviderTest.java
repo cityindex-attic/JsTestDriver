@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.action.UploadAction;
 import com.google.jstestdriver.browser.BrowserActionExecutorAction;
+import com.google.jstestdriver.browser.BrowserIdStrategy;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.browser.CommandLineBrowserRunner;
 import com.google.jstestdriver.hooks.ActionListProcessor;
@@ -92,7 +93,7 @@ public class DefaultActionListProviderTest extends TestCase {
                 null),
             new FailureCheckerAction(null, null),
             new UploadAction(null),
-            new CapturedBrowsers(new MockTime(0))));
+            new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0)))));
   }
 
   public void testParseWithServerAndReset() throws Exception {

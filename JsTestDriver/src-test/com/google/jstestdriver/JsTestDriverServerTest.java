@@ -27,6 +27,7 @@ import java.util.Observer;
 import junit.framework.TestCase;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.jstestdriver.browser.BrowserIdStrategy;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.NullPathPrefix;
@@ -37,10 +38,14 @@ import com.google.jstestdriver.util.NullStopWatch;
  */
 public class JsTestDriverServerTest extends TestCase {
 
-  private CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(1));
-  private JsTestDriverServerImpl server = new JsTestDriverServerImpl(4224, browsers,
-      new FilesCache(new HashMap<String, FileInfo>()), SlaveBrowser.TIMEOUT,
-      null, Collections.<AuthStrategy> emptySet(), new NullPathPrefix());
+  private CapturedBrowsers browsers = new CapturedBrowsers(new BrowserIdStrategy(new MockTime(1)));
+  private JsTestDriverServerImpl server = new JsTestDriverServerImpl(4224,
+      browsers,
+      new FilesCache(new HashMap<String, FileInfo>()),
+      SlaveBrowser.TIMEOUT,
+      null,
+      Collections.<AuthStrategy>emptySet(),
+      new NullPathPrefix());
 
   @Override
   protected void tearDown() throws Exception {

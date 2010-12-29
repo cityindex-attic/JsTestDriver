@@ -27,6 +27,7 @@ import com.google.jstestdriver.JsonCommand;
 import com.google.jstestdriver.LoadedFiles;
 import com.google.jstestdriver.Response;
 import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.protocol.BrowserLog;
 import com.google.jstestdriver.protocol.BrowserStreamAcknowledged;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 
@@ -146,6 +147,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
           }
           break;
         case LOG:
+          BrowserLog log = gson.fromJson(res.getResponse(), res.getGsonType());
           logger.info("Message from the browser: " + res.toString());
           break;
         // reset the browsers fileset.

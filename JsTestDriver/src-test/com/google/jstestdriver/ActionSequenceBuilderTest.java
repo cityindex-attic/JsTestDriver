@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 
 import com.google.jstestdriver.action.UploadAction;
 import com.google.jstestdriver.browser.BrowserActionExecutorAction;
+import com.google.jstestdriver.browser.BrowserIdStrategy;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 import com.google.jstestdriver.model.NullPathPrefix;
@@ -42,7 +43,7 @@ public class ActionSequenceBuilderTest extends TestCase {
             new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
             new FailureCheckerAction(null, null),
             new UploadAction(null),
-            new CapturedBrowsers(new MockTime(0)));
+            new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0))));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(UploadAction.class);
@@ -68,7 +69,7 @@ public class ActionSequenceBuilderTest extends TestCase {
             null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
         new FailureCheckerAction(null, null),
         new UploadAction(null),
-        new CapturedBrowsers(new MockTime(0)));
+        new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0))));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -99,7 +100,7 @@ public class ActionSequenceBuilderTest extends TestCase {
                 null, null, null, null, null, 0, null, null),
             new FailureCheckerAction(null, null),
             new UploadAction(null),
-            new CapturedBrowsers(new MockTime(0)));
+            new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0))));
 
     List<Action> actions = builder.addTests(tests).withLocalServerPort(999)
         .usingFiles(files, false).build();

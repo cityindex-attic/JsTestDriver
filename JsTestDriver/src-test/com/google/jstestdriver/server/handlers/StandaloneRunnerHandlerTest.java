@@ -29,6 +29,7 @@ import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.MockTime;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
+import com.google.jstestdriver.browser.BrowserIdStrategy;
 import com.google.jstestdriver.runner.RunnerType;
 
 /**
@@ -44,7 +45,7 @@ public class StandaloneRunnerHandlerTest extends TestCase {
     files.put("file3.js", new FileInfo("file3.js", 53, -1, false, false, "content3"));
     files.put("file4.js", new FileInfo("file4.js", 1, -1, false, false, "content4"));
     FilesCache cache = new FilesCache(files);
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new MockTime(0));
+    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0)));
     BrowserInfo browserInfo = new BrowserInfo();
     browserInfo.setUploadSize(50);
     SlaveBrowser slaveBrowser =

@@ -44,7 +44,7 @@ public class ProxyServletConfig implements ServletConfig {
     return configValues.get(s);
   }
 
-  public Enumeration getInitParameterNames() {
+  public Enumeration<String> getInitParameterNames() {
     return Iterators.asEnumeration(configValues.keySet().iterator());
   }
 }

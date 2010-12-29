@@ -28,6 +28,7 @@ import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.MockTime;
 import com.google.jstestdriver.SlaveBrowser;
+import com.google.jstestdriver.browser.BrowserIdStrategy;
 import com.google.jstestdriver.runner.RunnerType;
 
 /**
@@ -36,7 +37,7 @@ import com.google.jstestdriver.runner.RunnerType;
 public class HomeHandlerTest extends TestCase {
 
   public void testDisplayInfo() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new MockTime(0));
+    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0)));
     BrowserInfo browserInfo = new BrowserInfo();
 
     browserInfo.setId(1L);

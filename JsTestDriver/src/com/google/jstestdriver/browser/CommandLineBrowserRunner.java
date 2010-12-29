@@ -57,7 +57,7 @@ public class CommandLineBrowserRunner implements BrowserRunner {
         logger.warn("Unexpected shutdown " + process + " " + process.exitValue());
       }
     } catch (IllegalThreadStateException e) {
-      logger.warn("Process refused to exit" + process);
+      logger.warn("Process refused to exit [" + browserPath +" ]: "+ process);
     }
   }
 

@@ -40,6 +40,7 @@ import com.google.jstestdriver.StreamMessage;
 import com.google.jstestdriver.Time;
 import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.browser.BrowserIdStrategy;
 import com.google.jstestdriver.runner.RunnerType;
 
 /**
@@ -48,7 +49,7 @@ import com.google.jstestdriver.runner.RunnerType;
 public class CommandGetHandlerTest extends TestCase {
 
   public void testListBrowsers() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new MockTime(0));
+    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0)));
     BrowserInfo browserInfo = new BrowserInfo();
     browserInfo.setId(1L);
     SlaveBrowser slave =
@@ -63,7 +64,7 @@ public class CommandGetHandlerTest extends TestCase {
   }
 
   public void testBrowserPanic() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new MockTime(0));
+    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0)));
     BrowserInfo browserInfo = new BrowserInfo();
     browserInfo.setId(1L);
 

@@ -73,7 +73,12 @@ class FileSetGetHandler implements RequestHandler {
   }
 
   private void sessionHeartBeat(String id, String sessionId) {
-    Lock lock = capturedBrowsers.getBrowser(id).getLock();
+    SlaveBrowser browser = capturedBrowsers.getBrowser(id);
+    if (browser == null) {
+      logger.error("heartbeat to a dead session");
+      return;
+    }
+    Lock lock = browser.getLock();
 
     if (lock.getSessionId().equals(sessionId)) {
       lock.setLastHeartBeat(new Date().getTime());

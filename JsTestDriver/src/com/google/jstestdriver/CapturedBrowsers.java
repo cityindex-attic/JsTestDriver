@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.jstestdriver.browser.BrowserCaptureEvent;
 import com.google.jstestdriver.browser.BrowserCaptureEvent.Event;
+import com.google.jstestdriver.browser.BrowserIdStrategy;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -34,13 +34,12 @@ import java.util.concurrent.atomic.AtomicLong;
 @Singleton
 public class CapturedBrowsers extends Observable {
 
-  private final AtomicLong nextId = new AtomicLong(0);
   private final Map<String, SlaveBrowser> slaves = new ConcurrentHashMap<String, SlaveBrowser>();
-  private final Time time;
+  private final BrowserIdStrategy idStrategy;
   
   @Inject
-  public CapturedBrowsers(Time time) {
-    this.time = time;
+  public CapturedBrowsers(BrowserIdStrategy idStrategy) {
+    this.idStrategy = idStrategy;
   }
 
   public SlaveBrowser getBrowser(String id) {
@@ -48,7 +47,7 @@ public class CapturedBrowsers extends Observable {
   }
 
   public String getUniqueId() {
-    return Long.toString(time.now().getMillis());
+    return Long.toString(idStrategy.nextId());
   }
 
   public void addSlave(SlaveBrowser slave) {

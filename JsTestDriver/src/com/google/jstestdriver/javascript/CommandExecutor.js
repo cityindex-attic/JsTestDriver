@@ -101,9 +101,12 @@ jstestdriver.CommandExecutor.prototype.executeCommand = function(jsonCommand) {
     this.commandMap_[command.command](command.parameters);
   } catch (e) {
     var response = new jstestdriver.Response(jstestdriver.RESPONSE_TYPES.LOG,
-      JSON.stringify('Exception ' + e.name + ': ' + e.message +
+      JSON.stringify({
+        'source' : 'jstestdriver.CommandExecutor',
+        'level' : 1000,
+        'message' : 'Exception ' + e.name + ': ' + e.message +
       '\n' + e.fileName + '(' + e.lineNumber +
-      '):\n' + e.stack),
+      '):\n' + e.stack}),
     this.getBrowserInfo());
     this.streamingService_.stream(response, this.__boundExecuteCommand);
   }

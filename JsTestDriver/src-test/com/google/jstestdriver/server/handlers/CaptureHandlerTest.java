@@ -15,25 +15,23 @@
  */
 package com.google.jstestdriver.server.handlers;
 
-import junit.framework.TestCase;
-
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.MockTime;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.browser.BrowserHunter;
+import com.google.jstestdriver.browser.BrowserIdStrategy;
 import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.runner.RunnerType;
+
+import junit.framework.TestCase;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class CaptureHandlerTest extends TestCase {
 
-  /**
-   * @return
-   */
   private CapturedBrowsers createBrowsers() {
-    return new CapturedBrowsers(new MockTime(1));
+    return new CapturedBrowsers(new BrowserIdStrategy(new MockTime(1)));
   }
 
   public void testRedirectQuirksUrl() throws Exception {

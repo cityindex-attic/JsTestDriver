@@ -18,6 +18,7 @@ package com.google.jstestdriver;
 import junit.framework.TestCase;
 
 import com.google.jstestdriver.browser.BrowserHunter;
+import com.google.jstestdriver.browser.BrowserIdStrategy;
 import com.google.jstestdriver.model.NullPathPrefix;
 
 /**
@@ -27,7 +28,7 @@ public class BrowserHunterTest extends TestCase {
 
   public void testCaptureAndGenerateUrlQuirks() throws Exception {
     Time time = new MockTime(444);
-    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(time),
+    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(new BrowserIdStrategy(time)),
         SlaveBrowser.TIMEOUT, new NullPathPrefix(), new TimeImpl());
     SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version",
         "os");

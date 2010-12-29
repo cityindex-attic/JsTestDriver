@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.browser.BrowserFileSet;
+import com.google.jstestdriver.browser.BrowserIdStrategy;
 import com.google.jstestdriver.runner.RunnerType;
 import com.google.jstestdriver.server.handlers.CaptureHandler;
 import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
@@ -63,7 +64,7 @@ public class FileSetRequestHandlerTest extends TestCase {
     final String fileThree = "three.js";
 
 
-    final CapturedBrowsers browsers = new CapturedBrowsers(new MockTime(0));
+    final CapturedBrowsers browsers = new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0)));
     final BrowserInfo browserInfo = new BrowserInfo();
     browserInfo.setName("firefox");
     final SlaveBrowser browser =
