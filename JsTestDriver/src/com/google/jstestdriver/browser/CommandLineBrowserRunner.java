@@ -16,6 +16,8 @@
 package com.google.jstestdriver.browser;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +90,6 @@ public class CommandLineBrowserRunner implements BrowserRunner {
 
   @Override
   public boolean equals(Object obj) {
-    
     if (obj == null) {
       return false;
     }
@@ -108,7 +109,38 @@ public class CommandLineBrowserRunner implements BrowserRunner {
 
   @Override
   public String toString() {
-    return "CommandLineBrowserRunner [browserPath=" + browserPath
-        + ", process=" + process + ", processFactory=" + processFactory + "]";
+    return "CommandLineBrowserRunner [\nbrowserPath=" + browserPath
+        + ",\nprocess=" + process + ",\n process log={\n" + getLog() + "\n}]";
+  }
+
+  /**
+   * @return
+   */
+  private String getLog() {
+    StringBuilder log = new StringBuilder("error:\n");
+    if (process == null) {
+      return "no process log";
+    }
+    InputStream errorStream = process.getErrorStream();
+    InputStream outputStream = process.getInputStream();
+    byte[] buffer = new byte[512];
+    try {
+      while(errorStream.available() > 0) {
+        errorStream.read(buffer);
+        log.append(buffer);
+      }
+    } catch (IOException e) {
+      log.append("io exception reading error");
+    }
+    log.append("\ninput:\n");
+    try {
+      while(outputStream.available() > 0) {
+        outputStream.read(buffer);
+        log.append(buffer);
+      }
+    } catch (IOException e) {
+      log.append("io exception reading input");
+    }
+    return log.toString();
   }
 }
