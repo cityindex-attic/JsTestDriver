@@ -69,6 +69,11 @@ jstestdriver.TestCaseInfo.prototype.getTestRunConfigurationFor = function(expres
 
   for (var i = 0; i < expressionsSize; i++) {
     var expr = expressions[i];
+
+    if (expr == 'all' || expr == '*') {
+      return this.getDefaultTestRunConfiguration();
+    }
+
     var tokens = expr.split('.');
     var tests = testRunsConfigurationMap[tokens[0]];
 

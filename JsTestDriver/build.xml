@@ -624,8 +624,6 @@
 			<arg value="all" />
 			<arg value="--testOutput" />
 			<arg value="${XMLDIRECTORY}" />
-			<arg value="--runnerMode" />
-			<arg value="DEBUG_OBSERVE" />
 		</java>
 	</target>
 
