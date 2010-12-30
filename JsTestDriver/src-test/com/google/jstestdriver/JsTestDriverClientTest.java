@@ -176,7 +176,7 @@ public class JsTestDriverClientTest extends TestCase {
     assertEquals("os1", browser1.getOs());
   }
 
-  public void testRunATest() throws Exception {
+  public void testRunAllTest() throws Exception {
     MockServer server = new MockServer();
     String id = "1";
 
@@ -192,8 +192,8 @@ public class JsTestDriverClientTest extends TestCase {
     browserInfo.setUploadSize(10);
     server.expect("http://localhost/cmd?listBrowsers", gson.toJson(Lists.newArrayList(browserInfo)));
 
-    server.expect("http://localhost/cmd?POST?{data={\"command\":\"runAllTests\","
-        + "\"parameters\":[\"false\",\"false\",\"\"]}, id=" + id + "}", "");
+    server.expect("http://localhost/cmd?POST?{data={\"command\":\"runTests\","
+        + "\"parameters\":[\"[\\\"all\\\"]\",\"false\",\"\"]}, id=" + id + "}", "");
     server.expect("http://localhost/cmd?id=1", "{\"response\":{\"response\":\"PASSED\","
         + "\"browser\":{\"name\":\"browser\"},\"error\":\"error2\",\"executionTime\":123},"
         + "\"last\":true}");

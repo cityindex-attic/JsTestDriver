@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.internal.Lists;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.model.JstdTestCase;
@@ -95,15 +96,7 @@ public class JsTestDriverClientImpl implements JsTestDriverClient {
 
   public void runAllTests(String browserId, ResponseStream responseStream, boolean captureConsole,
       JstdTestCase testCase) {
-    List<String> parameters = new LinkedList<String>();
-
-    parameters.add(String.valueOf(captureConsole));
-    parameters.add("false");
-    parameters.add(debug ? "1":""); // The json serialization of 0,
-    // false as strings evals to true on the js side. so, "" it is.
-    JsonCommand cmd = new JsonCommand(CommandType.RUNALLTESTS, parameters);
-
-    sendCommand(browserId, responseStream, gson.toJson(cmd), true, testCase);
+    runTests(browserId, responseStream, Lists.newArrayList("all"), captureConsole, testCase);
   }
 
   public void reset(String browserId, ResponseStream responseStream, JstdTestCase testCase) {
