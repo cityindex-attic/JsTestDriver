@@ -15,16 +15,15 @@
  */
 package com.google.jstestdriver.browser;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.google.jstestdriver.FileUploader;
+import com.google.jstestdriver.ProcessFactory;
+import com.google.jstestdriver.SlaveBrowser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.jstestdriver.FileUploader;
-import com.google.jstestdriver.ProcessFactory;
-import com.google.jstestdriver.SlaveBrowser;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Runs a browser from the command line.
@@ -68,7 +67,7 @@ public class CommandLineBrowserRunner implements BrowserRunner {
   }
 
   public int getNumStartupTries() {
-    return 1;
+    return 3;
   }
 
   public long getHeartbeatTimeout() {
@@ -113,9 +112,6 @@ public class CommandLineBrowserRunner implements BrowserRunner {
         + ",\nprocess=" + process + ",\n process log={\n" + getLog() + "\n}]";
   }
 
-  /**
-   * @return
-   */
   private String getLog() {
     StringBuilder log = new StringBuilder("error:\n");
     if (process == null) {
