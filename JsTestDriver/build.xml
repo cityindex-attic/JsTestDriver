@@ -138,6 +138,7 @@
 			<filelist dir="${destdir}/${javascript-resources}" files="Signal.js,
                PageUnloadHandler.js,
                ResetCommand.js,
+               NoopCommand.js,
                Response.js,
                Asserts.js,
                StreamingService.js,
@@ -206,6 +207,7 @@
                TestRunner.js,
                StandAloneLoadTestsCommand.js,
                StandAloneRunTestsCommand.js,
+               NoopCommand.js,
                StandAloneTestReporter.js,
                CommandExecutor.js,
                config.js" />
@@ -250,6 +252,7 @@
                TestRunner.js,
                StandAloneLoadTestsCommand.js,
                StandAloneRunTestsCommand.js,
+               NoopCommand.js,
                VisualTestReporter.js,
                CommandExecutor.js,
                config.js" />

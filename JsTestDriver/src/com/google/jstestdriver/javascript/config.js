@@ -160,9 +160,11 @@ jstestdriver.config = (function(module) {
     var resetCommand = new jstestdriver.ResetCommand(
         window.location,
         unloadSignal);
+        
+    var noopCommand = new jstestdriver.NoopCommand(streamStop, getBrowserInfo);
 
     executor.registerCommand('execute', executor, executor.execute);
-    executor.registerCommand('noop', null, streamStop);
+    executor.registerCommand('noop', noopCommand, noopCommand.sendNoop);
     executor.registerCommand('runAllTests', runTestsCommand, runTestsCommand.runAllTests);
     executor.registerCommand('runTests', runTestsCommand, runTestsCommand.runTests);
     executor.registerCommand('loadTest', loadTestsCommand, loadTestsCommand.loadTest);

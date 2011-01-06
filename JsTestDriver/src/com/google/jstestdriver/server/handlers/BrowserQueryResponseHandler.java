@@ -146,6 +146,11 @@ class BrowserQueryResponseHandler implements RequestHandler {
             }
           }
           break;
+        case NOOP:
+          command = browser.getLastDequeuedCommand();
+          logger.warn("Got a NOOP with command {} running, which should not happen.",
+              browser.getLastDequeuedCommand());
+          break;
         case LOG:
           BrowserLog log = gson.fromJson(res.getResponse(), res.getGsonType());
           logger.info("Message from the browser: " + res.toString());

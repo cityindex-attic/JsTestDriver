@@ -94,6 +94,7 @@ public class BrowserControlledRunnerHandler implements RequestHandler {
   }
 
   public void service(final SlaveBrowser slaveBrowser) {
+    logger.debug("Adding noop command.");
     slaveBrowser.createCommand(gson.toJson(new JsonCommand(CommandType.NOOP, null)));
 
     Set<String> filesToload = cache.getAllFileNames();
@@ -111,6 +112,7 @@ public class BrowserControlledRunnerHandler implements RequestHandler {
 
       loadFilesParameters.add(gson.toJson(chunkedFileSources));
       loadFilesParameters.add("true");
+      logger.debug("adding chunked upload command: {}", i);
       slaveBrowser.createCommand(gson.toJson(new JsonCommand(CommandType.LOADTEST,
           loadFilesParameters)));
     }
@@ -119,6 +121,7 @@ public class BrowserControlledRunnerHandler implements RequestHandler {
     runAllTestsParameters.add("false");
     runAllTestsParameters.add("false");
     runAllTestsParameters.add("0");
+    logger.debug("adding run all tests command.");
     slaveBrowser.createCommand(gson.toJson(new JsonCommand(CommandType.RUNALLTESTS,
         runAllTestsParameters)));
   }

@@ -16,6 +16,8 @@
 package com.google.jstestdriver;
 
 import com.google.gson.reflect.TypeToken;
+import com.google.jstestdriver.protocol.BrowserLog;
+import com.google.jstestdriver.protocol.Noop;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -38,7 +40,8 @@ public class Response {
     UNKNOWN(null),
     BROWSER_READY(null),
     COMMAND_RESULT(null),
-    LOG(null);
+    NOOP(Noop.class),
+    LOG(BrowserLog.class);
 
     public final Type type;
 
