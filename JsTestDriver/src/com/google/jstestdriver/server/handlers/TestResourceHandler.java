@@ -64,16 +64,12 @@ class TestResourceHandler implements RequestHandler {
     writer.flush();
   }
 
-  /**
-   * @param fileName
-   * @return
-   */
   private String parseMimeType(String fileName) {
     int extension = fileName.lastIndexOf(".");
     if (extension == -1) {
       return null;
     }
     return StaticResourceHandler.MIME_TYPE_MAP.get(
-        fileName.substring(extension - 1));
+        fileName.substring(extension + 1));
   }
 }

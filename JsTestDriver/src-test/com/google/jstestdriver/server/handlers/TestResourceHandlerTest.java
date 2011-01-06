@@ -20,7 +20,11 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import junit.framework.TestCase;
+
+import org.easymock.EasyMock;
 
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
@@ -42,12 +46,16 @@ public class TestResourceHandlerTest extends TestCase {
   }
 
   public void testServeFile() throws Exception {
+    HttpServletResponse response = EasyMock.createMock(HttpServletResponse.class);
+    response.setContentType(StaticResourceHandler.MIME_TYPE_MAP.get("js"));
+    EasyMock.expectLastCall().anyTimes();
+    EasyMock.replay(response);
     Map<String, FileInfo> files = new HashMap<String, FileInfo>();
 
     files.put("dummy.js", new FileInfo("dummy.js", -1, -1, false, false, "data"));
     files.put("dummytoo.js", new FileInfo("dummytoo.js", 20, -1, false, false, "more data"));
     FilesCache filesCache = new FilesCache(files);
-    TestResourceHandler handler = new TestResourceHandler(null, null, filesCache);
+    TestResourceHandler handler = new TestResourceHandler(null, response, filesCache);
 
     handler.service("dummy.js", writer);
     assertEquals("data", out.toString());
