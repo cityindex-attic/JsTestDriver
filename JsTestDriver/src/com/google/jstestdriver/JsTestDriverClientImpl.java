@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.internal.Lists;
+import com.google.common.collect.Lists;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.JsonCommand.CommandType;
 import com.google.jstestdriver.model.JstdTestCase;
