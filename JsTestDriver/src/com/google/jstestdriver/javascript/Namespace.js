@@ -62,7 +62,7 @@ jstestdriver.clearInterval = function() {
 };
 
 document.write = function(str) {
-  jstestdriver.console.error('Illegal call to document.write.');
+  //jstestdriver.console.error('Illegal call to document.write.');
 };
 
 
