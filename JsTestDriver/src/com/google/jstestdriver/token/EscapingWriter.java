@@ -15,49 +15,56 @@
  */
 package com.google.jstestdriver.token;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
  * Automatically escapes \, ', ", \n, \f, \r when writing to the underlying writer.
  * (Why isn't the Gson Escaper public? Arg!)
  * Not Thread Safe!
- * @author corysmith@google.com (Cory Smith)
+ * @author corbinrsmith@gmail.com (Cory Smith)
  *
  */
 public class EscapingWriter extends FilterWriter {
 
-  private static final Map<Character, char[]> REPLACE;
-  static {
-    Map<Character, char[]> replace = Maps.newHashMap();
-    replace.put('\\', new char[]{'\\','\\'});
-    replace.put('\n', new char[]{'\\','n'});
-    replace.put('\r', new char[]{'\\','r'});
-    replace.put('\f', new char[]{'\\','f'});
-    replace.put('\'', new char[]{'\\','\''});
-    replace.put('"', new char[]{'\\','"'});
-    REPLACE = Collections.unmodifiableMap(replace);
-  }
-  
-  private final char[] escapedBuffer = new char[256]; 
-  
+  private static final Map<Character, char[]> REPLACE = ImmutableMap
+      .<Character, char[]>builder()
+      .put('\\', new char[] {'\\', '\\'})
+      .put('\n', new char[] {'\\', 'n'})
+      .put('\r', new char[] {'\\', 'r'})
+      .put('\f', new char[] {'\\', 'f'})
+      .put('\'', new char[] {'\\', '\''})
+      .put('"', new char[] {'\\', '"'})
+      .build();
+
+  private final char[] escapedBuffer = new char[256];
+
+  private Map<Character, Integer> escapedCounts = Maps.newHashMap();
+
   public EscapingWriter(Writer out) {
     super(out);
+    for (Character key : REPLACE.keySet()) {
+      escapedCounts.put(key, 0);
+    }
   }
-  
+
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
     int pos = 0;
     for (int i = off; i < len; i++ ) {
-      if (REPLACE.containsKey(Character.valueOf(cbuf[i]))) {
-        pos = writeToBuffer(pos, REPLACE.get(cbuf[i]));
+      Character character = Character.valueOf(cbuf[i]);
+      if (REPLACE.containsKey(character)) {
+        pos = writeToBuffer(pos, REPLACE.get(character));
+        // TODO(corysmith): find a better method to accomplish this in a performant manner.
+        escapedCounts.put(character,  escapedCounts.get(character) + 1);
       } else {
-        pos = writeToBuffer(pos, cbuf[i]);
+        pos = writeToBuffer(pos, character);
       }
     }
     out.write(escapedBuffer, 0, pos);
@@ -88,13 +95,25 @@ public class EscapingWriter extends FilterWriter {
     Character chr = Character.valueOf((char)c);
     if (REPLACE.containsKey(chr)) {
       out.write(REPLACE.get(chr));
+      // TODO(corysmith): find a better method to accomplish this in a performant manner.
+      escapedCounts.put(chr,  escapedCounts.get(chr) + 1);
     } else {
       out.write(c);
     }
   }
-  
+
   @Override
   public void write(char[] cbuf) throws IOException {
     write(cbuf, 0, cbuf.length);
+  }
+  
+  public int getEscapedCount(char character) {
+    return escapedCounts.get(character);
+  }
+
+  @Override
+  public String toString() {
+    return "EscapingWriter [escapedBuffer=" + Arrays.toString(escapedBuffer) + ", escapedCounts="
+        + escapedCounts + "]";
   }
 }

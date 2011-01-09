@@ -16,6 +16,7 @@
 package com.google.jstestdriver.html;
 
 import java.io.StringWriter;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -31,24 +32,43 @@ public class HtmlDocNestedNodeTest extends TestCase {
   public void testVariableAssignment() throws Exception {
     String id = " foo";
     String html = "<div>\n'foo'</div>";
-    Node node = new HtmlDocNestedNode(ConcreteToken.from(id),
-      Lists.newArrayList(ConcreteToken.from(html)));
+    Node node =
+        new HtmlDocNestedNode(ConcreteToken.from(id), Lists.newArrayList(ConcreteToken.from(html)));
 
     StringWriter writer = new StringWriter();
     node.write(writer);
-    assertEquals(String.format("this.%s = jstestdriver.toHtml('%s',window.document);",
-      id, html.replace("\n", "\\n").replace("'", "\\'")), writer.toString());
+    assertEquals(
+            String.format("this.%s = jstestdriver.toHtml('%s',window.document);", id,
+                html.replace("\n", "\\n").replace("'", "\\'")) + "\n", writer.toString());
   }
 
   public void testAppend() throws Exception {
     String id = " +";
     String html = "<div>\n</div>";
-    Node node = new HtmlDocNestedNode(ConcreteToken.from(id),
-      Lists.newArrayList(ConcreteToken.from(html)));
+    Node node =
+        new HtmlDocNestedNode(ConcreteToken.from(id), Lists.newArrayList(ConcreteToken.from(html)));
 
     StringWriter writer = new StringWriter();
     node.write(writer);
-    assertEquals(String.format("jstestdriver.appendHtml('%s',window.document);", html
-      .replace("\n", "\\n").replace("'", "\\'")), writer.toString());
+    assertEquals(
+            String.format("jstestdriver.appendHtml('%s',window.document);",
+                html.replace("\n", "\\n").replace("'", "\\'")) + "\n", writer.toString());
+  }
+  
+  public void testAppendMultiline() throws Exception {
+    String id = " +";
+    char[] breaks = new char[5];
+    Arrays.fill(breaks, '\n');
+    String html = "<div>" + new String(breaks) + "</div>";
+
+    Node node =
+        new HtmlDocNestedNode(ConcreteToken.from(id), Lists.newArrayList(ConcreteToken.from(html)));
+
+    StringWriter writer = new StringWriter();
+    node.write(writer);
+    assertEquals(
+            String.format("jstestdriver.appendHtml('%s',window.document);",
+                html.replace("\n", "\\n").replace("'", "\\'")) + new String(breaks),
+        writer.toString());
   }
 }

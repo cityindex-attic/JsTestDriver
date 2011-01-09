@@ -58,6 +58,9 @@ public class HtmlDocNestedNode extends HtmlDocNode{
       }
       writer.write(JS_ARG_SEP);
       writer.write(JS_END_STATEMENT);
+      for (int i = 0; i < escaping.getEscapedCount('\n'); i++) {
+        writer.append('\n');
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

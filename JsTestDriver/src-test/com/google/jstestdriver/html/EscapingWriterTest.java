@@ -32,6 +32,7 @@ public class EscapingWriterTest extends TestCase {
       escaper.write(chr);
     }
     assertEquals("\\'\\\"", writer.toString());
+    assertEquals(1, escaper.getEscapedCount('"'));
   }
 
   public void testEscapeSlashes() throws Exception {
@@ -39,6 +40,7 @@ public class EscapingWriterTest extends TestCase {
     EscapingWriter escaper = new EscapingWriter(writer);
     escaper.write('\\');
     assertEquals("\\\\", writer.toString());
+    assertEquals(1, escaper.getEscapedCount('\\'));
   }
   
   public void testEscapeLineBreak() throws Exception {
@@ -46,5 +48,7 @@ public class EscapingWriterTest extends TestCase {
     EscapingWriter escaper = new EscapingWriter(writer);
     escaper.write('\n');
     assertEquals("\\n", writer.toString());
+    assertEquals(1, escaper.getEscapedCount('\n'));
+    
   }
 }
