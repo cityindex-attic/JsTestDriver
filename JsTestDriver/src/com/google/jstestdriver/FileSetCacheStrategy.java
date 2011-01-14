@@ -15,16 +15,27 @@
  */
 package com.google.jstestdriver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * 
+ * @author corbinrsmith@gmail.com (Cory Smith)
+ *
+ */
 public class FileSetCacheStrategy {
+  private static final Logger logger =
+      LoggerFactory.getLogger(FileSetCacheStrategy.class);
+
   /** Creates a fileSet from out of date and absent files. */
   public Set<FileInfo> createExpiredFileSet(Collection<FileInfo> newFileSet,
                                             Set<FileInfo> currentFileSet) {
     Set<FileInfo> expiredFileSet = new LinkedHashSet<FileInfo>();
-  
+
     if (currentFileSet.isEmpty()) {
       for (FileInfo info : newFileSet) {
         expiredFileSet.add(info);
@@ -38,10 +49,13 @@ public class FileSetCacheStrategy {
       }
       for (FileInfo browserFileInfo : currentFileSet) {
         for (FileInfo clientFileInfo : newFileSet) {
-          if (clientFileInfo.equals(browserFileInfo) &&
-              (clientFileInfo.getTimestamp() != browserFileInfo.getTimestamp() ||
-               clientFileInfo.getLength() != browserFileInfo.getLength())) {
-            expiredFileSet.add(clientFileInfo);
+          if (clientFileInfo.equals(browserFileInfo)){
+            if (clientFileInfo.getTimestamp() != browserFileInfo.getTimestamp() ||
+                clientFileInfo.getLength() != browserFileInfo.getLength()) {
+              expiredFileSet.add(clientFileInfo);
+            } else {
+              logger.debug("files equal {}, {} no update", clientFileInfo, browserFileInfo);
+            }
             break;
           }
         }

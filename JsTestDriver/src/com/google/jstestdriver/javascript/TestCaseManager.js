@@ -28,12 +28,12 @@ jstestdriver.TestCaseManager = function(pluginRegistrar) {
 
 jstestdriver.TestCaseManager.prototype.add = function(testCaseInfo) {
   var index = this.indexOf_(testCaseInfo);
-
   if (index != -1) {
     throw new Error('duplicate test case names! On ' +
         testCaseInfo + ' and ' + this.testCasesInfo_[index] );
   } else {
-    this.recentCases_.push(this.testCasesInfo_.push(testCaseInfo) - 1);
+    this.testCasesInfo_.push(testCaseInfo);
+    this.recentCases_.push(testCaseInfo);
   }
 };
 
@@ -51,7 +51,7 @@ jstestdriver.TestCaseManager.prototype.removeTestCaseForFilename = function(file
   this.fileToTestCaseMap_[filename] = null;
   delete this.fileToTestCaseMap_[filename];
   while (cases.length) {
-    this.removeTestCase_(cases.pop());
+    this.removeTestCase_(this.indexOf_(cases.pop()));
   }
 };
 

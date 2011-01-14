@@ -94,7 +94,7 @@ jstestdriver.plugins.async.CallbackPool.prototype.onError = function(error) {
  */
 jstestdriver.plugins.async.CallbackPool.prototype.addCallback = function(wrapped, opt_n) {
   this.count_ += opt_n || 1;
-  console.log('adding. (' + this.count_ + ' in pool)');
+  //console.log('adding. (' + this.count_ + ' in pool)');
   var callback = new jstestdriver.plugins.async.TestSafeCallbackBuilder()
       .setPool(this)
       .setRemainingUses(opt_n)
@@ -147,9 +147,9 @@ jstestdriver.plugins.async.CallbackPool.prototype.addErrback = function(message)
 jstestdriver.plugins.async.CallbackPool.prototype.remove = function(message, opt_n) {
   if (this.count_ > 0) {
     this.count_ -= opt_n || 1;
-    if (message) {
+    /*if (message) {
       console.log(message + ' (' + this.count_ + ' in pool)');
-    }
+    }*/
     this.maybeComplete();
   }
 };

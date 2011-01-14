@@ -73,7 +73,7 @@ jstestdriver.plugins.async.DeferredQueue.prototype.startStep = function() {
   var nextDescription = this.descriptions_.shift();
   var nextOp = this.operations_.shift();
   if (nextOp) {
-    console.log('Starting step: \'' + nextDescription + '\'');
+    //console.log('Starting step: \'' + nextDescription + '\'');
     var q = this;
     this.execute_(nextOp, function(errors) {
       q.finishStep_(errors);

@@ -72,9 +72,9 @@ jstestdriver.plugins.async.FiniteUseCallback.prototype.invoke = function(var_arg
         this.onDepleted_.apply();
       }
     }
-  } else {
+  } /*else {
     console.log('Warning. Attempted to call unusable callback.');
-  }
+  }*/
 };
 
 
