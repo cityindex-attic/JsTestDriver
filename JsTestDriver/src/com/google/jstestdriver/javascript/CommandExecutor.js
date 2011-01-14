@@ -101,14 +101,20 @@ jstestdriver.CommandExecutor.prototype.executeCommand = function(jsonCommand) {
     this.commandMap_[command.command](command.parameters);
   } catch (e) {
     var response = new jstestdriver.Response(jstestdriver.RESPONSE_TYPES.LOG,
-      jstestdriver.JSON.stringify({
+    var message =  'Exception ' + e.name + ': ' + e.message +
+        '\n' + e.fileName + '(' + e.lineNumber +
+        '):\n' + e.stack;
+    jstestdriver.JSON.stringify({
         'source' : 'jstestdriver.CommandExecutor',
         'level' : 1000,
-        'message' : 'Exception ' + e.name + ': ' + e.message +
-      '\n' + e.fileName + '(' + e.lineNumber +
-      '):\n' + e.stack}),
+        'message' : message}),
     this.getBrowserInfo());
+    if (top.console && top.console.log) {
+      top.console.log(message);
+    }
     this.streamingService_.close(response, this.__boundExecuteCommand);
+    // Propagate the exception.
+    throw e;
   }
 };
 
@@ -125,10 +131,8 @@ jstestdriver.CommandExecutor.prototype.execute = function(cmd) {
 
 jstestdriver.CommandExecutor.prototype.evaluateCommand = function(cmd) {
   var res = '';
-
   try {
     var evaluatedCmd = eval('(' + cmd + ')');
-
     if (evaluatedCmd) {
       res = evaluatedCmd.toString();
     }
