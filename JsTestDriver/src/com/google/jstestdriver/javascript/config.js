@@ -43,9 +43,13 @@ jstestdriver.config = (function(module) {
 
     jstestdriver.global.AsyncTestCase = jstestdriver.bind(jstestdriver.testCaseBuilder,
         jstestdriver.testCaseBuilder.AsyncTestCase);
-    
+
     jstestdriver.global.ConditionalTestCase = jstestdriver.bind(jstestdriver.testCaseBuilder,
         jstestdriver.testCaseBuilder.ConditionalTestCase);
+
+    jstestdriver.global.ConditionalAsyncTestCase = jstestdriver.bind(
+        jstestdriver.testCaseBuilder,
+        jstestdriver.testCaseBuilder.ConditionalAsyncTestCase);
 
     // default plugin
     var scriptLoader = new jstestdriver.plugins.ScriptLoader(window, document,
