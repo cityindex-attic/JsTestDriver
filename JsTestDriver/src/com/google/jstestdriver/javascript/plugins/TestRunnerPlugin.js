@@ -21,19 +21,43 @@ jstestdriver.plugins.TestRunnerPlugin = function(dateObj, clearBody, opt_runTest
 };
 
 
-jstestdriver.plugins.pausingRunTestLoop =
-    function(testCaseName, template, tests, runTest, onTest, onComplete) {
-  var i = 0;
-  function nextTest() {
-    if (tests[i]) {
-      onTest(runTest(testCaseName, template, tests[i++]));
-      jstestdriver.setTimeout(nextTest, 1);
-    } else {
-      onComplete();
+jstestdriver.plugins.createPausingRunTestLoop =
+    function (interval, now, setTimeout) {
+  var lastPause;
+  function pausingRunTestLoop(testCaseName,
+                              template,
+                              tests,
+                              runTest,
+                              onTest,
+                              onComplete) {
+    var i = 0;
+    lastPause = now();
+    function nextTest() {
+      if (tests[i]) {
+        var test = tests[i++];
+        onTest(runTest(testCaseName, template, test));
+        if (lastPause - now() >= interval) {
+          jstestdriver.log("pausing after " + testCaseName + '.' + test)
+          lastPause = now();
+          setTimeout(nextTest, 1);
+        } else {
+          nextTest();
+        }
+      } else {
+        onComplete();
+      }
     }
+    nextTest();
   }
-  nextTest();
+  return pausingRunTestLoop;
 };
+
+
+jstestdriver.plugins.pausingRunTestLoop =
+    jstestdriver.plugins.createPausingRunTestLoop(
+        0,
+        jstestdriver.now,
+        jstestdriver.setTimeout);
 
 
 jstestdriver.plugins.defaultRunTestLoop =

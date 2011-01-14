@@ -36,7 +36,9 @@ public class RunnerPage implements Page {
       .writeExternalScript("/static/runner.js")
       .writeScript(
           "jstestdriver.console = new jstestdriver.Console();" +
-          "jstestdriver.config.startRunner(jstestdriver.config.createExecutor);")
+          "jstestdriver.config.startRunner(jstestdriver.config.createExecutor, " +
+          "    jstestdriver.plugins.createPausingRunTestLoop(jstestdriver.TIMEOUT, " +
+          "        jstestdriver.now, jstestdriver.setTimeout));")
       .finishHead()
       .startBody()
       .finishBody()

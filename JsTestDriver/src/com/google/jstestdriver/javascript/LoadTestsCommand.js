@@ -38,7 +38,6 @@ jstestdriver.LoadTestsCommand.prototype.loadTest = function(args) {
   var fileLoader = new jstestdriver.FileLoader(this.pluginRegistrar_,
        this.boundOnFileLoaded_);
 
-  jstestdriver.log('jstestdriver.LoadTestsCommand.prototype.loadTest [' + fileSrcs + ']');
   fileLoader.load(fileSrcs);
 };
 
@@ -48,7 +47,6 @@ jstestdriver.LoadTestsCommand.prototype.onFileLoaded = function(status) {
       jstestdriver.RESPONSE_TYPES.FILE_LOAD_RESULT,
       JSON.stringify(status),
       this.getBrowserInfo());
-  jstestdriver.log('jstestdriver.LoadTestsCommand.prototype.onFileLoaded [' + response + ']');
   this.onLoadComplete_(response);
 };
 

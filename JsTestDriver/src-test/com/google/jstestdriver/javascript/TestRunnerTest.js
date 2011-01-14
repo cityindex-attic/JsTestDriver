@@ -27,10 +27,7 @@ TestRunnerTest.prototype.testRunTests = function() {
       return true;
     }
   });
-  var testRunner = new jstestdriver.TestRunner(pluginRegistrar,
-      function(callback, timeout) {
-    callback();
-  });
+  var testRunner = new jstestdriver.TestRunner(pluginRegistrar);
   var testCaseManager = new jstestdriver.TestCaseManager();
   var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
   var testCase1 = testCaseBuilder.TestCase('testCase1');

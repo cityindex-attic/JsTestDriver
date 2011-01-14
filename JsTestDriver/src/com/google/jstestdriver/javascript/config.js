@@ -23,19 +23,17 @@ jstestdriver.config = (function(module) {
   /**
    * Start a new runner.
    */
-  config.startRunner = function(createCommandExecutor, testBreather, opt_runTestLoop) {
+  config.startRunner = function(createCommandExecutor, opt_runTestLoop) {
     
     var runTestLoop = opt_runTestLoop || jstestdriver.plugins.defaultRunTestLoop;
+    jstestdriver.log("using runTestLoop:" + runTestLoop);
     
     jstestdriver.pluginRegistrar = new jstestdriver.PluginRegistrar();
     jstestdriver.testCaseManager =
         new jstestdriver.TestCaseManager(jstestdriver.pluginRegistrar);
 
-    jstestdriver.testRunner = new jstestdriver.TestRunner(
-        jstestdriver.pluginRegistrar,
-        jstestdriver.testBreather(jstestdriver.setTimeout,
-                                  jstestdriver.TIMEOUT)
-    );
+    jstestdriver.testRunner =
+        new jstestdriver.TestRunner(jstestdriver.pluginRegistrar);
 
     jstestdriver.testCaseBuilder =
         new jstestdriver.TestCaseBuilder(jstestdriver.testCaseManager);

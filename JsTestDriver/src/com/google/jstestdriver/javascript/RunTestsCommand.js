@@ -45,7 +45,7 @@ jstestdriver.RunTestsCommand.prototype.runAllTests = function(args) {
 
 
 jstestdriver.RunTestsCommand.prototype.runTests = function(args) {
-  var expressions = this.jsonParse('{"expressions":' + args[0] + '}').expressions;
+  var expressions = this.jsonParse_('{"expressions":' + args[0] + '}').expressions;
   var captureConsole = args[1];
   this.debug_ = Boolean(args[2]);
 
