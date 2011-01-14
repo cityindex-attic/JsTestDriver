@@ -60,7 +60,7 @@ public class SlaveBrowserTest extends TestCase {
         RunnerType.CLIENT);
 
     assertEquals(
-        "/slave/id/1/page/CONSOLE/mode/quirks/timeout/15000/upload_size/" + FileUploader.CHUNK_SIZE
-            + "/rt/CLIENT", browser.getCaptureUrl());
+        "/slave/id/1/page/CONSOLE/mode/quirks/timeout/" + SlaveBrowser.TIMEOUT + "/upload_size/"
+            + FileUploader.CHUNK_SIZE + "/rt/CLIENT", browser.getCaptureUrl());
   }
 }

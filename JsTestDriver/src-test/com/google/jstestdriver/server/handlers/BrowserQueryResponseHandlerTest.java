@@ -149,7 +149,7 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
 
     handler.service("1", "response", "true", null, writer);
     assertEquals(new Gson().toJson(
-        new JsonCommand(JsonCommand.CommandType.UNKNOWNBROWSER, null)), out.toString());
+        new JsonCommand(JsonCommand.CommandType.STOP, null)), out.toString());
   }
 
   public void testDoNotGetCommandIfNotLastResponse() throws Exception {

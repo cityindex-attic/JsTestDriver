@@ -28,17 +28,17 @@ public class BrowserHunterTest extends TestCase {
 
   public void testCaptureAndGenerateUrlQuirks() throws Exception {
     Time time = new MockTime(444);
-    BrowserHunter browserHunter = new BrowserHunter(new CapturedBrowsers(new BrowserIdStrategy(time)),
-        SlaveBrowser.TIMEOUT, new NullPathPrefix(), new TimeImpl());
-    SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version",
-        "os");
+    BrowserHunter browserHunter =
+        new BrowserHunter(new CapturedBrowsers(new BrowserIdStrategy(time)), SlaveBrowser.TIMEOUT,
+            new NullPathPrefix(), new TimeImpl());
+    SlaveBrowser slaveBrowser = browserHunter.captureBrowser("name", "version", "os");
     BrowserInfo browserInfo = slaveBrowser.getBrowserInfo();
 
     assertEquals("name", browserInfo.getName());
     assertEquals("version", browserInfo.getVersion());
     assertEquals("os", browserInfo.getOs());
     assertEquals(
-        "/slave/id/444/page/CONSOLE/mode/quirks/timeout/15000/upload_size/" + FileUploader.CHUNK_SIZE
-            + "/rt/CLIENT", slaveBrowser.getCaptureUrl());
+        "/slave/id/444/page/CONSOLE/mode/quirks/timeout/" + SlaveBrowser.TIMEOUT + "/upload_size/"
+            + FileUploader.CHUNK_SIZE + "/rt/CLIENT", slaveBrowser.getCaptureUrl());
   }
 }
