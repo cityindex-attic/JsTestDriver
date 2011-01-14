@@ -174,6 +174,11 @@ jstestdriver.config = (function(module) {
     executor.registerCommand('unknownBrowser', null, function() {
       // TODO(corysmith): handle this better.
     });
+    executor.registerCommand('stop', null, function() {
+      if (window.console && window.console.log) {
+        window.console.log('Stopping executor by server request.');
+      }
+    });
     executor.registerCommand('streamAcknowledged',
                              streamingService,
                              streamingService.streamAcknowledged);
@@ -338,6 +343,14 @@ jstestdriver.config = (function(module) {
     executor.registerCommand('streamAcknowledged',
             streamingService,
             streamingService.streamAcknowledged);
+    executor.registerCommand('unknownBrowser', null, function() {
+      // TODO(corysmith): handle this better.
+    });
+    executor.registerCommand('stop', null, function() {
+      if (window.console && window.console.log) {
+        window.console.log('Stopping executor by server request.');
+      }
+    });
 
     return executor;
   }

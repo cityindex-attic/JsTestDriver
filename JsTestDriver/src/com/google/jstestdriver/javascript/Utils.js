@@ -13,6 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
+jstestdriver.JSON = JSON;
+
+
 jstestdriver.FORMAT_MAPPINGS = {
   's' : function(arg) {
     if (arg == undefined) {
@@ -23,8 +27,10 @@ jstestdriver.FORMAT_MAPPINGS = {
   'd' : Number,
   'i' : parseInt,
   'f' : parseFloat,
-  'o' : JSON.stringify
+  'o' : jstestdriver.JSON.stringify
 }
+
+
 
 
 jstestdriver.formatString = function(str) {

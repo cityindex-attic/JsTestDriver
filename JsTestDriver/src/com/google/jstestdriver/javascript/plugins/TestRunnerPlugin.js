@@ -27,7 +27,7 @@ jstestdriver.plugins.pausingRunTestLoop =
   function nextTest() {
     if (tests[i]) {
       onTest(runTest(testCaseName, template, tests[i++]));
-      jstestdriver.setTimeout(nextTest, 10);
+      jstestdriver.setTimeout(nextTest, 1);
     } else {
       onComplete();
     }

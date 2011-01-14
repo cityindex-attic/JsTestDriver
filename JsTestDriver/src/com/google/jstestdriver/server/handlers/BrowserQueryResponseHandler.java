@@ -103,12 +103,14 @@ class BrowserQueryResponseHandler implements RequestHandler {
       try {
         serviceBrowser(response, isLast, responseId, writer, browser);
       } catch (JsonParseException e) {
+        writer.print(gson.toJson(new JsonCommand(JsonCommand.CommandType.STOP, null)));
+        writer.flush();
         throw new RuntimeException("Unable to parse: " + response, e);
       }
     } else {
       // TODO(corysmith): handle this better.
-      logger.error("Unknown browser {}", id);
-      writer.print(gson.toJson(new JsonCommand(JsonCommand.CommandType.UNKNOWNBROWSER, null)));
+      logger.error("Unknown browser {} with response {}", id, response);
+      writer.print(gson.toJson(new JsonCommand(JsonCommand.CommandType.STOP, null)));
       try {
         Thread.sleep(1000); // pause to make sure the browser doesn't spin.
       } catch (InterruptedException e) {
@@ -183,7 +185,7 @@ class BrowserQueryResponseHandler implements RequestHandler {
           browser.resetFileSet();
           break;
         case UNKNOWN:
-          logger.error("Recieved Unknown");
+          logger.error("Recieved Unknown: " + response);
       }
       logger.debug("Received:\n done: {} \n res:\n {}\n", new Object[] {done, res});
       browser.addResponse(res, done);

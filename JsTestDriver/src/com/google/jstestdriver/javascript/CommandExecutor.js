@@ -104,10 +104,11 @@ jstestdriver.CommandExecutor.prototype.executeCommand = function(jsonCommand) {
         '\n' + e.fileName + '(' + e.lineNumber +
         '):\n' + e.stack;
     var response = new jstestdriver.Response(jstestdriver.RESPONSE_TYPES.LOG,
-      jstestdriver.JSON.stringify({
-          'source' : 'jstestdriver.CommandExecutor',
-          'level' : 1000,
-          'message' : message}),
+      jstestdriver.JSON.stringify(
+          new jstestdriver.BrowserLog(1000,
+              'jstestdriver.CommandExecutor',
+              message,
+              this.getBrowserInfo())),
       this.getBrowserInfo());
     if (top.console && top.console.log) {
       top.console.log(message);

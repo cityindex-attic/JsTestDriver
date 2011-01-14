@@ -25,6 +25,7 @@ public class JsonCommand {
   public enum CommandType {
     EXECUTE("execute"),
     UNKNOWNBROWSER("unknownBrowser"),
+    STOP("stop"),
     RUNTESTS("runTests"),
     LOADTEST("loadTest"),
     RESET("reset"),

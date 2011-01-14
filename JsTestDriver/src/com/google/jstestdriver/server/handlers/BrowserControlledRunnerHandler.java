@@ -81,7 +81,7 @@ public class BrowserControlledRunnerHandler implements RequestHandler {
     if (browser == null) {
       // re-capture browser as standalone
       response.sendRedirect(
-          prefix.prefixPath("/capture/" + CaptureHandler.RUNNER_TYPE + "/" + RunnerType.BROWSER + "/timeout/3600000"));
+          prefix.prefixPath("/capture/" + CaptureHandler.RUNNER_TYPE + "/" + RunnerType.BROWSER + "/timeout/-1"));
     } else {
       browser.heartBeat();
       // start test running
@@ -124,5 +124,8 @@ public class BrowserControlledRunnerHandler implements RequestHandler {
     logger.debug("adding run all tests command.");
     slaveBrowser.createCommand(gson.toJson(new JsonCommand(CommandType.RUNALLTESTS,
         runAllTestsParameters)));
+    // stop the executor until the next refresh.
+    slaveBrowser.createCommand(gson.toJson(new JsonCommand(CommandType.STOP, null)));
+    
   }
 }

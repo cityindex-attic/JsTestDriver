@@ -50,10 +50,17 @@ jstestdriver.StandAloneRunTestsCommand = function(testCaseManager,
 };
 
 
+jstestdriver.StandAloneRunTestsCommand.prototype.createLog_ = function(message) {
+  return new jstestdriver.BrowserLog(0, 'jstestdriver.StandAloneRunTestsCommand',
+    message, this.getBrowserInfo_());
+};
+
+
 jstestdriver.StandAloneRunTestsCommand.prototype.runAllTests = function(args) {
-  this.streamContinue_(new jstestdriver.Response(
-          'LOG',
-          JSON.stringify('started alltests.'),
+  this.streamContinue_(
+      new jstestdriver.Response(
+          jstestdriver.RESPONSE_TYPES.LOG,
+          jstestdriver.JSON.stringify(this.createLog_('all tests started.')),
           this.getBrowserInfo_()));
   var captureConsole = args[0];
   this.debug_ = Boolean(args[2]);
@@ -64,9 +71,10 @@ jstestdriver.StandAloneRunTestsCommand.prototype.runAllTests = function(args) {
 
 
 jstestdriver.StandAloneRunTestsCommand.prototype.runTests = function(args) {
-  this.streamContinue_(new jstestdriver.Response(
-          'LOG',
-          JSON.stringify('started tests.'),
+  this.streamContinue_(
+      new jstestdriver.Response(
+          jstestdriver.RESPONSE_TYPES.LOG,
+          jstestdriver.JSON.stringify(this.createLog_('started tests.')),
           this.getBrowserInfo_()));
   var expressions = jsonParse('{"expressions":' + args[0] + '}').expressions;
   var captureConsole = args[1];
@@ -97,7 +105,7 @@ jstestdriver.StandAloneRunTestsCommand.prototype.onTestDone_ = function(result) 
 
 
 jstestdriver.StandAloneRunTestsCommand.prototype.onComplete = function() {
-  var serializedTests = JSON.stringify(this.testsDone_);
+  var serializedTests = jstestdriver.JSON.stringify(this.testsDone_);
   this.streamContinue_(new jstestdriver.Response(
           jstestdriver.RESPONSE_TYPES.TEST_RESULT,
           serializedTests,
@@ -106,12 +114,14 @@ jstestdriver.StandAloneRunTestsCommand.prototype.onComplete = function() {
   this.testsDone_ = [];
   this.reporter_.finishTests(this.now_());
   this.reporter_.setIsFinished(true);
-  this.streamStop_(new jstestdriver.Response(
-          'LOG',
-          JSON.stringify('testing complete, isSuccess:' +
+  this.streamStop_(
+      new jstestdriver.Response(
+          jstestdriver.RESPONSE_TYPES.LOG,
+          jstestdriver.JSON.stringify(this.createLog_(
+              'testing complete, isSuccess:' +
               this.reporter_.isSuccess() +
               ', isFinished:' +
-              this.reporter_.isFinished()),
+              this.reporter_.isFinished())),
           this.getBrowserInfo_()));
 };
 

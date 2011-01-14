@@ -66,7 +66,7 @@ public class SlaveBrowser {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SlaveBrowser.class);
 
-  public static final long TIMEOUT = 15000; // 15 seconds
+  public static final long TIMEOUT = 30000; // 30 seconds
   private static final int POLL_RESPONSE_TIMEOUT = 2;
 
   private final Time time;
@@ -253,8 +253,12 @@ public class SlaveBrowser {
   }
 
   public boolean isAlive() {
-    return receivedHeartbeat()
+    boolean alive = receivedHeartbeat()
         && ((time.now().getMillis() - lastHeartbeat.get().getMillis() < timeout) || timeout == -1);
+    if (!alive) {
+      LOGGER.debug("Browser dead: {}", toString());
+    }
+    return alive;
   }
 
   public String getCaptureUrl() {
