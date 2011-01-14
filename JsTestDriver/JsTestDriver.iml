@@ -9,8 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="xerces-2_9_1" level="project" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/google-collect-1.0-rc2/google-collect-1.0-rc2.jar!/" />
@@ -19,7 +18,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" exported="" name="slf4j-1.5.6" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -29,7 +27,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="testability-explorer" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -48,7 +45,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="joda-time-1.6" level="project" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -76,7 +72,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="google-gson-1.2.3" level="project" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -86,8 +81,78 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" exported="" name="guice" level="project" />
-    <orderEntry type="library" exported="" name="jetty" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/joda-time-1.6/joda-time-1.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/slf4j-1.5.6/slf4j-api-1.5.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/google-gson-1.2.3/gson-1.2.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jetty/jetty-6.1.19.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jetty/servlet-api-2.5-20081211.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jetty/jetty-util-6.1.19.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/guice/guice-servlet-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/guice/guice-multibindings-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

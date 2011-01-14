@@ -5,25 +5,24 @@
   <property name="src.dir" value="${basedir}/src"/>
   <property name="lib.dir" value="${basedir}/lib"/>
   <property name="jstestdriver.lib" value="../JsTestDriver/target/bin/JsTestDriver.jar"/>
-  <property name="idea.version" value="IC-95.429"/>
-  <property name="IDEA_JAR_PATH" value=""/>
+  <property name="IDEA_LIB_PATH" value="/Applications/IdeaX-IC-98.117.app/lib"/>
 
   <path id="forms.classpath">
     <pathelement location="${lib.dir}/asm-3.0/asm-3.0.jar"/>
     <pathelement location="${lib.dir}/asm-commons-3.0/asm-commons-3.0.jar"/>
     <pathelement location="${lib.dir}/jdom-1.1/jdom-1.1.jar"/>
-    <pathelement location="${lib.dir}/com.intellij/javac2-${idea.version}/javac2.jar"/>
-    <pathelement location="${lib.dir}/com.intellij/form_rt-${idea.version}/forms_rt.jar"/>
-    <pathelement location="${lib.dir}/com.intellij/openapi-${idea.version}/openapi.jar"/>
+    <pathelement location="${IDEA_LIB_PATH}/javac2.jar"/>
+    <pathelement location="${IDEA_LIB_PATH}/forms_rt.jar"/>
+    <pathelement location="${IDEA_LIB_PATH}/openapi.jar"/>
   </path>
 
   <path id="compile.classpath">
     <pathelement location="${jstestdriver.lib}" />
-    <pathelement location="${lib.dir}/com.intellij/openapi-${idea.version}/openapi.jar" />
-    <pathelement location="${lib.dir}/com.intellij/extensions-${idea.version}/extensions.jar" />
-    <pathelement location="${lib.dir}/com.intellij/util-${idea.version}/util.jar" />
-    <pathelement location="${IDEA_JAR_PATH}" />
-    <pathelement location="${lib.dir}/com.intellij/annotations-${idea.version}/annotations.jar"/>
+    <pathelement location="${IDEA_LIB_PATH}/openapi.jar" />
+    <pathelement location="${IDEA_LIB_PATH}/extensions.jar" />
+    <pathelement location="${IDEA_LIB_PATH}/util.jar" />
+    <pathelement location="${IDEA_LIB_PATH}/idea.jar" />
+    <pathelement location="${IDEA_LIB_PATH}/annotations.jar"/>
     <pathelement location="${lib.dir}/jdom-1.1/jdom-1.1.jar"/>
     <pathelement location="${lib.dir}/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
   </path>

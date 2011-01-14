@@ -15,12 +15,8 @@
  */
 package com.google.jstestdriver.idea;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.name.Names;
 import com.google.jstestdriver.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.io.FileReader;
@@ -132,12 +128,6 @@ public class TestRunner {
           new DefaultPathRewriter());
       IDEPluginActionBuilder builder =
           new IDEPluginActionBuilder(configurationParser, serverURL, responseStreamFactory, baseDirectory);
-      builder.install(new AbstractModule() {
-        @Override
-        protected void configure() {
-          bind(File.class).annotatedWith(Names.named("basePath")).toInstance(baseDirectory);
-        }
-      });
       for (Module module : new PluginLoader().load(parsePluginsFromConfFile())) {
         builder.install(module);
       }

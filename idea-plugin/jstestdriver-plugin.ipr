@@ -107,7 +107,9 @@
           </option>
           <option name="myCustomValuesEnabled" value="true" />
         </inspection_tool>
-        <inspection_tool class="MissingOverrideAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
+        <inspection_tool class="MissingOverrideAnnotation" enabled="true" level="WARNING" enabled_by_default="true">
+          <option name="ignoreObjectMethods" value="true" />
+        </inspection_tool>
         <inspection_tool class="RawUseOfParameterizedType" enabled="true" level="WARNING" enabled_by_default="true">
           <option name="ignoreObjectConstruction" value="true" />
           <option name="ignoreTypeCasts" value="false" />
@@ -274,7 +276,10 @@
       <module fileurl="file://$PROJECT_DIR$/jstestdriver-plugin.iml" filepath="$PROJECT_DIR$/jstestdriver-plugin.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IC-95.429" project-jdk-type="IDEA JDK">
+  <component name="ProjectResources">
+    <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IC-95.429" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ResourceManagerContainer">
@@ -320,6 +325,7 @@
         <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/jakarta-oro-2.0.8" />
         <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/emma-2.0.5312-lib" />
         <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/google-collect-1.0-rc2" />
+        <root url="file://$PROJECT_DIR$/../JsTestDriver/lib/joda-time-1.6" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
