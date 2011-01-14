@@ -79,6 +79,7 @@ jstestdriver.TestRunner.prototype.runConfiguration = function(config,
     this.overrideConsole_();
   }
 
+  jstestdriver.log("running configuration " + config);
   this.pluginRegistrar_.runTestConfiguration(
       config,
       onTestDone,

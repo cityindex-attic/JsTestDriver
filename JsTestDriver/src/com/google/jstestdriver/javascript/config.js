@@ -59,6 +59,7 @@ jstestdriver.config = (function(module) {
             jstestdriver.now);
     var testRunnerPlugin =
           new jstestdriver.plugins.TestRunnerPlugin(Date, function() {
+        jstestdriver.log(jstestdriver.jQuery('body')[0].innerHTML);
         jstestdriver.jQuery('body').children().remove();
         jstestdriver.jQuery(document).unbind();
         jstestdriver.jQuery(document).die();
@@ -73,6 +74,7 @@ jstestdriver.config = (function(module) {
 
     jstestdriver.pluginRegistrar.register(
         new jstestdriver.plugins.async.AsyncTestRunnerPlugin(Date, function() {
+
           jstestdriver.jQuery('body').children().remove();
           jstestdriver.jQuery(document).unbind();
           jstestdriver.jQuery(document).die();

@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver.hooks;
 
+import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.config.Configuration;
@@ -29,6 +30,15 @@ import com.google.jstestdriver.config.Configuration;
  *
  */
 public interface PluginInitializer {
+  
+  /**
+   * A simple constant for plugins to return.
+   */
+  public static final Module NULL_MODULE = new Module() {
+    public void configure(Binder binder) {
+    }
+  }; 
+  
   /**
    * This is called during the initialization of JsTD.
    * @param flags The jstd flags.
