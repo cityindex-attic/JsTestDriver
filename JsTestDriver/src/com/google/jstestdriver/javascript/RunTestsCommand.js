@@ -49,13 +49,14 @@ jstestdriver.RunTestsCommand.prototype.runTests = function(args) {
   var captureConsole = args[1];
   this.debug_ = Boolean(args[2]);
 
+  jstestdriver.log('jstestdriver.RunTestsCommand.prototype.runTests: running tests ' + args);
   this.runTestCases_(this.testCaseManager_.getTestRunsConfigurationFor(expressions),
-      captureConsole == "true" ? true : false, false);
+      captureConsole == "true" ? true : false);
 };
 
 
-jstestdriver.RunTestsCommand.prototype.runTestCases_ = function(testRunsConfiguration,
-    captureConsole) {
+jstestdriver.RunTestsCommand.prototype.runTestCases_ =
+    function(testRunsConfiguration, captureConsole) {
   this.lastTestResultsSent_ = this.now_();
   this.testRunner_.runTests(testRunsConfiguration,
                             this.boundOnTestDone_,

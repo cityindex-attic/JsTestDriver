@@ -205,3 +205,11 @@ jstestdriver.createSynchPost = function(jQuery) {
     });
   });
 };
+
+
+// TODO(corysmith): make this configurable.
+jstestdriver.log = function(message) {
+  /*if (top.console && top.console.log) {
+    top.console.log(message);
+  }*/
+};

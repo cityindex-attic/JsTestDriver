@@ -226,12 +226,16 @@ public class FileUploader {
             }));
       }
       server.post(baseUrl + "/cmd", loadFileParams);
-      String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + browserId);
-      StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
-      Response response = message.getResponse();
-
-      logger.debug("LOADTEST finished for ({}) {}", browserId, response.getBrowser());
-      stream.stream(response);
+      while (true) {
+        String jsonResponse = server.fetch(baseUrl + "/cmd?id=" + browserId);
+        StreamMessage message = gson.fromJson(jsonResponse, StreamMessage.class);
+        Response response = message.getResponse();
+        logger.trace("LOADTEST response for {}", response);
+        stream.stream(response);
+        if (message.isLast()) {
+          break;
+        }
+      }
     }
   }
 

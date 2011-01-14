@@ -24,14 +24,15 @@ public class JsonCommand {
 
   public enum CommandType {
     EXECUTE("execute"),
-    RUNALLTESTS("runAllTests"),
+    UNKNOWNBROWSER("unknownBrowser"),
     RUNTESTS("runTests"),
     LOADTEST("loadTest"),
     RESET("reset"),
 //    REGISTERCOMMAND("registerCommand"),
     DRYRUN("dryRun"),
     DRYRUNFOR("dryRunFor"),
-    NOOP("noop");
+    NOOP("noop"),
+    RUNALLTESTS("runAllTests");
 
     private final String command;
 

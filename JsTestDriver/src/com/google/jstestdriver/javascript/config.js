@@ -171,6 +171,9 @@ jstestdriver.config = (function(module) {
     executor.registerCommand('reset', resetCommand, resetCommand.reset);
     executor.registerCommand('dryRun', executor, executor.dryRun);
     executor.registerCommand('dryRunFor', executor, executor.dryRunFor);
+    executor.registerCommand('unknownBrowser', null, function() {
+      // TODO(corysmith): handle this better.
+    });
     executor.registerCommand('streamAcknowledged',
                              streamingService,
                              streamingService.streamAcknowledged);

@@ -110,7 +110,8 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
     CapturedBrowsers browsers = new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0)));
     String id = "1";
     SlaveBrowser slave =
-        new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null, CaptureHandler.QUIRKS,
+        new SlaveBrowser(new TimeImpl(), id, new BrowserInfo(), 20, null,
+            CaptureHandler.QUIRKS,
             RunnerType.CLIENT);
 
     slave.setDequeueTimeout(0L, TimeUnit.NANOSECONDS);
@@ -141,12 +142,14 @@ public class BrowserQueryResponseHandlerTest extends TestCase {
   }
 
   public void testBrowserIsNotSlave() throws Exception {
-    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0)));
+    CapturedBrowsers capturedBrowsers = new CapturedBrowsers(
+        new BrowserIdStrategy(new MockTime(0)));
     BrowserQueryResponseHandler handler =
         new BrowserQueryResponseHandler(null, null, capturedBrowsers, streamedResponses);
 
     handler.service("1", "response", "true", null, writer);
-    assertEquals(0, out.toString().length());
+    assertEquals(new Gson().toJson(
+        new JsonCommand(JsonCommand.CommandType.UNKNOWNBROWSER, null)), out.toString());
   }
 
   public void testDoNotGetCommandIfNotLastResponse() throws Exception {

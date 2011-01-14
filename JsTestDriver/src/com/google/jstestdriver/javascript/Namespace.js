@@ -29,7 +29,7 @@ if (typeof console.info == 'undefined') console.info = function() {};
 if (typeof console.warn == 'undefined') console.warn = function() {};
 if (typeof console.error == 'undefined') console.error = function() {};
 
-jstestdriver.globalSetTimeout = setTimeout;
+jstestdriver.globalSetTimeout = window.setTimeout;
 jstestdriver.setTimeout = function() {
   if (jstestdriver.globalSetTimeout.apply) {
     return jstestdriver.globalSetTimeout.apply(window, arguments);

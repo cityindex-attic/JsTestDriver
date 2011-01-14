@@ -29,6 +29,9 @@ heartbeatTest.prototype.getView = function(connected) {
     },
     updateLastBeat : function(lastBeat) {
       this.lastBeat = lastBeat;
+    },
+    updateNextBeat : function(nextBeat) {
+      this.nextBeat = nextBeat;
     }
   };
 };

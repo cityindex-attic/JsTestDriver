@@ -195,11 +195,13 @@ public class SlaveBrowser {
     try {
       StreamMessage message = responses.poll(POLL_RESPONSE_TIMEOUT, TimeUnit.SECONDS);
       if (message == null) {
+        LOGGER.debug("responses size {}", responses.size());
         message = new StreamMessage(false, new Response(ResponseType.UNKNOWN.name(), "{}", browserInfo, "", 0l));
       }
       return message;
     } catch (InterruptedException e) {
-      return null;
+      LOGGER.error("Exception during poll {}", e);
+      return new StreamMessage(false, new Response(ResponseType.UNKNOWN.name(), "{}", browserInfo, "", 0l));
     }
   }
 

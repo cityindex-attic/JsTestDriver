@@ -15,26 +15,14 @@
  */
 package com.google.jstestdriver.server.handlers;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.mortbay.jetty.MimeTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.jstestdriver.FileSource;
 import com.google.jstestdriver.FileUploader;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.JsonCommand;
-import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.JsonCommand.CommandType;
+import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 import com.google.jstestdriver.runner.RunnerType;
@@ -42,6 +30,18 @@ import com.google.jstestdriver.server.handlers.pages.Page;
 import com.google.jstestdriver.server.handlers.pages.PageType;
 import com.google.jstestdriver.server.handlers.pages.SlavePageRequest;
 import com.google.jstestdriver.util.HtmlWriter;
+
+import org.mortbay.jetty.MimeTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Handler for the browser controlled test running mode.

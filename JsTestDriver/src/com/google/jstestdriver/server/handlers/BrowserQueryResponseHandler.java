@@ -106,7 +106,14 @@ class BrowserQueryResponseHandler implements RequestHandler {
         throw new RuntimeException("Unable to parse: " + response, e);
       }
     } else {
+      // TODO(corysmith): handle this better.
       logger.error("Unknown browser {}", id);
+      writer.print(gson.toJson(new JsonCommand(JsonCommand.CommandType.UNKNOWNBROWSER, null)));
+      try {
+        Thread.sleep(1000); // pause to make sure the browser doesn't spin.
+      } catch (InterruptedException e) {
+        
+      }
     }
     writer.flush();
   }
@@ -153,7 +160,11 @@ class BrowserQueryResponseHandler implements RequestHandler {
           break;
         case LOG:
           BrowserLog log = gson.fromJson(res.getResponse(), res.getGsonType());
-          logger.info("Message from the browser: " + res.toString());
+          if (log.getLevel() == 1000) {
+            logger.info("Error in browser: " + res.toString());
+          } else {
+            logger.info("Message from the browser: " + res.toString());
+          }
           break;
         // reset the browsers fileset.
         case RESET_RESULT:
@@ -171,6 +182,8 @@ class BrowserQueryResponseHandler implements RequestHandler {
           logger.debug("Clearing fileset for {}", browser);
           browser.resetFileSet();
           break;
+        case UNKNOWN:
+          logger.error("Recieved Unknown");
       }
       logger.debug("Received:\n done: {} \n res:\n {}\n", new Object[] {done, res});
       browser.addResponse(res, done);

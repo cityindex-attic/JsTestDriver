@@ -53,6 +53,10 @@ jstestdriver.Response = function(type, response, browser, start) {
 };
 
 
+jstestdriver.Response.prototype.toString = function() {
+  return 'Response(\nresponse=' + this.response + ',\ntype' + this.type + ',\n browser=' + this.browser + ')';
+};
+
 
 /**
  * @param {String} done Indicates if this is the last streamed message.
