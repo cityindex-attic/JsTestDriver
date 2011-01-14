@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Google Inc.
+ * Copyright 2011 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -48,9 +48,10 @@ jstestdriver.plugins.async.CallbackPoolArmor.prototype.addCallback = function(ca
 /**
  * @return {Function} An errback function to attach to an asynchronous system so
  *     that the test runner can be notified in the event of error.
+ * @param {string} message A message to report to the user upon error.
  */
-jstestdriver.plugins.async.CallbackPoolArmor.prototype.addErrback = function() {
-  return this.pool_.addErrback();
+jstestdriver.plugins.async.CallbackPoolArmor.prototype.addErrback = function(message) {
+  return this.pool_.addErrback(message);
 };
 
 
