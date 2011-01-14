@@ -52,35 +52,6 @@ public class PluginResources {
   public static Icon getServerStopIcon() {
     return findIcon("stopServer.png", ToolPanel.class);
   }
-
-  public static Icon getFailedTestIcon() {
-    return findIcon("/runConfigurations/testFailed.png");
-  }
-
-  public static Icon getErroredTestIcon() {
-    return findIcon("/runConfigurations/testError.png");
-  }
-
-  public static Icon getPassedTestIcon() {
-    return findIcon("/runConfigurations/testPassed.png");
-  }
-
-  public static Icon getRerunIcon() {
-    return findIcon("/actions/refreshUsages.png");
-  }
-
-  public static Icon getFilterPassedIcon() {
-    return findIcon("/runConfigurations/hidePassed.png");
-  }
-
-  public static Icon getRerunFailedIcon() {
-    return findIcon("/runConfigurations/rerunFailedTests.png");
-  }
-
-  public static Icon getResetBrowsersIcon() {
-    return findIcon("/actions/reset.png");
-  }
-
   public static String getCaptureUrlMessage() {
     return MessageBundle.message("captureLabel");
   }

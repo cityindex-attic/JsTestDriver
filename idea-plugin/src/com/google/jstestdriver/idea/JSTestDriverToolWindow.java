@@ -22,10 +22,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.peer.PeerFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 
+import com.intellij.ui.content.ContentFactory.SERVICE;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -69,7 +69,8 @@ public class JSTestDriverToolWindow implements ProjectComponent {
 
     ToolWindow myToolWindow =
         toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.BOTTOM);
-    ContentFactory contentFactory = PeerFactory.getInstance().getContentFactory();
+
+    ContentFactory contentFactory = SERVICE.getInstance();
     Content content = contentFactory.createContent(new ToolPanel(), "", false);
     myToolWindow.getContentManager().addContent(content);
     myToolWindow.setIcon(PluginResources.getSmallIcon());

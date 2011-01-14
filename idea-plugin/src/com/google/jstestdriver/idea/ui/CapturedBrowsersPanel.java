@@ -18,15 +18,14 @@ package com.google.jstestdriver.idea.ui;
 import com.google.jstestdriver.browser.BrowserCaptureEvent;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.idea.PluginResources.BrowserIcon;
+import com.intellij.util.concurrency.SwingWorker;
 
 import java.awt.Dimension;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
@@ -74,18 +73,23 @@ public class CapturedBrowsersPanel extends JPanel implements Observer {
   }
 
   public void update(Observable observable, Object o) {
-    BrowserCaptureEvent captureEvent = (BrowserCaptureEvent) o;
-    SlaveBrowser slave = captureEvent.getBrowser();
-    if (slave.getBrowserInfo().getName().contains("Firefox")) {
-      firefoxLabel.setIcon(firefox.getIconForEvent(captureEvent.event));
-    } else if (slave.getBrowserInfo().getName().contains("Chrome")) {
-      chromeLabel.setIcon(chrome.getIconForEvent(captureEvent.event));
-    } else if (slave.getBrowserInfo().getName().contains("Opera")) {
-      operaLabel.setIcon(opera.getIconForEvent(captureEvent.event));
-    } else if (slave.getBrowserInfo().getName().contains("Safari")) {
-      safariLabel.setIcon(safari.getIconForEvent(captureEvent.event));
-    } else if (slave.getBrowserInfo().getName().contains("Microsoft Internet Explorer")) {
-      ieLabel.setIcon(ie.getIconForEvent(captureEvent.event));
-    }
+    final BrowserCaptureEvent captureEvent = (BrowserCaptureEvent) o;
+    final SlaveBrowser slave = captureEvent.getBrowser();
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        if (slave.getBrowserInfo().getName().contains("Firefox")) {
+          firefoxLabel.setIcon(firefox.getIconForEvent(captureEvent.event));
+        } else if (slave.getBrowserInfo().getName().contains("Chrome")) {
+          chromeLabel.setIcon(chrome.getIconForEvent(captureEvent.event));
+        } else if (slave.getBrowserInfo().getName().contains("Opera")) {
+          operaLabel.setIcon(opera.getIconForEvent(captureEvent.event));
+        } else if (slave.getBrowserInfo().getName().contains("Safari")) {
+          safariLabel.setIcon(safari.getIconForEvent(captureEvent.event));
+        } else if (slave.getBrowserInfo().getName().contains("Microsoft Internet Explorer")) {
+          ieLabel.setIcon(ie.getIconForEvent(captureEvent.event));
+        }
+      }
+    });
   }
 }

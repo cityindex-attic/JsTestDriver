@@ -41,9 +41,8 @@ import com.google.jstestdriver.config.InitializeModule;
 import com.google.jstestdriver.config.Initializer;
 import com.google.jstestdriver.guice.TestResultPrintingModule.TestResultPrintingInitializer;
 import com.google.jstestdriver.hooks.PluginInitializer;
-import com.google.jstestdriver.runner.RunnerMode;
 
-import org.kohsuke.args4j.CmdLineException;
+import org.apache.commons.logging.LogFactory;
 import org.mortbay.log.Slf4jLog;
 
 import java.awt.BorderLayout;
@@ -135,7 +134,7 @@ public class MainUI {
       final List<Module> actionRunnerModules =
           initializeInjector.getInstance(Initializer.class)
               .initialize(Collections.<Module>emptyList(), configuration, preparsedFlags.getRunnerMode(),
-                          preparsedFlags.getUnusedFlagsAsArgs());
+                  preparsedFlags.getUnusedFlagsAsArgs());
 
       final Injector injector = Guice.createInjector(actionRunnerModules);
 

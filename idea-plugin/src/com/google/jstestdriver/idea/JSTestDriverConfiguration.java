@@ -67,7 +67,7 @@ public class JSTestDriverConfiguration extends ModuleBasedConfiguration<RunConfi
 
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env)
       throws ExecutionException {
-    return new TestRunnerState(this, getProject(), env, getConfigurationModule());
+    return new TestRunnerState(this, getProject(), env);
   }
 
   @Override

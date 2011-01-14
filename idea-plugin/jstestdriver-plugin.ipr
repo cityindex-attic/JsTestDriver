@@ -270,7 +270,6 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file:///usr/local/google/alexeagle/js-test-driver/JsTestDriver/JsTestDriver.iml" filepath="/usr/local/google/alexeagle/js-test-driver/JsTestDriver/JsTestDriver.iml" />
       <module fileurl="file://$PROJECT_DIR$/../JsTestDriver/jstestdriver.iml" filepath="$PROJECT_DIR$/../JsTestDriver/jstestdriver.iml" />
       <module fileurl="file://$PROJECT_DIR$/jstestdriver-plugin.iml" filepath="$PROJECT_DIR$/jstestdriver-plugin.iml" />
     </modules>
