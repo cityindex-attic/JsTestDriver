@@ -86,6 +86,7 @@ public class JsTestDriverServerImpl extends Observable implements JsTestDriverSe
    */
   public void start() {
     try {
+      logger.info("Started the JsTD server on {}", port);
       // TODO(corysmith): Move this to the constructor when we are injecting everything.
       timer = new Timer(true);
       timer.schedule(new BrowserReaper(capturedBrowsers), browserTimeout * 2, browserTimeout * 2);

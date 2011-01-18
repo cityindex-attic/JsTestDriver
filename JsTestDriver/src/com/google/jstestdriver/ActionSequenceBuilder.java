@@ -50,6 +50,7 @@ public class ActionSequenceBuilder {
   private final BrowserActionExecutorAction browserActionsRunner;
   private final FailureCheckerAction failureCheckerAction;
   private final UploadAction uploadAction;
+  private boolean raiseOnFailure = false;
 
   /**
    * Begins the building of an action sequence.
@@ -124,7 +125,7 @@ public class ActionSequenceBuilder {
     if (needToStartServer()) {
       addServerActions(actions, leaveServerRunning());
     }
-    if (!tests.isEmpty()) {
+    if (!tests.isEmpty() && raiseOnFailure) {
       actions.add(failureCheckerAction);
     }
     return actions;
@@ -181,6 +182,15 @@ public class ActionSequenceBuilder {
 
   public ActionSequenceBuilder printingResultsWhenFinished(XmlPrinter printer) {
     this.xmlPrinter = printer;
+    return this;
+  }
+
+  /**
+   * Throw an {@link FailureException} when there are no tests, a test fails, or
+   * there are errors while loading a test.
+   */
+  public ActionSequenceBuilder raiseOnFailure() {
+    raiseOnFailure = true;
     return this;
   }
 }

@@ -45,6 +45,7 @@ public class DefaultActionListProvider implements ActionListProvider {
   private final Set<ActionListProcessor> processors;
   private final XmlPrinter xmlPrinter;
   private final ActionSequenceBuilder builder;
+  private final boolean raiseOnFailure;
 
   // TODO(corysmith): Refactor this. Currently in a temporary,
   //  make dependencies visible to aid refactoring state.
@@ -60,7 +61,8 @@ public class DefaultActionListProvider implements ActionListProvider {
       @Named("testOutput") String testOutput,
       Set<ActionListProcessor> processors,
       XmlPrinter xmlPrinter,
-      ActionSequenceBuilder builder) {
+      ActionSequenceBuilder builder,
+      @Named("raiseOnFailure") boolean raiseOnFailure) {
     this.tests = tests;
     this.arguments = arguments;
     this.reset = reset;
@@ -72,6 +74,7 @@ public class DefaultActionListProvider implements ActionListProvider {
     this.processors = processors;
     this.xmlPrinter = xmlPrinter;
     this.builder = builder;
+    this.raiseOnFailure = raiseOnFailure;
   }
 
   @Provides
@@ -82,6 +85,9 @@ public class DefaultActionListProvider implements ActionListProvider {
            .reset(reset)
            .asDryRunFor(dryRunFor)
            .withLocalServerPort(port);
+    if (raiseOnFailure) {
+      builder.raiseOnFailure();
+    }
     if (testOutput.length() > 0) {
       builder.printingResultsWhenFinished(xmlPrinter);
     }

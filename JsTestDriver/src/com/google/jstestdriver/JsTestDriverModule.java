@@ -92,6 +92,8 @@ public class JsTestDriverModule extends AbstractModule {
          .annotatedWith(Names.named("outputStream")).toInstance(outputStream);
     bind(String.class)
          .annotatedWith(Names.named("server")).toInstance(serverAddress);
+    bind(Boolean.class)
+         .annotatedWith(Names.named("raiseOnFailure")).toInstance(true);
 
     bind(new TypeLiteral<Set<FileInfo>>() {}).annotatedWith(Names.named("originalFileSet"))
         .toInstance(fileSet);

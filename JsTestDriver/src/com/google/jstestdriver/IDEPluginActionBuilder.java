@@ -141,7 +141,9 @@ public class IDEPluginActionBuilder {
       bind(Boolean.class)
           .annotatedWith(Names.named("debug"))
           .toInstance(Boolean.FALSE);
-     
+
+      bind(Boolean.class)
+          .annotatedWith(Names.named("raiseOnFailure")).toInstance(false);
 
       bind(new TypeLiteral<List<Action>>() {
       }).toProvider(ActionListProvider.class);

@@ -93,7 +93,7 @@ public class DefaultActionListProviderTest extends TestCase {
                 null),
             new FailureCheckerAction(null, null),
             new UploadAction(null),
-            new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0)))));
+            new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0)))), true);
   }
 
   public void testParseWithServerAndReset() throws Exception {

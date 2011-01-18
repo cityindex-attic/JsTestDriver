@@ -48,7 +48,6 @@ public class ActionSequenceBuilderTest extends TestCase {
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
-    expectedActions.add(FailureCheckerAction.class);
     builder.usingFiles(files, false);
 
     List<Action> sequence = builder.addTests(tests).build();
@@ -76,11 +75,38 @@ public class ActionSequenceBuilderTest extends TestCase {
     expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(ServerShutdownAction.class);
-    expectedActions.add(FailureCheckerAction.class);
     builder.withLocalServerPort(1001).usingFiles(files, false);
 
     List<Action> sequence = builder.addTests(tests).build();
 
+    assertSequence(expectedActions, sequence);
+  }
+  
+  public void testAddTestsAndExitOnFailureWithLocalServer() throws Exception {
+    List<String> tests = tests();
+    ActionSequenceBuilder builder = new ActionSequenceBuilder(
+        new ActionFactory(
+            null,
+            Collections.<TestsPreProcessor> emptySet(),
+            SlaveBrowser.TIMEOUT,
+            Collections.<AuthStrategy>emptySet(),
+            false,
+            null, null),
+            null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
+            new FailureCheckerAction(null, null),
+            new UploadAction(null),
+            new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0))));
+    
+    List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
+    expectedActions.add(ServerStartupAction.class);
+    expectedActions.add(UploadAction.class);
+    expectedActions.add(BrowserActionExecutorAction.class);
+    expectedActions.add(ServerShutdownAction.class);
+    expectedActions.add(FailureCheckerAction.class);
+    builder.withLocalServerPort(1001).usingFiles(files, false);
+    
+    List<Action> sequence = builder.addTests(tests).raiseOnFailure().build();
+    
     assertSequence(expectedActions, sequence);
   }
 
@@ -111,7 +137,6 @@ public class ActionSequenceBuilderTest extends TestCase {
     expectedActions.add(BrowserActionExecutorAction.class);
 //    expectedActions.add(BrowserShutdownAction.class);
     expectedActions.add(ServerShutdownAction.class);
-    expectedActions.add(FailureCheckerAction.class);
     this.<Action>assertSequence(expectedActions, actions);
   }
 
