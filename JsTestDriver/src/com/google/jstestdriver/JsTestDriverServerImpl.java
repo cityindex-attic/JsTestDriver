@@ -23,10 +23,15 @@ import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.server.JettyModule;
 import com.google.jstestdriver.server.handlers.JstdHandlersModule;
 
+import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Observable;
 import java.util.Set;
 import java.util.Timer;
@@ -86,14 +91,13 @@ public class JsTestDriverServerImpl extends Observable implements JsTestDriverSe
    */
   public void start() {
     try {
-      logger.info("Started the JsTD server on {}", port);
       // TODO(corysmith): Move this to the constructor when we are injecting everything.
       timer = new Timer(true);
       timer.schedule(new BrowserReaper(capturedBrowsers), browserTimeout * 2, browserTimeout * 2);
       server.start();
       setChanged();
       notifyObservers(Event.STARTED);
-      logger.debug("Starting the server.");
+      logger.info("Started the JsTD server on {}", port);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -112,5 +116,23 @@ public class JsTestDriverServerImpl extends Observable implements JsTestDriverSe
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  /* (non-Javadoc)
+   * @see com.google.jstestdriver.JsTestDriverServer#isHealthy()
+   */
+  public boolean isHealthy() {
+    String url = "http://localhost:" + port + handlerPrefix.prefixPath("/hello");
+    HttpURLConnection connection;
+    try {
+      connection = (HttpURLConnection) new URL(url).openConnection();
+      connection.connect();
+      return connection.getResponseCode() == 200;
+    } catch (MalformedURLException e) {
+      logger.warn("Bad url {}", e);
+    } catch (IOException e) {
+      logger.warn("Server not ready {}", e);
+    }
+    return false;
   }
 }

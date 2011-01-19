@@ -91,7 +91,7 @@ public class HttpServer implements Server {
       logger.trace("Post response:\n{}", response);
       return response;
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Connection error on : " +connection.toString(), e);
     } finally {
       if (connection != null) {
         connection.disconnect();

@@ -21,6 +21,11 @@ public interface JsTestDriverServer {
   void start();
 
   void stop();
+  
+  /**
+   * Gets /hello to see if the server is active.
+   */
+  boolean isHealthy();
 
   public enum Event {
     STARTED, STOPPED

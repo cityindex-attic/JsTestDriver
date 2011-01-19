@@ -107,10 +107,16 @@ public class ServerStartupAction implements ObservableAction {
     }
     try {
       server.start();
+      for (int i = 0; i < 3; i++) {
+        if (server.isHealthy()) {
+          return runData;
+        }
+        Thread.sleep(500); // wait for the server to come up.
+      }
+      throw new RuntimeException("Server never healthy on " + port);
     } catch (Exception e) {
       throw new RuntimeException("Error starting the server on " + port, e);
     }
-    return runData;
   }
 
   public void addObservers(List<Observer> observers) {
