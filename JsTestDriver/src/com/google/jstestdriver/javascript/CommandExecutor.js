@@ -205,6 +205,7 @@ jstestdriver.CommandExecutor.prototype.listen = function() {
                                   'Runner reset.',
                                   this.getBrowserInfo(),
                                   true);
+    jstestdriver.log('Runner reset: ' + window.location.href);
   } else {
     response =
         new jstestdriver.Response(jstestdriver.RESPONSE_TYPES.BROWSER_READY,

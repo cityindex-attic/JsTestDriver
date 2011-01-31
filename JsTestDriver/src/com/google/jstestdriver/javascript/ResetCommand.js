@@ -19,8 +19,9 @@
  * Resets the javascript state by reloading or replacing current window.
  * @param {window.location} location The location object.
  * @param {jstestdriver.Signal} signal Signals that the window will be reloaded.
+ * @param {function():Number} now Returns the current time in ms.
  */
-jstestdriver.ResetCommand = function(location, signal) {
+jstestdriver.ResetCommand = function(location, signal, now) {
   /**
    * @type {window.location}
    * @private
@@ -32,13 +33,25 @@ jstestdriver.ResetCommand = function(location, signal) {
    * @private
    */
   this.signal_ = signal;
+  
+  /**
+   * @type {function():Number}
+   * @private
+   */
+  this.now_ = now;
 };
 
 jstestdriver.ResetCommand.prototype.reset = function() {
   this.signal_.set(true);
   if (this.location_.href.search('\\?refresh') != -1) {
+    jstestdriver.log("Reloading " + this.location_.href)
     this.location_.reload();
   } else {
-    this.location_.replace(this.location_.href + '?refresh');
+    
+    var newUrl = this.location_.protocol + "//" + 
+                 this.location_.host + 
+                 this.location_.pathname +  '?refresh=' + this.now_();
+    jstestdriver.log("Replacing " + newUrl)
+    this.location_.replace(newUrl);
   }
 };

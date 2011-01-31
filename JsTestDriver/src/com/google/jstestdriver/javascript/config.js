@@ -163,7 +163,8 @@ jstestdriver.config = (function(module) {
     var unloadSignal = new jstestdriver.Signal(false);
     var resetCommand = new jstestdriver.ResetCommand(
         window.location,
-        unloadSignal);
+        unloadSignal,
+        jstestdriver.now);
         
     var noopCommand = new jstestdriver.NoopCommand(streamStop, getBrowserInfo);
 
