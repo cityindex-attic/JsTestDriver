@@ -138,6 +138,10 @@ public class FileInfo {
     }
     return true;
   }
+  
+  public FileInfo load(String data) {
+    return new FileInfo(filePath, timestamp, length, isPatch, serveOnly, data);
+  }
 
   @Override
   public String toString() {

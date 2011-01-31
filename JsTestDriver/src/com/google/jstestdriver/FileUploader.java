@@ -272,7 +272,7 @@ public class FileUploader {
    * being updated.
    */
   private Collection<FileInfo> determineInBrowserDependencies(FileInfo file, List<FileInfo> files) {
-    List<FileInfo> deps = new LinkedList<FileInfo>();
+    LinkedHashSet<FileInfo> deps = Sets.newLinkedHashSet();
     for (FileInfo dep : filter.resolveFilesDeps(file, files)) {
       deps.add(dep);
     }
@@ -291,6 +291,7 @@ public class FileUploader {
   private List<FileSource> filterFilesToLoad(Collection<FileInfo> fileInfos) {
     List<FileSource> filteredFileSources = new LinkedList<FileSource>();
 
+    System.out.println(fileInfos);
     for (FileInfo fileInfo : fileInfos) {
       if (!fileInfo.isServeOnly()) {
         filteredFileSources.add(fileInfoToFileSource(fileInfo));

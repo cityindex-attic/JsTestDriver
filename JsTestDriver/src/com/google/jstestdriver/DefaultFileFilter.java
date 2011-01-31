@@ -19,8 +19,17 @@ package com.google.jstestdriver;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Handles the determination of which files to reload.
+ * 
+ * @author Cory Smith (corbinrsmith@gmail.com)
+ */
 public class DefaultFileFilter implements JsTestDriverFileFilter {
   public List<FileInfo> resolveFilesDeps(FileInfo file, List<FileInfo> fileSet) {
-    return Collections.singletonList(file);
+    int index = fileSet.indexOf(file);
+    if (index == -1) {
+      return Collections.singletonList(file);
+    }
+    return fileSet.subList(index, fileSet.size());
   }
 }

@@ -15,7 +15,15 @@
  */
 package com.google.jstestdriver.server.handlers;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.jstestdriver.CapturedBrowsers;
@@ -24,19 +32,12 @@ import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 import com.google.jstestdriver.servlet.fileset.FileSetRequestHandler;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 class FileSetPostHandler implements RequestHandler {
-
-  private final Gson gson = new Gson();
+  
+  private final Gson gson = new GsonBuilder().create();
   private final HttpServletRequest request;
   private final HttpServletResponse response;
 
