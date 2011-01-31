@@ -291,7 +291,6 @@ public class FileUploader {
   private List<FileSource> filterFilesToLoad(Collection<FileInfo> fileInfos) {
     List<FileSource> filteredFileSources = new LinkedList<FileSource>();
 
-    System.out.println(fileInfos);
     for (FileInfo fileInfo : fileInfos) {
       if (!fileInfo.isServeOnly()) {
         filteredFileSources.add(fileInfoToFileSource(fileInfo));
