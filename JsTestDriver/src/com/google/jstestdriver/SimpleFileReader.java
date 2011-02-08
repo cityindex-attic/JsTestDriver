@@ -18,6 +18,8 @@ package com.google.jstestdriver;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
  * A simple filereader.
@@ -26,12 +28,12 @@ import java.io.IOException;
 public class SimpleFileReader implements FileReader {
 
   public String readFile(String file)  {
-    BufferedInputStream bis = null;
+    InputStreamReader reader = null;
     try {
-      bis = new BufferedInputStream(new FileInputStream(file));
+      reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)), Charset.forName("UTF-8"));
       StringBuilder sb = new StringBuilder();
 
-      for (int c = bis.read(); c != -1; c = bis.read()) {
+      for (int c = reader.read(); c != -1; c = reader.read()) {
         sb.append((char) c);
       }
       String contents = sb.toString();
@@ -40,9 +42,9 @@ public class SimpleFileReader implements FileReader {
     } catch (IOException e) {
       throw new RuntimeException("Impossible to read file: " + file, e);
     } finally {
-      if (bis != null) {
+      if (reader != null) {
         try {
-          bis.close();
+          reader.close();
         } catch (IOException e) {
           // ignore
         }
