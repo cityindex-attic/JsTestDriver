@@ -151,13 +151,14 @@ public class FileInfo {
     return new FileInfo(filePath, timestamp, length, isPatch, serveOnly, data);
   }
 
+  /** Translates the FileInfo into a lightwieght FileSrc object. */
   public FileSource toFileSource(HandlerPathPrefix prefix, Set<FileInfoScheme> schemes) {
     for (FileInfoScheme scheme : schemes) {
-      if (scheme.matches(this.getFilePath())) {
-        return new FileSource(this.getFilePath(), this.getTimestamp());
+      if (scheme.matches(filePath)) {
+        return new FileSource(filePath, this.getTimestamp());
       }
     }
-    return new FileSource(prefix.prefixPath("/test/" + this.getFilePath()), this.getTimestamp());
+    return new FileSource(prefix.prefixPath("/test/" + this.getDisplayPath()), this.getTimestamp());
   }
 
   @Override
@@ -204,7 +205,7 @@ public class FileInfo {
    * Provides a unique identifier to reference this FileInfo in the browser.
    */
   public String getDisplayPath() {
-    return null;
+    return filePath;
   }
 
   /**

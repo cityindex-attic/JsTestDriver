@@ -25,7 +25,7 @@ public class ServerFileUpload implements FileSetRequestHandler<String> {
     for (FileInfo f : data) {
       filesCache.addFile(f);
     }
-    return "{ok}";
+    return "{ok:1}";
   }
   
 

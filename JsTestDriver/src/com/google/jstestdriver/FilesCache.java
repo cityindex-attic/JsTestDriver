@@ -25,7 +25,7 @@ import java.util.Set;
 public class FilesCache {
 
   // TODO(corysmith): replace this with a synchronized collection
-  // When the map semantics
+  // When the map semantics are clean.
   private final Map<String, FileInfo> files;
 
   public FilesCache(Map<String, FileInfo> files) {
@@ -33,12 +33,8 @@ public class FilesCache {
   }
 
   public synchronized String getFileContent(String fileName) {
-    FileInfo FileInfo = files.get(fileName);
-    return FileInfo != null ? FileInfo.getData() : "";
-  }
-
-  public synchronized FileInfo getFileInfo(String fileName) {
-    return files.get(fileName);
+    FileInfo info = files.get(fileName);
+    return info != null ? info.getData() : "";
   }
 
   public synchronized void clear() {
@@ -46,7 +42,7 @@ public class FilesCache {
   }
 
   public synchronized void addFile(FileInfo fileInfo) {
-    files.put(fileInfo.getFilePath(), fileInfo);
+    files.put(fileInfo.getDisplayPath(), fileInfo);
   }
 
   public int getFilesNumber() {
