@@ -279,21 +279,12 @@ public class FileUploader {
     return deps;
   }
 
-  private FileSource fileInfoToFileSource(FileInfo info) {
-    for (FileInfoScheme scheme : schemes) {
-      if (scheme.matches(info.getFilePath())) {
-        return new FileSource(info.getFilePath(), info.getTimestamp());
-      }
-    }
-    return new FileSource(prefix.prefixPath("/test/" + info.getFilePath()), info.getTimestamp());
-  }
-
   private List<FileSource> filterFilesToLoad(Collection<FileInfo> fileInfos) {
     List<FileSource> filteredFileSources = new LinkedList<FileSource>();
 
     for (FileInfo fileInfo : fileInfos) {
       if (!fileInfo.isServeOnly()) {
-        filteredFileSources.add(fileInfoToFileSource(fileInfo));
+        filteredFileSources.add(fileInfo.toFileSource(prefix, schemes));
       }
     }
     return filteredFileSources;

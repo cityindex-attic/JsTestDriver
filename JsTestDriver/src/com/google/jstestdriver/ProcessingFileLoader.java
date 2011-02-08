@@ -48,7 +48,7 @@ public class ProcessingFileLoader implements FileLoader {
     this.stopWatch = stopWatch;
   }
 
-  //TODO(corysmith): Remove shouldReset.
+  // TODO(corysmith): Remove shouldReset.
   public List<FileInfo> loadFiles(
       Collection<FileInfo> filesToLoad, boolean shouldReset) {
     List<FileInfo> processed = new LinkedList<FileInfo>();
@@ -60,7 +60,7 @@ public class ProcessingFileLoader implements FileLoader {
 
       stopWatch.start("loadFile");
       for (FileInfo file : preProcessedFiles) {
-        loaded.add(loadFile(shouldReset, basePath, file));
+        loaded.add(file.loadFile(reader, basePath));
       }
       stopWatch.stop("loadFile");
 
@@ -73,26 +73,6 @@ public class ProcessingFileLoader implements FileLoader {
       throw e;
     }
     return processed;
-  }
-
-  private FileInfo loadFile(boolean shouldReset, File basePath, FileInfo file) {
-    if (!file.canLoad()) {
-      return file;
-    }
-    StringBuilder fileContent = new StringBuilder();
-    long timestamp = file.getTimestamp();
-    fileContent.append(reader.readFile(file.getAbsoluteFileName(basePath)));
-    List<FileInfo> patches = file.getPatches();
-    if (patches != null) {
-      for (FileInfo patch : patches) {
-        fileContent.append(reader.readFile(patch.getAbsoluteFileName(basePath)));
-      }
-    }
-    return new FileInfo(file.getFilePath(),
-                        timestamp,
-                        -1,
-                        false,
-                        file.isServeOnly(), fileContent.toString());
   }
 
   private FileInfo postProcessFile(FileInfo processed) {

@@ -18,6 +18,10 @@ package com.google.jstestdriver;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import com.google.jstestdriver.hooks.FileInfoScheme;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 
 /**
  * Represents a test resource.
@@ -95,7 +99,7 @@ public class FileInfo {
   }
 
   public void setTimestamp(long timestamp) {
-  	this.timestamp = timestamp;
+    this.timestamp = timestamp;
   }
 
   public boolean isPatch() {
@@ -103,11 +107,15 @@ public class FileInfo {
   }
 
   public boolean isWebAddress() {
-		return filePath.startsWith("http://") || filePath.startsWith("https://");
-	}
+    return filePath.startsWith("http://") || filePath.startsWith("https://");
+  }
 
   public boolean canLoad() {
     return !isWebAddress();
+  }
+
+  public File toFile(File basePath) {
+    return new File(getPath(basePath, filePath));
   }
 
   @Override
@@ -138,9 +146,18 @@ public class FileInfo {
     }
     return true;
   }
-  
-  public FileInfo load(String data) {
+
+  public FileInfo load(String data, long timestamp) {
     return new FileInfo(filePath, timestamp, length, isPatch, serveOnly, data);
+  }
+
+  public FileSource toFileSource(HandlerPathPrefix prefix, Set<FileInfoScheme> schemes) {
+    for (FileInfoScheme scheme : schemes) {
+      if (scheme.matches(this.getFilePath())) {
+        return new FileSource(this.getFilePath(), this.getTimestamp());
+      }
+    }
+    return new FileSource(prefix.prefixPath("/test/" + this.getFilePath()), this.getTimestamp());
   }
 
   @Override
@@ -153,15 +170,15 @@ public class FileInfo {
   public static final String formatFileSeparator(String path) {
     return path.replaceAll("\\\\", SEPARATOR_CHAR);
   }
-  
-	/**
-	 * Gets a path containing the base dir and relative file path. The file separators in the path
-	 * will be formatted to use {@link #SEPARATOR_CHAR} as the path separator.
-	 */
+
+  /**
+   * Gets a path containing the base dir and relative file path. The file separators in the path
+   * will be formatted to use {@link #SEPARATOR_CHAR} as the path separator.
+   */
   public static String getPath(File dir, String path) {
   // Don't prepend the directory if the path is already absolute
-	  if (new File(path).isAbsolute()) {
-		  return path;
+    if (new File(path).isAbsolute()) {
+      return path;
     }
 
     String dirPath = formatFileSeparator(dir.getPath());
@@ -171,5 +188,48 @@ public class FileInfo {
     }
 
     return dirPath + path;
+  }
+
+  /**
+   * @param resolvedPath The resolved absolute path of the file.
+   * @param timestamp The timestamp of the file.
+   * @return An updated FileInfo.
+   */
+  public FileInfo fromResolvedPath(String resolvedPath, long timestamp) {
+    return new FileInfo(resolvedPath, timestamp,
+      length, isPatch, serveOnly, null);
+  }
+
+  /**
+   * Provides a unique identifier to reference this FileInfo in the browser.
+   */
+  public String getDisplayPath() {
+    return null;
+  }
+
+  /**
+   * Loads a file from the file system using a reader.
+   * @param reader The file reader to pull from the file system.
+   * @param basePath The base path
+   * @return The loaded file info.
+   */
+  public FileInfo loadFile(FileReader reader, File basePath) {
+    if (!this.canLoad()) {
+      return this;
+    }
+    StringBuilder fileContent = new StringBuilder();
+    fileContent.append(reader.readFile(this.getAbsoluteFileName(basePath)));
+    List<FileInfo> patches = this.getPatches();
+    if (patches != null) {
+      for (FileInfo patch : patches) {
+        fileContent.append(reader.readFile(patch.getAbsoluteFileName(basePath)));
+      }
+    }
+    return new FileInfo(filePath,
+                        timestamp,
+                        length,
+                        isPatch,
+                        serveOnly,
+                        fileContent.toString());
   }
 }
