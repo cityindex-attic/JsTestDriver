@@ -23,16 +23,20 @@ import org.kohsuke.args4j.spi.OptionHandler;
 import org.kohsuke.args4j.spi.Parameters;
 import org.kohsuke.args4j.spi.Setter;
 
+import com.google.jstestdriver.config.CmdFlags;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Parsers the Flags from args.
- * @author corysmith
+ * @author corysmith (corbinrsmith@google.com)
  *
  */
 public class Args4jFlagsParser implements FlagsParser {
+
+  private final CmdFlags cmdLineFlags;
 
   public static class StringListOptionHandler extends OptionHandler<List<String>> {
   
@@ -84,6 +88,13 @@ public class Args4jFlagsParser implements FlagsParser {
 
   }
 
+  /**
+   * @param cmdLineFlags The additional flags not handled by the Args4jFlagsParser.
+   */
+  public Args4jFlagsParser(CmdFlags cmdLineFlags) {
+    this.cmdLineFlags = cmdLineFlags;
+  }
+
   public Flags parseArgument(String[] strings) throws CmdLineException {
     FlagsImpl flags = new FlagsImpl();
     CmdLineParser.registerHandler(List.class, StringListOptionHandler.class);
@@ -99,6 +110,7 @@ public class Args4jFlagsParser implements FlagsParser {
     if (strings.length == 0 || flags.getDisplayHelp()) {
       ByteArrayOutputStream stream = new ByteArrayOutputStream();
       cmdLineParser.printUsage(stream);
+      cmdLineFlags.printUsage(stream);
       throw new CmdLineException(stream.toString());
     }
     return flags;

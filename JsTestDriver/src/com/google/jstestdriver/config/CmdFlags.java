@@ -1,16 +1,17 @@
 package com.google.jstestdriver.config;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.jstestdriver.Plugin;
-import com.google.jstestdriver.runner.RunnerMode;
-
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.jstestdriver.Plugin;
+import com.google.jstestdriver.runner.RunnerMode;
 
 /**
  * A collection of CmdLinFlags with convenience methods for the preparsable
@@ -21,8 +22,15 @@ import java.util.Set;
  *
  */
 public class CmdFlags {
-  private static final Set<String> PREPARSE_FLAGS =
-      ImmutableSet.of("--plugins", "--config", "--basePath", "--runnerMode");
+  private static final Set<CmdLineFlagMetaData> PREPARSE_FLAGS = ImmutableSet.of(
+      new CmdLineFlagMetaData("--plugins", "VAL[,VAL]", "Comma separated list of paths to plugin jars."),
+      new CmdLineFlagMetaData("--config", "VAL","Path to configuration file."),
+ new CmdLineFlagMetaData("--basePath", "VAL",
+          "Override the base path in the "
+              + "configuration file. Defaults to the parent directory of the configuration file."),
+      new CmdLineFlagMetaData("--runnerMode", "VAL", "The configruation of the "
+          + "logging and frequency that the runner reports actions: DEBUG, "
+          + "DEBUG_NO_TRACE, DEBUG_OBSERVE, PROFILE, QUIET (default), INFO"));
 
   private final List<CmdLineFlag> flags;
 
@@ -64,18 +72,11 @@ public class CmdFlags {
 
   public File getConfigPath() throws IOException {
     String configPath = getConfigPathNoDefault();
-    String basePath = getBasePathNoDefault();
 
-    File defaultConfig = basePath == null ?
-        new File("jsTestDriver.conf") :
-        new File(new File(basePath), "jsTestDriver.conf");
-
-    if (configPath == null) {
-      return defaultConfig.exists() ? defaultConfig : null;
+    if (configPath != null) {
+      return new File(configPath).getAbsoluteFile();
     }
-    return basePath == null ?
-        new File(configPath) :
-        new File(new File(basePath), configPath);
+    return new File("jsTestDriver.conf").getAbsoluteFile();
   }
 
   public File getBasePath() throws IOException {
@@ -83,15 +84,11 @@ public class CmdFlags {
     if (basePath != null) {
       return new File(basePath);
     }
-    final String configPath = getConfigPathNoDefault();
+    final File configPath = getConfigPath();
     if (configPath == null) {
-      return new File(".").getCanonicalFile();
+      return null;
     }
-    final File parentFile = new File(configPath).getParentFile();
-    if (parentFile != null) {
-      return parentFile.getCanonicalFile();
-    }
-    return new File(".").getCanonicalFile();
+    return configPath.getParentFile();
   }
 
   public RunnerMode getRunnerMode() {
@@ -111,5 +108,17 @@ public class CmdFlags {
       }
     }
     return args.toArray(new String[args.size()]);
+  }
+  
+  public void printUsage(ByteArrayOutputStream stream) {
+    for (CmdLineFlagMetaData meta : PREPARSE_FLAGS) {
+      try {
+        meta.printUsage(stream);
+        stream.write('\n');
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
   }
 }

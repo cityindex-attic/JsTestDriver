@@ -26,8 +26,11 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import com.google.common.collect.Sets;
+import com.google.inject.internal.Lists;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.browser.CommandLineBrowserRunner;
+import com.google.jstestdriver.config.CmdFlags;
+import com.google.jstestdriver.config.CmdLineFlag;
 
 /**
  * @author corysmith
@@ -35,26 +38,26 @@ import com.google.jstestdriver.browser.CommandLineBrowserRunner;
  */
 public class FlagsParserTest extends TestCase {
   public void testParseList() throws Exception {
-    Flags flags = new Args4jFlagsParser().parseArgument(new String[]{"--tests", "foo,bar,baz"});
+    Flags flags = new Args4jFlagsParser(null).parseArgument(new String[]{"--tests", "foo,bar,baz"});
     assertEquals(Arrays.asList("foo", "bar", "baz"), flags.getTests());
   }
   public void testParseListTrailingWhiteSpace() throws Exception {
-    Flags flags = new Args4jFlagsParser().parseArgument(new String[]{"--tests", "foo, bar,\nbaz"});
+    Flags flags = new Args4jFlagsParser(null).parseArgument(new String[]{"--tests", "foo, bar,\nbaz"});
     assertEquals(Arrays.asList("foo", "bar", "baz"), flags.getTests());
   }
   public void testParseListWithSlash() throws Exception {
-    Flags flags = new Args4jFlagsParser().parseArgument(new String[]{"--browser", "/path/browser,/beep"});
+    Flags flags = new Args4jFlagsParser(null).parseArgument(new String[]{"--browser", "/path/browser,/beep"});
     assertEquals(browsers("/beep", "/path/browser"), flags.getBrowser());
   }
   public void testParseListWithSlashAndComma() throws Exception {
-    Flags flags = new Args4jFlagsParser().parseArgument(new String[]{"--browser",
+    Flags flags = new Args4jFlagsParser(null).parseArgument(new String[]{"--browser",
         "open,/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome"});
     assertEquals(browsers("open", "/Applications/Google\\ Chrome.app/" +
         "Contents/MacOS/Google\\ Chrome"), flags.getBrowser());
   }
 
   public void testParseListWindowsOpts() throws Exception {
-    Flags flags = new Args4jFlagsParser().parseArgument(new String[]{"--browser",
+    Flags flags = new Args4jFlagsParser(null).parseArgument(new String[]{"--browser",
       "C:\\Program Files\\Mozilla Firefox\\firefox.exe," +
       "C:\\Program Files\\Safari\\Safari.exe," +
       "C:\\Program Files\\Internet Explorer\\iexplore.exe," +
@@ -78,23 +81,26 @@ public class FlagsParserTest extends TestCase {
   
   
   public void testParseInteger() throws Exception {
-    Flags flags = new Args4jFlagsParser().parseArgument(new String[]{"--port", "4504"});
+    Flags flags = new Args4jFlagsParser(null).parseArgument(new String[]{"--port", "4504"});
     assertEquals(new Integer(4504), flags.getPort());
   }
   public void testNoArgs() throws Exception {
-    try{
-      new Args4jFlagsParser().parseArgument(new String[]{});
+    CmdFlags cmdLineFlags = new CmdFlags(Lists.<CmdLineFlag>newArrayList());
+    try {
+      new Args4jFlagsParser(
+        cmdLineFlags).parseArgument(new String[] {});
       fail("expected instructions");
     } catch (CmdLineException e) {
       ByteArrayOutputStream message = new ByteArrayOutputStream();
       new CmdLineParser(new FlagsImpl()).printUsage(message);
+      cmdLineFlags.printUsage(message);
       assertEquals(message.toString(), e.getMessage());
     }
   }
   public void testBadArgs() throws Exception {
     String[] args = new String[]{"--port"};
     try{
-      new Args4jFlagsParser().parseArgument(args);
+      new Args4jFlagsParser(null).parseArgument(args);
       fail("expected instructions");
     } catch (CmdLineException e) {
       ByteArrayOutputStream message = new ByteArrayOutputStream();

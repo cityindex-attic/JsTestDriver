@@ -16,6 +16,7 @@
 package com.google.jstestdriver.config;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +42,7 @@ public class YamlParserTest extends TestCase {
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
     YamlParser parser = new YamlParser();
 
-    Configuration config = parser.parse(new InputStreamReader(bais));
+    Configuration config = parser.parse(new InputStreamReader(bais), null);
     Set<FileInfo> files = config.getFilesList();
     List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
 
@@ -53,13 +54,18 @@ public class YamlParserTest extends TestCase {
   public void testParseConfigFileAndHaveListOfFilesWithPatches()
       throws Exception {
 
-    String configFile = "load:\n" + "- code/code.js\n"
-      + "- patch code/patch.js\n" + "- code/code2.js\n" + "- test/*.js\n"
-      + "exclude:\n" + "- code/code2.js\n" + "- test/test2.js";
+    String configFile = "load:\n" +
+      "- code/code.js\n" +
+      "- patch code/patch.js\n" +
+      "- code/code2.js\n" +
+      "- test/*.js\n" +
+      "exclude:\n" +
+      "- code/code2.js\n" +
+      "- test/test2.js";
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
     YamlParser parser = new YamlParser();
 
-    Configuration config = parser.parse( new InputStreamReader(bais));
+    Configuration config = parser.parse( new InputStreamReader(bais), null);
     Set<FileInfo> files = config.getFilesList();
     List<FileInfo> listFiles = new ArrayList<FileInfo>(files);
 
@@ -78,7 +84,7 @@ public class YamlParserTest extends TestCase {
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
     YamlParser parser = new YamlParser();
 
-    Configuration config = parser.parse(new InputStreamReader(bais));
+    Configuration config = parser.parse(new InputStreamReader(bais), null);
     List<Plugin> plugins = config.getPlugins();
     assertEquals(expected, plugins.get(0));
   }
@@ -97,7 +103,7 @@ public class YamlParserTest extends TestCase {
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
     YamlParser parser = new YamlParser();
 
-    Configuration config = parser.parse(new InputStreamReader(bais));
+    Configuration config = parser.parse(new InputStreamReader(bais), null);
     List<Plugin> plugins = config.getPlugins();
 
     assertEquals(2, plugins.size());
@@ -113,7 +119,7 @@ public class YamlParserTest extends TestCase {
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
     YamlParser parser = new YamlParser();
 
-    Configuration config = parser.parse(new InputStreamReader(bais));
+    Configuration config = parser.parse(new InputStreamReader(bais), null);
     List<Plugin> plugins = config.getPlugins();
     Plugin plugin = plugins.get(0);
     List<String> args = plugin.getArgs();
@@ -131,7 +137,7 @@ public class YamlParserTest extends TestCase {
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
     YamlParser parser = new YamlParser();
 
-    Configuration config = parser.parse(new InputStreamReader(bais));
+    Configuration config = parser.parse(new InputStreamReader(bais), null);
     List<Plugin> plugins = config.getPlugins();
     Plugin plugin = plugins.get(0);
     List<String> args = plugin.getArgs();
@@ -146,7 +152,7 @@ public class YamlParserTest extends TestCase {
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
     YamlParser parser = new YamlParser();
 
-    Configuration config = parser.parse(new InputStreamReader(bais));
+    Configuration config = parser.parse(new InputStreamReader(bais), null);
     Set<FileInfo> serveFilesSet = config.getFilesList();
     List<FileInfo> serveFiles = new ArrayList<FileInfo>(serveFilesSet);
 
@@ -171,7 +177,7 @@ public class YamlParserTest extends TestCase {
     ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
     YamlParser parser = new YamlParser();
     
-    Configuration config = parser.parse(new InputStreamReader(bais));
+    Configuration config = parser.parse(new InputStreamReader(bais), null);
     Set<FileInfo> serveFilesSet = config.getFilesList();
     List<FileInfo> serveFiles = Lists.newArrayList(serveFilesSet);
     
@@ -182,5 +188,33 @@ public class YamlParserTest extends TestCase {
     
     List<FileInfo> tests = config.getTests();
     assertEquals("test/*.js", tests.get(0).getFilePath());
+  }
+
+  public void testParseBasePath() throws Exception {
+    String configFile = "basepath: /some/path\n"
+      + "load:\n"
+      + " - code/*.js\n"
+      + "test:\n"
+      + " - test/*.js\n"
+      + "serve:\n"
+      + " - serve/serve1.js\n"
+      + "exclude:\n"
+      + " - code/code2.js\n"
+      + " - test/test2.js";
+    ByteArrayInputStream bais = new ByteArrayInputStream(configFile.getBytes());
+    YamlParser parser = new YamlParser();
+    
+    Configuration config = parser.parse(new InputStreamReader(bais), null);
+    Set<FileInfo> serveFilesSet = config.getFilesList();
+    List<FileInfo> serveFiles = Lists.newArrayList(serveFilesSet);
+    
+    assertEquals(2, serveFilesSet.size());
+    assertTrue(serveFiles.get(0).getFilePath().endsWith("code/*.js"));
+    assertTrue(serveFiles.get(1).getFilePath().endsWith("serve/serve1.js"));
+    assertTrue(serveFiles.get(1).isServeOnly());
+    
+    List<FileInfo> tests = config.getTests();
+    assertEquals("test/*.js", tests.get(0).getFilePath());
+    assertEquals(new File("/some/path"), config.getBasePath());
   }
 }

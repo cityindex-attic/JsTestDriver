@@ -1,9 +1,9 @@
 package com.google.jstestdriver.config;
 
-import com.google.common.collect.Lists;
-
 import java.util.Collections;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 /**
  * An extremely simple flag object. It only support the name and the value
@@ -44,5 +44,29 @@ public class CmdLineFlag {
     if (value != null) {
       args.add(value);
     }
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((flag == null) ? 0 : flag.hashCode());
+    result = prime * result + ((value == null) ? 0 : value.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
+    CmdLineFlag other = (CmdLineFlag) obj;
+    if (flag == null) {
+      if (other.flag != null) return false;
+    } else if (!flag.equals(other.flag)) return false;
+    if (value == null) {
+      if (other.value != null) return false;
+    } else if (!value.equals(other.value)) return false;
+    return true;
   }
 }

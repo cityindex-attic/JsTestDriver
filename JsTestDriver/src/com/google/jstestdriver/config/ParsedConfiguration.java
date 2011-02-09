@@ -23,6 +23,7 @@ import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 
+import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,14 +40,16 @@ public class ParsedConfiguration implements Configuration {
   private final Set<FileInfo> excludedFiles;
   private final long testTimeout;
   private final List<FileInfo> tests;
+  private final File basePath;
 
   public ParsedConfiguration(Set<FileInfo> filesList, Set<FileInfo> excludedFiles,
-      List<Plugin> plugins, String server, long testTimeout, List<FileInfo> tests) {
+      List<Plugin> plugins, String server, long testTimeout, File basePath, List<FileInfo> tests) {
     this.filesList = filesList;
     this.excludedFiles = excludedFiles;
     this.plugins = plugins;
     this.server = server;
     this.testTimeout = testTimeout;
+    this.basePath = basePath;
     this.tests = tests;
   }
 
@@ -88,6 +91,7 @@ public class ParsedConfiguration implements Configuration {
             flags.getPort(),
             flags.getServerHandlerPrefix()),
         testTimeout,
+        basePath,
         Lists.newArrayList(testFiles));
   }
 
@@ -97,5 +101,9 @@ public class ParsedConfiguration implements Configuration {
 
   public List<FileInfo> getTests() {
     return tests;
+  }
+
+  public File getBasePath() {
+    return basePath;
   }
 }

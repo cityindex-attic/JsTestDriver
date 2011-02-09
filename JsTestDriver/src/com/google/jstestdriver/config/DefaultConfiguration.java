@@ -21,6 +21,7 @@ import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,11 @@ import java.util.Set;
 public class DefaultConfiguration implements Configuration{
 
   public static final long DEFAULT_TEST_TIMEOUT = 2 * 60 * 60;
+  private final File basePath;
+
+  public DefaultConfiguration(File basePath) {
+    this.basePath = basePath;
+  }
 
   public Set<FileInfo> getFilesList() {
     return Collections.<FileInfo>emptySet();
@@ -61,5 +67,9 @@ public class DefaultConfiguration implements Configuration{
 
   public List<FileInfo> getTests() {
     return Collections.<FileInfo>emptyList();
+  }
+
+  public File getBasePath() {
+    return basePath;
   }
 }

@@ -20,6 +20,7 @@ import com.google.jstestdriver.Plugin;
 
 import org.jvyaml.YAML;
 
+import java.io.File;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -35,13 +36,14 @@ import java.util.Set;
  */
 public class YamlParser {
   @SuppressWarnings("unchecked")
-  public Configuration parse(Reader configReader) {
+  public Configuration parse(Reader configReader, File defaultBasePath) {
     Map<Object, Object> data = (Map<Object, Object>) YAML.load(configReader);
     Set<FileInfo> resolvedFilesLoad = new LinkedHashSet<FileInfo>();
     Set<FileInfo> testFiles = new LinkedHashSet<FileInfo>();
     Set<FileInfo> resolvedFilesExclude = new LinkedHashSet<FileInfo>();
 
     String server = "";
+    File basePath = defaultBasePath;
     long timeOut = 0;
     List<Plugin> plugins = Lists.newLinkedList();
 
@@ -74,7 +76,14 @@ public class YamlParser {
     }
     
     if (data.containsKey("timeout")) {
-      timeOut = (Long)data.get("timeout");
+      timeOut = (Long) data.get("timeout");
+    }
+    
+    if (data.containsKey("basepath")) {
+      basePath = new File((String) data.get("basepath"));
+      if (!basePath.isAbsolute()) {
+        basePath = new File(defaultBasePath, basePath.getPath());
+      }
     }
 
     return new ParsedConfiguration(resolvedFilesLoad,
@@ -82,6 +91,7 @@ public class YamlParser {
                                    plugins,
                                    server,
                                    timeOut,
+                                   basePath,
                                    Lists.newArrayList(testFiles));
   }
 

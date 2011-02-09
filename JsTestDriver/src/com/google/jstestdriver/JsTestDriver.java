@@ -52,7 +52,6 @@ public class JsTestDriver {
       // pre-parse parsing... These are the flags
       // that must be dealt with before we parse the flags.
       CmdFlags cmdLineFlags = new CmdLineFlagsFactory().create(args);
-      final File basePath = cmdLineFlags.getBasePath();
       List<Plugin> cmdLinePlugins = cmdLineFlags.getPlugins();
 
       // configure logging before we start seriously processing.
@@ -65,8 +64,12 @@ public class JsTestDriver {
       logger.debug("loaded plugins %s", pluginModules);
       List<Module> initializeModules = Lists.newLinkedList(pluginModules);
 
-      Configuration configuration = getConfiguration(cmdLineFlags.getConfigPath());
-      initializeModules.add(new InitializeModule(pluginLoader, basePath, new Args4jFlagsParser(),
+      Configuration configuration = getConfiguration(cmdLineFlags.getConfigPath(), cmdLineFlags.getBasePath());
+      File basePath = configuration.getBasePath().getCanonicalFile();
+      initializeModules.add(
+          new InitializeModule(pluginLoader,
+          basePath,
+          new Args4jFlagsParser(cmdLineFlags),
           cmdLineFlags.getRunnerMode()));
       initializeModules.add(new Module() {
         public void configure(Binder binder) {
@@ -102,17 +105,16 @@ public class JsTestDriver {
   /**
    * Creates a configuration from the path, by reading and parsing it. Or, it
    * will return a DefaultConfiguration, if the path is null.
-   *
    */
-  public static Configuration getConfiguration(File config) throws FileNotFoundException {
+  public static Configuration getConfiguration(File config, File basePath) throws FileNotFoundException {
     final YamlParser configParser = new YamlParser();
-    Configuration configuration = new DefaultConfiguration();
+    Configuration configuration = new DefaultConfiguration(basePath);
     if (config != null) {
       if (!config.exists()) {
         throw new RuntimeException("Config file doesn't exist: " + config.getAbsolutePath());
       }
       configuration = configParser.parse(new InputStreamReader(new FileInputStream(config),
-          Charset.defaultCharset()));
+          Charset.defaultCharset()), basePath == null ? config.getParentFile() : basePath);
     }
     return configuration;
   }

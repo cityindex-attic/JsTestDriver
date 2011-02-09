@@ -21,6 +21,7 @@ import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -36,16 +37,19 @@ public class ResolvedConfiguration implements Configuration {
   private final String server;
   private final long testSuiteTimeout;
   private final List<FileInfo> tests;
+  private final File basePath;
 
   public ResolvedConfiguration(Set<FileInfo> filesList,
                                List<Plugin> plugins,
                                String server,
                                long testSuiteTimeout,
+                               File basePath,
                                List<FileInfo> tests) {
     this.filesList = filesList;
     this.plugins = plugins;
     this.server = server;
     this.testSuiteTimeout = testSuiteTimeout;
+    this.basePath = basePath;
     this.tests = tests;
   }
 
@@ -72,5 +76,9 @@ public class ResolvedConfiguration implements Configuration {
 
   public List<FileInfo> getTests() {
     return tests;
+  }
+
+  public File getBasePath() {
+    return basePath;
   }
 }

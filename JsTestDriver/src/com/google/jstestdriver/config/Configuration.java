@@ -21,6 +21,7 @@ import com.google.jstestdriver.PathResolver;
 import com.google.jstestdriver.Plugin;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -50,4 +51,9 @@ public interface Configuration {
 
   /** Returns a list of files containing test. */
   public List<FileInfo> getTests();
+
+  /**
+   * Returns the basePath for the configuration.
+   */
+  public File getBasePath();
 }
