@@ -4,9 +4,6 @@
 	<classpathentry kind="src" path="src-test"/>
 	<classpathentry kind="src" path="src-generated"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant-googlecode-0.0.2/ant-googlecode-0.0.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-gson-1.2.3/gson-1.2.3-javadoc.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-gson-1.2.3/gson-1.2.3-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-gson-1.2.3/gson-1.2.3.jar" sourcepath="lib/google-gson-1.2.3/gson-1.2.3-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/guice/guice-multibindings-2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" sourcepath="lib/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/joda-time-1.6/joda-time-1.6-javadoc.jar"/>
@@ -37,6 +34,9 @@
 	<classpathentry exported="true" kind="lib" path="lib/google-collect-1.0-rc2/google-collect-1.0-rc2.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-1.5.6/slf4j-jdk14-1.5.6.jar" sourcepath="lib/slf4j-1.5.6/slf4j-jdk14-1.5.6-sources.jar"/>
 	<classpathentry kind="lib" path="lib/cglib/cglib-nodep-2.2.jar"/>
+	<classpathentry kind="lib" path="lib/google-gson-1.6/gson-1.6-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/google-gson-1.6/gson-1.6-sources.jar"/>
+	<classpathentry kind="lib" path="lib/google-gson-1.6/gson-1.6.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/args4j-2.0.12/args4j-2.0.12.jar"/>
 	<classpathentry kind="lib" path="lib/guice/aopalliance.jar"/>

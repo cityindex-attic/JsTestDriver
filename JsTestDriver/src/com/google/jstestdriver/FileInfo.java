@@ -205,7 +205,8 @@ public class FileInfo {
    * Provides a unique identifier to reference this FileInfo in the browser.
    */
   public String getDisplayPath() {
-    return filePath;
+    // remove relative path markers, as they won't resolve properly in the browser.
+    return filePath.replace("..", "_");
   }
 
   /**
