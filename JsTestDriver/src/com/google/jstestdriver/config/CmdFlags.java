@@ -110,8 +110,6 @@ public class CmdFlags {
     final ArrayList<String> args = Lists.newArrayList();
     for (CmdLineFlag flag : flags) {
       if (!PREPARSE_FLAGS.containsKey(flag.flag)) {
-        System.out.println(flag.flag);
-        System.out.println(PREPARSE_FLAGS);
         flag.addToArgs(args);
       }
     }
