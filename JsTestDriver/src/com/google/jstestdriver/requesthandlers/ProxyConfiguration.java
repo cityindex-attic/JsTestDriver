@@ -15,6 +15,8 @@ import com.google.jstestdriver.server.proxy.JstdProxyServlet;
 import com.google.jstestdriver.server.proxy.ProxyServletConfig;
 
 import org.mortbay.servlet.ProxyServlet.Transparent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,9 @@ import javax.servlet.ServletException;
  * @author rdionne@google.com (Robert Dionne)
  */
 public class ProxyConfiguration {
+
+  private static final Logger logger =
+      LoggerFactory.getLogger(ProxyConfiguration.class);
 
   /**
    * JSON key identifying the {@link RequestMatcher} pattern.
@@ -105,9 +110,16 @@ public class ProxyConfiguration {
       JsonObject entry = element.getAsJsonObject();
       RequestMatcher matcher =
           new RequestMatcher(ANY, entry.get(MATCHER).getAsString());
-      JstdProxyServlet proxy = proxyProvider.get();
       ServletConfig config = servletConfigFactory.create(
           matcher.getPrefix(), entry.get(SERVER).getAsString());
+      JstdProxyServlet proxy;
+      if (proxyServlets.get(matcher) != null) {
+          logger.debug("Reusing previous proxy bound to {}.", matcher);
+          proxy = proxyServlets.get(matcher);
+      } else {
+        logger.debug("Creating new proxy bound to {}.", matcher);
+        proxy = proxyProvider.get();
+      }
       proxy.init(config);
       listBuilder.add(matcher);
       mapBuilder.put(matcher, proxy);
