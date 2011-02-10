@@ -16,7 +16,6 @@
 package com.google.jstestdriver;
 
 import com.google.jstestdriver.hooks.AuthStrategy;
-import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.model.RunData;
@@ -41,7 +40,6 @@ public class ServerStartupAction implements ObservableAction {
   private JsTestDriverServerImpl server;
   private List<Observer> observerList = new LinkedList<Observer>();
   private final long browserTimeout;
-  private final ProxyDestination destination;
   private final Set<AuthStrategy> authStrategies;
   private final boolean preloadFiles;
   private final FileLoader fileLoader;
@@ -54,7 +52,7 @@ public class ServerStartupAction implements ObservableAction {
   @Deprecated
   public ServerStartupAction(int port, CapturedBrowsers capturedBrowsers,
       FilesCache preloadedFilesCache, URLTranslator urlTranslator, URLRewriter urlRewriter) {
-    this(port, capturedBrowsers, preloadedFilesCache, SlaveBrowser.TIMEOUT, null, Collections
+    this(port, capturedBrowsers, preloadedFilesCache, SlaveBrowser.TIMEOUT, Collections
         .<AuthStrategy>emptySet(), false, null, new NullPathPrefix());
   }
 
@@ -63,7 +61,6 @@ public class ServerStartupAction implements ObservableAction {
       CapturedBrowsers capturedBrowsers,
       FilesCache preloadedFilesCache,
       long browserTimeout,
-      ProxyDestination destination,
       Set<AuthStrategy> authStrategies,
       boolean preloadFiles,
       FileLoader fileLoader,
@@ -72,7 +69,6 @@ public class ServerStartupAction implements ObservableAction {
     this.capturedBrowsers = capturedBrowsers;
     this.preloadedFilesCache = preloadedFilesCache;
     this.browserTimeout = browserTimeout;
-    this.destination = destination;
     this.authStrategies = authStrategies;
     this.preloadFiles = preloadFiles;
     this.fileLoader = fileLoader;
@@ -98,7 +94,6 @@ public class ServerStartupAction implements ObservableAction {
         capturedBrowsers,
         preloadedFilesCache,
         browserTimeout,
-        destination,
         authStrategies,
         handlerPrefix);
 

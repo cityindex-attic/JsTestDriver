@@ -1,12 +1,9 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.server.proxy;
 
-import com.google.common.collect.Iterators;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
-import com.google.jstestdriver.annotations.ProxyConfig;
-
-import java.util.Enumeration;
-import java.util.Map;
+import com.google.inject.assistedinject.Assisted;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -17,34 +14,23 @@ import javax.servlet.ServletContext;
  *
  * @author rdionne@google.com (Robert Dionne)
  */
-public class ProxyServletConfig implements ServletConfig {
+public class ProxyServletConfig extends SimpleServletConfig {
 
   private static final String NAME = "Proxy Servlet";
+  private static final String PREFIX = "Prefix";
+  private static final String PROXY_TO = "ProxyTo";
 
-  private final ServletContext servletContext;
-  private final Map<String, String> configValues;
+  public interface Factory {
+    ProxyServletConfig create(
+        @Assisted("prefix") String prefix,
+        @Assisted("proxyTo") String proxyTo);
+  }
 
   @Inject
   public ProxyServletConfig(
       ServletContext servletContext,
-      @ProxyConfig Map<String, String> configValues) {
-    this.servletContext = servletContext;
-    this.configValues = configValues;
-  }
-
-  public String getServletName() {
-    return NAME;
-  }
-
-  public ServletContext getServletContext() {
-    return servletContext;
-  }
-
-  public String getInitParameter(String s) {
-    return configValues.get(s);
-  }
-
-  public Enumeration<String> getInitParameterNames() {
-    return Iterators.asEnumeration(configValues.keySet().iterator());
+      @Assisted("prefix") String prefix,
+      @Assisted("proxyTo") String proxyTo) {
+    super(NAME, servletContext, ImmutableMap.of(PREFIX, prefix, PROXY_TO, proxyTo));
   }
 }

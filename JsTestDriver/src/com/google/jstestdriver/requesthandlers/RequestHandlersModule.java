@@ -7,11 +7,14 @@ import com.google.inject.Guice;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.assistedinject.FactoryProvider;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.servlet.RequestParameters;
 import com.google.inject.servlet.RequestScoped;
 import com.google.jstestdriver.annotations.RequestProtocol;
 import com.google.jstestdriver.annotations.ResponseWriter;
+import com.google.jstestdriver.server.handlers.ProxyRequestHandler;
+import com.google.jstestdriver.server.proxy.ProxyServletConfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +75,14 @@ public abstract class RequestHandlersModule extends AbstractModule {
 
     bind(new Key<List<RequestMatcher>>() {}).toInstance(matchers.build());
     bind(Servlet.class).to(RequestHandlerServlet.class).in(Singleton.class);
+
+    bind(ProxyServletConfig.Factory.class).toProvider(
+        FactoryProvider.newFactory(
+            ProxyServletConfig.Factory.class, ProxyServletConfig.class));
+    bind(ProxyRequestHandler.Factory.class).toProvider(
+        FactoryProvider.newFactory(
+            ProxyRequestHandler.Factory.class, ProxyRequestHandler.class));
+    bind(ProxyConfiguration.class).in(Singleton.class);
   }
 
   @Provides @Singleton ServletContext provideServletContext(Servlet servlet) {

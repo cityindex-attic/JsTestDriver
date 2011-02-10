@@ -15,6 +15,15 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.jstestdriver.browser.BrowserIdStrategy;
+import com.google.jstestdriver.hooks.AuthStrategy;
+import com.google.jstestdriver.hooks.FileInfoScheme;
+import com.google.jstestdriver.model.NullPathPrefix;
+import com.google.jstestdriver.util.NullStopWatch;
+
+import junit.framework.TestCase;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -23,15 +32,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-
-import junit.framework.TestCase;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.jstestdriver.browser.BrowserIdStrategy;
-import com.google.jstestdriver.hooks.AuthStrategy;
-import com.google.jstestdriver.hooks.FileInfoScheme;
-import com.google.jstestdriver.model.NullPathPrefix;
-import com.google.jstestdriver.util.NullStopWatch;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -43,7 +43,6 @@ public class JsTestDriverServerTest extends TestCase {
       browsers,
       new FilesCache(new HashMap<String, FileInfo>()),
       SlaveBrowser.TIMEOUT,
-      null,
       Collections.<AuthStrategy>emptySet(),
       new NullPathPrefix());
 

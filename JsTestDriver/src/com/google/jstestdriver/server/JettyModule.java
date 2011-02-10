@@ -15,7 +15,12 @@
  */
 package com.google.jstestdriver.server;
 
-import javax.servlet.Servlet;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.jstestdriver.annotations.MaxFormContentSize;
+import com.google.jstestdriver.annotations.Port;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
@@ -24,13 +29,7 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.servlet.GzipFilter;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.jstestdriver.ProxyHandler;
-import com.google.jstestdriver.annotations.MaxFormContentSize;
-import com.google.jstestdriver.annotations.Port;
-import com.google.jstestdriver.model.HandlerPathPrefix;
+import javax.servlet.Servlet;
 
 /**
  * Sippin' on Jetty and Guice.
@@ -65,16 +64,13 @@ public class JettyModule extends AbstractModule {
 
   @Provides @Singleton Server provideJettyServer(
       SocketConnector connector,
-      ProxyHandler proxyHandler,
       @MaxFormContentSize Integer maxFormContentSize,
       ServletHolder servletHolder) {
     Server server = new Server();
     server.setGracefulShutdown(1);
     server.addConnector(connector);
-    server.setHandler(proxyHandler);
-   
 
-    Context context = new Context(proxyHandler, "/", Context.SESSIONS);
+    Context context = new Context(server, "/", Context.SESSIONS);
     context.setMaxFormContentSize(maxFormContentSize);
 
     context.addFilter(GzipFilter.class, handlerPrefix.prefixPath("/test/*"), Handler.DEFAULT);
@@ -100,6 +96,7 @@ public class JettyModule extends AbstractModule {
     context.addServlet(servletHolder, handlerPrefix.prefixPath("/static/*"));
     context.addServlet(servletHolder, handlerPrefix.prefixPath("/bcr"));
     context.addServlet(servletHolder, handlerPrefix.prefixPath("/bcr/*"));
+    context.addServlet(servletHolder, "/*");
 
     return server;
   }

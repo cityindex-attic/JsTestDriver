@@ -1,6 +1,8 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 package com.google.jstestdriver.requesthandlers;
 
+import static com.google.jstestdriver.requesthandlers.HttpMethod.ANY;
+
 import com.google.common.base.Objects;
 
 /**
@@ -39,7 +41,7 @@ class RequestMatcher {
    * @param method the {@link HttpMethod} of the request
    */
   public boolean methodMatches(HttpMethod method) {
-    return this.method.equals(method);
+    return this.method.equals(method) || this.method.equals(ANY);
   }
 
   /**
@@ -59,6 +61,10 @@ class RequestMatcher {
       default:
         return uri.equals(pattern);
     }
+  }
+
+  public String getPrefix() {
+    return kind == Kind.PREFIX ? "" : pattern;
   }
 
   @Override

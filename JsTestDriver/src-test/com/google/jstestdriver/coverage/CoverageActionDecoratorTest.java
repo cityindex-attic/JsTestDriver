@@ -35,7 +35,7 @@ public class CoverageActionDecoratorTest extends TestCase {
     CoverageReporterAction reporter = new CoverageReporterAction(null, null, null);
     List<Action> actions =
         Lists.<Action>newArrayList(new ServerStartupAction(0, null, null,
-            SlaveBrowser.TIMEOUT, null, Collections.<AuthStrategy>emptySet(), false, null, new NullPathPrefix()));
+            SlaveBrowser.TIMEOUT, Collections.<AuthStrategy>emptySet(), false, null, new NullPathPrefix()));
     List<Action> actual = new CoverageActionDecorator(reporter).process(actions);
     assertEquals(2, actual.size());
     assertTrue(actual.get(0) instanceof ServerStartupAction);

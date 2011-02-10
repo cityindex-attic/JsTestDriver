@@ -9,6 +9,7 @@ package com.google.jstestdriver.requesthandlers;
 * @author rdionne@google.com (Robert Dionne)
 */
 public enum HttpMethod {
+  ANY,
   DELETE,
   GET,
   OPTIONS,

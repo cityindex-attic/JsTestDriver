@@ -16,9 +16,12 @@
 package com.google.jstestdriver.server.handlers;
 
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 import org.mortbay.servlet.ProxyServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -33,7 +36,14 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author rdionne@google.com (Robert Dionne)
  */
-class ProxyRequestHandler implements RequestHandler {
+public class ProxyRequestHandler implements RequestHandler {
+
+  private static final Logger logger =
+      LoggerFactory.getLogger(ProxyRequestHandler.class);
+
+  public interface Factory {
+    ProxyRequestHandler create(ProxyServlet.Transparent proxy);
+  }
 
   private final HttpServletRequest request;
   private final HttpServletResponse response;
@@ -43,7 +53,7 @@ class ProxyRequestHandler implements RequestHandler {
   public ProxyRequestHandler(
       HttpServletRequest request,
       HttpServletResponse response,
-      ProxyServlet.Transparent proxy) {
+      @Assisted ProxyServlet.Transparent proxy) {
     this.request = request;
     this.response = response;
     this.proxy = proxy;

@@ -26,20 +26,6 @@ import static com.google.jstestdriver.server.handlers.pages.PageType.STANDALONE_
 import static com.google.jstestdriver.server.handlers.pages.PageType.VISUAL_STANDALONE_RUNNER;
 import static com.google.jstestdriver.server.handlers.pages.SlavePageRequest.UPLOAD_SIZE;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.mortbay.servlet.ProxyServlet;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -52,7 +38,6 @@ import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FilesCache;
 import com.google.jstestdriver.ForwardingServlet;
-import com.google.jstestdriver.ProxyHandler;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.SlaveResourceService;
 import com.google.jstestdriver.StandaloneRunnerFilesFilter;
@@ -62,9 +47,7 @@ import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.annotations.BaseResourceLocation;
 import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.annotations.Port;
-import com.google.jstestdriver.annotations.ProxyConfig;
 import com.google.jstestdriver.hooks.AuthStrategy;
-import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.requesthandlers.HttpMethod;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
@@ -77,12 +60,23 @@ import com.google.jstestdriver.server.handlers.pages.PageType;
 import com.google.jstestdriver.server.handlers.pages.RunnerPage;
 import com.google.jstestdriver.server.handlers.pages.SlavePageRequest;
 import com.google.jstestdriver.server.handlers.pages.StandaloneRunnerPage;
-import com.google.jstestdriver.server.proxy.ProxyServletConfig;
+import com.google.jstestdriver.server.proxy.SimpleServletConfig;
 import com.google.jstestdriver.servlet.fileset.BrowserFileCheck;
 import com.google.jstestdriver.servlet.fileset.FileSetRequestHandler;
 import com.google.jstestdriver.servlet.fileset.ServerFileCheck;
 import com.google.jstestdriver.servlet.fileset.ServerFileUpload;
 import com.google.jstestdriver.util.ParameterParser;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Defines {@link RequestHandler} bindings for the JSTD server.
@@ -100,14 +94,11 @@ public class JstdHandlersModule extends RequestHandlersModule {
   private static final String TIMEOUT = "timeout";
 
   private static final String JSTD = "jstd";
-  private static final String PREFIX = "Prefix";
-  private static final String PROXY_TO = "ProxyTo";
   
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache filesCache;
   private final long browserTimeout;
   private final Set<AuthStrategy> authStrategies;
-  private final ProxyDestination destination;
   private final HandlerPathPrefix handlerPrefix;
 
   /**
@@ -120,13 +111,11 @@ public class JstdHandlersModule extends RequestHandlersModule {
       FilesCache filesCache,
       long browserTimeout,
       Set<AuthStrategy> authStrategies,
-      ProxyDestination destination,
       HandlerPathPrefix handlerPrefix) {
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = filesCache;
     this.browserTimeout = browserTimeout;
     this.authStrategies = authStrategies;
-    this.destination = destination;
     this.handlerPrefix = handlerPrefix;
   }
   
@@ -150,12 +139,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve( GET, handlerPrefix.prefixPath("/heartbeat"), HeartbeatGetHandler.class);
     serve(POST, handlerPrefix.prefixPath("/heartbeat"), HeartbeatPostHandler.class);
     serve( GET, handlerPrefix.prefixPath("/auth", JSTD), AuthHandler.class);
-
-    if (destination != null) {
-      for (HttpMethod method : HttpMethod.values()) {
-        serve(method, handlerPrefix.prefixPath("/proxy/*", JSTD), ProxyRequestHandler.class);
-      }
-    }
+    serve(POST, handlerPrefix.prefixPath("/proxy", JSTD), ProxyConfigurationHandler.class);
 
     serve( GET, handlerPrefix.prefixPath("/hello"), HelloHandler.class);
     serve(POST, handlerPrefix.prefixPath("/log"), BrowserLoggingHandler.class);
@@ -183,7 +167,6 @@ public class JstdHandlersModule extends RequestHandlersModule {
         .toInstance(new ConcurrentHashMap<SlaveBrowser, Thread>());
     bind(new Key<Set<AuthStrategy>>() {}).toInstance(authStrategies);
     bind(new Key<Set<FileInfo>>() {}).toInstance(new HashSet<FileInfo>());
-    bind(ServletConfig.class).annotatedWith(ProxyConfig.class).to(ProxyServletConfig.class);
     bind(StandaloneRunnerFilesFilter.class).to(StandaloneRunnerFilesFilterImpl.class);
     bind(HandlerPathPrefix.class).toInstance(handlerPrefix);
     bind(Time.class).to(TimeImpl.class);
@@ -226,30 +209,14 @@ public class JstdHandlersModule extends RequestHandlersModule {
   }
 
   @Provides @Singleton
-  @ProxyConfig Map<String, String> provideProxyConfig(ImmutableMap.Builder<String, String> builder) {
-    builder.put(PREFIX, handlerPrefix.prefixPath(ProxyHandler.PROXY_PREFIX, JSTD));
-    if (destination != null) {
-      builder.put(PROXY_TO, destination.getDestinationAddress());
-    }
-    return builder.build();
-  }
-
-  @Provides @Singleton
-  ProxyServlet.Transparent provideTransparentProxy(@ProxyConfig ServletConfig config)
-      throws ServletException {
-    ProxyServlet.Transparent proxy = new ProxyServlet.Transparent();
-    proxy.init(config);
-    return proxy;
-  }
-
-  @Provides @Singleton
   ForwardingServlet provideForwardingServlet(@Port Integer port, ServletContext context)
       throws ServletException {
     ForwardingServlet servlet = new ForwardingServlet("localhost", port);
 
     // Need to init the ForwardingServlet because it is a ProxyServlet.Transparent, a class
     // that relies upon ServletContext#log().
-    servlet.init(new ProxyServletConfig(context, ImmutableMap.<String, String>of()));
+    servlet.init(new SimpleServletConfig(
+        "forward", context, ImmutableMap.<String, String>of()));
     return servlet;
   }
 }

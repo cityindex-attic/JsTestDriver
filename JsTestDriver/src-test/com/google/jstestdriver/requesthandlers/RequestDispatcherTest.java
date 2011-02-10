@@ -5,17 +5,17 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.util.Providers;
 
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
 import org.easymock.IMocksControl;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.util.Providers;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author rdionne@google.com (Robert Dionne)
@@ -32,6 +32,8 @@ public class RequestDispatcherTest extends TestCase {
 
   private RequestHandler handlerOne;
   private RequestHandler handlerTwo;
+
+  private ProxyConfiguration proxyConfiguration;
 
   private UnsupportedMethodErrorSender sender;
   
@@ -50,6 +52,8 @@ public class RequestDispatcherTest extends TestCase {
     handlerOne = control.createMock(RequestHandler.class);
     handlerTwo = control.createMock(RequestHandler.class);
 
+    proxyConfiguration = control.createMock(ProxyConfiguration.class);
+
     sender = control.createMock(UnsupportedMethodErrorSender.class);
     
     dispatcher = new RequestDispatcher(
@@ -59,6 +63,7 @@ public class RequestDispatcherTest extends TestCase {
         ImmutableMap.of(
             one, Providers.of(handlerOne),
             two, Providers.of(handlerTwo)),
+        proxyConfiguration,
         sender);
   }
 
@@ -89,6 +94,8 @@ public class RequestDispatcherTest extends TestCase {
   public void testDispatch_POST_methodNotAllowed() throws Exception {
     expect(request.getMethod()).andReturn("POST");
     expect(request.getRequestURI()).andReturn("/one/two").anyTimes();
+    expect(proxyConfiguration.getMatchers())
+        .andReturn(ImmutableList.<RequestMatcher>of());
     /*expect*/ sender.methodNotAllowed();
 
     control.replay();
@@ -101,6 +108,8 @@ public class RequestDispatcherTest extends TestCase {
   public void testDispatch_GET_methodNotAllowed() throws Exception {
     expect(request.getMethod()).andReturn("GET");
     expect(request.getRequestURI()).andReturn("/a/b").anyTimes();
+    expect(proxyConfiguration.getMatchers())
+        .andReturn(ImmutableList.<RequestMatcher>of());
     /*expect*/ sender.methodNotAllowed();
 
     control.replay();
@@ -124,6 +133,8 @@ public class RequestDispatcherTest extends TestCase {
   public void testDispatch_GET_notFound() throws Exception {
     expect(request.getMethod()).andReturn("GET");
     expect(request.getRequestURI()).andReturn("/nothing").anyTimes();
+    expect(proxyConfiguration.getMatchers())
+        .andReturn(ImmutableList.<RequestMatcher>of());
     /*expect*/ response.sendError(eq(HttpServletResponse.SC_NOT_FOUND), (String) anyObject());
 
     control.replay();

@@ -20,7 +20,6 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.hooks.AuthStrategy;
-import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 
@@ -44,7 +43,6 @@ public class ActionFactory {
   private final Provider<JsTestDriverClient> clientProvider;
   private final Set<TestsPreProcessor> testPreProcessors;
   private final long browserTimeout;
-  private ProxyDestination destination;
   private final Set<AuthStrategy> authStrategies;
   private final boolean preloadFiles;
   private final FileLoader fileLoader;
@@ -67,11 +65,6 @@ public class ActionFactory {
     this.serverHandlerPrefix = serverHandlerPrefix;
   }
 
-  @Inject(optional = true)
-  public void setProxyDestination(ProxyDestination destination) {
-    this.destination = destination;
-  }
-
   public ServerStartupAction getServerStartupAction(Integer port,
       CapturedBrowsers capturedBrowsers, FilesCache preloadedFilesCache) {
     ServerStartupAction serverStartupAction =
@@ -79,7 +72,6 @@ public class ActionFactory {
                                 capturedBrowsers,
                                 preloadedFilesCache,
                                 browserTimeout,
-                                destination,
                                 authStrategies,
                                 preloadFiles,
                                 fileLoader,

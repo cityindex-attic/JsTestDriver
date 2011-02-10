@@ -18,12 +18,10 @@ package com.google.jstestdriver;
 import com.google.inject.Guice;
 import com.google.jstestdriver.browser.BrowserReaper;
 import com.google.jstestdriver.hooks.AuthStrategy;
-import com.google.jstestdriver.hooks.ProxyDestination;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.server.JettyModule;
 import com.google.jstestdriver.server.handlers.JstdHandlersModule;
 
-import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +47,6 @@ public class JsTestDriverServerImpl extends Observable implements JsTestDriverSe
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache filesCache;
   private final long browserTimeout;
-  private final ProxyDestination destination;
   private final Set<AuthStrategy> authStrategies;
 
   private Timer timer;
@@ -60,14 +57,12 @@ public class JsTestDriverServerImpl extends Observable implements JsTestDriverSe
                             CapturedBrowsers capturedBrowsers,
                             FilesCache preloadedFilesCache,
                             long browserTimeout,
-                            ProxyDestination destination,
                             Set<AuthStrategy> authStrategies,
                             HandlerPathPrefix handlerPrefix) {
     this.port = port;
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = preloadedFilesCache;
     this.browserTimeout = browserTimeout;
-    this.destination = destination;
     this.authStrategies = authStrategies;
     this.handlerPrefix = handlerPrefix;
     initServer();
@@ -82,7 +77,6 @@ public class JsTestDriverServerImpl extends Observable implements JsTestDriverSe
             filesCache,
             browserTimeout,
             authStrategies,
-            destination,
             handlerPrefix)).getInstance(Server.class);
   }
 

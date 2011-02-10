@@ -4,15 +4,15 @@ package com.google.jstestdriver.requesthandlers;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A @RequestScoped object that dispatches the request to the appropriate
@@ -28,6 +28,7 @@ class RequestDispatcher {
   private final HttpServletResponse response;
   private final List<RequestMatcher> matchers;
   private final Map<RequestMatcher, Provider<RequestHandler>> handlerProviders;
+  private ProxyConfiguration proxyConfiguration;
   private final UnsupportedMethodErrorSender errorSender;
 
   @Inject
@@ -36,11 +37,13 @@ class RequestDispatcher {
       HttpServletResponse response,
       List<RequestMatcher> matchers,
       Map<RequestMatcher, Provider<RequestHandler>> handlerProviders,
+      ProxyConfiguration proxyConfiguration,
       UnsupportedMethodErrorSender errorSender) {
     this.request = request;
     this.response = response;
     this.matchers = matchers;
     this.handlerProviders = handlerProviders;
+    this.proxyConfiguration = proxyConfiguration;
     this.errorSender = errorSender;
   }
 
@@ -63,6 +66,16 @@ class RequestDispatcher {
           if (matcher.methodMatches(method)) {
             logger.trace("handling {} {}", uri, request);
             handlerProviders.get(matcher).get().handleIt();
+            return;
+          }
+        }
+      }
+      for (RequestMatcher matcher : proxyConfiguration.getMatchers()) {
+        if (matcher.uriMatches(uri)) {
+          pathMatched = true;
+          if (matcher.methodMatches(method)) {
+            logger.trace("proxying {} {}", uri, request);
+            proxyConfiguration.getRequestHandler(matcher).handleIt();
             return;
           }
         }

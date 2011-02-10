@@ -44,6 +44,7 @@
     <pathelement location="${lib.dir}/google-gson-1.6/gson-1.6.jar" />
     <pathelement location="${lib.dir}/guice/aopalliance.jar" />
     <pathelement location="${lib.dir}/guice/guice-2.0.jar" />
+    <pathelement location="${lib.dir}/guice/guice-assistedinject-2.0.jar" />
     <pathelement location="${lib.dir}/guice/guice-multibindings-2.0.jar" />
     <pathelement location="${lib.dir}/guice/guice-servlet-2.0.jar" />
     <pathelement location="${lib.dir}/jakarta-oro-2.0.8/jakarta-oro-2.0.8.jar" />
@@ -433,6 +434,7 @@
       <zipfileset src="${lib.dir}/google-gson-1.6/gson-1.6.jar" />
       <zipfileset src="${lib.dir}/guice/aopalliance.jar" />
       <zipfileset src="${lib.dir}/guice/guice-2.0.jar" />
+      <zipfileset src="${lib.dir}/guice/guice-assistedinject-2.0.jar" />
       <zipfileset src="${lib.dir}/guice/guice-multibindings-2.0.jar" />
       <zipfileset src="${lib.dir}/guice/guice-servlet-2.0.jar" />
       <zipfileset src="${lib.dir}/args4j-2.0.12/args4j-2.0.12.jar" />
