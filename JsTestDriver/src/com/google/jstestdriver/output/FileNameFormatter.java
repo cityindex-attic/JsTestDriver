@@ -25,8 +25,12 @@ import java.io.File;
 public class FileNameFormatter {
   public String format(String path, String format) {
     String escaped = path
-        .replace(File.separator, "#")
-        .replace(File.pathSeparator, "|")
+        .replace(File.separator, "!")
+        .replace(File.pathSeparator, "$")
+        .replace(">", "#")
+        .replace("<", "#")
+        .replace("?", "%")
+        .replace("*", "@")
         .replace(" ", "_");
 
     return String.format(format, escaped.length() > 200 ? escaped.substring(0, 200) : escaped);
