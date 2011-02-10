@@ -26,7 +26,8 @@ public class FileNameFormatter {
   public String format(String path, String format) {
     String escaped = path
         .replace(File.separator, "!")
-        .replace(File.pathSeparator, "$")
+        .replace('/', '$')
+        .replace('\\', '$')
         .replace(">", "#")
         .replace(".", "_")
         .replace("<", "#")
