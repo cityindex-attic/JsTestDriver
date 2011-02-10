@@ -83,10 +83,14 @@ public class FileNameFormatterTest extends TestCase {
   }
 
   private void assertCreateFile(String formattedPath) throws IOException {
-    File newFile = new File(tmp, formattedPath);
-    newFile.deleteOnExit();
-    assertTrue(String.format("path %s was not created.", formattedPath), newFile.createNewFile());
-    assertTrue(String.format("path %s is not a file.", formattedPath), newFile.getCanonicalFile()
-        .isFile());
+    try {
+      File newFile = new File(tmp, formattedPath);
+      newFile.deleteOnExit();
+      assertTrue(String.format("path %s was not created.", formattedPath), newFile.createNewFile());
+      assertTrue(String.format("path %s is not a file.", formattedPath), newFile.getCanonicalFile()
+          .isFile());
+    } catch (IOException e) {
+      fail(String.format("Error in creation: %s %s", formattedPath, e));
+    }
   }
 }

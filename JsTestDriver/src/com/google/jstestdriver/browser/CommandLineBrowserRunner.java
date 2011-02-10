@@ -63,7 +63,7 @@ public class CommandLineBrowserRunner implements BrowserRunner {
   }
 
   public int getTimeout() {
-    return 60;
+    return 30;
   }
 
   public int getNumStartupTries() {

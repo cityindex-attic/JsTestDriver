@@ -28,6 +28,7 @@ public class FileNameFormatter {
         .replace(File.separator, "!")
         .replace(File.pathSeparator, "$")
         .replace(">", "#")
+        .replace(".", "_")
         .replace("<", "#")
         .replace("?", "%")
         .replace("*", "@")
