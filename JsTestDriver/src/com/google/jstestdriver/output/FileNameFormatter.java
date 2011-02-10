@@ -27,7 +27,6 @@ public class FileNameFormatter {
         .replace('/', 'a')
         .replace('\\', 'a')
         .replace(">", "a")
-        .replace(".", "a")
         .replace(":", "a")
         .replace(":", "a")
         .replace(";", "a")
