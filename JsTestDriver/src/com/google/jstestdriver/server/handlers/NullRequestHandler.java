@@ -6,6 +6,7 @@ import com.google.jstestdriver.requesthandlers.RequestHandler;
 import java.io.IOException;
 
 /**
+ * A {@link RequestHandler} with no behavior.
  * @author rdionne@google.com (Robert Dionne)
  */
 public class NullRequestHandler implements RequestHandler {

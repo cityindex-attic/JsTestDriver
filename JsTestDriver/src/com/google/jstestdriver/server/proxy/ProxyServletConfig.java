@@ -5,12 +5,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
-import javax.servlet.ServletConfig;
+import org.mortbay.servlet.ProxyServlet;
+
 import javax.servlet.ServletContext;
 
 /**
- * A {@link ServletConfig} that configures the server-under-test proxy by
- * providing values for "Prefix" and "ProxyTo".
+ * A {@link SimpleServletConfig} that configures a
+ * {@link ProxyServlet.Transparent} proxy by providing values for "Prefix" and
+ * "ProxyTo".
  *
  * @author rdionne@google.com (Robert Dionne)
  */
@@ -31,6 +33,7 @@ public class ProxyServletConfig extends SimpleServletConfig {
       ServletContext servletContext,
       @Assisted("prefix") String prefix,
       @Assisted("proxyTo") String proxyTo) {
-    super(NAME, servletContext, ImmutableMap.of(PREFIX, prefix, PROXY_TO, proxyTo));
+    super(NAME, servletContext,
+        ImmutableMap.of(PREFIX, prefix, PROXY_TO, proxyTo));
   }
 }

@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.google.jstestdriver.server.handlers.NullRequestHandler;
 import com.google.jstestdriver.server.handlers.ProxyRequestHandler;
 import com.google.jstestdriver.server.proxy.JstdProxyServlet;
@@ -24,11 +25,23 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
 /**
+ * An object that maintains a mapping between {@link RequestMatcher}s and
+ * initialized {@link JstdProxyServlet}s pointing to various hosts so that the
+ * {@link RequestDispatcher} may instantiate {@link ProxyRequestHandler}s on
+ * demand.
+ *
  * @author rdionne@google.com (Robert Dionne)
  */
 public class ProxyConfiguration {
 
+  /**
+   * JSON key identifying the {@link RequestMatcher} pattern.
+   */
   public static final String MATCHER = "matcher";
+
+  /**
+   * JSON key identifying the host path.
+   */
   public static final String SERVER = "server";
 
   private final Provider<JstdProxyServlet> proxyProvider;
@@ -38,6 +51,15 @@ public class ProxyConfiguration {
   private List<RequestMatcher> matchers;
   private Map<RequestMatcher, JstdProxyServlet> proxyServlets;
 
+  /**
+   * Constructs a {@link ProxyConfiguration}. {@link ProxyConfiguration} is
+   * bound to the {@link Singleton} scope.
+   * @param proxyProvider A Guice {@link Provider} of {@link JstdProxyServlet}s.
+   * @param servletConfigFactory A Guice assistedinject factory for
+   *     {@link ProxyServletConfig}s.
+   * @param handlerFactory A Guice assistedinject factory for
+   *     {@link ProxyRequestHandler}s.
+   */
   @Inject
   public ProxyConfiguration(
       Provider<JstdProxyServlet> proxyProvider,
@@ -49,15 +71,34 @@ public class ProxyConfiguration {
     clearConfiguration();
   }
 
+  /**
+   * @return A {@link List} of {@link RequestMatcher}s to hand off to the
+   * {@link RequestDispatcher} for proxying matching requests to various hosts.
+   */
   public synchronized List<RequestMatcher> getMatchers() {
     return matchers;
   }
 
+  /**
+   * Instantiates a {@link ProxyRequestHandler} to proxy the current request
+   * along to the matching host using a {@link JstdProxyServlet} behind the
+   * scenes.
+   * @param matcher The {@link RequestMatcher} that matches the current request.
+   * @return A suitable {@link RequestHandler}.
+   */
   public synchronized RequestHandler getRequestHandler(RequestMatcher matcher) {
     Transparent proxy = proxyServlets.get(matcher);
-    return proxy == null ? new NullRequestHandler() : handlerFactory.create(proxy);
+    return proxy == null ?
+        new NullRequestHandler() : handlerFactory.create(proxy);
   }
 
+  /**
+   * Updates this {@link ProxyConfiguration} given the new {@code configuration}
+   * encoded as a {@link JsonObject} by discarding previously initialized
+   * {@link JstdProxyServlet}s and instantiating new ones with new hosts.
+   * @param configuration A {@link JsonObject} specifying a new configuration.
+   * @throws ServletException If the new servlets fail to initialize.
+   */
   public synchronized void updateConfiguration(JsonArray configuration)
       throws ServletException {
     ImmutableList.Builder<RequestMatcher> listBuilder = ImmutableList.builder();
@@ -77,6 +118,10 @@ public class ProxyConfiguration {
     this.proxyServlets = mapBuilder.build();
   }
 
+  /**
+   * Empties the mapping of {@link RequestMatcher}s to
+   * {@link JstdProxyServlet}s.
+   */
   public synchronized void clearConfiguration() {
     this.matchers = ImmutableList.of();
     this.proxyServlets = ImmutableMap.of();

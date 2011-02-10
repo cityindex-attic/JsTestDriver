@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * A {@link RequestHandler} that reads a JSON configuration to update the
+ * internal {@link ProxyConfiguration}.
  * @author rdionne@google.com (Robert Dionne)
  */
 public class ProxyConfigurationHandler implements RequestHandler {
@@ -47,7 +49,8 @@ public class ProxyConfigurationHandler implements RequestHandler {
 
   public void handleIt() throws IOException {
     try {
-      proxyConfiguration.updateConfiguration(parser.parse(request.getReader()).getAsJsonArray());
+      proxyConfiguration.updateConfiguration(
+          parser.parse(request.getReader()).getAsJsonArray());
     } catch (ServletException e) {
       logger.error("Error configuring proxy {}", e);
     }

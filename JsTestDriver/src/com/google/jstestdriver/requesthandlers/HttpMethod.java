@@ -9,11 +9,21 @@ package com.google.jstestdriver.requesthandlers;
 * @author rdionne@google.com (Robert Dionne)
 */
 public enum HttpMethod {
+
+  /**
+   * ANY is a wildcard that matches any other method.
+   */
   ANY,
+
   DELETE,
+
   GET,
+
   OPTIONS,
+
   POST,
+
   PUT,
+
   TRACE
 }

@@ -30,16 +30,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * A {@link RequestHandler} that forwards all "/jstd/proxy/*" requests to
- * a server-under-test after first stripping the "/jstd/proxy/" prefix from
- * the request's URI.
+ * A {@link RequestHandler} that proxies requests by delegating to a
+ * {@link ProxyServlet.Transparent}.
  *
  * @author rdionne@google.com (Robert Dionne)
  */
 public class ProxyRequestHandler implements RequestHandler {
-
-  private static final Logger logger =
-      LoggerFactory.getLogger(ProxyRequestHandler.class);
 
   public interface Factory {
     ProxyRequestHandler create(ProxyServlet.Transparent proxy);

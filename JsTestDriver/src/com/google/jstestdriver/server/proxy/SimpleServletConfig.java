@@ -7,12 +7,13 @@ import com.google.inject.Inject;
 import java.util.Enumeration;
 import java.util.Map;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 /**
- * A {@link ServletConfig} that configures the server-under-test proxy by
- * providing values for "Prefix" and "ProxyTo".
+ * A {@link ServletConfig} that uses a {@link Map} to configure a
+ * {@link Servlet}.
  *
  * @author rdionne@google.com (Robert Dionne)
  */
