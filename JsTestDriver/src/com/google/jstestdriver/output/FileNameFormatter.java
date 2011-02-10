@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver.output;
 
-import java.io.File;
 
 /**
  * Escapes and formats a filename.
@@ -25,19 +24,19 @@ import java.io.File;
 public class FileNameFormatter {
   public String format(String path, String format) {
     String escaped = path
-        .replace(File.separator, "#")
-        .replace('/', '#')
-        .replace('\\', '#')
-        .replace(">", "#")
-        .replace(".", "_")
-        .replace(":", "_")
-        .replace(";", "_")
-        .replace("+", "_")
-        .replace(",", "_")
-        .replace("<", "#")
-        .replace("?", "#")
-        .replace("*", "#")
-        .replace(" ", "_");
+        .replace('/', 'a')
+        .replace('\\', 'a')
+        .replace(">", "a")
+        .replace(".", "a")
+        .replace(":", "a")
+        .replace(":", "a")
+        .replace(";", "a")
+        .replace("+", "a")
+        .replace(",", "a")
+        .replace("<", "a")
+        .replace("?", "a")
+        .replace("*", "a")
+        .replace(" ", "a");
 
     return String.format(format, escaped.length() > 200 ? escaped.substring(0, 200) : escaped);
   }
