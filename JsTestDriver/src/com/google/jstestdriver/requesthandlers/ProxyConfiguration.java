@@ -114,8 +114,8 @@ public class ProxyConfiguration {
           matcher.getPrefix(), entry.get(SERVER).getAsString());
       JstdProxyServlet proxy;
       if (proxyServlets.get(matcher) != null) {
-          logger.debug("Reusing previous proxy bound to {}.", matcher);
-          proxy = proxyServlets.get(matcher);
+        logger.debug("Reusing previous proxy bound to {}.", matcher);
+        proxy = proxyServlets.get(matcher);
       } else {
         logger.debug("Creating new proxy bound to {}.", matcher);
         proxy = proxyProvider.get();
