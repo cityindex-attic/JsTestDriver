@@ -30,6 +30,7 @@ public class FileNameFormatter {
         .replace('\\', '#')
         .replace(">", "#")
         .replace(".", "_")
+        .replace(":", "_")
         .replace(";", "_")
         .replace("+", "_")
         .replace(",", "_")
