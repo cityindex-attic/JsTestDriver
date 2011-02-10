@@ -15,18 +15,9 @@
  */
 package com.google.jstestdriver.server;
 
-<<<<<<< HEAD
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.jstestdriver.annotations.MaxFormContentSize;
-import com.google.jstestdriver.annotations.Port;
-import com.google.jstestdriver.model.HandlerPathPrefix;
-=======
 import java.util.Random;
 
 import javax.servlet.Servlet;
->>>>>>> Changed the jetty startup to use java.util.Random instead of the secure one
 
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
@@ -36,7 +27,12 @@ import org.mortbay.jetty.servlet.HashSessionIdManager;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.servlet.GzipFilter;
 
-import javax.servlet.Servlet;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.jstestdriver.annotations.MaxFormContentSize;
+import com.google.jstestdriver.annotations.Port;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 
 /**
  * Sippin' on Jetty and Guice.
