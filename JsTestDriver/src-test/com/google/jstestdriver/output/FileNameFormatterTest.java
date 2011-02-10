@@ -33,7 +33,7 @@ public class FileNameFormatterTest extends TestCase {
 
   @Override
   protected void setUp() throws Exception {
-    tmp = new File(System.getProperty("java.io.tmpdir") + File.pathSeparator + this);
+    tmp = new File(System.getProperty("java.io.tmpdir") + File.separator + this);
     tmp.mkdir();
     tmp.deleteOnExit();
   }
@@ -90,6 +90,7 @@ public class FileNameFormatterTest extends TestCase {
       assertTrue(String.format("path %s is not a file.", formattedPath), newFile.getCanonicalFile()
           .isFile());
     } catch (IOException e) {
+      e.printStackTrace();
       fail(String.format("Error in creation: %s %s", formattedPath, e));
     }
   }
