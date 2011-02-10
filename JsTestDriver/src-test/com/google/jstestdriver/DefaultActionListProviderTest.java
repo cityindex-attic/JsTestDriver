@@ -32,6 +32,7 @@ import com.google.jstestdriver.browser.CommandLineBrowserRunner;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
+import com.google.jstestdriver.output.FileNameFormatter;
 import com.google.jstestdriver.output.PrintXmlTestResultsAction;
 import com.google.jstestdriver.output.XmlPrinter;
 import com.google.jstestdriver.output.XmlPrinterImpl;
@@ -137,7 +138,7 @@ public class DefaultActionListProviderTest extends TestCase {
     List<String> tests = Arrays.asList("foo.testBar");
     DefaultActionListProvider parser =
         createProvider(9876, false, tests, Collections
-            .<ActionListProcessor> emptySet(), ".", new XmlPrinterImpl(null, null));
+            .<ActionListProcessor> emptySet(), ".", new XmlPrinterImpl(null, null, new FileNameFormatter()));
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);

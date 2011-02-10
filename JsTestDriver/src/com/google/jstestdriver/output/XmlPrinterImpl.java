@@ -45,11 +45,13 @@ public class XmlPrinterImpl implements XmlPrinter {
   private final TestResultHolder resultHolder;
   private final String xmlOutputDir;
   private final String fileNameFormat = "TEST-%s.xml";
+  private final FileNameFormatter formatter;
 
   @Inject
-  public XmlPrinterImpl(TestResultHolder resultHolder, @Named("testOutput") String xmlOutputDir) {
+  public XmlPrinterImpl(TestResultHolder resultHolder, @Named("testOutput") String xmlOutputDir, FileNameFormatter formatter) {
     this.resultHolder = resultHolder;
     this.xmlOutputDir = xmlOutputDir;
+    this.formatter = formatter;
   }
 
   public void writeXmlReportFiles() {
@@ -88,7 +90,7 @@ public class XmlPrinterImpl implements XmlPrinter {
   }
 
   private String formatFileName(String suiteName) {
-    return String.format(fileNameFormat, suiteName);
+    return formatter.format(suiteName, fileNameFormat);
   }
 
   private String formatSuiteName(String browser, String testCaseName) {
