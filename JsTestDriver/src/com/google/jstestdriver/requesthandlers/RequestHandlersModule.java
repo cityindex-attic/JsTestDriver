@@ -13,7 +13,6 @@ import com.google.inject.servlet.RequestParameters;
 import com.google.inject.servlet.RequestScoped;
 import com.google.jstestdriver.annotations.RequestProtocol;
 import com.google.jstestdriver.annotations.ResponseWriter;
-import com.google.jstestdriver.server.handlers.ProxyRequestHandler;
 import com.google.jstestdriver.server.proxy.ProxyServletConfig;
 
 import org.slf4j.Logger;

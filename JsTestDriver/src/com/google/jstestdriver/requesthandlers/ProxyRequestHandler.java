@@ -13,15 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.server.handlers;
+package com.google.jstestdriver.requesthandlers;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.jstestdriver.requesthandlers.RequestHandler;
 
 import org.mortbay.servlet.ProxyServlet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 

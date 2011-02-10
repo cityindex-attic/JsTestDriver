@@ -1,5 +1,5 @@
 // Copyright 2011 Google Inc. All Rights Reserved.
-package com.google.jstestdriver.server.handlers;
+package com.google.jstestdriver.requesthandlers;
 
 import com.google.jstestdriver.requesthandlers.RequestHandler;
 

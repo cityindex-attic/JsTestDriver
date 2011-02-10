@@ -11,8 +11,6 @@ import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import com.google.jstestdriver.server.handlers.NullRequestHandler;
-import com.google.jstestdriver.server.handlers.ProxyRequestHandler;
 import com.google.jstestdriver.server.proxy.JstdProxyServlet;
 import com.google.jstestdriver.server.proxy.ProxyServletConfig;
 
