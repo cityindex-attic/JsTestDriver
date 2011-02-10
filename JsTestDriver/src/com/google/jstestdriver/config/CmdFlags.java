@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.Plugin;
 import com.google.jstestdriver.runner.RunnerMode;
@@ -22,16 +22,22 @@ import com.google.jstestdriver.runner.RunnerMode;
  *
  */
 public class CmdFlags {
-  private static final Set<CmdLineFlagMetaData> PREPARSE_FLAGS = ImmutableSet.of(
-      new CmdLineFlagMetaData("--plugins", "VAL[,VAL]", "Comma separated list of paths to plugin jars."),
-      new CmdLineFlagMetaData("--config", "VAL","Path to configuration file."),
- new CmdLineFlagMetaData("--basePath", "VAL",
-          "Override the base path in the "
-              + "configuration file. Defaults to the parent directory of the configuration file."),
-      new CmdLineFlagMetaData("--runnerMode", "VAL", "The configruation of the "
-          + "logging and frequency that the runner reports actions: DEBUG, "
-          + "DEBUG_NO_TRACE, DEBUG_OBSERVE, PROFILE, QUIET (default), INFO"));
-
+  private static final Map<String, CmdLineFlagMetaData> PREPARSE_FLAGS = 
+    ImmutableMap.<String, CmdLineFlagMetaData>builder()
+      .put(
+          "--plugins",
+          new CmdLineFlagMetaData("--plugins", "VAL[,VAL]",
+              "Comma separated list of paths to plugin jars."))
+      .put("--config", new CmdLineFlagMetaData("--config", "VAL", "Path to configuration file."))
+      .put(
+          "--basePath",
+          new CmdLineFlagMetaData("--basePath", "VAL", "Override the base path in the "
+              + "configuration file. Defaults to the parent directory of the configuration file."))
+      .put(
+          "--runnerMode",
+          new CmdLineFlagMetaData("--runnerMode", "VAL", "The configuration of the "
+              + "logging and frequency that the runner reports actions: DEBUG, "
+              + "DEBUG_NO_TRACE, DEBUG_OBSERVE, PROFILE, QUIET (default), INFO")).build();
   private final List<CmdLineFlag> flags;
 
   public CmdFlags(List<CmdLineFlag> flags) {
@@ -103,7 +109,9 @@ public class CmdFlags {
   public String[] getUnusedFlagsAsArgs() {
     final ArrayList<String> args = Lists.newArrayList();
     for (CmdLineFlag flag : flags) {
-      if (!PREPARSE_FLAGS.contains(flag.flag)) {
+      if (!PREPARSE_FLAGS.containsKey(flag.flag)) {
+        System.out.println(flag.flag);
+        System.out.println(PREPARSE_FLAGS);
         flag.addToArgs(args);
       }
     }
@@ -111,7 +119,7 @@ public class CmdFlags {
   }
   
   public void printUsage(ByteArrayOutputStream stream) {
-    for (CmdLineFlagMetaData meta : PREPARSE_FLAGS) {
+    for (CmdLineFlagMetaData meta : PREPARSE_FLAGS.values()) {
       try {
         meta.printUsage(stream);
         stream.write('\n');
