@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver.config;
 
+import com.google.gson.JsonArray;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.PathResolver;
@@ -38,19 +39,22 @@ public class ResolvedConfiguration implements Configuration {
   private final long testSuiteTimeout;
   private final List<FileInfo> tests;
   private final File basePath;
+  private final JsonArray proxyConfig;
 
   public ResolvedConfiguration(Set<FileInfo> filesList,
                                List<Plugin> plugins,
                                String server,
                                long testSuiteTimeout,
                                File basePath,
-                               List<FileInfo> tests) {
+                               List<FileInfo> tests,
+                               JsonArray proxyConfig) {
     this.filesList = filesList;
     this.plugins = plugins;
     this.server = server;
     this.testSuiteTimeout = testSuiteTimeout;
     this.basePath = basePath;
     this.tests = tests;
+    this.proxyConfig = proxyConfig;
   }
 
   // TODO(corysmith): fix this interface to not require extra information.
@@ -80,5 +84,9 @@ public class ResolvedConfiguration implements Configuration {
 
   public File getBasePath() {
     return basePath;
+  }
+
+  public JsonArray getProxyConfiguration() {
+    return proxyConfig;
   }
 }

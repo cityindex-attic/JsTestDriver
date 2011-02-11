@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver.config;
 
+import com.google.gson.JsonArray;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.PathResolver;
@@ -71,5 +72,9 @@ public class DefaultConfiguration implements Configuration{
 
   public File getBasePath() {
     return basePath;
+  }
+
+  public JsonArray getProxyConfiguration() {
+    return new JsonArray();
   }
 }

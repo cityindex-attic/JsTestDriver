@@ -30,7 +30,7 @@ public class ParsedConfigurationTest extends TestCase {
     String configServer = "configServer";
     String flagServer = "flagServer";
     final ParsedConfiguration config =
-        new ParsedConfiguration(null, null, null, configServer, 0, null, null);
+        new ParsedConfiguration(null, null, null, configServer, 0, null, null, null);
     assertEquals(flagServer, config.getServer(flagServer, -1, new NullPathPrefix()));
     assertEquals(configServer, config.getServer("", -1, new NullPathPrefix()));
     final ConcretePathPrefix prefix = new ConcretePathPrefix("jstd");

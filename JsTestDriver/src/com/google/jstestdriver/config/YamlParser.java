@@ -15,6 +15,8 @@
 package com.google.jstestdriver.config;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Plugin;
 
@@ -46,6 +48,7 @@ public class YamlParser {
     File basePath = defaultBasePath;
     long timeOut = 0;
     List<Plugin> plugins = Lists.newLinkedList();
+    JsonArray proxyConfig = new JsonArray();
 
     if (data.containsKey("load")) {
       resolvedFilesLoad.addAll(createFileInfos((List<String>) data
@@ -86,13 +89,24 @@ public class YamlParser {
       }
     }
 
+    if (data.containsKey("proxy")) {
+      for (Map<String, String> value :
+          (List<Map<String, String>>) data.get("proxy")) {
+        JsonObject entry = new JsonObject();
+        entry.addProperty("matcher", value.get("matcher"));
+        entry.addProperty("server", value.get("server"));
+        proxyConfig.add(entry);
+      }
+    }
+
     return new ParsedConfiguration(resolvedFilesLoad,
                                    resolvedFilesExclude,
                                    plugins,
                                    server,
                                    timeOut,
                                    basePath,
-                                   Lists.newArrayList(testFiles));
+                                   Lists.newArrayList(testFiles),
+                                   proxyConfig);
   }
 
   private List<String> createArgsList(String args) {

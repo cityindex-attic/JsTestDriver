@@ -17,6 +17,7 @@ package com.google.jstestdriver.config;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonArray;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.Flags;
 import com.google.jstestdriver.PathResolver;
@@ -41,9 +42,10 @@ public class ParsedConfiguration implements Configuration {
   private final long testTimeout;
   private final List<FileInfo> tests;
   private final File basePath;
+  private final JsonArray proxyConfig;
 
   public ParsedConfiguration(Set<FileInfo> filesList, Set<FileInfo> excludedFiles,
-      List<Plugin> plugins, String server, long testTimeout, File basePath, List<FileInfo> tests) {
+      List<Plugin> plugins, String server, long testTimeout, File basePath, List<FileInfo> tests, JsonArray proxyConfig) {
     this.filesList = filesList;
     this.excludedFiles = excludedFiles;
     this.plugins = plugins;
@@ -51,6 +53,7 @@ public class ParsedConfiguration implements Configuration {
     this.testTimeout = testTimeout;
     this.basePath = basePath;
     this.tests = tests;
+    this.proxyConfig = proxyConfig;
   }
 
   public Set<FileInfo> getFilesList() {
@@ -92,7 +95,8 @@ public class ParsedConfiguration implements Configuration {
             flags.getServerHandlerPrefix()),
         testTimeout,
         basePath,
-        Lists.newArrayList(testFiles));
+        Lists.newArrayList(testFiles),
+        proxyConfig);
   }
 
   public long getTestSuiteTimeout() {
@@ -105,5 +109,9 @@ public class ParsedConfiguration implements Configuration {
 
   public File getBasePath() {
     return basePath;
+  }
+
+  public JsonArray getProxyConfiguration() {
+    return proxyConfig;
   }
 }
