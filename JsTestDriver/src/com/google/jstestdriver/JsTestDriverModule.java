@@ -15,13 +15,16 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.JsonArray;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryProvider;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
+import com.google.jstestdriver.action.ConfigureProxyAction;
 import com.google.jstestdriver.annotations.BrowserCount;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.config.DefaultConfiguration;
@@ -52,6 +55,7 @@ public class JsTestDriverModule extends AbstractModule {
   private final long testSuiteTimeout;
   private final List<FileInfo> tests;
   private final List<FileInfo> plugins;
+  private final JsonArray proxyConfig;
 
   public JsTestDriverModule(Flags flags,
       Set<FileInfo> fileSet,
@@ -65,7 +69,8 @@ public class JsTestDriverModule extends AbstractModule {
          basePath,
          DefaultConfiguration.DEFAULT_TEST_TIMEOUT,
          Collections.<FileInfo>emptyList(),
-         Collections.<FileInfo>emptyList());
+         Collections.<FileInfo>emptyList(),
+         new JsonArray());
   }
 
   public JsTestDriverModule(Flags flags,
@@ -75,7 +80,8 @@ public class JsTestDriverModule extends AbstractModule {
       File basePath,
       long testSuiteTimeout,
       List<FileInfo> tests,
-      List<FileInfo> plugins) {
+      List<FileInfo> plugins,
+      JsonArray proxyConfig) {
     this.flags = flags;
     this.fileSet = fileSet;
     this.serverAddress = serverAddress;
@@ -84,6 +90,7 @@ public class JsTestDriverModule extends AbstractModule {
     this.testSuiteTimeout = testSuiteTimeout;
     this.tests = tests;
     this.plugins = plugins;
+    this.proxyConfig = proxyConfig;
   }
 
   @Override
@@ -126,6 +133,10 @@ public class JsTestDriverModule extends AbstractModule {
        .toInstance(plugins);
     bind(Integer.class).annotatedWith(BrowserCount.class).
         toProvider(BrowserCountProvider.class).in(Singleton.class);
+    bind(JsonArray.class).annotatedWith(Names.named("proxy")).toInstance(proxyConfig);
+    bind(ConfigureProxyAction.Factory.class).toProvider(
+        FactoryProvider.newFactory(ConfigureProxyAction.Factory.class,
+            ConfigureProxyAction.class));
   }
 
   /**

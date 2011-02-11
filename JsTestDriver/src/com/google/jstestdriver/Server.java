@@ -15,6 +15,7 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.JsonElement;
 import com.google.inject.ImplementedBy;
 
 import java.util.Map;
@@ -28,6 +29,7 @@ public interface Server {
 
   String fetch(String url);
   String post(String url, Map<String, String> params);
+  String postJson(String url, JsonElement json);
   String startSession(String baseUrl, String id);
   void stopSession(String baseUrl, String id, String sessionId);
 }

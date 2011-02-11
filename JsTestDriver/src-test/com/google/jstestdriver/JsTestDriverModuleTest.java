@@ -16,6 +16,7 @@
 
 package com.google.jstestdriver;
 
+import com.google.gson.JsonArray;
 import com.google.inject.Guice;
 import com.google.jstestdriver.guice.DebugModule;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
@@ -40,7 +41,8 @@ public class JsTestDriverModuleTest extends TestCase {
         new File(""),
         2 * 60 * 60,
         Collections.<FileInfo>emptyList(),
-        Collections.<FileInfo>emptyList())).getInstance(ActionRunner.class);
+        Collections.<FileInfo>emptyList(),
+        new JsonArray())).getInstance(ActionRunner.class);
   }
 
   public void testGetActionRunnerWithXmlWriter() throws Exception {
@@ -54,6 +56,7 @@ public class JsTestDriverModuleTest extends TestCase {
         new File(""),
         2 * 60 * 60,
         Collections.<FileInfo>emptyList(),
-        Collections.<FileInfo>emptyList())).getInstance(ActionRunner.class);
+        Collections.<FileInfo>emptyList(),
+        new JsonArray())).getInstance(ActionRunner.class);
   }
 }

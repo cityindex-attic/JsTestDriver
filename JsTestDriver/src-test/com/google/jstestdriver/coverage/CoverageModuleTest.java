@@ -23,6 +23,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -56,7 +57,8 @@ public class CoverageModuleTest extends TestCase {
             new File(""),
             2 * 60 * 60,
             Collections.<FileInfo>emptyList(),
-            Collections.<FileInfo>emptyList());
+            Collections.<FileInfo>emptyList(),
+            new JsonArray());
 
     final Injector injector = Guice.createInjector(Lists.newArrayList(coverage, printStream,
         new DebugModule(false), jsTestDriverModule));

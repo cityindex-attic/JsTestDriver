@@ -15,6 +15,8 @@
  */
 package com.google.jstestdriver;
 
+import com.google.gson.JsonElement;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,6 +94,34 @@ public class HttpServer implements Server {
       return response;
     } catch (IOException e) {
       throw new RuntimeException("Connection error on : " +connection.toString(), e);
+    } finally {
+      if (connection != null) {
+        connection.disconnect();
+      }
+    }
+  }
+
+  public String postJson(String url, JsonElement json) {
+    HttpURLConnection connection = null;
+    try {
+      logger.trace("Post url:{}\nJSON:\n{}\n", url, json);
+      String jsonString = json.toString();
+      connection = (HttpURLConnection) new URL(url).openConnection();
+      connection.setRequestMethod("POST");
+      connection.setDoOutput(true);
+      connection.setDoInput(true);
+      connection.setRequestProperty("Content-Type", "application/jsonrequest");
+      connection.setRequestProperty("Content-Length", Integer.toString(
+          jsonString.getBytes().length));
+      OutputStreamWriter oWriter = new OutputStreamWriter(connection.getOutputStream());
+      oWriter.write(jsonString);
+      oWriter.close();
+      connection.connect();
+      String response = toString(connection.getInputStream());
+      logger.trace("Post response:\n{}\n", response);
+      return response;
+    } catch (IOException e) {
+      throw new RuntimeException("Connection error on: " + connection, e);
     } finally {
       if (connection != null) {
         connection.disconnect();

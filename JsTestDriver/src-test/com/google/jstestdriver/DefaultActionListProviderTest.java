@@ -24,6 +24,9 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import com.google.common.collect.Sets;
+import com.google.gson.JsonArray;
+import com.google.jstestdriver.action.ConfigureProxyAction;
+import com.google.jstestdriver.action.ConfigureProxyAction.Factory;
 import com.google.jstestdriver.action.UploadAction;
 import com.google.jstestdriver.browser.BrowserActionExecutorAction;
 import com.google.jstestdriver.browser.BrowserIdStrategy;
@@ -54,6 +57,7 @@ public class DefaultActionListProviderTest extends TestCase {
 
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
+    expectedActions.add(ConfigureProxyAction.class);
     expectedActions.add(UploadAction.class);
     //expectedActions.add(BrowserActionExecutorAction.class);
     assertSequence(expectedActions, actions);
@@ -94,7 +98,17 @@ public class DefaultActionListProviderTest extends TestCase {
                 null),
             new FailureCheckerAction(null, null),
             new UploadAction(null),
-            new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0)))), true);
+            new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0))),
+            null,
+            newConfigureProxyActionFactory()), true);
+  }
+
+  private Factory newConfigureProxyActionFactory() {
+    return new Factory() {
+      public ConfigureProxyAction create(JsonArray proxyConfig) {
+        return new ConfigureProxyAction(null, null, null, proxyConfig);
+      }
+    };
   }
 
   public void testParseWithServerAndReset() throws Exception {
@@ -109,6 +123,7 @@ public class DefaultActionListProviderTest extends TestCase {
     flags.setReset(true);
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
+    expectedActions.add(ConfigureProxyAction.class);
     expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
 
@@ -125,6 +140,7 @@ public class DefaultActionListProviderTest extends TestCase {
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
+    expectedActions.add(ConfigureProxyAction.class);
     expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(ServerShutdownAction.class);
@@ -142,6 +158,7 @@ public class DefaultActionListProviderTest extends TestCase {
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
+    expectedActions.add(ConfigureProxyAction.class);
     expectedActions.add(UploadAction.class);
     expectedActions.add(BrowserActionExecutorAction.class);
     expectedActions.add(PrintXmlTestResultsAction.class);

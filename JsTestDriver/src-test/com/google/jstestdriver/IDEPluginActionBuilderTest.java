@@ -16,9 +16,14 @@
 package com.google.jstestdriver;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryProvider;
 import com.google.inject.multibindings.Multibinder;
+import com.google.inject.name.Names;
 import com.google.inject.util.Providers;
+import com.google.jstestdriver.action.ConfigureProxyAction;
 import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.output.MultiTestResultListener;
@@ -74,6 +79,11 @@ public class IDEPluginActionBuilderTest extends TestCase {
                        bind(XmlPrinter.class).to(XmlPrinterImpl.class);
                        bind(TestResultListener.class).toInstance(
                            new MultiTestResultListener(Collections.<TestResultListener>emptySet()));
+                       bind(JsonArray.class).annotatedWith(Names.named("proxy"))
+                           .toInstance(new JsonArray());
+                       bind(ConfigureProxyAction.Factory.class).toProvider(
+                           FactoryProvider.newFactory(ConfigureProxyAction.Factory.class,
+                               ConfigureProxyAction.class));
                      }
                    });
     builder.addAllTests();
@@ -101,6 +111,11 @@ public class IDEPluginActionBuilderTest extends TestCase {
                        bind(XmlPrinter.class).to(XmlPrinterImpl.class);
                        bind(TestResultListener.class)
                            .toProvider(Providers.<TestResultListener>of(null));
+                       bind(JsonArray.class).annotatedWith(Names.named("proxy"))
+                           .toInstance(new JsonArray());
+                       bind(ConfigureProxyAction.Factory.class).toProvider(
+                           FactoryProvider.newFactory(ConfigureProxyAction.Factory.class,
+                               ConfigureProxyAction.class));
                      }
                    });
     builder.addAllTests();
@@ -165,6 +180,10 @@ public class IDEPluginActionBuilderTest extends TestCase {
     }
 
     public String post(String url, Map<String, String> params) {
+      return null;
+    }
+
+    public String postJson(String url, JsonElement json) {
       return null;
     }
 

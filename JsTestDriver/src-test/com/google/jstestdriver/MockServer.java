@@ -22,6 +22,7 @@ import java.util.Queue;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonElement;
 
 /**
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
@@ -44,6 +45,10 @@ public class MockServer implements Server {
 
   public String post(String url, Map<String, String> params) {
     return get(url + "?POST?" + params);
+  }
+
+  public String postJson(String url, JsonElement json) {
+    return get(url + "?POST?" + json);
   }
 
   private String get(String request) {

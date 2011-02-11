@@ -102,7 +102,8 @@ public class Initializer {
             resolvedConfiguration.getTestSuiteTimeout(),
             resolvedConfiguration.getTests(),
             // TODO(corysmith): pull js plugins from the configuration.
-            Collections.<FileInfo>emptyList()));
+            Collections.<FileInfo>emptyList(),
+            resolvedConfiguration.getProxyConfiguration()));
     return modules;
   }
 }

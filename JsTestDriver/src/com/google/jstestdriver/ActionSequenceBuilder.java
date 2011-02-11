@@ -21,7 +21,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gson.JsonArray;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.action.ConfigureProxyAction;
 import com.google.jstestdriver.action.UploadAction;
 import com.google.jstestdriver.browser.BrowserActionExecutorAction;
 import com.google.jstestdriver.output.PrintXmlTestResultsAction;
@@ -50,7 +53,9 @@ public class ActionSequenceBuilder {
   private final BrowserActionExecutorAction browserActionsRunner;
   private final FailureCheckerAction failureCheckerAction;
   private final UploadAction uploadAction;
+  private final ConfigureProxyAction.Factory proxyActionFactory;
   private boolean raiseOnFailure = false;
+  private JsonArray proxyConfig;
 
   /**
    * Begins the building of an action sequence.
@@ -63,13 +68,17 @@ public class ActionSequenceBuilder {
                                BrowserActionExecutorAction browserActionsRunner,
                                FailureCheckerAction failureCheckerAction,
                                UploadAction uploadAction,
-                               CapturedBrowsers capturedBrowsers) {
+                               CapturedBrowsers capturedBrowsers,
+                               @Named("proxy") JsonArray proxyConfig,
+                               ConfigureProxyAction.Factory proxyActionFactory) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.browserActionsRunner = browserActionsRunner;
     this.failureCheckerAction = failureCheckerAction;
     this.uploadAction = uploadAction;
     this.capturedBrowsers = capturedBrowsers;
+    this.proxyConfig = proxyConfig;
+    this.proxyActionFactory = proxyActionFactory;
   }
 
   /**
@@ -113,6 +122,7 @@ public class ActionSequenceBuilder {
   /** Creates and returns a sequence of actions. */
   public List<Action> build() {
     List<Action> actions = new LinkedList<Action>();
+    actions.add(proxyActionFactory.create(proxyConfig));
     actions.add(uploadAction);
     if (!leaveServerRunning()) {
       actions.add(browserActionsRunner);
