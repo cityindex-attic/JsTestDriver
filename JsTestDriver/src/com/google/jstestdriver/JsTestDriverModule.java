@@ -16,6 +16,8 @@
 package com.google.jstestdriver;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -23,6 +25,7 @@ import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryProvider;
 import com.google.inject.multibindings.Multibinder;
+import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.google.jstestdriver.action.ConfigureProxyAction;
 import com.google.jstestdriver.annotations.BrowserCount;
@@ -30,6 +33,7 @@ import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.config.DefaultConfiguration;
 import com.google.jstestdriver.guice.BrowserActionProvider;
 import com.google.jstestdriver.guice.FlagsModule;
+import com.google.jstestdriver.hooks.ProxyDestination;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -133,10 +137,48 @@ public class JsTestDriverModule extends AbstractModule {
        .toInstance(plugins);
     bind(Integer.class).annotatedWith(BrowserCount.class).
         toProvider(BrowserCountProvider.class).in(Singleton.class);
-    bind(JsonArray.class).annotatedWith(Names.named("proxy")).toInstance(proxyConfig);
+    bind(JsonArray.class).annotatedWith(Names.named("rawProxy"))
+        .toInstance(proxyConfig);
+    bind(JsonArray.class).annotatedWith(Names.named("proxy"))
+        .toProvider(ProxyConfigurationProvider.class);
     bind(ConfigureProxyAction.Factory.class).toProvider(
         FactoryProvider.newFactory(ConfigureProxyAction.Factory.class,
             ConfigureProxyAction.class));
+  }
+
+  private static class ProxyConfigurationProvider implements Provider<JsonArray> {
+
+    private final JsonArray proxyConfig;
+
+    @Inject(optional = true)
+    private ProxyDestination destination;
+
+    @Inject
+    public ProxyConfigurationProvider(@Named("rawProxy") JsonArray proxyConfig) {
+      this.proxyConfig = proxyConfig;
+    }
+
+    public JsonArray get() {
+      if (destination == null) {
+        return proxyConfig;
+      } else {
+        JsonArray copy = copy(proxyConfig);
+        JsonObject defaultDestination = new JsonObject();
+        defaultDestination.addProperty("matcher", "*");
+        defaultDestination.addProperty(
+            "server", destination.getDestinationAddress());
+        copy.add(defaultDestination);
+        return copy;
+      }
+    }
+
+    private JsonArray copy(JsonArray original) {
+      JsonArray copy = new JsonArray();
+      for (JsonElement element : original) {
+        copy.add(element);
+      }
+      return copy;
+    }
   }
 
   /**
