@@ -15,36 +15,61 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.model.HandlerPathPrefix;
 
-import java.util.LinkedList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
+ * Parses failures.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public class FailureParser {
+  private static final Logger logger = LoggerFactory.getLogger(FailureParser.class);
   private final Gson gson = new Gson();
+  private final HandlerPathPrefix pathPrefix;
 
-  public Failure parse(String failure) {
-    final List<String> stack = new LinkedList<String>();
+  @Inject
+  public FailureParser(@Named("serverHandlerPrefix") HandlerPathPrefix pathPrefix) {
+    this.pathPrefix = pathPrefix;
+  }
+
+  public List<Failure> parse(String failure) {
     String message = "";
+    List<Failure> failures;
+    String stackStripPrefix = pathPrefix.prefixPath("/static/");
     try {
-      JsException exception = gson.fromJson(failure, JsException.class);
-
-      message = exception.getMessage();
-      String errorStack = exception.getStack();
-      String[] lines = errorStack.split("\n");
-
-      for (String l : lines) {
-        if (l.contains("/test/")) {
-          stack.add(l);
+      Collection<JsException> exceptions =
+          gson.fromJson(failure, new TypeToken<Collection<JsException>>() {}.getType());
+      failures = Lists.newArrayListWithExpectedSize(exceptions.size());
+      for (JsException exception : exceptions) {
+        message = String.format("%s: %s", exception.getName(), exception.getMessage());
+        String errorStack = exception.getStack();
+        String[] lines = errorStack.split("\n");
+        
+        final List<String> stack = Lists.newLinkedList();
+        stack.add(message);
+        stack.add("");
+        for (String l : lines) {
+          if (!l.contains(stackStripPrefix)) {
+            stack.add(l);
+          }
         }
+        failures.add(new Failure(message, stack));
       }
     } catch (Exception e) {
-      message = failure;
+      logger.error("Error converting jsexceptions.", e);
+      failures = Lists.newArrayList(new Failure(message, Lists.<String>newArrayList()));
     }
-    return new Failure(message, stack);
+    return failures;
   }
 
   public static class Failure {
@@ -63,6 +88,34 @@ public class FailureParser {
     public List<String> getStack() {
       return stack;
     }
-  }
 
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((message == null) ? 0 : message.hashCode());
+      result = prime * result + ((stack == null) ? 0 : stack.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
+      Failure other = (Failure) obj;
+      if (message == null) {
+        if (other.message != null) return false;
+      } else if (!message.equals(other.message)) return false;
+      if (stack == null) {
+        if (other.stack != null) return false;
+      } else if (!stack.equals(other.stack)) return false;
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "Failure [stack=" + stack + ", message=" + message + "]";
+    }
+  }
 }

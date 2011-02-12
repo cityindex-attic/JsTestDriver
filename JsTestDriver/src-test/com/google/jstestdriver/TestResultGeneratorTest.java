@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 
 import com.google.gson.Gson;
 import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.model.NullPathPrefix;
 
 /**
  * @author shyamseshadri@gmail.com (Shyam Seshadri)
@@ -33,7 +34,8 @@ public class TestResultGeneratorTest extends TestCase {
     Collection<TestResult> results = new ArrayList<TestResult>();
     results.add(expected);
     String gsonString = gson.toJson(results);
-    TestResultGenerator generator = new TestResultGenerator();
+    TestResultGenerator generator =
+        new TestResultGenerator(new FailureParser(new NullPathPrefix()));
     Response response = new Response();
     response.setType(ResponseType.TEST_RESULT.name());
     response.setResponse(gsonString);

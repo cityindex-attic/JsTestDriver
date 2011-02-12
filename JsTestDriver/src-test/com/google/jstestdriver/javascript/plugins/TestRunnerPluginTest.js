@@ -145,7 +145,7 @@ TestRunnerPluginTest.prototype.testClearBodyError = function() {
 
   assertNotNull(result);
   assertEquals("error", result.result);
-  assertEquals(testRunnerPlugin.serializeError(clearBodyError), result.message);
+  assertEquals(testRunnerPlugin.serializeError([clearBodyError]), result.message);
 };
 
 
@@ -169,7 +169,7 @@ TestRunnerPluginTest.prototype.testWrongTest = function() {
   };
   testRunnerPlugin.runTestConfiguration(testRunConfiguration, onTestDone, function() {});
 
-  assertEquals('testBar not found in test', jsonParse(result.message).message);
+  assertEquals('testBar not found in test', jsonParse(result.message)[0].message);
 };
 
 
@@ -272,7 +272,7 @@ TestRunnerPluginTest.prototype.testSetUpError = function() {
   testRunnerPlugin.runTestConfiguration(testRunConfiguration, onTestDone, function() {});
 
   assertEquals("error", result.result);
-  assertEquals("a big setUp error", jsonParse(result.message).message);
+  assertEquals("a big setUp error", jsonParse(result.message)[0].message);
 };
 
 
@@ -301,7 +301,7 @@ TestRunnerPluginTest.prototype.testTearDownError = function() {
   testRunnerPlugin.runTestConfiguration(testRunConfiguration, onTestDone, function() {});
 
   assertEquals("error", result.result);
-  assertEquals("a big tearDown error", jsonParse(result.message).message);
+  assertEquals("a big tearDown error", jsonParse(result.message)[0].message);
 };
 
 
@@ -337,6 +337,40 @@ TestRunnerPluginTest.prototype.testTearDownCalledWhenTestFails = function() {
 
   assertEquals("failed", result.result);
   assertTrue(tearDownCalled);
+};
+
+
+TestRunnerPluginTest.prototype.testErrorInTearDownAndTest = function() {
+  var fakeDate = function() {};
+  
+  fakeDate.prototype.getTime = function() {
+    return 0;
+  };
+  var testRunnerPlugin = new jstestdriver.plugins.TestRunnerPlugin(fakeDate, function() {});
+  var testCaseManager = new jstestdriver.TestCaseManager();
+  var testCaseBuilder = new jstestdriver.TestCaseBuilder(testCaseManager);
+  var testCaseClass = testCaseBuilder.TestCase('test');
+  var tearDownCalled = false;
+  
+  testCaseClass.prototype.setUp = function() {};
+  testCaseClass.prototype.tearDown = function() {
+    throw new Error('Whoops!');
+  };
+  testCaseClass.prototype.testFoo = function() {
+    var err = new Error('test error');
+    err.name = 'AssertError';
+    throw err;
+  };
+  var testRunConfiguration = new jstestdriver.TestRunConfiguration(
+    testCaseManager.getTestCasesInfo()[0], new Array('testFoo'));
+  var result;
+  var onTestDone = function(res) {
+    result = res;
+  };
+  testRunnerPlugin.runTestConfiguration(testRunConfiguration, onTestDone, function() {});
+  
+  assertEquals("failed", result.result);
+  assertEquals(2, JSON.parse(result.message).length);
 };
 
 

@@ -57,7 +57,7 @@ public class TestResult {
   }
 
   public TestResult() {
-  }  
+  }
 
   public Result getResult() {
     return Result.valueOf(result);

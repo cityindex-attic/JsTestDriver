@@ -131,12 +131,31 @@
     </copy>
   </target>
 
-  <target name="build-js" depends="copy-js, compile-js">
+  <target name="concat-libs" depends="copy-js, compile-js">
+    <concat destfile="${destdir}/${javascript-resources}/angular-json.js">
+      <filelist dir="${destdir}/${javascript-resources}/lib" files="
+        angular-JSON-pre.js,
+        angular-JSON.js,
+        angular-JSON-post.js" />
+    </concat>
+    <concat destfile="${destdir}/${javascript-resources}/lib/jquery-min.js">
+      <filelist dir="${destdir}/${javascript-resources}/lib" files="jquery-1.4.3.min.js,
+                          jquery-compat.js" />
+    </concat>
+    <concat destfile="${destdir}/${javascript-resources}/lib/jquery.js">
+      <filelist dir="${destdir}/${javascript-resources}/lib" files="jquery-1.4.3.js,
+                          jquery-compat.js" />
+    </concat>
+  </target>
+
+  <target name="build-js" depends="concat-libs">
     <concat destfile="${destdir}/${javascript-resources}/jstestdrivernamespace.js">
       <filelist dir="${destdir}/${javascript-resources}" files="Namespace.js" />
     </concat>
     <concat destfile="${destdir}/${javascript-resources}/runner.js">
-      <filelist dir="${destdir}/${javascript-resources}" files="Signal.js,
+      <filelist dir="${destdir}/${javascript-resources}" files="
+               angular-json.js,
+               Signal.js,
                PageUnloadHandler.js,
                ResetCommand.js,
                NoopCommand.js,
@@ -179,16 +198,10 @@
                AssertsPlugin.js,
                TestCaseManagerPlugin.js" />
     </concat>
-    <concat destfile="${destdir}/${javascript-resources}/lib/jquery-min.js">
-      <filelist dir="${destdir}/${javascript-resources}/lib" files="jquery-1.4.3.min.js,
-                       jquery-compat.js" />
-    </concat>
-    <concat destfile="${destdir}/${javascript-resources}/lib/jquery.js">
-      <filelist dir="${destdir}/${javascript-resources}/lib" files="jquery-1.4.3.js,
-                       jquery-compat.js" />
-    </concat>
     <concat destfile="${destdir}/${javascript-resources}/standalonerunner.js">
-      <filelist dir="${destdir}/${javascript-resources}" files="Signal.js,
+      <filelist dir="${destdir}/${javascript-resources}" files="
+               angular-json.js,
+               Signal.js,
                Response.js,
                Asserts.js,
                StreamingService.js,
@@ -232,7 +245,9 @@
 
     </concat>
     <concat destfile="${destdir}/${javascript-resources}/browser_controlled_runner.js">
-      <filelist dir="${destdir}/${javascript-resources}" files="Signal.js,
+      <filelist dir="${destdir}/${javascript-resources}" files="
+               angular-json.js,
+               Signal.js,
                Response.js,
                Asserts.js,
                StreamingService.js,

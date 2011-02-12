@@ -15,11 +15,17 @@
  */
 package com.google.jstestdriver;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
 import com.google.jstestdriver.FailureParser.Failure;
 import com.google.jstestdriver.Response.ResponseType;
+import com.google.jstestdriver.TestResult.Result;
+import com.google.jstestdriver.model.NullPathPrefix;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -36,7 +42,21 @@ public class TestResultGenerator {
 
   private final Gson gson = new Gson();
   
-  private final FailureParser failureParser = new FailureParser();
+
+  private final FailureParser failureParser;
+  
+  /**
+   * 
+   */
+  @Deprecated
+  public TestResultGenerator() {
+    this(new FailureParser(new NullPathPrefix()));
+  }
+
+  @Inject
+  public TestResultGenerator(FailureParser failureParser) {
+    this.failureParser = failureParser;
+  }
 
   /**
    * Loads the test results from the gson and response, sets the browser info on
@@ -62,16 +82,23 @@ public class TestResultGenerator {
 
         result.setBrowserInfo(browserInfo);
 
-        final Failure failure = failureParser.parse(result.getMessage());
-        result.setParsedMessage(failure.getMessage());
-        List<String> stackTrace = failure.getStack();
-        StringBuilder sb = new StringBuilder();
-
-        for (String l : stackTrace) {
-          sb.append(l);
-          sb.append(NEW_LINE);
+        if (result.getResult() != Result.passed) {
+          final List<Failure> failures = failureParser.parse(result.getMessage());
+          result.setParsedMessage(
+              Joiner.on("\n").join(Lists.transform(failures, new Function<Failure, String>() {
+                public String apply(Failure failure) {
+                  return failure.getMessage();
+                }
+              })));
+          StringBuilder sb = new StringBuilder();
+          for (Failure failure : failures) {
+            for (String l : failure.getStack()) {
+              sb.append(l);
+              sb.append(NEW_LINE);
+            }
+          }
+          result.setStack(sb.toString());
         }
-        result.setStack(sb.toString());
       }
       return results;
     } catch (JsonParseException e) {

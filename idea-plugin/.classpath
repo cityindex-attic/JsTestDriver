@@ -2,11 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/JsTestDriver"/>
-	<classpathentry kind="lib" path="lib/idea.jar"/>
-	<classpathentry kind="lib" path="/JsTestDriver/lib/guice/aopalliance.jar"/>
-	<classpathentry kind="lib" path="/JsTestDriver/lib/guice/guice-2.0.jar"/>
-	<classpathentry kind="lib" path="/JsTestDriver/lib/guice/guice-multibindings-2.0.jar"/>
-	<classpathentry kind="lib" path="/JsTestDriver/lib/guice/guice-servlet-2.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jstestdriver"/>
+	<classpathentry kind="lib" path="/home/corysmith/bin/idea-IC-99.32/lib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

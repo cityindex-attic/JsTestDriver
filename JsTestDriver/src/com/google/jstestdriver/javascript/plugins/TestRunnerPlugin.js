@@ -104,6 +104,7 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTestConfiguration =
 jstestdriver.plugins.TestRunnerPlugin.prototype.runTest =
     function(testCaseName, testCase, testName) {
   var testCaseInstance;
+  var errors = [];
   try {
     try {
       testCaseInstance = new testCase();
@@ -121,8 +122,6 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest =
     jstestdriver.expectedAssertCount = -1;
     jstestdriver.assertCount = 0;
     var res = jstestdriver.TestResult.RESULT.PASSED;
-    var msg = '';
-  
     try {
       if (testCaseInstance.setUp) {
         testCaseInstance.setUp();
@@ -150,7 +149,7 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest =
       res = jstestdriver.pluginRegistrar.isFailure(e) ?
           jstestdriver.TestResult.RESULT.FAILED :
             jstestdriver.TestResult.RESULT.ERROR;
-      msg = this.serializeError(e);
+      errors.push(e);
     }
     try {
       if (testCaseInstance.tearDown) {
@@ -158,17 +157,19 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest =
       }
       this.clearBody_();
     } catch (e) {
-      if (res == jstestdriver.TestResult.RESULT.PASSED && msg == '') {
+      if (res == jstestdriver.TestResult.RESULT.PASSED) {
         res = jstestdriver.TestResult.RESULT.ERROR;
       }
-      msg = this.serializeError(e);
+      errors.push(e);
     }
     var end = new this.dateObj_().getTime();
+    msg = this.serializeError(errors);
     return new jstestdriver.TestResult(testCaseName, testName, res, msg,
             jstestdriver.console.getAndResetLog(), end - start);
   } catch (e) {
+    errors.push(e);
     return new jstestdriver.TestResult(testCaseName, testName,
-            'error', 'Unexpected runner error: ' + e.toString(),
+            'error', 'Unexpected runner error: ' + this.serializeError(errors),
             jstestdriver.console.getAndResetLog(), 0);
   }
 };
@@ -177,14 +178,5 @@ jstestdriver.plugins.TestRunnerPlugin.prototype.runTest =
  *@param {Error} e
  */
 jstestdriver.plugins.TestRunnerPlugin.prototype.serializeError = function(e) {
-  //return JSON.stringify(e);
-  return JSON.stringify({
-    'message' : String(e.message),
-    'name' : String(e.name),
-    'fileName' : String(e.fileName),
-    'lineNumber' : Number(e.lineNumber),
-    'number' : Number(e.number),
-    'description' : String(e.description),
-    'stack' : String(e.stack)
-  });
+  return jstestdriver.angular.toJson(e);
 };
