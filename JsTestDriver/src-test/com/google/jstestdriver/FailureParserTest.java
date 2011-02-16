@@ -5,7 +5,6 @@ package com.google.jstestdriver;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.google.jstestdriver.FailureParser.Failure;
 import com.google.jstestdriver.model.ConcretePathPrefix;
 import com.google.jstestdriver.model.NullPathPrefix;
 

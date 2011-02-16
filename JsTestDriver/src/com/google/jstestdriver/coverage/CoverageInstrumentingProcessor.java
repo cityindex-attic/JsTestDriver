@@ -47,8 +47,11 @@ public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
   }
 
   public FileInfo process(FileInfo file) {
-    if (file.getFilePath().contains("LCOV.js") || !file.canLoad()
-      || file.isServeOnly() || excludes.contains(file.getFilePath())) {
+    if (file.getFilePath().contains("LCOV.js") ||
+        !file.canLoad() ||
+        file.isServeOnly() ||
+        excludes.contains(file.getFilePath()) ||
+        file.getData().isEmpty()) {
       return file;
     }
     long start = System.currentTimeMillis();
