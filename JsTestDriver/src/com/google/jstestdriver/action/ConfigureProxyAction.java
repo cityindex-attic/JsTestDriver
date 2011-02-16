@@ -7,6 +7,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.Action;
 import com.google.jstestdriver.Server;
+import com.google.jstestdriver.hooks.ProxyConfigurationFilter;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.RunData;
 
@@ -24,6 +25,7 @@ public class ConfigureProxyAction implements Action {
   private final HandlerPathPrefix prefixer;
   private final String baseUrl;
   private final Server server;
+  private final ProxyConfigurationFilter filter;
   private final JsonArray proxyConfig;
 
   @Inject
@@ -31,16 +33,18 @@ public class ConfigureProxyAction implements Action {
       @Named("serverHandlerPrefix") HandlerPathPrefix prefixer,
       @Named("server") String baseUrl,
       Server server,
+      ProxyConfigurationFilter filter,
       @Assisted JsonArray proxyConfig) {
     this.prefixer = prefixer;
     this.baseUrl = baseUrl;
     this.server = server;
+    this.filter = filter;
     this.proxyConfig = proxyConfig;
   }
 
   public RunData run(RunData runData) {
     if (proxyConfig != null && proxyConfig.size() > 0) {
-      server.postJson(baseUrl + "/proxy", proxyConfig);
+      server.postJson(baseUrl + "/proxy", filter.filter(proxyConfig));
     }
     return runData;
   }

@@ -137,48 +137,10 @@ public class JsTestDriverModule extends AbstractModule {
        .toInstance(plugins);
     bind(Integer.class).annotatedWith(BrowserCount.class).
         toProvider(BrowserCountProvider.class).in(Singleton.class);
-    bind(JsonArray.class).annotatedWith(Names.named("rawProxy"))
-        .toInstance(proxyConfig);
-    bind(JsonArray.class).annotatedWith(Names.named("proxy"))
-        .toProvider(ProxyConfigurationProvider.class);
+    bind(JsonArray.class).annotatedWith(Names.named("proxy")).toInstance(proxyConfig);
     bind(ConfigureProxyAction.Factory.class).toProvider(
         FactoryProvider.newFactory(ConfigureProxyAction.Factory.class,
             ConfigureProxyAction.class));
-  }
-
-  private static class ProxyConfigurationProvider implements Provider<JsonArray> {
-
-    private final JsonArray proxyConfig;
-
-    @Inject(optional = true)
-    private ProxyDestination destination;
-
-    @Inject
-    public ProxyConfigurationProvider(@Named("rawProxy") JsonArray proxyConfig) {
-      this.proxyConfig = proxyConfig;
-    }
-
-    public JsonArray get() {
-      if (destination == null) {
-        return proxyConfig;
-      } else {
-        JsonArray copy = copy(proxyConfig);
-        JsonObject defaultDestination = new JsonObject();
-        defaultDestination.addProperty("matcher", "*");
-        defaultDestination.addProperty(
-            "server", destination.getDestinationAddress());
-        copy.add(defaultDestination);
-        return copy;
-      }
-    }
-
-    private JsonArray copy(JsonArray original) {
-      JsonArray copy = new JsonArray();
-      for (JsonElement element : original) {
-        copy.add(element);
-      }
-      return copy;
-    }
   }
 
   /**
