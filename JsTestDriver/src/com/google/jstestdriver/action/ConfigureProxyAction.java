@@ -11,6 +11,9 @@ import com.google.jstestdriver.hooks.ProxyConfigurationFilter;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.RunData;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * Configures the proxy on the server by sending a POST application/jsonrequest
  * to /jstd/proxy with the proxy mappings.
@@ -43,8 +46,16 @@ public class ConfigureProxyAction implements Action {
   }
 
   public RunData run(RunData runData) {
-    if (proxyConfig != null && proxyConfig.size() > 0) {
-      server.postJson(baseUrl + "/proxy", filter.filter(proxyConfig));
+    try {
+      URL initialUrl = new URL(baseUrl + "/proxy");
+      URL adjustedUrl = new URL(
+          initialUrl.getProtocol(),
+          initialUrl.getHost(),
+          initialUrl.getPort(),
+          prefixer.prefixPath(initialUrl.getPath(), "jstd"));
+      server.postJson(adjustedUrl.toString(), filter.filter(proxyConfig));
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
     }
     return runData;
   }

@@ -139,6 +139,7 @@ public class JstdHandlersModule extends RequestHandlersModule {
     serve( GET, handlerPrefix.prefixPath("/heartbeat"), HeartbeatGetHandler.class);
     serve(POST, handlerPrefix.prefixPath("/heartbeat"), HeartbeatPostHandler.class);
     serve( GET, handlerPrefix.prefixPath("/auth", JSTD), AuthHandler.class);
+    serve( GET, handlerPrefix.prefixPath("/proxy", JSTD), ProxyConfigurationHandler.class);
     serve(POST, handlerPrefix.prefixPath("/proxy", JSTD), ProxyConfigurationHandler.class);
 
     serve( GET, handlerPrefix.prefixPath("/hello"), HelloHandler.class);

@@ -51,6 +51,7 @@ public class ProxyConfiguration {
   private final ProxyServletConfig.Factory servletConfigFactory;
   private final ProxyRequestHandler.Factory handlerFactory;
 
+  private JsonArray proxyConfig = new JsonArray();
   private List<RequestMatcher> matchers;
   private Map<RequestMatcher, JstdProxyServlet> proxyServlets;
 
@@ -95,6 +96,10 @@ public class ProxyConfiguration {
         new NullRequestHandler() : handlerFactory.create(proxy);
   }
 
+  public synchronized JsonArray getProxyConfig() {
+    return proxyConfig;
+  }
+
   /**
    * Updates this {@link ProxyConfiguration} given the new {@code configuration}
    * encoded as a {@link JsonObject} by discarding previously initialized
@@ -104,6 +109,7 @@ public class ProxyConfiguration {
    */
   public synchronized void updateConfiguration(JsonArray configuration)
       throws ServletException {
+    proxyConfig = configuration;
     ImmutableList.Builder<RequestMatcher> listBuilder = ImmutableList.builder();
     ImmutableMap.Builder<RequestMatcher, JstdProxyServlet> mapBuilder = ImmutableMap.builder();
     for (JsonElement element : configuration) {
