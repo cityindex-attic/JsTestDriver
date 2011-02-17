@@ -215,15 +215,15 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.buildResult = functio
   var message = '';
   if (this.errors_.length) {
     result = 'failed';
-    message = jstestdriver.angular.toJson(this.errors);
+    message = jstestdriver.angular.toJson(this.errors_);
   } else if (jstestdriver.expectedAssertCount != -1 &&
              jstestdriver.expectedAssertCount != jstestdriver.assertCount) {
     result = 'failed';
-    message = jstestdriver.angular.toJson(new Error("Expected '" +
+    message = jstestdriver.angular.toJson([new Error("Expected '" +
         jstestdriver.expectedAssertCount +
         "' asserts but '" +
         jstestdriver.assertCount +
-        "' encountered."));
+        "' encountered.")]);
   }
   return new jstestdriver.TestResult(
       this.testCaseInfo_.getTestCaseName(), this.testName_, result, message,
