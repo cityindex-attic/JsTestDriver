@@ -215,17 +215,11 @@ jstestdriver.plugins.async.AsyncTestRunnerPlugin.prototype.buildResult = functio
   var message = '';
   if (this.errors_.length) {
     result = 'failed';
-    var stringifiedErrors = [];
-    for (var i = 0; i < this.errors_.length; ++i) {
-      stringifiedErrors.push(
-          jstestdriver.plugins.TestRunnerPlugin.prototype.serializeError.call(
-              this, this.errors_[i]));
-    }
-    message = stringifiedErrors.join('\n');
+    message = jstestdriver.angular.toJson(this.errors);
   } else if (jstestdriver.expectedAssertCount != -1 &&
              jstestdriver.expectedAssertCount != jstestdriver.assertCount) {
     result = 'failed';
-    message = JSON.stringify(new Error("Expected '" +
+    message = jstestdriver.angular.toJson(new Error("Expected '" +
         jstestdriver.expectedAssertCount +
         "' asserts but '" +
         jstestdriver.assertCount +

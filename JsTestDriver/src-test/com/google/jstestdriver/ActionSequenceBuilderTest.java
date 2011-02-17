@@ -64,7 +64,7 @@ public class ActionSequenceBuilderTest extends TestCase {
   private Factory newConfigureProxyActionFactory() {
     return new Factory() {
       public ConfigureProxyAction create(JsonArray proxyConfig) {
-        return new ConfigureProxyAction(null, null, null, proxyConfig);
+        return new ConfigureProxyAction(null, null, null, null, proxyConfig);
       }
     };
   }
