@@ -15,6 +15,14 @@
  */
 package com.google.jstestdriver;
 
+import java.io.File;
+import java.util.List;
+import java.util.logging.LogManager;
+
+import org.kohsuke.args4j.CmdLineException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Lists;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
@@ -24,24 +32,11 @@ import com.google.inject.multibindings.Multibinder;
 import com.google.jstestdriver.config.CmdFlags;
 import com.google.jstestdriver.config.CmdLineFlagsFactory;
 import com.google.jstestdriver.config.Configuration;
-import com.google.jstestdriver.config.DefaultConfiguration;
 import com.google.jstestdriver.config.InitializeModule;
 import com.google.jstestdriver.config.Initializer;
 import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.guice.TestResultPrintingModule.TestResultPrintingInitializer;
 import com.google.jstestdriver.hooks.PluginInitializer;
-
-import org.kohsuke.args4j.CmdLineException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.logging.LogManager;
 
 public class JsTestDriver {
 
@@ -64,7 +59,9 @@ public class JsTestDriver {
       logger.debug("loaded plugins %s", pluginModules);
       List<Module> initializeModules = Lists.newLinkedList(pluginModules);
 
-      Configuration configuration = getConfiguration(cmdLineFlags.getConfigPath(), cmdLineFlags.getBasePath());
+      Configuration configuration =
+          cmdLineFlags.getConfigurationSource().parse(cmdLineFlags.getBasePath(), new YamlParser());
+
       File basePath = configuration.getBasePath().getCanonicalFile();
       initializeModules.add(
           new InitializeModule(pluginLoader,
@@ -100,22 +97,5 @@ public class JsTestDriver {
           + "\n Use --runnerMode DEBUG for more information.");
       System.exit(1);
     }
-  }
-
-  /**
-   * Creates a configuration from the path, by reading and parsing it. Or, it
-   * will return a DefaultConfiguration, if the path is null.
-   */
-  public static Configuration getConfiguration(File config, File basePath) throws FileNotFoundException {
-    final YamlParser configParser = new YamlParser();
-    Configuration configuration = new DefaultConfiguration(basePath);
-    if (config != null) {
-      if (!config.exists()) {
-        throw new RuntimeException("Config file doesn't exist: " + config.getAbsolutePath());
-      }
-      configuration = configParser.parse(new InputStreamReader(new FileInputStream(config),
-          Charset.defaultCharset()), basePath == null ? config.getParentFile() : basePath);
-    }
-    return configuration;
   }
 }

@@ -76,13 +76,12 @@ public class CmdFlags {
     return null;
   }
 
-  public File getConfigPath() throws IOException {
+  public ConfigurationSource getConfigurationSource() throws IOException {
     String configPath = getConfigPathNoDefault();
-
     if (configPath != null) {
-      return new File(configPath).getAbsoluteFile();
+      return new UserConfigurationSource(new File(configPath).getAbsoluteFile());
     }
-    return new File("jsTestDriver.conf").getAbsoluteFile();
+    return new DefaultConfigurationSource();
   }
 
   public File getBasePath() throws IOException {
@@ -90,11 +89,7 @@ public class CmdFlags {
     if (basePath != null) {
       return new File(basePath);
     }
-    final File configPath = getConfigPath();
-    if (configPath == null) {
-      return null;
-    }
-    return configPath.getParentFile();
+    return getConfigurationSource().getParentFile();
   }
 
   public RunnerMode getRunnerMode() {

@@ -18,6 +18,9 @@ package com.google.jstestdriver;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.browser.CommandLineBrowserRunner;
+import com.google.jstestdriver.config.ConfigurationSource;
+import com.google.jstestdriver.config.DefaultConfigurationSource;
+import com.google.jstestdriver.config.UserConfigurationSource;
 import com.google.jstestdriver.model.ConcretePathPrefix;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.NullPathPrefix;
@@ -26,6 +29,7 @@ import com.google.jstestdriver.runner.RunnerMode;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -43,7 +47,7 @@ public class FlagsImpl implements Flags {
   private Set<BrowserRunner> browser = Sets.newHashSet();
   private boolean reset;
   private long browserTimeout = SlaveBrowser.TIMEOUT;
-  private String config = "jsTestDriver.conf";
+  private ConfigurationSource config = new DefaultConfigurationSource();
   private List<String> tests = new ArrayList<String>();
   private boolean displayHelp = false;
   private boolean verbose = false;
@@ -111,10 +115,10 @@ public class FlagsImpl implements Flags {
 
   @Option(name="--config", usage="Loads the configuration file")
   public void setConfig(String config) {
-    this.config = config;
+    this.config = new UserConfigurationSource(new File(config).getAbsoluteFile());
   }
 
-  public String getConfig() {
+  public ConfigurationSource getConfig() {
     return config;
   }
 

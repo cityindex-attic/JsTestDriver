@@ -15,6 +15,14 @@
  */
 package com.google.jstestdriver.coverage;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Set;
+
 import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -23,18 +31,11 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
 import com.google.jstestdriver.ResponseStreamFactory;
+import com.google.jstestdriver.config.ConfigurationSource;
 import com.google.jstestdriver.guice.BrowserActionProvider;
 import com.google.jstestdriver.hooks.ActionListProcessor;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 import com.google.jstestdriver.hooks.ResourcePreProcessor;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Configure the code coverage plugin.
@@ -110,7 +111,7 @@ public class CoverageModule extends AbstractModule {
   // no point in requiring bad practice to integrate. (unlike some frameworks...)
   @Provides @Inject
   public CoverageWriter createCoverageWriter(@Named("testOutput") String testOut,
-                                             @Named("config") String configFileName,
+                                             @Named("config") ConfigurationSource source,
                                              @Named("outputStream") PrintStream out,
                                              CoverageNameMapper mapper) {
     if (testOut.length() > 0) {
@@ -120,7 +121,7 @@ public class CoverageModule extends AbstractModule {
           testOutDir.mkdirs();
         }
         // this should probably be configurable
-        File coverageFile = new File(testOutDir, String.format("%s-coverage.dat", configFileName));
+        File coverageFile = new File(testOutDir, String.format("%s-coverage.dat", source.getName()));
         if (coverageFile.exists()) {
           coverageFile.delete();
         }

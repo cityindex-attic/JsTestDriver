@@ -167,7 +167,7 @@ asyncTestRunnerPluginTest.prototype.
 
   assertEquals('failed', result.result);
   assertEquals('Expected \'5\' asserts but \'3\' encountered.',
-      JSON.parse(result.message).message);
+      JSON.parse(result.message)[0].message);
 };
 
 

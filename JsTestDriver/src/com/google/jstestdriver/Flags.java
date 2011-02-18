@@ -16,6 +16,7 @@
 package com.google.jstestdriver;
 
 import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.config.ConfigurationSource;
 import com.google.jstestdriver.guice.GuiceBinding;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 
@@ -26,6 +27,7 @@ import java.util.Set;
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
 public interface Flags {
+  public static final String DEFAULT_CONFIG_NAME = "jsTestDriver.conf";
 
   @GuiceBinding(name="port")
   public Integer getPort();
@@ -48,7 +50,7 @@ public interface Flags {
   public boolean getReset();
 
   @GuiceBinding(name="config")
-  public String getConfig();
+  public ConfigurationSource getConfig();
 
   @GuiceBinding(name="tests", parameterizedType = String.class)
   public List<String> getTests();

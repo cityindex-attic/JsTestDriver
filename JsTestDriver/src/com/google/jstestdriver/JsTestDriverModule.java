@@ -15,26 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
-import com.google.inject.assistedinject.FactoryProvider;
-import com.google.inject.multibindings.Multibinder;
-import com.google.inject.name.Named;
-import com.google.inject.name.Names;
-import com.google.jstestdriver.action.ConfigureProxyAction;
-import com.google.jstestdriver.annotations.BrowserCount;
-import com.google.jstestdriver.browser.BrowserRunner;
-import com.google.jstestdriver.config.DefaultConfiguration;
-import com.google.jstestdriver.guice.BrowserActionProvider;
-import com.google.jstestdriver.guice.FlagsModule;
-import com.google.jstestdriver.hooks.ProxyDestination;
-
 import java.io.File;
 import java.io.PrintStream;
 import java.util.Collections;
@@ -42,6 +22,22 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import com.google.gson.JsonArray;
+import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryProvider;
+import com.google.inject.multibindings.Multibinder;
+import com.google.inject.name.Names;
+import com.google.jstestdriver.action.ConfigureProxyAction;
+import com.google.jstestdriver.annotations.BrowserCount;
+import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.config.DefaultConfiguration;
+import com.google.jstestdriver.guice.BrowserActionProvider;
+import com.google.jstestdriver.guice.FlagsModule;
 
 /**
  * Guice module for configuring JsTestDriver.
