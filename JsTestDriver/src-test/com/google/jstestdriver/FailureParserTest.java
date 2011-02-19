@@ -27,7 +27,7 @@ public class FailureParserTest extends junit.framework.TestCase {
     List<String> stack1 = Lists.newArrayList("/static/asserts.js", "/test/foo.js");
     
     Failure failure1 = new Failure(String.format("%s: %s", name1, message1),
-        Lists.newArrayList(String.format("%s: %s", name1, message1), "", stack1.get(1)));
+        Lists.newArrayList(stack1.get(1)));
 
     String jsonFailures = gson.toJson(Lists.newArrayList(
         new JsException(name1, message1, "doof.js", 1l, Joiner.on("\n").join(stack1))));
@@ -42,7 +42,7 @@ public class FailureParserTest extends junit.framework.TestCase {
     List<String> stack1 = Lists.newArrayList(
         prefix.prefixPath("/static/asserts.js"), prefix.prefixPath("/test/foo.js"));
     Failure failure1 = new Failure(String.format("%s: %s", name1, message1),
-        Lists.newArrayList(String.format("%s: %s", name1, message1), "", stack1.get(1)));
+        Lists.newArrayList(stack1.get(1)));
 
     String jsonFailures = gson.toJson(Lists.newArrayList(
         new JsException(name1, message1, "doof.js", 1l, Joiner.on("\n").join(stack1))));
@@ -55,14 +55,13 @@ public class FailureParserTest extends junit.framework.TestCase {
     String message1 = "Whut?";
     List<String> stack1 = Lists.newArrayList("/static/asserts.js", "/test/foo.js");
     Failure failure1 = new Failure(String.format("%s: %s", name1, message1),
-        Lists.newArrayList(String.format("%s: %s", name1, message1), "", stack1.get(1)));
+        Lists.newArrayList(stack1.get(1)));
 
     String name2 = "TypeError";
     String message2 = "Thuw?";
-    String failureMessage1 = String.format("%s: %s", name1, message1);
     List<String> stack2 = Lists.newArrayList("/static/asserts.js", "/test/foo.js", "/test/baz.js");
     Failure failure2 = new Failure(String.format("%s: %s", name2, message2),
-        Lists.newArrayList(String.format("%s: %s", name2, message2), "", stack2.get(1), stack2.get(2)));
+        Lists.newArrayList(stack2.get(1), stack2.get(2)));
 
     String jsonFailures = gson.toJson(Lists.newArrayList(
         new JsException(name1, message1, "doof.js", 1l, Joiner.on("\n").join(stack1)),
@@ -72,5 +71,13 @@ public class FailureParserTest extends junit.framework.TestCase {
 
     assertEquals(failure1, failures.get(0));
     assertEquals(failure2, failures.get(1));
+  }
+  
+  public void testParseUnparsableFailure() throws Exception {
+    String failure = "some unformatted failure.";
+    
+    List<Failure> failures = new FailureParser(new NullPathPrefix()).parse(failure);
+    
+    assertEquals(failure, failures.get(0).getMessage());
   }
 }

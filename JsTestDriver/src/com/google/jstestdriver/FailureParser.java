@@ -51,13 +51,15 @@ public class FailureParser {
           gson.fromJson(failure, new TypeToken<Collection<JsException>>() {}.getType());
       failures = Lists.newArrayListWithExpectedSize(exceptions.size());
       for (JsException exception : exceptions) {
-        message = String.format("%s: %s", exception.getName(), exception.getMessage());
+        if (exception.getName() != null && !exception.getName().isEmpty()) {
+          message = String.format("%s: %s", exception.getName(), exception.getMessage());
+        } else {
+          message = exception.getMessage();
+        }
         String errorStack = exception.getStack();
         String[] lines = errorStack.split("\n");
-        
+
         final List<String> stack = Lists.newLinkedList();
-        stack.add(message);
-        stack.add("");
         for (String l : lines) {
           if (!l.contains(stackStripPrefix)) {
             stack.add(l);
@@ -66,8 +68,8 @@ public class FailureParser {
         failures.add(new Failure(message, stack));
       }
     } catch (Exception e) {
-      logger.error("Error converting jsexceptions.", e);
-      failures = Lists.newArrayList(new Failure(message, Lists.<String>newArrayList()));
+      logger.error("Error converting JsExceptions.", e);
+      failures = Lists.newArrayList(new Failure(failure, Lists.<String>newArrayList()));
     }
     return failures;
   }

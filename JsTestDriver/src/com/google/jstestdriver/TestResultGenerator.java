@@ -85,7 +85,7 @@ public class TestResultGenerator {
         if (result.getResult() != Result.passed) {
           final List<Failure> failures = failureParser.parse(result.getMessage());
           result.setParsedMessage(
-              Joiner.on("\n").join(Lists.transform(failures, new Function<Failure, String>() {
+              Joiner.on(NEW_LINE).join(Lists.transform(failures, new Function<Failure, String>() {
                 public String apply(Failure failure) {
                   return failure.getMessage();
                 }
@@ -96,6 +96,7 @@ public class TestResultGenerator {
               sb.append(l);
               sb.append(NEW_LINE);
             }
+            sb.append(NEW_LINE);
           }
           result.setStack(sb.toString());
         }
