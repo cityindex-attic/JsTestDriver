@@ -23,6 +23,13 @@ public class LogConfigBuilder {
     configLines.add("java.util.logging.ConsoleHandler.level=ALL");
     return this;
   }
+  
+  public LogConfigBuilder useMemoryHandler(int pushCount) {
+    handlers.add("java.util.logging.MemoryHandler");
+    configLines.add("java.util.logging.MemoryHandler.target=java.util.logging.ConsoleHandler");
+    configLines.add("java.util.logging.MemoryHandler.size=" + pushCount);
+    return this;
+  }
 
   public LogConfigBuilder finest(String className) {
     configLines.add(className + ".level=FINEST");

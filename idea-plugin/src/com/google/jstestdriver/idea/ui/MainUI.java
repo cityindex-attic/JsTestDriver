@@ -39,6 +39,7 @@ import com.google.jstestdriver.config.CmdLineFlagsFactory;
 import com.google.jstestdriver.config.Configuration;
 import com.google.jstestdriver.config.InitializeModule;
 import com.google.jstestdriver.config.Initializer;
+import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.guice.TestResultPrintingModule.TestResultPrintingInitializer;
 import com.google.jstestdriver.hooks.PluginInitializer;
 
@@ -115,12 +116,13 @@ public class MainUI {
   private void startUI() {
     try {
       // TODO(corysmith): Fix the set up to have an injection class and proper arrangements for listening.
-      final Configuration configuration = JsTestDriver.getConfiguration(preparsedFlags.getConfigPath());
+      final Configuration configuration = preparsedFlags.getConfigurationSource().parse(
+          preparsedFlags.getBasePath(), new YamlParser());
       List<Module> initializeModules = Lists.newLinkedList();
       initializeModules.add(
           new InitializeModule(new PluginLoader(),
               preparsedFlags.getBasePath(),
-              new Args4jFlagsParser(),
+              new Args4jFlagsParser(preparsedFlags),
               preparsedFlags.getRunnerMode()));
       initializeModules.add(new Module() {
         public void configure(Binder binder) {
