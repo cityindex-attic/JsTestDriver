@@ -118,11 +118,12 @@ jstestdriver.VisualTestReporter.prototype.renderResult = function(result, parent
       result.testName,
       result.result.toUpperCase(),
       result.time)];
-  if (result.message) {
-    var message = this.parseJson_(result.message);
-    html.push('<div class="message">' + message.message + '</div>');
-    if (message.stack) {
-      var frames = message.stack.split('\n');
+  var errors = result.message.length ? this.parseJson_(result.message) : [];
+  while(errors.length) {
+    var error = errors.pop()
+    html.push('<div class="message">' + error.message + '</div>');
+    if (error.stack) {
+      var frames = error.stack.split('\n');
       var stack = [];
       for (var i = 0; frames[i]; i++) {
         if (frames[i].indexOf('/test/') != -1) {

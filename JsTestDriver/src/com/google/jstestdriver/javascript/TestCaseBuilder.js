@@ -50,6 +50,11 @@ jstestdriver.TestCaseBuilder.prototype.TestCase =
   if (typeof testCaseClass.prototype.setUp == 'undefined') {
     testCaseClass.prototype.setUp = function() {};
   }
+  if (!testCaseClass.prototype.hasOwnProperty('toString')) {
+    testCaseClass.prototype.toString = function() {
+      return "TestCase(" + testCaseName +")";
+    };
+  }
   if (typeof testCaseClass.prototype.tearDown == 'undefined') {
     testCaseClass.prototype.tearDown = function() {};
   }
