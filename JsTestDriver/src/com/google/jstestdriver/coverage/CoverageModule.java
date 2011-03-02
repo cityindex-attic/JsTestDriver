@@ -45,8 +45,13 @@ import com.google.jstestdriver.hooks.ResourcePreProcessor;
 public class CoverageModule extends AbstractModule {
 
   private final List<String> excludes;
+  private boolean useCoberturaFormat = false;
 
   public CoverageModule(List<String> excludes) {
+    // until a better system for configuring plugins is devised, look for
+    // the string "useCoberturaFormat" in the args parameter, as it is unlikely
+    // to conflict with an existing excludes parameter
+    useCoberturaFormat = excludes.remove("useCoberturaFormat");
     this.excludes = excludes;
   }
 
@@ -113,6 +118,7 @@ public class CoverageModule extends AbstractModule {
   public CoverageWriter createCoverageWriter(@Named("testOutput") String testOut,
                                              @Named("config") ConfigurationSource source,
                                              @Named("outputStream") PrintStream out,
+											 @Named("basePath") File basePath,
                                              CoverageNameMapper mapper) {
     if (testOut.length() > 0) {
       try {
@@ -120,6 +126,13 @@ public class CoverageModule extends AbstractModule {
         if (!testOutDir.exists()) {
           testOutDir.mkdirs();
         }
+		if (useCoberturaFormat) {
+          File coverageFile = new File(testOutDir, "coverage.xml");
+          if (coverageFile.exists()) {
+            coverageFile.delete();
+          }
+          return new CoberturaWriter(new FileWriter(coverageFile), mapper, basePath);
+        } else {
         // this should probably be configurable
         File coverageFile = new File(testOutDir, String.format("%s-coverage.dat", source.getName()));
         if (coverageFile.exists()) {
@@ -127,6 +140,7 @@ public class CoverageModule extends AbstractModule {
         }
         coverageFile.createNewFile();
         return new LcovWriter(new FileWriter(coverageFile), mapper);
+		}
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
