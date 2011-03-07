@@ -48,7 +48,7 @@ public class CoverageInstrumentingProcessorTest extends TestCase {
     FileInfo serveOnly = new FileInfo("someData.dat", 0, -1, true, true, "scally{wag}");
     FileInfo excluded = new FileInfo("excluded.dat", 0, -1, true, false, "not{me}");
     FileInfo remote = new FileInfo("https://foobar", 0, -1, true, false, null);
-    FileInfo empty = new FileInfo("foobar.js", 0, -1, true, false, "");
+    FileInfo empty = new FileInfo("foobar.js", 0, -1, true, false, "\n");
     CoverageInstrumentingProcessor processor =
         new CoverageInstrumentingProcessor(null,
             Sets.<String>newHashSet(excluded.getFilePath()),
