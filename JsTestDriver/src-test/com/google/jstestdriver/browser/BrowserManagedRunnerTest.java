@@ -44,9 +44,9 @@ public class BrowserManagedRunnerTest extends TestCase {
         new FakeJsTestDriverClient(Lists.newArrayList(browserInfo));
     final FakeBrowserRunner runner = new FakeBrowserRunner();
     final FakeBrowserActionRunner browserActionRunner = new FakeBrowserActionRunner();
-    final BrowserManagedRunner browserRunner =
-        new BrowserManagedRunner(
-            runner, browserId, serverAddress, client, browserActionRunner, new NullStopWatch());
+    final BrowserCallable<Collection<ResponseStream>> browserRunner =
+        new BrowserCallable<Collection<ResponseStream>>(browserActionRunner, browserId,
+            new BrowserControl(runner, serverAddress, new NullStopWatch(), client));
     browserRunner.call();
   }
 

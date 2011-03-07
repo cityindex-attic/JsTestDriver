@@ -27,6 +27,7 @@ import com.google.jstestdriver.RunTestsAction;
 import com.google.jstestdriver.TestErrors;
 import com.google.jstestdriver.model.JstdTestCase;
 import com.google.jstestdriver.model.RunData;
+import com.google.jstestdriver.util.RetryingCallable;
 import com.google.jstestdriver.util.StopWatch;
 
 import org.slf4j.Logger;
@@ -149,14 +150,11 @@ public class BrowserActionExecutorAction implements Action {
   }
 
   // TODO(corysmith): Pull this into a factory.
-  private BrowserManagedRunner createBrowserManagedRunner(RunData runData, BrowserRunner runner,
+  private Callable<Collection<ResponseStream>> createBrowserManagedRunner(RunData runData, BrowserRunner runner,
       String browserId, BrowserActionRunner actionRunner) {
-    return new BrowserManagedRunner(runner,
-        browserId,
-        serverAddress,
-        client,
-        actionRunner,
-        stopWatch);
+    return new RetryingCallable<Collection<ResponseStream>>(runner.getNumStartupTries(),
+        new BrowserCallable<Collection<ResponseStream>>(actionRunner, browserId,
+      new BrowserControl(runner, serverAddress, stopWatch, client))) ;
   }
 
   public List<BrowserAction> getActions() {

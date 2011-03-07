@@ -15,74 +15,73 @@
  */
 package com.google.jstestdriver;
 
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.google.jstestdriver.browser.BrowserControl;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.model.RunData;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import com.google.jstestdriver.util.StopWatch;
 
 /**
  * Starts a list of browsers when run.
  * @author jeremiele@google.com (Jeremie Lenfant-Engelmann)
  */
-public class BrowserStartupAction implements Action, Observer {
+public class BrowserStartupAction implements Action {
 
-  private static final Logger logger =
-      LoggerFactory.getLogger(BrowserStartupAction.class);
-  private final CountDownLatch latch;
   private final Set<BrowserRunner> browsers;
   private final String serverAddress;
+  private final JsTestDriverClient client;
+  private final StopWatch stopWatch;
+  private final ExecutorService executor;
 
+  @Inject
   public BrowserStartupAction(Set<BrowserRunner> browsers,
-                              String serverAddress,
-                              CountDownLatch latch) {
+                              StopWatch stopWatch,
+                              JsTestDriverClient client,
+                              @Named("server") String serverAddress,
+                              ExecutorService executor) {
       this.browsers = browsers;
+      this.stopWatch = stopWatch;
+      this.client = client;
       this.serverAddress = serverAddress;
-      this.latch = latch;
+      this.executor = executor;
   }
 
   public RunData run(RunData runData) {
-    try {
-      String url = String.format("%s/capture", serverAddress);
-      int timeout = 30;
-      for (BrowserRunner browser : browsers) {
-        browser.startBrowser(url);
-        if (browser.getTimeout() > timeout) {
-          timeout = browser.getTimeout();
+    List<Future<String>> browserIds = Lists.newArrayListWithCapacity(browsers.size());
+    for (final BrowserRunner browser : browsers) {
+      browserIds.add(executor.submit(new Callable<String>() {
+        public String call() throws Exception {
+          return new BrowserControl(browser, serverAddress, stopWatch, client)
+              .captureBrowser(client.getNextBrowserId());
         }
+      }));
+    }
+    // check for exceptions. Gotta be a better way.
+    for (Future<String> futureId : browserIds) {
+      try {
+        futureId.get();
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      } catch (ExecutionException e) {
+        throw new RuntimeException(e);
       }
-      if (!latch.await(timeout, TimeUnit.SECONDS)) {
-        long count = latch.getCount();
-
-        if (count < browsers.size()) {
-          logger.warn("Not all browsers were captured continuing anyway...");
-        } else {
-          logger.error("None of the browsers were captured after 30 seconds");
-          for (BrowserRunner browser : browsers) {
-            browser.stopBrowser();
-          }
-        }
-      }
-    } catch (InterruptedException e) {
-      logger.error("Error in starting browsers: {}", e.toString());
     }
     return runData;
   }
 
-  public void update(Observable o, Object arg) {
-    latch.countDown();
-  }
-  
   public Set<BrowserRunner> getBrowsers() {
     return browsers;
   }
-  
+
   public String getServerAddress() {
     return serverAddress;
   }

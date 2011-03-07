@@ -50,6 +50,7 @@ class TestResourceHandler implements RequestHandler {
     response.setHeader("Pragma", "no-cache");
     response.setHeader("Cache-Control", "private, no-cache, no-store, max-age=0, must-revalidate");
     response.setHeader("Expires", TIME_IN_THE_PAST);
+    response.setHeader("Content-Type", "text/plain");
     service(request.getPathInfo().substring(1) /* remove the first / */, response.getWriter());
   }
 

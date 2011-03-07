@@ -56,10 +56,12 @@ public class ActionSequenceBuilder {
   private final ConfigureProxyAction.Factory proxyActionFactory;
   private boolean raiseOnFailure = false;
   private JsonArray proxyConfig;
+  private final BrowserStartupAction browserStartup;
 
   /**
    * Begins the building of an action sequence.
    * @param failureCheckerAction TODO
+   * @param browserStartup TODO
    */
   @Inject
   public ActionSequenceBuilder(ActionFactory actionFactory,
@@ -70,7 +72,8 @@ public class ActionSequenceBuilder {
                                UploadAction uploadAction,
                                CapturedBrowsers capturedBrowsers,
                                @Named("proxy") JsonArray proxyConfig,
-                               ConfigureProxyAction.Factory proxyActionFactory) {
+                               ConfigureProxyAction.Factory proxyActionFactory,
+                               BrowserStartupAction browserStartup) {
     this.actionFactory = actionFactory;
     this.fileLoader = fileLoader;
     this.browserActionsRunner = browserActionsRunner;
@@ -79,6 +82,7 @@ public class ActionSequenceBuilder {
     this.capturedBrowsers = capturedBrowsers;
     this.proxyConfig = proxyConfig;
     this.proxyActionFactory = proxyActionFactory;
+    this.browserStartup = browserStartup;
   }
 
   /**
@@ -98,6 +102,8 @@ public class ActionSequenceBuilder {
     // add browser startup here.
     if (!leaveServerRunning) {
       actions.add(new ServerShutdownAction(serverStartupAction));
+    } else {
+      actions.add(browserStartup);
     }
   }
 

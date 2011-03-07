@@ -15,182 +15,133 @@
  */
 package com.google.jstestdriver;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Executors;
 
 import junit.framework.TestCase;
 
 import com.google.common.collect.Sets;
+import com.google.inject.internal.Lists;
 import com.google.jstestdriver.browser.BrowserRunner;
+import com.google.jstestdriver.model.JstdTestCase;
+import com.google.jstestdriver.util.NullStopWatch;
 
 /**
  * @author corysmith@google.com (Cory Smith)
- *
+ * Integration test for the browser startup action.
  */
 public class BrowserStartupActionTest extends TestCase {
+  /**
+   * 
+   * 
+   * @author Cory Smith (corbinrsmith@gmail.com)
+   */
+  private final class FakeJsTestDriverClient implements JsTestDriverClient {
+    private final Collection<BrowserInfo> capturedBrowsers;
+    private final String nextId;
 
-  public void testProcessRun() throws Exception {
-    CountDownLatchFake latch = new CountDownLatchFake(1, false, true);
-    final FakeBrowser browser = new FakeBrowser(300);
-    
-    final String serverAddress = "http://foo:8080";
-    
-    final BrowserStartupAction action =
-        new BrowserStartupAction(Sets.<BrowserRunner>newHashSet(browser),
-            serverAddress, latch);
+    /**
+     * @param capturedBrowsers
+     * @param nextId
+     */
+    public FakeJsTestDriverClient(Collection<BrowserInfo> capturedBrowsers, String nextId) {
+      this.capturedBrowsers = capturedBrowsers;
+      this.nextId = nextId;
+    }
 
-    action.run(null);
+    public Collection<BrowserInfo> listBrowsers() {
+      return capturedBrowsers;
+    }
 
-    assertTrue(browser.started);
-    assertEquals(serverAddress + "/capture", browser.serverAddress);
-    assertEquals(browser.getTimeout(), latch.getTimeoutPassed());
-  }
-  
-  public void testProcessRunLongestTimeout() throws Exception {
-    CountDownLatchFake latch = new CountDownLatchFake(1, false, true);
-    final FakeBrowser browserOne = new FakeBrowser(300);
-    final FakeBrowser browserTwo = new FakeBrowser(900);
-    
-    final String serverAddress = "http://foo:8080";
-    
-    final BrowserStartupAction action =
-      new BrowserStartupAction(Sets.<BrowserRunner>newHashSet(browserOne,
-                                                              browserTwo),
-          serverAddress, latch);
-    
-    action.run(null);
-    
-    assertTrue(browserOne.started);
-    assertTrue(browserTwo.started);
-    assertEquals(serverAddress + "/capture", browserOne.serverAddress);
-    assertEquals(serverAddress + "/capture", browserTwo.serverAddress);
-    assertEquals(browserTwo.getTimeout(), latch.getTimeoutPassed());
-  }
-  
-  public void testProcessRunLongestTimeoutReverseOrder() throws Exception {
-    CountDownLatchFake latch = new CountDownLatchFake(1, false, true);
-    final FakeBrowser browserOne = new FakeBrowser(300);
-    final FakeBrowser browserTwo = new FakeBrowser(900);
-    
-    final String serverAddress = "http://foo:8080";
-    
-    final BrowserStartupAction action =
-      new BrowserStartupAction(Sets.<BrowserRunner>newHashSet(browserTwo,
-                                                              browserOne),
-          serverAddress, latch);
-    
-    action.run(null);
-    
-    assertTrue(browserOne.started);
-    assertTrue(browserTwo.started);
-    assertEquals(serverAddress + "/capture", browserOne.serverAddress);
-    assertEquals(serverAddress + "/capture", browserTwo.serverAddress);
-    assertEquals(browserTwo.getTimeout(), latch.getTimeoutPassed());
+    public void eval(String id, ResponseStream responseStream, String cmd, JstdTestCase testCase) {
+
+    }
+
+    public void runAllTests(String id, ResponseStream responseStream, boolean captureConsole,
+        JstdTestCase testCase) {
+
+    }
+
+    public void reset(String id, ResponseStream responseStream, JstdTestCase testCase) {
+    }
+
+    public void runTests(String id, ResponseStream responseStream, List<String> tests,
+        boolean captureConsole, JstdTestCase testCase) {
+    }
+
+    public void dryRun(String id, ResponseStream responseStream, JstdTestCase testCase) {
+    }
+
+    public void dryRunFor(String id, ResponseStream responseStream, List<String> expressions,
+        JstdTestCase testCase) {
+    }
+
+    public String getNextBrowserId() {
+      return nextId;
+    }
+
+    public void uploadFiles(String browserId, JstdTestCase testCase) {
+    }
   }
 
-  public void testProcessStartFailure() throws Exception {
-    CountDownLatchFake latch = new CountDownLatchFake(1, false, true);
-    final FakeBrowser browser = new FakeBrowser(300);
-    final BrowserRunner errorBrowser = new BrowserRunner() {
-
-      public void stopBrowser() {
-      }
-
-      public void startBrowser(String serverAddress) {
-      }
-
-      public int getTimeout() {
-        return 300;
-      }
-      
-      public int getNumStartupTries() {
-        return 1;
-      }
-
-      public long getHeartbeatTimeout() {
-        return SlaveBrowser.TIMEOUT;
-      }
-
-      public int getUploadSize() {
-        return FileUploader.CHUNK_SIZE;
-      }
-    };
-    
-    final String serverAddress = "http://foo:8080";
-    final BrowserStartupAction action = new BrowserStartupAction(
-      Sets.<BrowserRunner>newHashSet(browser, errorBrowser, browser),
-      serverAddress,
-      latch);
-    
-    action.run(null);
-
-  }
-
-  private final class FakeBrowser implements BrowserRunner {
+  /**
+   * 
+   * 
+   * @author Cory Smith (corbinrsmith@gmail.com)
+   */
+  private final class BrowserRunnerStub implements BrowserRunner {
     public String serverAddress;
-    public boolean started;
-    private final int timeout;
-
-    public FakeBrowser(int timeout) {
-      this.timeout = timeout;
-    }
-
-    public void stopBrowser() {
-      started = false;
-    }
 
     public void startBrowser(String serverAddress) {
       this.serverAddress = serverAddress;
-      started = true;
+    }
+
+    public void stopBrowser() {
+      // TODO Auto-generated method stub
+
     }
 
     public int getTimeout() {
-      return timeout;
+      // TODO Auto-generated method stub
+      return 10;
     }
 
     public int getNumStartupTries() {
+      // TODO Auto-generated method stub
       return 1;
     }
-    
+
     public long getHeartbeatTimeout() {
-      return SlaveBrowser.TIMEOUT;
+      // TODO Auto-generated method stub
+      return 10;
     }
 
     public int getUploadSize() {
-      return FileUploader.CHUNK_SIZE;
+      // TODO Auto-generated method stub
+      return 0;
     }
   }
 
+  public void testRun() throws Exception {
+    String nextId = "123";
+    BrowserRunnerStub browserRunner = new BrowserRunnerStub();
+    Set<BrowserRunner> browsers = Sets.<BrowserRunner>newHashSet(browserRunner);
 
-  static class CountDownLatchFake extends CountDownLatch{
-    private final boolean awaitResponse;
-    private int count;
-    private long timeoutPassed;
+    BrowserInfo browserInfo = new BrowserInfo();
+    browserInfo.setId(Long.parseLong(nextId));
+    browserInfo.setServerReceivedHeartbeat(true);
+    Collection<BrowserInfo> capturedBrowsers = Lists.newArrayList(browserInfo);
 
-    public CountDownLatchFake(int count, boolean wait, boolean awaitResponse) {
-      super(0);
-      this.count = count;
-      this.awaitResponse = awaitResponse;
-    }
-
-    @Override
-    public boolean await(long timeoutPassed, TimeUnit unit) {
-      this.timeoutPassed = timeoutPassed;
-      return awaitResponse;
-    }
-
-    public long getTimeoutPassed() {
-      return timeoutPassed;
-    }
-
-    @Override
-    public long getCount() {
-      return count;
-    }
-
-    @Override
-    public void countDown() {
-      count--;
-    }
+    String serverAddress = "http://localhost";
+    BrowserStartupAction action = new BrowserStartupAction(browsers,
+        new NullStopWatch(),
+        new FakeJsTestDriverClient(capturedBrowsers, nextId),
+        serverAddress,
+        Executors.newSingleThreadExecutor());
+    
+    action.run(null);
+    assertEquals(serverAddress + "/capture/id/123/timeout/10/upload_size/0/", browserRunner.serverAddress);
   }
 }
