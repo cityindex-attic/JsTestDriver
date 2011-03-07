@@ -51,7 +51,7 @@ public class CoverageInstrumentingProcessor implements FileLoadPostProcessor {
         !file.canLoad() ||
         file.isServeOnly() ||
         excludes.contains(file.getFilePath()) ||
-        file.getData().isEmpty()) {
+        file.getData().trim().isEmpty()) {
       return file;
     }
     long start = System.currentTimeMillis();
