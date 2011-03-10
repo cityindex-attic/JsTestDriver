@@ -4,9 +4,8 @@ package com.google.jstestdriver.server.proxy;
 import org.mortbay.servlet.ProxyServlet;
 
 /**
- * A {@link ProxyServlet.Transparent} that does not proxy the "host" header.
+ * A {@link ProxyServlet.Transparent} that we could reconfigure to
+ * intercept various headers.
  * @author rdionne@google.com (Robert Dionne)
  */
-public class JstdProxyServlet extends ProxyServlet.Transparent {
-  {_DontProxyHeaders.add("host");}
-}
+public class JstdProxyServlet extends ProxyServlet.Transparent {}
