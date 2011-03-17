@@ -88,7 +88,6 @@ public class JettyModule extends AbstractModule {
     context.addServlet(servletHolder, handlerPrefix.prefixPath("/forward/*"));
     context.addServlet(servletHolder, handlerPrefix.prefixPath("/heartbeat"));
     context.addServlet(servletHolder, handlerPrefix.prefixPath("/hello"));
-    context.addServlet(servletHolder, handlerPrefix.prefixPath("/auth", "jstd"));
     context.addServlet(servletHolder, handlerPrefix.prefixPath("/proxy/*", "jstd"));
     context.addServlet(servletHolder, handlerPrefix.prefixPath("/log"));
     context.addServlet(servletHolder, handlerPrefix.prefixPath("/query/*"));

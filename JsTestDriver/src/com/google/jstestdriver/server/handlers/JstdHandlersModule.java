@@ -47,7 +47,6 @@ import com.google.jstestdriver.TimeImpl;
 import com.google.jstestdriver.annotations.BaseResourceLocation;
 import com.google.jstestdriver.annotations.BrowserTimeout;
 import com.google.jstestdriver.annotations.Port;
-import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.requesthandlers.HttpMethod;
 import com.google.jstestdriver.requesthandlers.RequestHandler;
@@ -98,7 +97,6 @@ public class JstdHandlersModule extends RequestHandlersModule {
   private final CapturedBrowsers capturedBrowsers;
   private final FilesCache filesCache;
   private final long browserTimeout;
-  private final Set<AuthStrategy> authStrategies;
   private final HandlerPathPrefix handlerPrefix;
 
   /**
@@ -110,12 +108,10 @@ public class JstdHandlersModule extends RequestHandlersModule {
       CapturedBrowsers capturedBrowsers,
       FilesCache filesCache,
       long browserTimeout,
-      Set<AuthStrategy> authStrategies,
       HandlerPathPrefix handlerPrefix) {
     this.capturedBrowsers = capturedBrowsers;
     this.filesCache = filesCache;
     this.browserTimeout = browserTimeout;
-    this.authStrategies = authStrategies;
     this.handlerPrefix = handlerPrefix;
   }
   
@@ -138,7 +134,6 @@ public class JstdHandlersModule extends RequestHandlersModule {
 
     serve( GET, handlerPrefix.prefixPath("/heartbeat"), HeartbeatGetHandler.class);
     serve(POST, handlerPrefix.prefixPath("/heartbeat"), HeartbeatPostHandler.class);
-    serve( GET, handlerPrefix.prefixPath("/auth", JSTD), AuthHandler.class);
     serve( GET, handlerPrefix.prefixPath("/proxy", JSTD), ProxyConfigurationHandler.class);
     serve(POST, handlerPrefix.prefixPath("/proxy", JSTD), ProxyConfigurationHandler.class);
 
@@ -166,7 +161,6 @@ public class JstdHandlersModule extends RequestHandlersModule {
         .toInstance(new ConcurrentHashMap<SlaveBrowser, List<String>>());
     bind(new Key<ConcurrentMap<SlaveBrowser, Thread>>() {})
         .toInstance(new ConcurrentHashMap<SlaveBrowser, Thread>());
-    bind(new Key<Set<AuthStrategy>>() {}).toInstance(authStrategies);
     bind(new Key<Set<FileInfo>>() {}).toInstance(new HashSet<FileInfo>());
     bind(StandaloneRunnerFilesFilter.class).to(StandaloneRunnerFilesFilterImpl.class);
     bind(HandlerPathPrefix.class).toInstance(handlerPrefix);

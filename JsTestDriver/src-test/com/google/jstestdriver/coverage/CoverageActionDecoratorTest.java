@@ -24,7 +24,6 @@ import com.google.common.collect.Lists;
 import com.google.jstestdriver.Action;
 import com.google.jstestdriver.ServerStartupAction;
 import com.google.jstestdriver.SlaveBrowser;
-import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.model.NullPathPrefix;
 
 /**
@@ -35,7 +34,7 @@ public class CoverageActionDecoratorTest extends TestCase {
     CoverageReporterAction reporter = new CoverageReporterAction(null, null, null);
     List<Action> actions =
         Lists.<Action>newArrayList(new ServerStartupAction(0, null, null,
-            SlaveBrowser.TIMEOUT, Collections.<AuthStrategy>emptySet(), false, null, new NullPathPrefix()));
+            SlaveBrowser.TIMEOUT, false, null, new NullPathPrefix()));
     List<Action> actual = new CoverageActionDecorator(reporter).process(actions);
     assertEquals(2, actual.size());
     assertTrue(actual.get(0) instanceof ServerStartupAction);

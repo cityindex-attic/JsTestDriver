@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver;
 
-import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.model.RunData;
@@ -40,7 +39,6 @@ public class ServerStartupAction implements ObservableAction {
   private JsTestDriverServerImpl server;
   private List<Observer> observerList = new LinkedList<Observer>();
   private final long browserTimeout;
-  private final Set<AuthStrategy> authStrategies;
   private final boolean preloadFiles;
   private final FileLoader fileLoader;
   private final HandlerPathPrefix handlerPrefix;
@@ -52,8 +50,8 @@ public class ServerStartupAction implements ObservableAction {
   @Deprecated
   public ServerStartupAction(int port, CapturedBrowsers capturedBrowsers,
       FilesCache preloadedFilesCache, URLTranslator urlTranslator, URLRewriter urlRewriter) {
-    this(port, capturedBrowsers, preloadedFilesCache, SlaveBrowser.TIMEOUT, Collections
-        .<AuthStrategy>emptySet(), false, null, new NullPathPrefix());
+    this(port, capturedBrowsers, preloadedFilesCache, SlaveBrowser.TIMEOUT,
+        false, null, new NullPathPrefix());
   }
 
   public ServerStartupAction(
@@ -61,7 +59,6 @@ public class ServerStartupAction implements ObservableAction {
       CapturedBrowsers capturedBrowsers,
       FilesCache preloadedFilesCache,
       long browserTimeout,
-      Set<AuthStrategy> authStrategies,
       boolean preloadFiles,
       FileLoader fileLoader,
       HandlerPathPrefix handlerPrefix) {
@@ -69,7 +66,6 @@ public class ServerStartupAction implements ObservableAction {
     this.capturedBrowsers = capturedBrowsers;
     this.preloadedFilesCache = preloadedFilesCache;
     this.browserTimeout = browserTimeout;
-    this.authStrategies = authStrategies;
     this.preloadFiles = preloadFiles;
     this.fileLoader = fileLoader;
     this.handlerPrefix = handlerPrefix;
@@ -94,7 +90,6 @@ public class ServerStartupAction implements ObservableAction {
         capturedBrowsers,
         preloadedFilesCache,
         browserTimeout,
-        authStrategies,
         handlerPrefix);
 
     for (Observer o : observerList) {

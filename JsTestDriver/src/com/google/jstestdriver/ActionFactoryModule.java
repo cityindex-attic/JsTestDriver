@@ -19,7 +19,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.hooks.ActionListProcessor;
-import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.hooks.FileLoadPostProcessor;
 import com.google.jstestdriver.hooks.ResourcePreProcessor;
@@ -46,7 +45,6 @@ public class ActionFactoryModule extends AbstractModule {
     Multibinder.newSetBinder(binder(), FileSetPreProcessor.class);
     Multibinder.newSetBinder(binder(), BrowserRunner.class);
     Multibinder.newSetBinder(binder(), JstdTestCaseProcessor.class);
-    Multibinder.newSetBinder(binder(), AuthStrategy.class);
     Multibinder.newSetBinder(binder(), ResourceDependencyResolver.class);
     Multibinder.newSetBinder(binder(), FileInfoScheme.class)
         .addBinding().to(HttpFileInfoScheme.class);
