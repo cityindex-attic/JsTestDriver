@@ -33,7 +33,6 @@ import com.google.jstestdriver.browser.BrowserIdStrategy;
 import com.google.jstestdriver.browser.BrowserRunner;
 import com.google.jstestdriver.browser.CommandLineBrowserRunner;
 import com.google.jstestdriver.hooks.ActionListProcessor;
-import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 import com.google.jstestdriver.output.FileNameFormatter;
 import com.google.jstestdriver.output.PrintXmlTestResultsAction;
@@ -71,7 +70,7 @@ public class DefaultActionListProviderTest extends TestCase {
                                                    XmlPrinter xmlPrinter) {
     ActionFactory actionFactory =
         new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT,
-            Collections.<AuthStrategy>emptySet(), false, null, null);
+            false, null, null);
     return new DefaultActionListProvider(
         tests,
         Collections.<String>emptyList(),

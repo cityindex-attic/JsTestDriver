@@ -28,7 +28,6 @@ import com.google.jstestdriver.action.ConfigureProxyAction.Factory;
 import com.google.jstestdriver.action.UploadAction;
 import com.google.jstestdriver.browser.BrowserActionExecutorAction;
 import com.google.jstestdriver.browser.BrowserIdStrategy;
-import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.TestsPreProcessor;
 import com.google.jstestdriver.model.NullPathPrefix;
 
@@ -37,7 +36,7 @@ public class ActionSequenceBuilderTest extends TestCase {
   private LinkedHashSet<FileInfo> files = new LinkedHashSet<FileInfo>();
   ActionFactory actionFactory =
       new ActionFactory(null, Collections.<TestsPreProcessor>emptySet(), SlaveBrowser.TIMEOUT,
-          Collections.<AuthStrategy>emptySet(), false, null, null);
+          false, null, null);
 
   public void testAddTestsWithRemoteServerAddress() throws Exception {
     List<String> tests = tests();
@@ -76,7 +75,6 @@ public class ActionSequenceBuilderTest extends TestCase {
             null,
             Collections.<TestsPreProcessor> emptySet(),
             SlaveBrowser.TIMEOUT,
-            Collections.<AuthStrategy>emptySet(),
             false,
             null, null),
             null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
@@ -106,7 +104,6 @@ public class ActionSequenceBuilderTest extends TestCase {
             null,
             Collections.<TestsPreProcessor> emptySet(),
             SlaveBrowser.TIMEOUT,
-            Collections.<AuthStrategy>emptySet(),
             false,
             null, null),
             null, null, new BrowserActionExecutorAction(null, null, null, null, null, 0, null, null),
@@ -138,7 +135,6 @@ public class ActionSequenceBuilderTest extends TestCase {
                 null,
                 Collections.<TestsPreProcessor>emptySet(),
                 SlaveBrowser.TIMEOUT,
-                Collections.<AuthStrategy>emptySet(),
                 false,
                 null,
                 new NullPathPrefix()),

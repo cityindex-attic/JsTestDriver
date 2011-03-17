@@ -17,7 +17,6 @@ package com.google.jstestdriver;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.jstestdriver.browser.BrowserIdStrategy;
-import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.util.NullStopWatch;
@@ -43,7 +42,6 @@ public class JsTestDriverServerTest extends TestCase {
       browsers,
       new FilesCache(new HashMap<String, FileInfo>()),
       SlaveBrowser.TIMEOUT,
-      Collections.<AuthStrategy>emptySet(),
       new NullPathPrefix());
 
   @Override

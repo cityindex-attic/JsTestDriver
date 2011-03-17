@@ -24,7 +24,6 @@ import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.google.inject.util.Providers;
 import com.google.jstestdriver.action.ConfigureProxyAction;
-import com.google.jstestdriver.hooks.AuthStrategy;
 import com.google.jstestdriver.hooks.FileInfoScheme;
 import com.google.jstestdriver.output.MultiTestResultListener;
 import com.google.jstestdriver.output.TestResultListener;
@@ -72,7 +71,6 @@ public class IDEPluginActionBuilderTest extends TestCase {
     builder.install(new AbstractModule(){
                      @Override
                      protected void configure() {
-                       Multibinder.newSetBinder(binder(), AuthStrategy.class);
                        Multibinder.newSetBinder(binder(), FileInfoScheme.class)
                            .addBinding().to(HttpFileInfoScheme.class);
                        bind(Server.class).to(MyServer.class);
@@ -104,7 +102,6 @@ public class IDEPluginActionBuilderTest extends TestCase {
     builder.install(new AbstractModule(){
                      @Override
                      protected void configure() {
-                       Multibinder.newSetBinder(binder(), AuthStrategy.class);
                        Multibinder.newSetBinder(binder(), FileInfoScheme.class)
                            .addBinding().to(HttpFileInfoScheme.class);
                        bind(Server.class).to(MyServer.class);
