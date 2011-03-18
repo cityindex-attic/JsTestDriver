@@ -49,16 +49,16 @@ public class DefaultActionListProviderTest extends TestCase {
         new CommandLineBrowserRunner("browser", null));
 
   public void testParseFlagsAndCreateActionQueue() throws Exception {
-    DefaultActionListProvider parser =
+    DefaultActionListProvider provider =
         createProvider(9876, false, Collections.<String> emptyList(), Collections
             .<ActionListProcessor> emptySet(), "", null);
-    List<Action> actions = parser.get();
+    List<Action> actions = provider.get();
 
     ArrayList<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
     expectedActions.add(ConfigureProxyAction.class);
     expectedActions.add(UploadAction.class);
-    //expectedActions.add(BrowserActionExecutorAction.class);
+    expectedActions.add(BrowserStartupAction.class);
     assertSequence(expectedActions, actions);
   }
 
@@ -99,7 +99,8 @@ public class DefaultActionListProviderTest extends TestCase {
             new UploadAction(null),
             new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0))),
             null,
-            newConfigureProxyActionFactory()), true);
+            newConfigureProxyActionFactory(),
+            new BrowserStartupAction(null, null, null, null, null)), true);
   }
 
   private Factory newConfigureProxyActionFactory() {

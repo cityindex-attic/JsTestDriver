@@ -55,9 +55,9 @@ jstestdriver.setInterval = function() {
 
 //TODO(corysmith): make this configurable.
 jstestdriver.log = function(message) {
-  if (window.console && window.console.log) {
-    //window.console.log(message);
-  }
+  /*if (window.console && window.console.log) {
+    window.console.log(message);
+  }*/
 };
 
 jstestdriver.globalClearInterval = clearInterval;

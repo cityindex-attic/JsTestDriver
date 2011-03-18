@@ -32,7 +32,7 @@ public class CoverageThreadedActionProvider implements BrowserActionProvider {
     List<BrowserAction> actions = Lists.newLinkedList();
     actions.add(reset); //start with a clean slate.
     actions.addAll(provider.get());
-    actions.add(reset); //clean up after the coverage run
+    //actions.add(reset); //clean up after the coverage run
     return actions;
   }
 }

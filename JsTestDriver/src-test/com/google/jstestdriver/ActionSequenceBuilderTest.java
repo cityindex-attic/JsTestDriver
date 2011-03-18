@@ -47,7 +47,7 @@ public class ActionSequenceBuilderTest extends TestCase {
             new UploadAction(null),
             new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0))),
             null,
-            newConfigureProxyActionFactory());
+            newConfigureProxyActionFactory(), null);
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ConfigureProxyAction.class);
@@ -82,7 +82,7 @@ public class ActionSequenceBuilderTest extends TestCase {
         new UploadAction(null),
         new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0))),
             null,
-            newConfigureProxyActionFactory());
+            newConfigureProxyActionFactory(), null);
 
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -111,7 +111,7 @@ public class ActionSequenceBuilderTest extends TestCase {
             new UploadAction(null),
             new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0))),
             null,
-            newConfigureProxyActionFactory());
+            newConfigureProxyActionFactory(), null);
     
     List<Class<? extends Action>> expectedActions = new ArrayList<Class<? extends Action>>();
     expectedActions.add(ServerStartupAction.class);
@@ -144,7 +144,7 @@ public class ActionSequenceBuilderTest extends TestCase {
             new UploadAction(null),
             new CapturedBrowsers(new BrowserIdStrategy(new MockTime(0))),
             null,
-            newConfigureProxyActionFactory());
+            newConfigureProxyActionFactory(), null);
 
     List<Action> actions = builder.addTests(tests).withLocalServerPort(999)
         .usingFiles(files, false).build();
